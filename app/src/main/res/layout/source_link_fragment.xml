@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="8dp"
+        android:weightSum="10"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/link_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
+            android:hint="@string/link_hint"
+            android:importantForAutofill="no"
+            android:inputType="textUri"
+            android:textSize="16sp" />
+
+        <ImageButton
+            android:id="@+id/extract_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:contentDescription="TODO"
+            android:scaleType="centerInside"
+            android:src="@android:drawable/ic_menu_send"
+            android:text="@string/text_extract_button"
+            tools:src="@android:drawable/ic_menu_send" />
+    </LinearLayout>
+</layout>

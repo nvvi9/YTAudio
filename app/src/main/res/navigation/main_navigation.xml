@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/source_link_destination">
+
+    <fragment
+        android:id="@+id/source_link_destination"
+        android:name="com.example.ytaudio.screens.url_link.SourceLinkFragment"
+        android:label="SourceLinkFragment"
+        tools:layout="@layout/source_link_fragment">
+        <action
+            android:id="@+id/action_source_link_destination_to_audioPlayerFragment"
+            app:destination="@id/audioPlayerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/audioPlayerFragment"
+        android:name="com.example.ytaudio.screens.audio_player.AudioPlayerFragment"
+        android:label="AudioPlayerFragment"
+        tools:layout="@layout/audio_player_fragment" >
+        <argument
+            android:name="linkURL"
+            app:argType="string" />
+    </fragment>
+</navigation>
