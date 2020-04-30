@@ -12,7 +12,11 @@
         tools:layout="@layout/source_link_fragment">
         <action
             android:id="@+id/action_source_link_destination_to_audioPlayerFragment"
-            app:destination="@id/audioPlayerFragment" />
+            app:destination="@id/audioPlayerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_out_left"
+            app:popExitAnim="@anim/slide_in_right" />
     </fragment>
     <fragment
         android:id="@+id/audioPlayerFragment"
@@ -21,6 +25,9 @@
         tools:layout="@layout/audio_player_fragment" >
         <argument
             android:name="linkURL"
+            app:argType="string" />
+        <argument
+            android:name="photoLink"
             app:argType="string" />
     </fragment>
 </navigation>

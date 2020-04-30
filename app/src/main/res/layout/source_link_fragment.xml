@@ -5,32 +5,41 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="8dp"
-        android:weightSum="10"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/link_text"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="9"
-            android:hint="@string/link_hint"
-            android:importantForAutofill="no"
-            android:inputType="textUri"
-            android:textSize="16sp" />
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal"
+            android:weightSum="10">
 
-        <ImageButton
-            android:id="@+id/extract_button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:contentDescription="TODO"
-            android:scaleType="centerInside"
-            android:src="@android:drawable/ic_menu_send"
-            android:text="@string/text_extract_button"
-            tools:src="@android:drawable/ic_menu_send" />
+            <EditText
+                android:id="@+id/link_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="9"
+                android:hint="@string/link_hint"
+                android:importantForAutofill="no"
+                android:inputType="textUri"
+                android:textSize="16sp" />
+
+            <ImageButton
+                android:id="@+id/extract_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:contentDescription="TODO"
+                android:scaleType="centerInside"
+                android:src="@android:drawable/ic_menu_send"
+                android:text="@string/text_extract_button"
+                tools:src="@android:drawable/ic_menu_send" />
+
+        </LinearLayout>
+
     </LinearLayout>
 </layout>

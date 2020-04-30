@@ -1,20 +1,19 @@
 package com.example.ytaudio.screens.audio_player
 
-import android.media.AudioManager
 import android.media.MediaPlayer
-import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
-import android.provider.MediaStore
 import android.text.format.DateUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
 import com.example.ytaudio.R
 import com.example.ytaudio.databinding.AudioPlayerFragmentBinding
 
@@ -25,7 +24,6 @@ class AudioPlayerFragment : Fragment() {
     }
 
     private lateinit var binding: AudioPlayerFragmentBinding
-    private lateinit var viewModel: AudioPlayerViewModel
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var runnable: Runnable
     private var handler = Handler()
@@ -41,8 +39,6 @@ class AudioPlayerFragment : Fragment() {
 
         binding =
             DataBindingUtil.inflate(inflater, R.layout.audio_player_fragment, container, false)
-
-//        viewModel = ViewModelProviders.of(this).get(AudioPlayerViewModel::class.java)
 
         binding.apply {
             buttonPlay.setOnClickListener {
@@ -73,6 +69,12 @@ class AudioPlayerFragment : Fragment() {
                 }
             })
         }
+
+        Glide.with(this).load(audioPlayerFragmentArgs.photoLink).into(binding.photo)
+
+        Toast.makeText(this.context, audioPlayerFragmentArgs.linkURL, Toast.LENGTH_LONG).show()
+
+        Log.i("AudioPlayerFragment", audioPlayerFragmentArgs.linkURL)
 
         return binding.root
     }
