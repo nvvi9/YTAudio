@@ -1,8 +1,11 @@
 package com.example.ytaudio.screens.audio_player
 
+import android.media.AudioManager
 import android.media.MediaPlayer
+import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
+import android.provider.MediaStore
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -23,7 +26,7 @@ class AudioPlayerFragment : Fragment() {
 
     private lateinit var binding: AudioPlayerFragmentBinding
     private lateinit var viewModel: AudioPlayerViewModel
-    private lateinit var mediaPlayer: MediaPlayer
+    private var mediaPlayer: MediaPlayer? = null
     private lateinit var runnable: Runnable
     private var handler = Handler()
     private var onPause = false
@@ -42,9 +45,16 @@ class AudioPlayerFragment : Fragment() {
 //        viewModel = ViewModelProviders.of(this).get(AudioPlayerViewModel::class.java)
 
         binding.apply {
-            buttonPlay.setOnClickListener { start() }
-            buttonPause.setOnClickListener { pause() }
-            buttonReset.setOnClickListener { stop() }
+            buttonPlay.setOnClickListener {
+                it.visibility = View.INVISIBLE
+                buttonPause.visibility = View.VISIBLE
+                start()
+            }
+            buttonPause.setOnClickListener {
+                it.visibility = View.INVISIBLE
+                buttonPlay.visibility = View.VISIBLE
+                pause()
+            }
             seekbarAudio.setOnSeekBarChangeListener(object :
                 SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(
@@ -52,7 +62,8 @@ class AudioPlayerFragment : Fragment() {
                     progress: Int,
                     fromUser: Boolean
                 ) {
-                    if (fromUser) mediaPlayer.seekTo(progress * ONE_SECOND)
+                    if (fromUser)
+                        mediaPlayer?.seekTo(progress * ONE_SECOND)
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -73,51 +84,45 @@ class AudioPlayerFragment : Fragment() {
 
     private fun start() {
         if (onPause) {
-            mediaPlayer.seekTo(mediaPlayer.currentPosition)
-            mediaPlayer.start()
-            onPause = false
+            mediaPlayer?.apply {
+                seekTo(this.currentPosition)
+                start()
+            }
         } else {
-            mediaPlayer = MediaPlayer.create(this.context, R.raw.nothing_left)
-            mediaPlayer.start()
+            mediaPlayer = MediaPlayer.create(this.context, R.raw.nothing_left).apply {
+                isLooping = true
+                start()
+            }
         }
+        onPause = false
         initializeSeekBar()
     }
 
+
     private fun pause() {
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.pause()
+        if (mediaPlayer?.isPlaying!!) {
+            mediaPlayer?.pause()
             onPause = true
         }
     }
 
     private fun stop() {
-        if (mediaPlayer.isPlaying || onPause.equals(true)) {
-            mediaPlayer.apply {
-                stop()
-                reset()
-                release()
-            }
-            onPause = false
-            binding.seekbarAudio.progress = 0
-            handler.removeCallbacks(runnable)
+        mediaPlayer?.apply {
+            stop()
+            prepare()
         }
     }
 
     private fun initializeSeekBar() {
-        binding.seekbarAudio.max = mediaPlayer.duration / ONE_SECOND
+        binding.seekbarAudio.max = mediaPlayer?.duration!! / ONE_SECOND
 
         runnable = Runnable {
-//            binding.seekbarAudio.progress = mediaPlayer.currentPosition / 1000
-//            binding.currentTimeText.text = (mediaPlayer.currentPosition / 1000).toString()
-//            binding.leftTimeText.text =
-//                ((mediaPlayer.duration - mediaPlayer.currentPosition) / 1000).toString()
-
             binding.apply {
-                seekbarAudio.progress = mediaPlayer.currentPosition / ONE_SECOND
+                seekbarAudio.progress = mediaPlayer?.currentPosition!! / ONE_SECOND
                 currentTimeText.text =
-                    DateUtils.formatElapsedTime((mediaPlayer.currentPosition / ONE_SECOND).toLong())
+                    DateUtils.formatElapsedTime((mediaPlayer?.currentPosition!! / ONE_SECOND).toLong())
                 leftTimeText.text =
-                    DateUtils.formatElapsedTime(((mediaPlayer.duration - mediaPlayer.currentPosition) / ONE_SECOND).toLong())
+                    DateUtils.formatElapsedTime(((mediaPlayer?.duration!! - mediaPlayer?.currentPosition!!) / ONE_SECOND).toLong())
             }
 
             handler.postDelayed(runnable, ONE_SECOND.toLong())

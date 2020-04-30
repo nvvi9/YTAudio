@@ -9,37 +9,33 @@
         android:padding="8dp">
 
 
-        <Button
+        <ImageButton
+            android:id="@+id/button_play"
+            style="@style/Widget.AppCompat.ImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
+            android:src="@android:drawable/ic_media_play"
+            android:text="@string/button_play_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:src="@android:drawable/ic_media_play" />
+
+        <ImageButton
             android:id="@+id/button_pause"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_pause_text"
-            app:layout_constraintEnd_toStartOf="@+id/button_play"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_chainStyle="spread"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/button_play" />
-
-        <Button
-            android:id="@+id/button_play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:text="@string/button_play_text"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
+            android:soundEffectsEnabled="false"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/button_reset"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/button_pause" />
-
-        <Button
-            android:id="@+id/button_reset"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/button_reset_text"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/button_play"
-            app:layout_constraintTop_toTopOf="@+id/button_play" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@android:drawable/ic_media_pause"
+            tools:srcCompat="@android:drawable/ic_media_pause" />
 
         <SeekBar
             android:id="@+id/seekbar_audio"
@@ -52,24 +48,28 @@
             android:id="@+id/current_time_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16dp"
+            android:text="@string/time_zero_text"
+            android:textSize="16sp"
             app:layout_constraintEnd_toStartOf="@+id/left_time_text"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/left_time_text"
-            tools:text="0:00" />
+            tools:text="@string/time_zero_text" />
 
         <TextView
             android:id="@+id/left_time_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16dp"
+            android:text="@string/time_zero_text"
+            android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/seekbar_audio"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/current_time_text"
-            tools:text="0:00" />
+            tools:text="@string/time_zero_text" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

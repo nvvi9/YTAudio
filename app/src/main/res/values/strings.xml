@@ -5,4 +5,5 @@
     <string name="button_play_text">play</string>
     <string name="button_pause_text">pause</string>
     <string name="button_reset_text">reset</string>
+    <string name="time_zero_text">00:00</string>
 </resources>
