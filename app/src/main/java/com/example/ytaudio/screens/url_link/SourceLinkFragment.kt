@@ -1,16 +1,17 @@
 package com.example.ytaudio.screens.url_link
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import com.commit451.youtubeextractor.Stream
 import com.commit451.youtubeextractor.YouTubeExtraction
 import com.commit451.youtubeextractor.YouTubeExtractor
@@ -37,9 +38,15 @@ class SourceLinkFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.source_link_fragment, container, false)
 
         binding.extractButton.setOnClickListener {
-            extractURL(binding.linkText.text.run {
-                subSequence(indexOf('=') + 1, length).toString()
-            })
+            if (binding.linkText.text.isNotBlank()) {
+                (context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(
+                    it.windowToken,
+                    0
+                )
+                extractURL(binding.linkText.text.run {
+                    subSequence(indexOf('=') + 1, length).toString()
+                })
+            }
         }
 
         return binding.root
@@ -75,12 +82,24 @@ class SourceLinkFragment : Fragment() {
     }
 
     private fun passResult(result: YouTubeExtraction) {
-        val videoUrl = result.streams.filterIsInstance<Stream.AudioStream>().toString()
-        findNavController().navigate(
-            SourceLinkFragmentDirections.actionSourceLinkDestinationToAudioPlayerFragment(
-                videoUrl!!,
-                result.thumbnails.first().url
-            )
-        )
+        result.streams.filterIsInstance<Stream.AudioStream>()
+            .filter {
+                listOf(
+                    Stream.FORMAT_M4A,
+                    Stream.FORMAT_MPEG_4
+                ).any { streamType ->
+                    streamType == it.format
+                }
+            }.takeIf {
+                it.isNotEmpty()
+            }?.get(0)?.url?.let {
+                findNavController().navigate(
+                    SourceLinkFragmentDirections.actionSourceLinkDestinationToAudioPlayerFragment(
+                        it,
+                        result.thumbnails.first().url,
+                        result.title
+                    )
+                )
+            }
     }
 }

@@ -13,10 +13,10 @@
         <action
             android:id="@+id/action_source_link_destination_to_audioPlayerFragment"
             app:destination="@id/audioPlayerFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_out_left"
-            app:popExitAnim="@anim/slide_in_right" />
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/audioPlayerFragment"
@@ -29,5 +29,9 @@
         <argument
             android:name="photoLink"
             app:argType="string" />
+        <argument
+            android:name="titleText"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 </navigation>

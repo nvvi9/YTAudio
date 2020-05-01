@@ -1,6 +1,9 @@
 package com.example.ytaudio.screens.audio_player
 
+import android.annotation.SuppressLint
+import android.media.AudioManager
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.text.format.DateUtils
@@ -9,7 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
@@ -28,6 +30,7 @@ class AudioPlayerFragment : Fragment() {
     private lateinit var runnable: Runnable
     private var handler = Handler()
     private var onPause = false
+    private lateinit var audioUri: Uri
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,6 +39,7 @@ class AudioPlayerFragment : Fragment() {
     ): View? {
 
         val audioPlayerFragmentArgs by navArgs<AudioPlayerFragmentArgs>()
+        audioUri = Uri.parse(audioPlayerFragmentArgs.linkURL)
 
         binding =
             DataBindingUtil.inflate(inflater, R.layout.audio_player_fragment, container, false)
@@ -46,11 +50,15 @@ class AudioPlayerFragment : Fragment() {
                 buttonPause.visibility = View.VISIBLE
                 start()
             }
+
             buttonPause.setOnClickListener {
                 it.visibility = View.INVISIBLE
                 buttonPlay.visibility = View.VISIBLE
                 pause()
             }
+
+            textTitle.text = audioPlayerFragmentArgs.titleText ?: ""
+
             seekbarAudio.setOnSeekBarChangeListener(object :
                 SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(
@@ -72,8 +80,6 @@ class AudioPlayerFragment : Fragment() {
 
         Glide.with(this).load(audioPlayerFragmentArgs.photoLink).into(binding.photo)
 
-        Toast.makeText(this.context, audioPlayerFragmentArgs.linkURL, Toast.LENGTH_LONG).show()
-
         Log.i("AudioPlayerFragment", audioPlayerFragmentArgs.linkURL)
 
         return binding.root
@@ -84,6 +90,7 @@ class AudioPlayerFragment : Fragment() {
         stop()
     }
 
+    @SuppressLint("UseRequireInsteadOfGet")
     private fun start() {
         if (onPause) {
             mediaPlayer?.apply {
@@ -91,7 +98,15 @@ class AudioPlayerFragment : Fragment() {
                 start()
             }
         } else {
-            mediaPlayer = MediaPlayer.create(this.context, R.raw.nothing_left).apply {
+//            mediaPlayer = MediaPlayer.create(this.context, R.raw.nothing_left).apply {
+//                isLooping = true
+//                start()
+//            }
+
+            mediaPlayer = MediaPlayer().apply {
+                setAudioStreamType(AudioManager.STREAM_MUSIC)
+                setDataSource(this@AudioPlayerFragment.context!!, audioUri)
+                prepare()
                 isLooping = true
                 start()
             }
