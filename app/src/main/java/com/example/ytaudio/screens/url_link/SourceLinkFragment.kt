@@ -37,15 +37,15 @@ class SourceLinkFragment : Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.source_link_fragment, container, false)
 
-        binding.extractButton.setOnClickListener {
+        binding.extractButton.setOnClickListener { view ->
             if (binding.linkText.text.isNotBlank()) {
                 (context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(
-                    it.windowToken,
+                    view.windowToken,
                     0
                 )
-                extractURL(binding.linkText.text.run {
-                    subSequence(indexOf('=') + 1, length).toString()
-                })
+
+                extractURL(binding.linkText.text.takeLastWhile { it != '=' && it != '/' }
+                    .toString())
             }
         }
 
