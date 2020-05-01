@@ -6,6 +6,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.text.TextUtils
 import android.text.format.DateUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -28,6 +29,7 @@ class AudioPlayerFragment : Fragment() {
     private lateinit var binding: AudioPlayerFragmentBinding
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var runnable: Runnable
+    private lateinit var runnableText: Runnable
     private var handler = Handler()
     private var onPause = false
     private lateinit var audioUri: Uri
@@ -48,6 +50,7 @@ class AudioPlayerFragment : Fragment() {
             buttonPlay.setOnClickListener {
                 it.visibility = View.INVISIBLE
                 buttonPause.visibility = View.VISIBLE
+                textTitle.ellipsize = TextUtils.TruncateAt.END
                 start()
             }
 
@@ -141,9 +144,9 @@ class AudioPlayerFragment : Fragment() {
                 leftTimeText.text =
                     DateUtils.formatElapsedTime(((mediaPlayer?.duration!! - mediaPlayer?.currentPosition!!) / ONE_SECOND).toLong())
             }
-
             handler.postDelayed(runnable, ONE_SECOND.toLong())
         }
+
         handler.postDelayed(runnable, ONE_SECOND.toLong())
     }
 }

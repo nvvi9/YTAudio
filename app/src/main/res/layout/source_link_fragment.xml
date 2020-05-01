@@ -15,6 +15,7 @@
             android:layout_gravity="bottom"
             android:layout_marginBottom="8dp"
             android:orientation="horizontal"
+            android:padding="8dp"
             android:weightSum="10">
 
             <EditText

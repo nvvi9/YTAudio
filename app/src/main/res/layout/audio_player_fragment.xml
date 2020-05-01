@@ -78,7 +78,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            tools:srcCompat="@drawable/ic_launcher_background" />
+            tools:srcCompat="@drawable/ic_launcher_background"
+            android:contentDescription="TODO" />
 
         <TextView
             android:id="@+id/text_title"
@@ -92,6 +93,7 @@
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:textColor="@android:color/secondary_text_dark_nodisable"
+            android:textColorHighlight="@android:color/secondary_text_dark_nodisable"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/left_time_text"
