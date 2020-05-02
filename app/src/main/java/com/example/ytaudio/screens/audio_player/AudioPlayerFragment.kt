@@ -29,7 +29,6 @@ class AudioPlayerFragment : Fragment() {
     private lateinit var binding: AudioPlayerFragmentBinding
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var runnable: Runnable
-    private lateinit var runnableText: Runnable
     private var handler = Handler()
     private var onPause = false
     private lateinit var audioUri: Uri
@@ -101,11 +100,6 @@ class AudioPlayerFragment : Fragment() {
                 start()
             }
         } else {
-//            mediaPlayer = MediaPlayer.create(this.context, R.raw.nothing_left).apply {
-//                isLooping = true
-//                start()
-//            }
-
             mediaPlayer = MediaPlayer().apply {
                 setAudioStreamType(AudioManager.STREAM_MUSIC)
                 setDataSource(this@AudioPlayerFragment.context!!, audioUri)

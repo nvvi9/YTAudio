@@ -17,6 +17,13 @@
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out" />
+        <action
+            android:id="@+id/action_source_link_destination_to_playerFragment"
+            app:destination="@id/playerFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/audioPlayerFragment"
@@ -33,5 +40,19 @@
             android:name="titleText"
             app:argType="string"
             app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/playerFragment"
+        android:name="com.example.ytaudio.screens.player.PlayerFragment"
+        android:label="PlayerFragment" >
+        <argument
+            android:name="audioUrl"
+            app:argType="string" />
+        <argument
+            android:name="photoUrl"
+            app:argType="string" />
+        <argument
+            android:name="titleText"
+            app:argType="string" />
     </fragment>
 </navigation>
