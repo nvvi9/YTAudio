@@ -8,91 +8,143 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
 import com.example.ytaudio.R
+import com.example.ytaudio.database.AudioDatabase
+import com.example.ytaudio.database.AudioDatabaseDao
+import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.databinding.PlayerFragmentBinding
-import com.google.android.exoplayer2.ExoPlayerFactory
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.source.TrackGroupArray
+import com.google.android.exoplayer2.source.dash.DashMediaSource
+import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import kotlinx.android.synthetic.main.audio_player_fragment.*
 import kotlinx.android.synthetic.main.player_fragment.view.*
 
-class PlayerFragment : Fragment() {
+class PlayerFragment : Fragment(), Player.EventListener {
+    override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
+//        super.onPlaybackParametersChanged(playbackParameters)
+    }
+
+    override fun onTracksChanged(
+        trackGroups: TrackGroupArray,
+        trackSelections: TrackSelectionArray
+    ) {
+//        super.onTracksChanged(trackGroups, trackSelections)
+    }
+
+    override fun onPlayerError(error: ExoPlaybackException) {
+//        super.onPlayerError(error)
+    }
+
+    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+        if (playbackState == Player.STATE_BUFFERING)
+            binding.progressBar.visibility = View.VISIBLE
+        else if (playbackState == Player.STATE_READY)
+            binding.progressBar.visibility = View.INVISIBLE
+    }
+
+    override fun onLoadingChanged(isLoading: Boolean) {
+//        super.onLoadingChanged(isLoading)
+    }
+
+    override fun onPositionDiscontinuity(reason: Int) {
+//        super.onPositionDiscontinuity(reason)
+    }
+
+    override fun onRepeatModeChanged(repeatMode: Int) {
+//        super.onRepeatModeChanged(repeatMode)
+    }
+
+    override fun onTimelineChanged(timeline: Timeline, manifest: Any?, reason: Int) {
+//        super.onTimelineChanged(timeline, manifest, reason)
+    }
 
     private lateinit var binding: PlayerFragmentBinding
-    private lateinit var player: SimpleExoPlayer
-    private lateinit var audioUri: Uri
-    private var playWhenReady = true
-    private var currentWindow = 0
+    private lateinit var player: ExoPlayer
+    private lateinit var url: String
+    private lateinit var audio: AudioInfo
     private var playbackPosition = 0L
+
+    private val bandwidthMeter by lazy {
+        DefaultBandwidthMeter()
+    }
+    private val adaptiveTrackSelectionFactory by lazy {
+        AdaptiveTrackSelection.Factory(bandwidthMeter)
+    }
+//    private var playWhenReady = true
+//    private var currentWindow = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val application = requireNotNull(this.activity).application
         binding = DataBindingUtil.inflate(inflater, R.layout.player_fragment, container, false)
 
-        val playerFragmentArgs by navArgs<PlayerFragmentArgs>()
+        val dataSource = AudioDatabase.getInstance(application).audioDatabaseDao
+        val viewModelFactory = PlayerViewModelFactory(dataSource, application)
+        val playerViewModel =
+            ViewModelProviders.of(this, viewModelFactory).get(PlayerViewModel::class.java)
 
-        audioUri = Uri.parse(playerFragmentArgs.audioUrl)
+        binding.lifecycleOwner = this
+
+        playerViewModel.lastAdded.observe(viewLifecycleOwner, Observer {
+            url = it?.audioUri.toString()
+        })
 
         return binding.root
     }
 
     override fun onStart() {
+        initializeExoPlayer()
         super.onStart()
-        if (Util.SDK_INT >= 24) initializePlayer()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        hideSystemUi()
-        if (Util.SDK_INT < 24 || !this::player.isInitialized) initializePlayer()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        if (Util.SDK_INT < 24) releasePlayer()
     }
 
     override fun onStop() {
+        releasePlayer()
         super.onStop()
-        if (Util.SDK_INT >= 24) releasePlayer()
     }
 
-    private fun initializePlayer() {
-        player = ExoPlayerFactory.newSimpleInstance(this.requireContext())
-        binding.playerView.player = player
-        val mediaSource = buildMediaSource(audioUri)
-        player.apply {
-            
-            playWhenReady = playWhenReady
-            seekTo(currentWindow, playbackPosition)
-            prepare(mediaSource, false, false)
-        }
+    private fun initializeExoPlayer() {
+        player = ExoPlayerFactory.newSimpleInstance(
+            this.requireContext(),
+            DefaultTrackSelector(adaptiveTrackSelectionFactory),
+            DefaultLoadControl()
+        )
+
+        preparePlayer()
+        binding.simpleExoPlayerView.player = player
+        player.seekTo(playbackPosition)
+        player.playWhenReady = true
+        player.addListener(this)
     }
 
-    private fun buildMediaSource(uri: Uri) =
-        ProgressiveMediaSource.Factory(DefaultDataSourceFactory(this.context, "exoplayer"))
-            .createMediaSource(uri)
-
-    @SuppressLint("InlinedApi")
-    private fun hideSystemUi() {
-        binding.playerView.systemUiVisibility =
-            View.SYSTEM_UI_FLAG_LOW_PROFILE or View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+    private fun preparePlayer() {
+        player.prepare(buildMediaSource(Uri.parse(url)))
     }
 
     private fun releasePlayer() {
-        if (this::player.isInitialized) {
-            playWhenReady = player.playWhenReady
-            playbackPosition = player.currentPosition
-            currentWindow = player.currentWindowIndex
-            player.release()
-        }
+        playbackPosition = player.currentPosition
+        player.release()
+    }
+
+    private fun buildMediaSource(uri: Uri): MediaSource {
+        val dataSourceFactory = DefaultHttpDataSourceFactory("ua", bandwidthMeter)
+        val dashChunkSourceFactory = DefaultDashChunkSource.Factory(dataSourceFactory)
+        return DashMediaSource(uri, dataSourceFactory, dashChunkSourceFactory, null, null)
     }
 }
