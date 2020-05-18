@@ -1,6 +1,5 @@
 package com.example.ytaudio.screens.url_link
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -14,14 +13,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-import com.commit451.youtubeextractor.Stream
-import com.commit451.youtubeextractor.YouTubeExtraction
 import com.commit451.youtubeextractor.YouTubeExtractor
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.databinding.SourceLinkFragmentBinding
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 
 class SourceLinkFragment : Fragment() {
 
@@ -54,7 +49,7 @@ class SourceLinkFragment : Fragment() {
                     0
                 )
 
-                sourceLinkViewModel.onExtract(binding.linkText.toString())
+                sourceLinkViewModel.onExtract(binding.linkText.text.toString())
 
 //                extractURL(binding.linkText.text.takeLastWhile { it != '=' && it != '/' }
 //                    .toString())

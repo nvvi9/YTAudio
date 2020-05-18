@@ -49,8 +49,8 @@ class SourceLinkViewModel(
 
     @SuppressLint("CheckResult")
     fun onExtract(videoLink: String) {
-        val videoId = videoLink.takeWhile { it != '=' && it != '/' }
-        extractor.extract(videoId).subscribeOn(Schedulers.io())
+        extractor.extract(videoLink.takeLastWhile { it != '=' && it != '/' })
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({ extraction ->
                 passResult(extraction)
             }, { t ->

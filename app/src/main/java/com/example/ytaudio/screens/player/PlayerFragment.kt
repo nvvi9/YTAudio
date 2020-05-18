@@ -1,6 +1,5 @@
 package com.example.ytaudio.screens.player
 
-import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,28 +9,20 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.navArgs
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioDatabase
-import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.databinding.PlayerFragmentBinding
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
-import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
-import com.google.android.exoplayer2.util.Util
-import kotlinx.android.synthetic.main.audio_player_fragment.*
-import kotlinx.android.synthetic.main.player_fragment.view.*
 
 class PlayerFragment : Fragment(), Player.EventListener {
     override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
@@ -104,13 +95,14 @@ class PlayerFragment : Fragment(), Player.EventListener {
 
         playerViewModel.lastAdded.observe(viewLifecycleOwner, Observer {
             url = it?.audioUri.toString()
+            initializeExoPlayer()
         })
 
         return binding.root
     }
 
     override fun onStart() {
-        initializeExoPlayer()
+//        initializeExoPlayer()
         super.onStart()
     }
 
