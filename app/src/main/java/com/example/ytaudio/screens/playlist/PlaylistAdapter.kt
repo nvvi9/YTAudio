@@ -31,11 +31,31 @@ class PlaylistAdapter(var audioPlaylist: List<AudioInfo>) :
         notifyDataSetChanged()
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    private var listener: OnItemClickListener? = null
+
+    interface OnItemClickListener {
+        fun onItemClick(itemView: View, position: Int)
+    }
+
+    fun setOnItemClickListener(listener: OnItemClickListener) {
+        this.listener = listener
+    }
+
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun bindItems(audio: AudioInfo) {
             val titleTextView = itemView.findViewById<TextView>(R.id.audio_title)
             titleTextView.text = audio.audioTitle
+        }
+
+        init {
+            itemView.setOnClickListener {
+                if (listener != null) {
+                    val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION)
+                        listener!!.onItemClick(itemView, position)
+                }
+            }
         }
     }
 }

@@ -65,7 +65,13 @@ class SourceLinkFragment : Fragment() {
 
         sourceLinkViewModel.navigateToPlayer.observe(viewLifecycleOwner, Observer {
             if (it) {
-                findNavController().navigate(SourceLinkFragmentDirections.actionSourceLinkDestinationToAudioPlayerFragment())
+                findNavController().navigate(
+                    SourceLinkFragmentDirections.actionSourceLinkDestinationToAudioPlayerFragment(
+                        "",
+                        "",
+                        ""
+                    )
+                )
             }
         })
 

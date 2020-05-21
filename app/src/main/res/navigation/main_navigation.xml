@@ -29,7 +29,17 @@
         android:id="@+id/audioPlayerFragment"
         android:name="com.example.ytaudio.screens.audio_player.AudioPlayerFragment"
         android:label="AudioPlayerFragment"
-        tools:layout="@layout/audio_player_fragment"/>
+        tools:layout="@layout/audio_player_fragment">
+        <argument
+            android:name="audioUri"
+            app:argType="string" />
+        <argument
+            android:name="audioTitle"
+            app:argType="string" />
+        <argument
+            android:name="audioPhotoUri"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/playerFragment"
         android:name="com.example.ytaudio.screens.player.PlayerFragment"
@@ -43,5 +53,8 @@
         <action
             android:id="@+id/action_playlistFragment_to_source_link_destination"
             app:destination="@id/source_link_destination" />
+        <action
+            android:id="@+id/action_playlistFragment_to_audioPlayerFragment"
+            app:destination="@id/audioPlayerFragment" />
     </fragment>
 </navigation>

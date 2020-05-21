@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
@@ -26,6 +27,9 @@ class PlaylistFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        var playlist = ArrayList<AudioInfo>()
+        val adapter = PlaylistAdapter(playlist)
+
         binding =
             DataBindingUtil.inflate(inflater, R.layout.playlist_fragment, container, false)
 
@@ -35,19 +39,33 @@ class PlaylistFragment : Fragment() {
         viewModel =
             ViewModelProviders.of(this, viewModelFactory).get(PlaylistViewModel::class.java)
 
-        val audioPlaylist = ArrayList<AudioInfo>()
+        binding.apply {
+            playlistView.layoutManager =
+                LinearLayoutManager(this@PlaylistFragment.context, RecyclerView.VERTICAL, false)
 
-        val adapter = PlaylistAdapter(audioPlaylist)
+            playlistView.adapter = adapter
 
-        binding.playlistView.layoutManager =
-            LinearLayoutManager(this.context, RecyclerView.VERTICAL, false)
-
-        binding.playlistView.adapter = adapter
-
-        binding.lifecycleOwner = this
+            lifecycleOwner = this@PlaylistFragment
+        }
 
         viewModel.getAudioPlaylist().observe(viewLifecycleOwner, Observer {
-            adapter.setData(it)
+            playlist = it as ArrayList<AudioInfo>
+            adapter.setData(playlist)
+        })
+
+        adapter.setOnItemClickListener(object : PlaylistAdapter.OnItemClickListener {
+            override fun onItemClick(itemView: View, position: Int) {
+                playlist[position].apply {
+                    findNavController().navigate(
+                        PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment(
+                            audioUri,
+                            audioTitle,
+                            photoUri
+                        )
+                    )
+
+                }
+            }
         })
 
         return binding.root
