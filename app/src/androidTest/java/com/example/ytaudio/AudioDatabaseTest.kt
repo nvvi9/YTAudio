@@ -38,9 +38,10 @@ class AudioDatabaseTest {
     @Test
     @Throws(Exception::class)
     fun insertAndGet() {
-        val audio = AudioInfo(audioUri = "string")
-        audioDao.insert(audio)
+//        val audio = AudioInfo(audioUri = "string")
+        audioDao.insert(AudioInfo(audioUri = "string", photoUri = "sd", audioTitle = "sdd"))
+        audioDao.insert(AudioInfo(audioUri = "", photoUri = "fs", audioTitle = "s"))
         val lastAdded = audioDao.getLastAudio()
-        assertEquals(lastAdded?.audioUri, "string")
+        assertEquals(lastAdded?.audioId, 0)
     }
 }

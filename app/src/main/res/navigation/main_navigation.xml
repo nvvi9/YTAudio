@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/source_link_destination">
+    app:startDestination="@id/playlistFragment">
 
     <fragment
         android:id="@+id/source_link_destination"
@@ -29,21 +29,19 @@
         android:id="@+id/audioPlayerFragment"
         android:name="com.example.ytaudio.screens.audio_player.AudioPlayerFragment"
         android:label="AudioPlayerFragment"
-        tools:layout="@layout/audio_player_fragment">
-        <argument
-            android:name="linkURL"
-            app:argType="string" />
-        <argument
-            android:name="photoLink"
-            app:argType="string" />
-        <argument
-            android:name="titleText"
-            app:argType="string"
-            app:nullable="true" />
-    </fragment>
+        tools:layout="@layout/audio_player_fragment"/>
     <fragment
         android:id="@+id/playerFragment"
         android:name="com.example.ytaudio.screens.player.PlayerFragment"
         android:label="PlayerFragment"
         tools:layout="@layout/player_fragment"/>
+    <fragment
+        android:id="@+id/playlistFragment"
+        tools:layout="@layout/playlist_fragment"
+        android:name="com.example.ytaudio.screens.playlist.PlaylistFragment"
+        android:label="PlaylistFragment" >
+        <action
+            android:id="@+id/action_playlistFragment_to_source_link_destination"
+            app:destination="@id/source_link_destination" />
+    </fragment>
 </navigation>

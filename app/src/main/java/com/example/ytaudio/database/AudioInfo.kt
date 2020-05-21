@@ -11,12 +11,12 @@ data class AudioInfo(
     var audioId: Long = 0L,
 
     @ColumnInfo(name = "audio_uri")
-    val audioUri: String = "",
+    val audioUri: String,
 
     @ColumnInfo(name = "photo_uri")
-    val photoUri: String = "",
+    val photoUri: String,
 
     @ColumnInfo(name = "audio_title")
-    val audioTitle: String = ""
+    val audioTitle: String
 
     )
