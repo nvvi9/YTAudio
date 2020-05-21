@@ -7,7 +7,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioInfo
-import kotlinx.android.synthetic.main.item_playlist.view.*
 
 class PlaylistAdapter(var audioPlaylist: List<AudioInfo>) :
     RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
@@ -26,20 +25,29 @@ class PlaylistAdapter(var audioPlaylist: List<AudioInfo>) :
 
     override fun getItemCount() = audioPlaylist.size
 
+
     fun setData(newAudioPlaylist: List<AudioInfo>) {
         audioPlaylist = newAudioPlaylist
         notifyDataSetChanged()
     }
 
+
     private var listener: OnItemClickListener? = null
+
 
     interface OnItemClickListener {
         fun onItemClick(itemView: View, position: Int)
     }
 
-    fun setOnItemClickListener(listener: OnItemClickListener) {
-        this.listener = listener
+
+    fun setOnItemClickListener(reaction: (View, Int) -> Unit) {
+        listener = object : OnItemClickListener {
+            override fun onItemClick(itemView: View, position: Int) {
+                reaction(itemView, position)
+            }
+        }
     }
+
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 

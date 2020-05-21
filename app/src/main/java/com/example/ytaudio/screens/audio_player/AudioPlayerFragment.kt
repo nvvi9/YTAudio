@@ -82,7 +82,7 @@ class AudioPlayerFragment : Fragment() {
 
         Glide.with(this).load(audioPlayerFragmentArgs.audioPhotoUri).into(binding.photo)
 
-        Log.i("AudioPlayerFragment", audioPlayerFragmentArgs.audioTitle)
+        Log.i("AudioPlayerFragment", audioPlayerFragmentArgs.audioUri)
 
         return binding.root
     }

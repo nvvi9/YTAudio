@@ -53,21 +53,18 @@ class PlaylistFragment : Fragment() {
             adapter.setData(playlist)
         })
 
-        adapter.setOnItemClickListener(object : PlaylistAdapter.OnItemClickListener {
-            override fun onItemClick(itemView: View, position: Int) {
-                playlist[position].apply {
-                    findNavController().navigate(
-                        PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment(
-                            audioUri,
-                            audioTitle,
-                            photoUri
-                        )
+        adapter.setOnItemClickListener { _, position ->
+            playlist[position].apply {
+                findNavController().navigate(
+                    PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment(
+                        audioUri,
+                        audioTitle,
+                        photoUri
                     )
-
-                }
+                )
             }
-        })
-
+        }
+        
         return binding.root
     }
 }
