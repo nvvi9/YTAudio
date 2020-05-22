@@ -49,10 +49,11 @@ class SourceLinkViewModel(
 
     @SuppressLint("CheckResult")
     fun onExtract(videoLink: String) {
-        extractor.extract(videoLink.takeLastWhile { it != '=' && it != '/' })
+        val youtubeId = videoLink.takeLastWhile { it != '=' && it != '/' }
+        extractor.extract(youtubeId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({ extraction ->
-                passResult(extraction)
+                passResult(extraction, youtubeId)
             }, { t ->
                 onError(t)
             })
@@ -67,7 +68,7 @@ class SourceLinkViewModel(
         _showToastEvent.value = false
     }
 
-    private fun passResult(result: YouTubeExtraction) {
+    private fun passResult(result: YouTubeExtraction, youtubeId: String) {
         val url = result.streams.filterIsInstance<Stream.AudioStream>().filter {
             listOf(
                 Stream.FORMAT_M4A,
@@ -78,6 +79,7 @@ class SourceLinkViewModel(
         uiScope.launch {
             insert(
                 AudioInfo(
+                    youtubeId = youtubeId,
                     audioUri = url!!,
                     photoUri = result.thumbnails.first().url,
                     audioTitle = result.title!!
