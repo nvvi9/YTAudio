@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -20,15 +19,13 @@ import com.example.ytaudio.databinding.PlaylistFragmentBinding
 class PlaylistFragment : Fragment() {
 
     private lateinit var binding: PlaylistFragmentBinding
-    private lateinit var viewModel: PlaylistViewModel
+    private lateinit var playlistViewModel: PlaylistViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var playlist = ArrayList<AudioInfo>()
-        val adapter = PlaylistAdapter(playlist)
 
         binding =
             DataBindingUtil.inflate(inflater, R.layout.playlist_fragment, container, false)
@@ -36,8 +33,18 @@ class PlaylistFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val dataSource = AudioDatabase.getInstance(application).audioDatabaseDao
         val viewModelFactory = PlaylistViewModelFactory(dataSource, application)
-        viewModel =
+        playlistViewModel =
             ViewModelProviders.of(this, viewModelFactory).get(PlaylistViewModel::class.java)
+
+        val adapter = PlaylistAdapter(AudioInfoListener { audioUri, audioTitle, photoUri ->
+            findNavController().navigate(
+                PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment(
+                    audioPhotoUri = photoUri,
+                    audioUri = audioUri,
+                    audioTitle = audioTitle
+                )
+            )
+        })
 
         binding.apply {
             playlistView.layoutManager =
@@ -45,25 +52,27 @@ class PlaylistFragment : Fragment() {
 
             playlistView.adapter = adapter
 
+            viewModel = playlistViewModel
+
             lifecycleOwner = this@PlaylistFragment
         }
 
-        viewModel.getAudioPlaylist().observe(viewLifecycleOwner, Observer {
-            playlist = it as ArrayList<AudioInfo>
-            adapter.setData(playlist)
+        playlistViewModel.audioPlaylist.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                adapter.submitList(it)
+            }
         })
 
-        adapter.setOnItemClickListener { _, position ->
-            playlist[position].apply {
-                findNavController().navigate(
-                    PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment(
-                        audioUri,
-                        audioTitle,
-                        photoUri
-                    )
-                )
+        playlistViewModel.navigateToSourceLink.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                this.findNavController()
+                    .navigate(PlaylistFragmentDirections.actionPlaylistFragmentToSourceLink())
+                playlistViewModel.onNavigationDone()
             }
-        }
+        })
+
+
+
 
         return binding.root
     }

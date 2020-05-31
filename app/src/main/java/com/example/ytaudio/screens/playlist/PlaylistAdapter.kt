@@ -3,67 +3,57 @@ package com.example.ytaudio.screens.playlist
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioInfo
+import com.example.ytaudio.databinding.ItemPlaylistBinding
 
-class PlaylistAdapter(var audioPlaylist: List<AudioInfo>) :
-    RecyclerView.Adapter<PlaylistAdapter.ViewHolder>() {
+class PlaylistAdapter(val clickListener: AudioInfoListener) :
+    ListAdapter<AudioInfo, PlaylistAdapter.ViewHolder>(AudioInfoDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_playlist, parent, false)
-        return ViewHolder(view)
+        return ViewHolder.from(parent)
     }
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindItems(audioPlaylist[position])
+        holder.bind(clickListener, getItem(position))
     }
 
 
-    override fun getItemCount() = audioPlaylist.size
+    class ViewHolder private constructor(val binding: ItemPlaylistBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(clickListener: AudioInfoListener, item: AudioInfo) {
+            binding.audio = item
+            binding.clickListener = clickListener
+            binding.executePendingBindings()
+        }
 
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val binding =
+                    ItemPlaylistBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
-    fun setData(newAudioPlaylist: List<AudioInfo>) {
-        audioPlaylist = newAudioPlaylist
-        notifyDataSetChanged()
-    }
-
-
-    private var listener: OnItemClickListener? = null
-
-
-    interface OnItemClickListener {
-        fun onItemClick(itemView: View, position: Int)
-    }
-
-
-    fun setOnItemClickListener(reaction: (View, Int) -> Unit) {
-        listener = object : OnItemClickListener {
-            override fun onItemClick(itemView: View, position: Int) {
-                reaction(itemView, position)
+                return ViewHolder(binding)
             }
         }
     }
+}
 
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class AudioInfoDiffCallback : DiffUtil.ItemCallback<AudioInfo>() {
 
-        fun bindItems(audio: AudioInfo) {
-            val titleTextView = itemView.findViewById<TextView>(R.id.audio_title)
-            titleTextView.text = audio.audioTitle
-        }
+    override fun areItemsTheSame(oldItem: AudioInfo, newItem: AudioInfo) =
+        oldItem.audioId == newItem.audioId
 
-        init {
-            itemView.setOnClickListener {
-                if (listener != null) {
-                    val position = adapterPosition
-                    if (position != RecyclerView.NO_POSITION)
-                        listener!!.onItemClick(itemView, position)
-                }
-            }
-        }
-    }
+
+    override fun areContentsTheSame(oldItem: AudioInfo, newItem: AudioInfo) =
+        oldItem == newItem
+}
+
+
+class AudioInfoListener(val clickListener: (audioUri: String, audioTitle: String, photoUri: String) -> Unit) {
+    fun onClick(audio: AudioInfo) = clickListener(audio.audioUri, audio.audioTitle, audio.photoUri)
 }

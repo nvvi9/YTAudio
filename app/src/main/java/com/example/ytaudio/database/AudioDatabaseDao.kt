@@ -27,7 +27,7 @@ interface AudioDatabaseDao {
     fun getAllAudioInfo(): List<AudioInfo>
 
     @Query("SELECT * FROM audio_playlist_table ORDER BY audioId DESC")
-    fun getAllAudio(): LiveData<List<AudioInfo>>
+    fun getAllAudio(): LiveData<List<AudioInfo>?>
 
     @Query("SELECT * FROM audio_playlist_table ORDER BY audioId DESC LIMIT 1")
     fun getLastAudio(): AudioInfo?

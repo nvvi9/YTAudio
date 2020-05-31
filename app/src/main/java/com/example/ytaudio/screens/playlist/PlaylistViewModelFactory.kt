@@ -9,6 +9,8 @@ class PlaylistViewModelFactory(
     private val dataSource: AudioDatabaseDao,
     private val application: Application
 ) : ViewModelProvider.Factory {
+
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PlaylistViewModel::class.java))
             return PlaylistViewModel(dataSource, application) as T

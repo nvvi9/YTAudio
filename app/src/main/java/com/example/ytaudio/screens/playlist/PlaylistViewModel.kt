@@ -23,5 +23,17 @@ class PlaylistViewModel(
 //    val audioPlaylist: LiveData<List<AudioInfo>>
 //        get() = _audioPlaylist
 
-    fun getAudioPlaylist() = database.getAllAudio()
+    val audioPlaylist = database.getAllAudio()
+
+    private val _navigateToSourceLink = MutableLiveData(false)
+    val navigateToSourceLink: LiveData<Boolean>
+        get() = _navigateToSourceLink
+
+    fun onAddButtonClicked() {
+        _navigateToSourceLink.value = true
+    }
+
+    fun onNavigationDone() {
+        _navigateToSourceLink.value = false
+    }
 }

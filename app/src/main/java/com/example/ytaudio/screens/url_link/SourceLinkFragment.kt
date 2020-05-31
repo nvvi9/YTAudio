@@ -24,7 +24,7 @@ class SourceLinkFragment : Fragment() {
         const val STATE_LINK_TEXT = "currentLink"
     }
 
-    private val extractor = YouTubeExtractor.Builder().build()
+//    private val extractor = YouTubeExtractor.Builder().build()
 
     private lateinit var binding: SourceLinkFragmentBinding
 
@@ -38,40 +38,22 @@ class SourceLinkFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val dataSource = AudioDatabase.getInstance(application).audioDatabaseDao
         val viewModelFactory = SourceLinkViewModelFactory(dataSource, application)
-        val sourceLinkViewModel =
+        val viewModel =
             ViewModelProviders.of(this, viewModelFactory).get(SourceLinkViewModel::class.java)
         binding.lifecycleOwner = this
+        binding.viewModel = viewModel
 
-        binding.extractButton.setOnClickListener { view ->
-            if (binding.linkText.text.isNotBlank()) {
-                (context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(
-                    view.windowToken,
-                    0
-                )
-
-                sourceLinkViewModel.onExtract(binding.linkText.text.toString())
-
-//                extractURL(binding.linkText.text.takeLastWhile { it != '=' && it != '/' }
-//                    .toString())
-            }
-        }
-
-        sourceLinkViewModel.showToastEvent.observe(viewLifecycleOwner, Observer {
+        viewModel.startExtraction.observe(viewLifecycleOwner, Observer {
             if (it) {
-                Toast.makeText(context, "Extraction failed", Toast.LENGTH_SHORT).show()
-                sourceLinkViewModel.doneShowingToast()
+                viewModel.onExtract(binding.linkText.text.toString())
+                viewModel.onStartExtractionDone()
             }
         })
 
-        sourceLinkViewModel.navigateToPlayer.observe(viewLifecycleOwner, Observer {
+        viewModel.navigateToPlaylist.observe(viewLifecycleOwner, Observer {
             if (it) {
-                findNavController().navigate(
-                    SourceLinkFragmentDirections.actionSourceLinkDestinationToAudioPlayerFragment(
-                        "",
-                        "",
-                        ""
-                    )
-                )
+                findNavController().navigate(SourceLinkFragmentDirections.actionSourceLinkFragmentToPlaylistFragment())
+                viewModel.navigationDone()
             }
         })
 

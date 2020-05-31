@@ -20,8 +20,8 @@ class AudioPlayerViewModel(
     val lastAdded: LiveData<AudioInfo?>
         get() = _lastAdded
 
-    private var _audioPlaylist: LiveData<List<AudioInfo>>
-    val audioPlaylist: LiveData<List<AudioInfo>>
+    private var _audioPlaylist: LiveData<List<AudioInfo>?>
+    val audioPlaylist: LiveData<List<AudioInfo>?>
         get() = _audioPlaylist
 
     init {
@@ -47,7 +47,7 @@ class AudioPlayerViewModel(
         }
     }
 
-    private suspend fun getAudioPlaylistFromDatabase(): LiveData<List<AudioInfo>> {
+    private suspend fun getAudioPlaylistFromDatabase(): LiveData<List<AudioInfo>?> {
         return withContext(Dispatchers.IO) {
             database.getAllAudio()
         }

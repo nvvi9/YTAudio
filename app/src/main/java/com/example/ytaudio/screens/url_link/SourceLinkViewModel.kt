@@ -2,6 +2,8 @@ package com.example.ytaudio.screens.url_link
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.database.sqlite.SQLiteConstraintException
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,6 +12,7 @@ import com.commit451.youtubeextractor.YouTubeExtraction
 import com.commit451.youtubeextractor.YouTubeExtractor
 import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.database.AudioInfo
+import com.example.ytaudio.onExtract
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
@@ -30,20 +33,27 @@ class SourceLinkViewModel(
 
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-//    private var audio = MutableLiveData<AudioInfo?>()
+    private val _navigateToPlaylist = MutableLiveData(false)
+    val navigateToPlaylist: LiveData<Boolean>
+        get() = _navigateToPlaylist
 
-    private val _navigateToPlayer = MutableLiveData<Boolean>()
 
-    val navigateToPlayer: LiveData<Boolean>
-        get() = _navigateToPlayer
+    fun navigationDone() {
+        _navigateToPlaylist.value = false
+    }
 
-    private val _showToastEvent = MutableLiveData<Boolean>()
 
-    val showToastEvent: LiveData<Boolean>
-        get() = _showToastEvent
+    private val _startExtraction = MutableLiveData(false)
+    val startExtraction: LiveData<Boolean>
+        get() = _startExtraction
 
-    init {
-        _navigateToPlayer.value = false
+
+    fun onStartExtraction() {
+        _startExtraction.value = true
+    }
+
+    fun onStartExtractionDone() {
+        _startExtraction.value = false
     }
 
 
@@ -59,14 +69,49 @@ class SourceLinkViewModel(
             })
     }
 
+
+//    fun extract(videoLink: String) {
+//        onExtract(videoLink, { result, youtubeId ->
+//            val url = result.streams.filterIsInstance<Stream.AudioStream>().filter {
+//                listOf(
+//                    Stream.FORMAT_M4A,
+//                    Stream.FORMAT_MPEG_4
+//                ).any { streamType -> streamType == it.format }
+//            }.takeIf { it.isNotEmpty() }?.get(0)?.url
+//
+//            uiScope.launch {
+//                try {
+//                    insert(
+//                        AudioInfo(
+//                            youtubeId = youtubeId,
+//                            audioUri = url!!,
+//                            photoUri = result.thumbnails.first().url,
+//                            audioTitle = result.title!!
+//                        )
+//                    )
+//                } catch (error: SQLiteConstraintException) {
+//                    Toast.makeText(
+//                        getApplication(),
+//                        "${result.title} was already added",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                } finally {
+//                    _navigateToPlaylist.value = true
+//                }
+//            }
+//        },
+//            { t ->
+//                t.printStackTrace()
+//                Toast.makeText(getApplication(), "Extraction failed", Toast.LENGTH_LONG).show()
+//            })
+//    }
+
+
     private fun onError(t: Throwable) {
         t.printStackTrace()
-        _showToastEvent.value = true
+        Toast.makeText(getApplication(), "Extraction failed", Toast.LENGTH_LONG).show()
     }
 
-    fun doneShowingToast() {
-        _showToastEvent.value = false
-    }
 
     private fun passResult(result: YouTubeExtraction, youtubeId: String) {
         val url = result.streams.filterIsInstance<Stream.AudioStream>().filter {
@@ -77,16 +122,25 @@ class SourceLinkViewModel(
         }.takeIf { it.isNotEmpty() }?.get(0)?.url
 
         uiScope.launch {
-            insert(
-                AudioInfo(
-                    youtubeId = youtubeId,
-                    audioUri = url!!,
-                    photoUri = result.thumbnails.first().url,
-                    audioTitle = result.title!!
+            try {
+                insert(
+                    AudioInfo(
+                        youtubeId = youtubeId,
+                        audioUri = url!!,
+                        photoUri = result.thumbnails.first().url,
+                        audioTitle = result.title!!
+                    )
                 )
-            )
+            } catch (error: SQLiteConstraintException) {
+                Toast.makeText(
+                    getApplication(),
+                    "${result.title} was already added",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } finally {
+                _navigateToPlaylist.value = true
+            }
         }
-        _navigateToPlayer.value = true
     }
 
     private suspend fun insert(audio: AudioInfo) {
