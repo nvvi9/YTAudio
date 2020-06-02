@@ -69,43 +69,43 @@ class SourceLinkViewModel(
             })
     }
 
+/*
+    fun extract(videoLink: String) {
+        onExtract(videoLink, { result, youtubeId ->
+            val url = result.streams.filterIsInstance<Stream.AudioStream>().filter {
+                listOf(
+                    Stream.FORMAT_M4A,
+                    Stream.FORMAT_MPEG_4
+                ).any { streamType -> streamType == it.format }
+            }.takeIf { it.isNotEmpty() }?.get(0)?.url
 
-//    fun extract(videoLink: String) {
-//        onExtract(videoLink, { result, youtubeId ->
-//            val url = result.streams.filterIsInstance<Stream.AudioStream>().filter {
-//                listOf(
-//                    Stream.FORMAT_M4A,
-//                    Stream.FORMAT_MPEG_4
-//                ).any { streamType -> streamType == it.format }
-//            }.takeIf { it.isNotEmpty() }?.get(0)?.url
-//
-//            uiScope.launch {
-//                try {
-//                    insert(
-//                        AudioInfo(
-//                            youtubeId = youtubeId,
-//                            audioUri = url!!,
-//                            photoUri = result.thumbnails.first().url,
-//                            audioTitle = result.title!!
-//                        )
-//                    )
-//                } catch (error: SQLiteConstraintException) {
-//                    Toast.makeText(
-//                        getApplication(),
-//                        "${result.title} was already added",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                } finally {
-//                    _navigateToPlaylist.value = true
-//                }
-//            }
-//        },
-//            { t ->
-//                t.printStackTrace()
-//                Toast.makeText(getApplication(), "Extraction failed", Toast.LENGTH_LONG).show()
-//            })
-//    }
-
+            uiScope.launch {
+                try {
+                    insert(
+                        AudioInfo(
+                            youtubeId = youtubeId,
+                            audioUri = url!!,
+                            photoUri = result.thumbnails.first().url,
+                            audioTitle = result.title!!
+                        )
+                    )
+                } catch (error: SQLiteConstraintException) {
+                    Toast.makeText(
+                        getApplication(),
+                        "${result.title} was already added",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } finally {
+                    _navigateToPlaylist.value = true
+                }
+            }
+        },
+            { t ->
+                t.printStackTrace()
+                Toast.makeText(getApplication(), "Extraction failed", Toast.LENGTH_LONG).show()
+            })
+    }
+*/
 
     private fun onError(t: Throwable) {
         t.printStackTrace()

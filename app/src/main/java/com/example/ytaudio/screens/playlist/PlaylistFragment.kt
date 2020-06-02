@@ -1,14 +1,15 @@
 package com.example.ytaudio.screens.playlist
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
@@ -46,6 +47,17 @@ class PlaylistFragment : Fragment() {
             )
         })
 
+        binding.toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.sourceLinkFragment -> {
+                    Toast.makeText(context, "clicked", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(PlaylistFragmentDirections.actionPlaylistFragmentToSourceLink())
+                    true
+                }
+                else -> false
+            }
+        }
+
         binding.apply {
             playlistView.layoutManager =
                 LinearLayoutManager(this@PlaylistFragment.context, RecyclerView.VERTICAL, false)
@@ -63,17 +75,7 @@ class PlaylistFragment : Fragment() {
             }
         })
 
-        playlistViewModel.navigateToSourceLink.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                this.findNavController()
-                    .navigate(PlaylistFragmentDirections.actionPlaylistFragmentToSourceLink())
-                playlistViewModel.onNavigationDone()
-            }
-        })
-
-
-
-
         return binding.root
     }
 }
+

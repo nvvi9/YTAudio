@@ -92,6 +92,8 @@ class AudioPlayerFragment : Fragment() {
         stop()
     }
 
+
+
     @SuppressLint("UseRequireInsteadOfGet")
     private fun start() {
         if (onPause) {
