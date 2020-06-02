@@ -12,7 +12,6 @@ import com.commit451.youtubeextractor.YouTubeExtraction
 import com.commit451.youtubeextractor.YouTubeExtractor
 import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.database.AudioInfo
-import com.example.ytaudio.onExtract
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
@@ -43,27 +42,13 @@ class SourceLinkViewModel(
     }
 
 
-    private val _startExtraction = MutableLiveData(false)
-    val startExtraction: LiveData<Boolean>
-        get() = _startExtraction
-
-
-    fun onStartExtraction() {
-        _startExtraction.value = true
-    }
-
-    fun onStartExtractionDone() {
-        _startExtraction.value = false
-    }
-
-
     @SuppressLint("CheckResult")
     fun onExtract(videoLink: String) {
         val youtubeId = videoLink.takeLastWhile { it != '=' && it != '/' }
         extractor.extract(youtubeId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({ extraction ->
-                passResult(extraction, youtubeId)
+                passResult(extraction)
             }, { t ->
                 onError(t)
             })
@@ -113,7 +98,7 @@ class SourceLinkViewModel(
     }
 
 
-    private fun passResult(result: YouTubeExtraction, youtubeId: String) {
+    private fun passResult(result: YouTubeExtraction) {
         val url = result.streams.filterIsInstance<Stream.AudioStream>().filter {
             listOf(
                 Stream.FORMAT_M4A,
@@ -125,10 +110,14 @@ class SourceLinkViewModel(
             try {
                 insert(
                     AudioInfo(
-                        youtubeId = youtubeId,
+                        youtubeId = result.videoId,
                         audioUri = url!!,
                         photoUri = result.thumbnails.first().url,
-                        audioTitle = result.title!!
+                        audioTitle = result.title ?: "",
+                        author = result.author ?: "",
+                        description = result.description ?: "",
+                        audioDuration = result.durationMilliseconds ?: 0L,
+                        viewCount = result.viewCount ?: 0L
                     )
                 )
             } catch (error: SQLiteConstraintException) {

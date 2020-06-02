@@ -38,13 +38,6 @@ class SourceLinkFragment : Fragment() {
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
-        viewModel.startExtraction.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                viewModel.onExtract(binding.linkText.text.toString())
-                viewModel.onStartExtractionDone()
-            }
-        })
-
         viewModel.navigateToPlaylist.observe(viewLifecycleOwner, Observer {
             if (it) {
                 findNavController().navigate(SourceLinkFragmentDirections.actionSourceLinkFragmentToPlaylistFragment())

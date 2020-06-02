@@ -24,6 +24,17 @@ data class AudioInfo(
     var photoUri: String,
 
     @ColumnInfo(name = "audio_title")
-    var audioTitle: String
+    var audioTitle: String,
 
+    @ColumnInfo(name = "video_author")
+    var author: String,
+
+    @ColumnInfo(name = "description")
+    var description: String,
+
+    @ColumnInfo(name = "audio_duration")
+    var audioDuration: Long,
+
+    @ColumnInfo(name = "view_count")
+    var viewCount: Long
 )

@@ -1,12 +1,10 @@
 package com.example.ytaudio.screens.playlist
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.databinding.ItemPlaylistBinding
 
@@ -46,7 +44,7 @@ class PlaylistAdapter(val clickListener: AudioInfoListener) :
 class AudioInfoDiffCallback : DiffUtil.ItemCallback<AudioInfo>() {
 
     override fun areItemsTheSame(oldItem: AudioInfo, newItem: AudioInfo) =
-        oldItem.audioId == newItem.audioId
+        oldItem.youtubeId == newItem.youtubeId
 
 
     override fun areContentsTheSame(oldItem: AudioInfo, newItem: AudioInfo) =

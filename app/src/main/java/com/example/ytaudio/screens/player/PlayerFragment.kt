@@ -12,14 +12,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioDatabase
-import com.example.ytaudio.database.AudioDatabaseDao
-import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.databinding.PlayerFragmentBinding
-import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
-import kotlinx.coroutines.*
 
 class PlayerFragment : Fragment(), Player.EventListener {
 
