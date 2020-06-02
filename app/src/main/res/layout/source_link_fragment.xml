@@ -41,7 +41,7 @@
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:contentDescription="TODO"
-                android:onClick="@{() -> viewModel.onExtract(linkText.getText().toString())}"
+                android:onClick="@{() -> viewModel.onExtract(linkText.getText())}"
                 android:scaleType="centerInside"
                 android:src="@android:drawable/ic_menu_send"
                 android:text="@string/text_extract_button"
