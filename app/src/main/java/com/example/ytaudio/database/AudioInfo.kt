@@ -11,7 +11,7 @@ import androidx.room.PrimaryKey
 )
 data class AudioInfo(
 
-    @PrimaryKey(autoGenerate = true) var audioId: Long = 0L,
+    @PrimaryKey(autoGenerate = true) val audioId: Long = 0L,
     @ColumnInfo(name = "youtube_id") val youtubeId: String,
     @ColumnInfo(name = "audio_url") var audioUrl: String,
     @ColumnInfo(name = "photo_url") var photoUrl: String,

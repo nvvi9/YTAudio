@@ -5,11 +5,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.database.AudioDatabaseDao
-import com.example.ytaudio.database.AudioInfo
 import org.junit.After
-import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
 

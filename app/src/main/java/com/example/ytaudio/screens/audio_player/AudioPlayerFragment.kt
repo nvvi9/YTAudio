@@ -8,16 +8,18 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.TextUtils
 import android.text.format.DateUtils
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.ytaudio.R
+import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.databinding.AudioPlayerFragmentBinding
 
 class AudioPlayerFragment : Fragment() {
@@ -27,6 +29,7 @@ class AudioPlayerFragment : Fragment() {
     }
 
     private lateinit var binding: AudioPlayerFragmentBinding
+    private lateinit var viewModel: AudioPlayerViewModel
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var runnable: Runnable
     private var handler = Handler()
@@ -40,10 +43,32 @@ class AudioPlayerFragment : Fragment() {
     ): View? {
 
         val audioPlayerFragmentArgs by navArgs<AudioPlayerFragmentArgs>()
-        audioUri = Uri.parse(audioPlayerFragmentArgs.audioUri)
 
         binding =
             DataBindingUtil.inflate(inflater, R.layout.audio_player_fragment, container, false)
+
+        val application = requireNotNull(this.activity).application
+        val dataSource = AudioDatabase.getInstance(application).audioDatabaseDao
+        val viewModelFactory = AudioPlayerViewModelFactory(dataSource, application)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(AudioPlayerViewModel::class.java)
+
+        viewModel.getAudioInfoFromDatabase(audioPlayerFragmentArgs.audioId)
+
+        viewModel.isAudioInfoInitialized.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                viewModel.audioInfo?.let {
+                    binding.run {
+                        textTitle.text = it.audioTitle
+                        Glide.with(this@AudioPlayerFragment).load(it.photoUrl).into(photo)
+                        audioUri = Uri.parse(it.audioUrl)
+                        leftTimeText.text = DateUtils.formatElapsedTime(it.audioDurationSeconds)
+                        viewModel.initializationDone()
+                        buttonPause.isClickable = true
+                        buttonPlay.isClickable = true
+                    }
+                }
+            }
+        })
 
         binding.apply {
             buttonPlay.setOnClickListener {
@@ -58,8 +83,6 @@ class AudioPlayerFragment : Fragment() {
                 buttonPlay.visibility = View.VISIBLE
                 pause()
             }
-
-            textTitle.text = audioPlayerFragmentArgs.audioTitle
 
             seekbarAudio.setOnSeekBarChangeListener(object :
                 SeekBar.OnSeekBarChangeListener {
@@ -78,11 +101,9 @@ class AudioPlayerFragment : Fragment() {
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 }
             })
+
+            lifecycleOwner = this@AudioPlayerFragment
         }
-
-        Glide.with(this).load(audioPlayerFragmentArgs.audioPhotoUri).into(binding.photo)
-
-        Log.i("AudioPlayerFragment", audioPlayerFragmentArgs.audioUri)
 
         return binding.root
     }
@@ -91,8 +112,6 @@ class AudioPlayerFragment : Fragment() {
         super.onStop()
         stop()
     }
-
-
 
     @SuppressLint("UseRequireInsteadOfGet")
     private fun start() {

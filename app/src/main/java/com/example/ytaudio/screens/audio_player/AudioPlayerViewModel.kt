@@ -6,50 +6,36 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.database.AudioInfo
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class AudioPlayerViewModel(
     val database: AudioDatabaseDao,
     application: Application
 ) :
     AndroidViewModel(application) {
+
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    private val _lastAdded = MutableLiveData<AudioInfo?>()
-    val lastAdded: LiveData<AudioInfo?>
-        get() = _lastAdded
+    private val _isAudioInfoInitialized = MutableLiveData(false)
+    val isAudioInfoInitialized: LiveData<Boolean>
+        get() = _isAudioInfoInitialized
 
-    private var _audioPlaylist: LiveData<List<AudioInfo>?>
-    val audioPlaylist: LiveData<List<AudioInfo>?>
-        get() = _audioPlaylist
 
-    init {
-        initializeLastAdded()
-        _audioPlaylist = database.getAllAudio()
-    }
+    var audioInfo: AudioInfo? = null
 
-    private fun initializeLastAdded() {
+
+    fun getAudioInfoFromDatabase(id: Long) {
         uiScope.launch {
-            _lastAdded.value = getLastAudioFromDatabase()
+            audioInfo = database.get(id)
+            _isAudioInfoInitialized.value = true
         }
     }
 
-    private suspend fun getLastAudioFromDatabase(): AudioInfo? {
-        return withContext(Dispatchers.IO) {
-            database.getLastAudio()
-        }
-    }
-
-    private fun initializeAudioPlaylist() {
-        uiScope.launch {
-            _audioPlaylist = getAudioPlaylistFromDatabase()
-        }
-    }
-
-    private suspend fun getAudioPlaylistFromDatabase(): LiveData<List<AudioInfo>?> {
-        return withContext(Dispatchers.IO) {
-            database.getAllAudio()
-        }
+    fun initializationDone() {
+        _isAudioInfoInitialized.value = false
     }
 }

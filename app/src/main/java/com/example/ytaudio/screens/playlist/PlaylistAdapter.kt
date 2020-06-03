@@ -52,6 +52,6 @@ class AudioInfoDiffCallback : DiffUtil.ItemCallback<AudioInfo>() {
 }
 
 
-class AudioInfoListener(val clickListener: (audioUri: String, audioTitle: String, photoUri: String) -> Unit) {
-    fun onClick(audio: AudioInfo) = clickListener(audio.audioUrl, audio.audioTitle, audio.photoUrl)
+class AudioInfoListener(val clickListener: (audioId: Long) -> Unit) {
+    fun onClick(audio: AudioInfo) = clickListener(audio.audioId)
 }

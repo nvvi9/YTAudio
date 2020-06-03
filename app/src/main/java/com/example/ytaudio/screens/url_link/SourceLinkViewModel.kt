@@ -1,7 +1,6 @@
 package com.example.ytaudio.screens.url_link
 
 import android.app.Application
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -20,7 +19,6 @@ class SourceLinkViewModel(
 ) : AndroidViewModel(application) {
 
     private val extractor = YoutubeJExtractor()
-
     private val viewModelJob = Job()
 
     override fun onCleared() {

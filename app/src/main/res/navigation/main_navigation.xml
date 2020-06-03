@@ -20,14 +20,8 @@
         android:label="AudioPlayerFragment"
         tools:layout="@layout/audio_player_fragment">
         <argument
-            android:name="audioUri"
-            app:argType="string" />
-        <argument
-            android:name="audioTitle"
-            app:argType="string" />
-        <argument
-            android:name="audioPhotoUri"
-            app:argType="string" />
+            android:name="audioId"
+            app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/playerFragment"

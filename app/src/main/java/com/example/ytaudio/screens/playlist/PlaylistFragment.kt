@@ -35,13 +35,11 @@ class PlaylistFragment : Fragment() {
         playlistViewModel =
             ViewModelProviders.of(this, viewModelFactory).get(PlaylistViewModel::class.java)
 
-        val adapter = PlaylistAdapter(AudioInfoListener { audioUri, audioTitle, photoUri ->
+        playlistViewModel.updatePlaylistInfo()
+
+        val adapter = PlaylistAdapter(AudioInfoListener {
             findNavController().navigate(
-                PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment(
-                    audioPhotoUri = photoUri,
-                    audioUri = audioUri,
-                    audioTitle = audioTitle
-                )
+                PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment(it)
             )
         })
 

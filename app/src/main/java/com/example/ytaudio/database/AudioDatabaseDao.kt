@@ -22,7 +22,7 @@ interface AudioDatabaseDao {
     suspend fun clear()
 
     @Query("SELECT * FROM audio_playlist_table ORDER BY audioId DESC")
-    fun getAllAudioInfo(): List<AudioInfo>
+    suspend fun getAllAudioInfo(): List<AudioInfo>
 
     @Query("SELECT * FROM audio_playlist_table ORDER BY audioId DESC")
     fun getAllAudio(): LiveData<List<AudioInfo>?>
