@@ -1,27 +1,25 @@
 package com.example.ytaudio.database
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 
 @Dao
 interface AudioDatabaseDao {
-    @Insert
-    fun insert(audio: AudioInfo)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(audio: AudioInfo)
 
     @Update
-    fun update(audio: AudioInfo)
+    suspend fun update(audio: AudioInfo)
 
     @Update
-    fun update(audioList: List<AudioInfo>)
+    suspend fun update(audioList: List<AudioInfo>)
 
     @Query("SELECT * FROM audio_playlist_table WHERE audioId = :key")
-    fun get(key: Long): AudioInfo?
+    suspend fun get(key: Long): AudioInfo?
 
     @Query("DELETE FROM audio_playlist_table")
-    fun clear()
+    suspend fun clear()
 
     @Query("SELECT * FROM audio_playlist_table ORDER BY audioId DESC")
     fun getAllAudioInfo(): List<AudioInfo>

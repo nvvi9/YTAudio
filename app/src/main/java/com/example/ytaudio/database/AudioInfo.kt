@@ -11,30 +11,22 @@ import androidx.room.PrimaryKey
 )
 data class AudioInfo(
 
-    @PrimaryKey(autoGenerate = true)
-    var audioId: Long = 0L,
-
-    @ColumnInfo(name = "youtube_id")
-    val youtubeId: String,
-
-    @ColumnInfo(name = "audio_uri")
-    var audioUri: String,
-
-    @ColumnInfo(name = "photo_uri")
-    var photoUri: String,
-
-    @ColumnInfo(name = "audio_title")
-    var audioTitle: String,
-
-    @ColumnInfo(name = "video_author")
-    var author: String,
-
-    @ColumnInfo(name = "description")
-    var description: String,
-
-    @ColumnInfo(name = "audio_duration")
-    var audioDuration: Long,
-
-    @ColumnInfo(name = "view_count")
-    var viewCount: Long
+    @PrimaryKey(autoGenerate = true) var audioId: Long = 0L,
+    @ColumnInfo(name = "youtube_id") val youtubeId: String,
+    @ColumnInfo(name = "audio_url") var audioUrl: String,
+    @ColumnInfo(name = "photo_url") var photoUrl: String,
+    @ColumnInfo(name = "audio_title") var audioTitle: String,
+    @ColumnInfo(name = "video_author") var author: String,
+    @ColumnInfo(name = "author_id") var authorId: String,
+    @ColumnInfo(name = "description") var description: String,
+    @ColumnInfo(name = "keywords") var keywords: String,
+    @ColumnInfo(name = "view_count") var viewCount: Int,
+    @ColumnInfo(name = "average_rating") var averageRating: Double,
+    @ColumnInfo(name = "audio_format") var audioFormat: String,
+    @ColumnInfo(name = "codec") var codec: String,
+    @ColumnInfo(name = "bitrate") var bitrate: Int,
+    @ColumnInfo(name = "average_bitrate") var averageBitrate: Int,
+    @ColumnInfo(name = "audio_duration_seconds") var audioDurationSeconds: Long,
+    @ColumnInfo(name = "last_update_time_seconds") var lastUpdateTimeSeconds: Long,
+    @ColumnInfo(name = "url_active_time_seconds") var urlActiveTimeSeconds: Long
 )

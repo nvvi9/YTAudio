@@ -36,12 +36,45 @@ class SourceLinkViewModel(
         uiScope.launch {
             try {
                 val videoData = getVideoData(youtubeId)
-                Log.i("SourceLinkViewModel", videoData.toString())
 
+                if (videoData.videoDetails.isLiveContent) {
+                    showToast("live content")
+                    return@launch
+                }
+
+                val adaptiveAudioStream = videoData.streamingData.adaptiveAudioStreams.maxBy {
+                    it.averageBitrate
+                }
+
+                database.insert(videoData.run {
+                    AudioInfo(
+                        youtubeId = videoDetails.videoId,
+                        audioUrl = adaptiveAudioStream!!.url,
+                        photoUrl = videoDetails.thumbnail.thumbnails.maxBy { it.height }!!.url,
+                        audioTitle = videoDetails.title,
+                        author = videoDetails.author,
+                        authorId = videoDetails.channelId,
+                        description = videoDetails.shortDescription,
+                        keywords = videoDetails.keywords.joinToString(),
+                        viewCount = videoDetails.viewCount.toIntOrNull() ?: 0,
+                        averageRating = videoDetails.averageRating,
+                        audioFormat = adaptiveAudioStream.extension,
+                        codec = adaptiveAudioStream.codec,
+                        bitrate = adaptiveAudioStream.bitrate,
+                        averageBitrate = adaptiveAudioStream.averageBitrate,
+                        audioDurationSeconds = videoDetails.lengthSeconds.toLong(),
+                        lastUpdateTimeSeconds = System.currentTimeMillis() / 1000,
+                        urlActiveTimeSeconds = streamingData.expiresInSeconds.toLong()
+                    )
+                })
+
+                startNavigation()
             } catch (e: ExtractionException) {
                 showToast("Extraction failed")
             } catch (e: YoutubeRequestException) {
                 showToast("Check your connection")
+            } catch (e: Exception) {
+                showToast("Unknown error")
             }
         }
     }
@@ -60,6 +93,9 @@ class SourceLinkViewModel(
     val navigateToPlaylist: LiveData<Boolean>
         get() = _navigateToPlaylist
 
+    private fun startNavigation() {
+        _navigateToPlaylist.value = true
+    }
 
     fun navigationDone() {
         _navigateToPlaylist.value = false

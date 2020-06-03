@@ -22,13 +22,13 @@ fun TextView.setAuthor(item: AudioInfo?) {
 
 @BindingAdapter("audioDuration")
 fun TextView.setDuration(item: AudioInfo?) {
-    text = DateUtils.formatElapsedTime((item?.audioDuration ?: 0L) / 1000L)
+    text = DateUtils.formatElapsedTime(item?.audioDurationSeconds ?: 0)
 }
 
 
 @BindingAdapter("audioPhoto")
 fun ImageView.setImage(item: AudioInfo?) {
     item?.let {
-        Glide.with(context).load(it.photoUri).into(this)
+        Glide.with(context).load(it.photoUrl).into(this)
     }
 }

@@ -62,7 +62,7 @@ class PlayerFragment : Fragment(), Player.EventListener {
             }
         })
 
-        url = playerViewModel.lastAdded.value?.audioUri ?: "nothing"
+        url = playerViewModel.lastAdded.value?.audioUrl ?: "nothing"
         url = "null"
 //        Toast.makeText(this.requireContext(), url, Toast.LENGTH_SHORT).show()
 
