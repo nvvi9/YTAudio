@@ -8,4 +8,7 @@
     <string name="time_zero_text">00:00</string>
     <string name="add_new_audio">Add new audio</string>
     <string name="thumbnail_description">video thumbnail</string>
+    <string name="button_play_description">start playing</string>
+    <string name="button_pause_description">stop playing</string>
+    <string name="photo_description">YouTube video thumbnail</string>
 </resources>

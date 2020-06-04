@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +18,7 @@ import com.example.ytaudio.databinding.PlaylistFragmentBinding
 class PlaylistFragment : Fragment() {
 
     private lateinit var binding: PlaylistFragmentBinding
-    private lateinit var playlistViewModel: PlaylistViewModel
+    private lateinit var viewModel: PlaylistViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,10 +32,8 @@ class PlaylistFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val dataSource = AudioDatabase.getInstance(application).audioDatabaseDao
         val viewModelFactory = PlaylistViewModelFactory(dataSource, application)
-        playlistViewModel =
-            ViewModelProviders.of(this, viewModelFactory).get(PlaylistViewModel::class.java)
-
-        playlistViewModel.updatePlaylistInfo()
+        viewModel =
+            ViewModelProvider(this, viewModelFactory).get(PlaylistViewModel::class.java)
 
         val adapter = PlaylistAdapter(AudioInfoListener {
             findNavController().navigate(
@@ -49,7 +47,7 @@ class PlaylistFragment : Fragment() {
 
             playlistView.adapter = adapter
 
-            viewModel = playlistViewModel
+            viewModel = viewModel
 
             toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
@@ -64,7 +62,7 @@ class PlaylistFragment : Fragment() {
             lifecycleOwner = this@PlaylistFragment
         }
 
-        playlistViewModel.audioPlaylist.observe(viewLifecycleOwner, Observer {
+        viewModel.audioPlaylist.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.submitList(it)
             }

@@ -17,6 +17,7 @@
             android:layout_marginBottom="8dp"
             android:background="@android:color/transparent"
             android:clickable="false"
+            android:contentDescription="@string/button_play_description"
             android:src="@android:drawable/ic_media_play"
             android:text="@string/button_play_text"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -31,6 +32,7 @@
             android:layout_marginBottom="8dp"
             android:background="@android:color/transparent"
             android:clickable="false"
+            android:contentDescription="@string/button_pause_description"
             android:soundEffectsEnabled="false"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -76,12 +78,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            android:contentDescription="@string/photo_description"
             app:layout_constraintBottom_toTopOf="@+id/text_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            tools:srcCompat="@drawable/ic_launcher_background"
-            android:contentDescription="TODO" />
+            tools:srcCompat="@drawable/ic_launcher_background" />
 
         <TextView
             android:id="@+id/text_title"

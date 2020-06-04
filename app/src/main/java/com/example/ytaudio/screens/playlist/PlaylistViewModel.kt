@@ -17,24 +17,26 @@ class PlaylistViewModel(
 
     private val extractor = YoutubeJExtractor()
 
-    private suspend fun YoutubeJExtractor.onExtract(id: String): YoutubeVideoData {
-        return withContext(Dispatchers.IO) {
-            extract(id)
-        }
-    }
 
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     val audioPlaylist = database.getAllAudio()
 
-    fun updatePlaylistInfo() {
+
+    init {
+        updatePlaylistInfo()
+    }
+
+
+    private fun updatePlaylistInfo() {
         uiScope.launch {
             val startTimeMillis = System.currentTimeMillis()
             val audioInfoList = database.getAllAudioInfo()
 
             audioInfoList.forEach {
                 it.updateInfo()
+                database.update(it)
             }
 
             Toast.makeText(
@@ -45,9 +47,10 @@ class PlaylistViewModel(
         }
     }
 
-    private fun AudioInfo.updateInfo() {
-        uiScope.launch {
-            val videoData = extractor.onExtract(youtubeId)
+
+    private suspend fun AudioInfo.updateInfo() {
+        withContext(Dispatchers.IO) {
+            val videoData = extractor.extract(youtubeId)
             val adaptiveAudioStream = videoData.streamingData.adaptiveAudioStreams.maxBy {
                 it.averageBitrate
             }
