@@ -51,8 +51,8 @@ class PlaylistFragment : Fragment() {
 
             toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.sourceLinkFragment -> {
-                        findNavController().navigate(PlaylistFragmentDirections.actionPlaylistFragmentToSourceLink())
+                    R.id.url_link -> {
+                        this@PlaylistFragment.viewModel.onExtract(linkText.text.toString())
                         true
                     }
                     else -> false

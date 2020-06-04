@@ -6,14 +6,10 @@
     app:startDestination="@id/playlistFragment">
 
     <fragment
-        android:id="@+id/sourceLinkFragment"
+        android:id="@+id/url_link"
         android:name="com.example.ytaudio.screens.url_link.SourceLinkFragment"
         android:label="SourceLinkFragment"
-        tools:layout="@layout/source_link_fragment">
-        <action
-            android:id="@+id/action_sourceLinkFragment_to_playlistFragment"
-            app:destination="@id/playlistFragment" />
-    </fragment>
+        tools:layout="@layout/source_link_fragment"/>
     <fragment
         android:id="@+id/audioPlayerFragment"
         android:name="com.example.ytaudio.screens.audio_player.AudioPlayerFragment"
@@ -33,9 +29,6 @@
         tools:layout="@layout/playlist_fragment"
         android:name="com.example.ytaudio.screens.playlist.PlaylistFragment"
         android:label="PlaylistFragment">
-        <action
-            android:id="@+id/action_playlistFragment_to_source_link"
-            app:destination="@id/sourceLinkFragment" />
         <action
             android:id="@+id/action_playlistFragment_to_audioPlayerFragment"
             app:destination="@id/audioPlayerFragment" />

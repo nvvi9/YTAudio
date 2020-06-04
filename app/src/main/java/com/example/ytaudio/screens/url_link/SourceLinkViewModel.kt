@@ -98,11 +98,4 @@ class SourceLinkViewModel(
     fun navigationDone() {
         _navigateToPlaylist.value = false
     }
-
-
-    private suspend fun insert(audio: AudioInfo) {
-        withContext(Dispatchers.IO) {
-            database.insert(audio)
-        }
-    }
 }
