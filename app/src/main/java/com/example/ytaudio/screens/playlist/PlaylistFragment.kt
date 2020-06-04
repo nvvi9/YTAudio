@@ -1,9 +1,12 @@
 package com.example.ytaudio.screens.playlist
 
+import android.content.Context
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -14,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.databinding.PlaylistFragmentBinding
+import com.google.android.material.textfield.TextInputEditText
 
 class PlaylistFragment : Fragment() {
 
@@ -52,11 +56,23 @@ class PlaylistFragment : Fragment() {
             toolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.url_link -> {
-                        this@PlaylistFragment.viewModel.onExtract(linkText.text.toString())
+                        if (!linkText.text.isNullOrBlank()) {
+                            this@PlaylistFragment.viewModel.onExtract(linkText.text.toString())
+                            toolbar.hideKeyboard()
+                        }
                         true
                     }
                     else -> false
                 }
+            }
+
+            linkText.setOnKeyListener { v, keyCode, event ->
+                if (!(v as TextInputEditText).text.isNullOrBlank() && keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
+                    this@PlaylistFragment.viewModel.onExtract(v.text.toString())
+                    v.hideKeyboard()
+                    return@setOnKeyListener true
+                }
+                false
             }
 
             lifecycleOwner = this@PlaylistFragment
@@ -70,5 +86,12 @@ class PlaylistFragment : Fragment() {
 
         return binding.root
     }
+
+    private fun View.hideKeyboard() =
+        (context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(
+            windowToken,
+            0
+        )
 }
+
 
