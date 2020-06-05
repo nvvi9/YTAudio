@@ -32,7 +32,6 @@
                     style="@style/Widget.Design.TextInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:singleLine="true"
                     app:endIconDrawable="@drawable/ic_add"
                     app:endIconMode="custom"
                     app:hintEnabled="false">
@@ -40,6 +39,7 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:singleLine="true"
                         android:hint="@string/link_hint"
                         android:textSize="16sp" />
                 </com.google.android.material.textfield.TextInputLayout>
