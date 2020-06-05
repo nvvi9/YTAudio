@@ -18,6 +18,7 @@ import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.databinding.PlaylistFragmentBinding
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 class PlaylistFragment : Fragment() {
 
@@ -53,23 +54,32 @@ class PlaylistFragment : Fragment() {
 
             viewModel = viewModel
 
-            toolbar.setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.url_link -> {
-                        if (!linkText.text.isNullOrBlank()) {
-                            this@PlaylistFragment.viewModel.onExtract(linkText.text.toString())
-                            toolbar.hideKeyboard()
-                        }
-                        true
-                    }
-                    else -> false
+//            toolbar.setOnMenuItemClickListener {
+//                when (it.itemId) {
+//                    R.id.url_link -> {
+//                        if (!linkText.text.isNullOrBlank()) {
+//                            this@PlaylistFragment.viewModel.onExtract(linkText.text.toString())
+//                            toolbar.hideKeyboard()
+//                        }
+//                        true
+//                    }
+//                    else -> false
+//                }
+//            }
+
+            linkText.setEndIconOnClickListener {
+                if (!binding.linkText.editText?.text.isNullOrBlank()) {
+                    this@PlaylistFragment.viewModel.onExtract(binding.linkText.editText!!.text.toString())
+                    it.hideKeyboard()
+                    binding.linkText.editText!!.text.clear()
                 }
             }
 
-            linkText.setOnKeyListener { v, keyCode, event ->
+            linkText.editText!!.setOnKeyListener { v, keyCode, event ->
                 if (!(v as TextInputEditText).text.isNullOrBlank() && keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
                     this@PlaylistFragment.viewModel.onExtract(v.text.toString())
                     v.hideKeyboard()
+                    v.text?.clear()
                     return@setOnKeyListener true
                 }
                 false
@@ -85,6 +95,12 @@ class PlaylistFragment : Fragment() {
         })
 
         return binding.root
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        binding.root.hideKeyboard()
     }
 
     private fun View.hideKeyboard() =
