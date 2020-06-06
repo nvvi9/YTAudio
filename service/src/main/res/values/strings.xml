@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_skip_to_previous">skip to previous audio</string>
+    <string name="notification_skip_to_next">skip to next audio</string>
+    <string name="notification_play">play</string>
+    <string name="notification_pause">pause</string>
+    <string name="notification_channel">now Playing</string>
+    <string name="notification_channel_description">shows what music is currently playing in UAMP</string>
+
+</resources>
