@@ -7,19 +7,19 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
-import android.os.Build
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.core.content.ContextCompat
 import androidx.media.MediaBrowserServiceCompat
 import com.example.ytaudio.database.AudioDatabase
+import com.example.ytaudio.service.extensions.flag
 import com.example.ytaudio.service.library.AudioSource
 import com.example.ytaudio.service.library.DatabaseAudioSource
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.PlaybackPreparer
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
@@ -31,9 +31,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
-
-private const val MEDIA_ROOT_ID = "media_root_id"
-private const val EMPTY_MEDIA_ROOT_ID = "empty_root_id"
 
 open class MediaPlaybackService : MediaBrowserServiceCompat() {
 
@@ -54,7 +51,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         .setUsage(C.USAGE_MEDIA)
         .build()
 
-    private val exoPLayer: ExoPlayer by lazy {
+    private val exoPlayer: ExoPlayer by lazy {
         ExoPlayerFactory.newSimpleInstance(this).apply {
             setAudioAttributes(ytAudioAttributes, true)
             addListener(playerListener)
@@ -82,7 +79,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
 
         notificationManager = NotificationManager(
             this,
-            exoPLayer,
+            exoPlayer,
             mediaSession.sessionToken,
             PlayerNotificationListener()
         )
@@ -98,29 +95,53 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
             val dataSourceFactory =
                 DefaultDataSourceFactory(this, Util.getUserAgent(this, YTAUDIO_USER_AGENT), null)
 
-            val playbackPreparer = PlaybackPreparer(audioSource, exoPLayer, dataSourceFactory)
+            val playbackPreparer = PlaybackPreparer(audioSource, exoPlayer, dataSourceFactory)
 
-            it.setPlayer(exoPLayer)
+            it.setPlayer(exoPlayer)
             it.setPlaybackPreparer(playbackPreparer)
             it.setQueueNavigator(QueueNavigator(mediaSession))
         }
-    }
-
-    override fun onLoadChildren(
-        parentId: String,
-        result: Result<MutableList<MediaBrowserCompat.MediaItem>>
-    ) {
-        TODO("Not yet implemented")
     }
 
     override fun onGetRoot(
         clientPackageName: String,
         clientUid: Int,
         rootHints: Bundle?
-    ): BrowserRoot? {
-        TODO("Not yet implemented")
+    ): BrowserRoot? = BrowserRoot(MEDIA_ROOT_ID, null)
+
+
+    override fun onLoadChildren(
+        parentId: String,
+        result: Result<MutableList<MediaItem>>
+    ) {
+        val resultSent = audioSource.whenReady { initialized ->
+            if (initialized) {
+                val children = audioSource.map {
+                    MediaItem(it.description, it.flag)
+                }
+                result.sendResult(children as MutableList<MediaItem>?)
+            } else {
+                mediaSession.sendSessionEvent("${javaClass.name} network error", null)
+                result.sendResult(null)
+            }
+        }
+
+        if (!resultSent) {
+            result.detach()
+        }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaSession.run {
+            isActive = false
+            release()
+        }
+
+        serviceJob.cancel()
+        exoPlayer.removeListener(playerListener)
+        exoPlayer.release()
+    }
 
     private inner class PlayerEventListener : Player.EventListener {
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
@@ -217,3 +238,5 @@ private class BecomingNoisyReceiver(
 }
 
 private const val YTAUDIO_USER_AGENT = "ytaudio.next"
+private const val MEDIA_ROOT_ID = "media_root_id"
+private const val EMPTY_MEDIA_ROOT_ID = "empty_root_id"

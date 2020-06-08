@@ -1,6 +1,7 @@
 package com.example.ytaudio.service.library
 
 import android.content.Context
+import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaDescriptionCompat.STATUS_NOT_DOWNLOADED
 import android.support.v4.media.MediaMetadataCompat
 import com.bumptech.glide.Glide
@@ -71,6 +72,7 @@ fun MediaMetadataCompat.Builder.from(audioInfo: AudioInfo): MediaMetadataCompat.
     mediaUri = audioInfo.audioUrl
     displayIconUri = audioInfo.photoUrl
     rating = audioInfo.averageRating.toLong()
+    flag = MediaItem.FLAG_PLAYABLE
 
     downloadStatus = STATUS_NOT_DOWNLOADED
 

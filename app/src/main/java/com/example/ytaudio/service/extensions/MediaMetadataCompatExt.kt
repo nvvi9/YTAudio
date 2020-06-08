@@ -2,6 +2,7 @@ package com.example.ytaudio.service.extensions
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import androidx.core.net.toUri
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
@@ -96,9 +97,10 @@ inline val MediaMetadataCompat.mediaUri: Uri
 inline val MediaMetadataCompat.downloadStatus
     get() = getLong(MediaMetadataCompat.METADATA_KEY_DOWNLOAD_STATUS)
 
+@MediaBrowserCompat.MediaItem.Flags
+inline val MediaMetadataCompat.flag
+    get() = this.getLong(METADATA_KEY_FLAGS).toInt()
 
-const val NO_GET = "No get"
-const val GET_ERROR = "Cannot get from MediaMetadataCompat.Builder"
 
 inline var MediaMetadataCompat.Builder.id: String
     get() = throw IllegalAccessException(GET_ERROR)
@@ -160,11 +162,18 @@ inline var MediaMetadataCompat.Builder.rating: Long
         putLong(MediaMetadataCompat.METADATA_KEY_RATING, value)
     }
 
-
 inline var MediaMetadataCompat.Builder.downloadStatus: Long
     get() = throw IllegalAccessException(GET_ERROR)
     set(value) {
         putLong(MediaMetadataCompat.METADATA_KEY_DOWNLOAD_STATUS, value)
+    }
+
+@MediaBrowserCompat.MediaItem.Flags
+inline var MediaMetadataCompat.Builder.flag: Int
+    @Deprecated(NO_GET, level = DeprecationLevel.ERROR)
+    get() = throw IllegalAccessException("Cannot get from MediaMetadataCompat.Builder")
+    set(value) {
+        putLong(METADATA_KEY_FLAGS, value.toLong())
     }
 
 
@@ -187,3 +196,7 @@ fun List<MediaMetadataCompat>.toMediaSource(dataSourceFactory: DataSource.Factor
     }
     return concatenatingMediaSource
 }
+
+const val METADATA_KEY_FLAGS = "com.example.ytaudio.service.METADATA_KEY_FLAGS"
+const val NO_GET = "No get"
+const val GET_ERROR = "Cannot get from MediaMetadataCompat.Builder"
