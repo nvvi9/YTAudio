@@ -10,6 +10,7 @@ import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.core.content.ContextCompat
@@ -17,12 +18,14 @@ import androidx.media.MediaBrowserServiceCompat
 import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.service.library.AudioSource
 import com.example.ytaudio.service.library.DatabaseAudioSource
-import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.PlaybackPreparer
 import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.ExoPlayerFactory
-import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.util.Util
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -40,6 +43,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
     private lateinit var audioSource: AudioSource
     private lateinit var becomingNoisyReceiver: BecomingNoisyReceiver
     private lateinit var notificationManager: NotificationManager
+    private lateinit var mediaSessionConnector: MediaSessionConnector
     private val database = AudioDatabase.getInstance(applicationContext).audioDatabaseDao
     private val playerListener = PlayerEventListener()
 
@@ -88,6 +92,17 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         audioSource = DatabaseAudioSource(this, database)
         serviceScope.launch {
             audioSource.load()
+        }
+
+        mediaSessionConnector = MediaSessionConnector(mediaSession).also {
+            val dataSourceFactory =
+                DefaultDataSourceFactory(this, Util.getUserAgent(this, YTAUDIO_USER_AGENT), null)
+
+            val playbackPreparer = PlaybackPreparer(audioSource, exoPLayer, dataSourceFactory)
+
+            it.setPlayer(exoPLayer)
+            it.setPlaybackPreparer(playbackPreparer)
+            it.setQueueNavigator(QueueNavigator(mediaSession))
         }
     }
 
@@ -157,6 +172,15 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
 }
 
 
+private class QueueNavigator(mediaSession: MediaSessionCompat) :
+    TimelineQueueNavigator(mediaSession) {
+
+    private val window = Timeline.Window()
+
+    override fun getMediaDescription(player: Player, windowIndex: Int): MediaDescriptionCompat =
+        player.currentTimeline.getWindow(windowIndex, window, true).tag as MediaDescriptionCompat
+}
+
 private class BecomingNoisyReceiver(
     private val context: Context,
     sessionToken: MediaSessionCompat.Token
@@ -191,3 +215,5 @@ private class BecomingNoisyReceiver(
     }
 
 }
+
+private const val YTAUDIO_USER_AGENT = "ytaudio.next"

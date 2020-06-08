@@ -6,7 +6,6 @@ import androidx.annotation.IntDef
 interface AudioSource : Iterable<MediaMetadataCompat> {
 
     suspend fun load()
-
     fun whenReady(performAction: (Boolean) -> Unit): Boolean
 }
 
