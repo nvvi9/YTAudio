@@ -112,7 +112,7 @@ class MediaPlaybackServiceConnection(context: Context, serviceComponent: Compone
     }
 
     companion object {
-
+        @Volatile
         private var instance: MediaPlaybackServiceConnection? = null
 
         fun getInstance(context: Context, serviceComponent: ComponentName) =
