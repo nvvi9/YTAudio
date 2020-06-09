@@ -18,7 +18,6 @@ import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.databinding.PlaylistFragmentBinding
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 
 class PlaylistFragment : Fragment() {
 

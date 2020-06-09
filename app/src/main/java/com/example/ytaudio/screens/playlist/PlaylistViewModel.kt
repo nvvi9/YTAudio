@@ -11,7 +11,6 @@ import com.github.kotvertolet.youtubejextractor.exception.YoutubeRequestExceptio
 import com.github.kotvertolet.youtubejextractor.models.youtube.videoData.YoutubeVideoData
 import kotlinx.coroutines.*
 
-
 class PlaylistViewModel(
     val database: AudioDatabaseDao,
     application: Application

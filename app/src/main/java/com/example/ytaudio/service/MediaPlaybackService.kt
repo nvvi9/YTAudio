@@ -8,7 +8,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
 import android.os.Bundle
-import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaControllerCompat
@@ -121,7 +120,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
                 }
                 result.sendResult(children as MutableList<MediaItem>?)
             } else {
-                mediaSession.sendSessionEvent("${javaClass.name} network error", null)
+                mediaSession.sendSessionEvent(NETWORK_FAILURE, null)
                 result.sendResult(null)
             }
         }
@@ -237,6 +236,7 @@ private class BecomingNoisyReceiver(
 
 }
 
+const val NETWORK_FAILURE = "service network failure"
 private const val YTAUDIO_USER_AGENT = "ytaudio.next"
 private const val MEDIA_ROOT_ID = "media_root_id"
 private const val EMPTY_MEDIA_ROOT_ID = "empty_root_id"
