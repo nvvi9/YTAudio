@@ -1,4 +1,4 @@
-package com.example.ytaudio.screens.playlist
+package com.example.ytaudio.utils
 
 import android.text.format.DateUtils
 import android.widget.ImageView

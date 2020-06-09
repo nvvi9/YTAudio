@@ -15,8 +15,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
-import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.databinding.PlaylistFragmentBinding
+import com.example.ytaudio.utils.FactoryUtils
 import com.google.android.material.textfield.TextInputEditText
 
 class PlaylistFragment : Fragment() {
@@ -34,10 +34,11 @@ class PlaylistFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.playlist_fragment, container, false)
 
         val application = requireNotNull(this.activity).application
-        val dataSource = AudioDatabase.getInstance(application).audioDatabaseDao
-        val viewModelFactory = PlaylistViewModelFactory(dataSource, application)
+
         viewModel =
-            ViewModelProvider(this, viewModelFactory).get(PlaylistViewModel::class.java)
+            ViewModelProvider(this, FactoryUtils.providePlaylistViewModel(application)).get(
+                PlaylistViewModel::class.java
+            )
 
         val adapter = PlaylistAdapter(AudioInfoListener {
             findNavController().navigate(

@@ -19,8 +19,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.ytaudio.R
-import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.databinding.AudioPlayerFragmentBinding
+import com.example.ytaudio.utils.FactoryUtils
 
 class AudioPlayerFragment : Fragment() {
 
@@ -48,9 +48,11 @@ class AudioPlayerFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.audio_player_fragment, container, false)
 
         val application = requireNotNull(this.activity).application
-        val dataSource = AudioDatabase.getInstance(application).audioDatabaseDao
-        val viewModelFactory = AudioPlayerViewModelFactory(dataSource, application)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(AudioPlayerViewModel::class.java)
+
+        viewModel =
+            ViewModelProvider(this, FactoryUtils.provideAudioPlayerViewModel(application)).get(
+                AudioPlayerViewModel::class.java
+            )
 
         viewModel.getAudioInfoFromDatabase(audioPlayerFragmentArgs.audioId)
 
