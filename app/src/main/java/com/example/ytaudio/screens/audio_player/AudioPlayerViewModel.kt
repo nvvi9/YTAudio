@@ -1,9 +1,7 @@
 package com.example.ytaudio.screens.audio_player
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
 import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.database.AudioInfo
 import kotlinx.coroutines.CoroutineScope
@@ -37,5 +35,16 @@ class AudioPlayerViewModel(
 
     fun initializationDone() {
         _isAudioInfoInitialized.value = false
+    }
+
+    class Factory(
+        private val dataSource: AudioDatabaseDao,
+        private val application: Application
+    ) : ViewModelProvider.Factory {
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return AudioPlayerViewModel(dataSource, application) as T
+        }
     }
 }

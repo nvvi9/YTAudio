@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.databinding.ItemPlaylistBinding
 
-class PlaylistAdapter(val clickListener: AudioInfoListener) :
+class PlaylistAdapter(private val clickListener: AudioInfoListener) :
     ListAdapter<AudioInfo, PlaylistAdapter.ViewHolder>(AudioInfoDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -45,7 +45,6 @@ class AudioInfoDiffCallback : DiffUtil.ItemCallback<AudioInfo>() {
 
     override fun areItemsTheSame(oldItem: AudioInfo, newItem: AudioInfo) =
         oldItem.youtubeId == newItem.youtubeId
-
 
     override fun areContentsTheSame(oldItem: AudioInfo, newItem: AudioInfo) =
         oldItem == newItem

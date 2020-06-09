@@ -7,9 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.databinding.SourceLinkFragmentBinding

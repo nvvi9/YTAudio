@@ -3,6 +3,8 @@ package com.example.ytaudio.screens.playlist
 import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.database.AudioInfo
 import com.github.kotvertolet.youtubejextractor.YoutubeJExtractor
@@ -10,7 +12,6 @@ import com.github.kotvertolet.youtubejextractor.exception.ExtractionException
 import com.github.kotvertolet.youtubejextractor.exception.YoutubeRequestException
 import com.github.kotvertolet.youtubejextractor.models.youtube.videoData.YoutubeVideoData
 import kotlinx.coroutines.*
-
 
 class PlaylistViewModel(
     val database: AudioDatabaseDao,
@@ -144,4 +145,15 @@ class PlaylistViewModel(
 
     private fun showToast(message: String) =
         Toast.makeText(getApplication(), message, Toast.LENGTH_SHORT).show()
+
+    class Factory(
+        private val dataSource: AudioDatabaseDao,
+        private val application: Application
+    ) : ViewModelProvider.Factory {
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return PlaylistViewModel(dataSource, application) as T
+        }
+    }
 }
