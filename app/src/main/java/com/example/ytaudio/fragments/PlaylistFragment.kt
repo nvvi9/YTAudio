@@ -1,4 +1,4 @@
-package com.example.ytaudio.screens.playlist
+package com.example.ytaudio.fragments
 
 import android.content.Context
 import android.os.Bundle
@@ -16,7 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
 import com.example.ytaudio.databinding.PlaylistFragmentBinding
+import com.example.ytaudio.utils.AudioInfoListener
 import com.example.ytaudio.utils.FactoryUtils
+import com.example.ytaudio.utils.PlaylistAdapter
+import com.example.ytaudio.viewmodels.PlaylistViewModel
 import com.google.android.material.textfield.TextInputEditText
 
 class PlaylistFragment : Fragment() {
@@ -109,5 +112,3 @@ class PlaylistFragment : Fragment() {
             0
         )
 }
-
-

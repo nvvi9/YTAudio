@@ -6,13 +6,8 @@
     app:startDestination="@id/playlistFragment">
 
     <fragment
-        android:id="@+id/url_link"
-        android:name="com.example.ytaudio.screens.url_link.SourceLinkFragment"
-        android:label="SourceLinkFragment"
-        tools:layout="@layout/source_link_fragment"/>
-    <fragment
         android:id="@+id/audioPlayerFragment"
-        android:name="com.example.ytaudio.screens.audio_player.AudioPlayerFragment"
+        android:name="com.example.ytaudio.fragments.AudioPlayerFragment"
         android:label="AudioPlayerFragment"
         tools:layout="@layout/audio_player_fragment">
         <argument
@@ -20,14 +15,9 @@
             app:argType="long" />
     </fragment>
     <fragment
-        android:id="@+id/playerFragment"
-        android:name="com.example.ytaudio.screens.player.PlayerFragment"
-        android:label="PlayerFragment"
-        tools:layout="@layout/player_fragment" />
-    <fragment
         android:id="@+id/playlistFragment"
         tools:layout="@layout/playlist_fragment"
-        android:name="com.example.ytaudio.screens.playlist.PlaylistFragment"
+        android:name="com.example.ytaudio.fragments.PlaylistFragment"
         android:label="PlaylistFragment">
         <action
             android:id="@+id/action_playlistFragment_to_audioPlayerFragment"

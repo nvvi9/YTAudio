@@ -1,4 +1,4 @@
-package com.example.ytaudio.screens.playlist
+package com.example.ytaudio.viewmodels
 
 import android.app.Application
 import android.widget.Toast

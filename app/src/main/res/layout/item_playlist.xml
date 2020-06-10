@@ -11,7 +11,7 @@
 
         <variable
             name="clickListener"
-            type="com.example.ytaudio.screens.playlist.AudioInfoListener" />
+            type="com.example.ytaudio.utils.AudioInfoListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

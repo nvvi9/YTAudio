@@ -1,4 +1,4 @@
-package com.example.ytaudio.screens.playlist
+package com.example.ytaudio.utils
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

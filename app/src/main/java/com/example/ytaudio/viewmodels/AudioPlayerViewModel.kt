@@ -1,4 +1,4 @@
-package com.example.ytaudio.screens.audio_player
+package com.example.ytaudio.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.*

@@ -108,8 +108,6 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         rootHints: Bundle?
     ): BrowserRoot? = BrowserRoot(MEDIA_ROOT_ID, null)
 
-
-
     override fun onLoadChildren(
         parentId: String,
         result: Result<MutableList<MediaItem>>

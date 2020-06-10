@@ -1,4 +1,4 @@
-package com.example.ytaudio.screens.audio_player
+package com.example.ytaudio.fragments
 
 import android.annotation.SuppressLint
 import android.media.AudioManager
@@ -21,6 +21,7 @@ import com.bumptech.glide.Glide
 import com.example.ytaudio.R
 import com.example.ytaudio.databinding.AudioPlayerFragmentBinding
 import com.example.ytaudio.utils.FactoryUtils
+import com.example.ytaudio.viewmodels.AudioPlayerViewModel
 
 class AudioPlayerFragment : Fragment() {
 
