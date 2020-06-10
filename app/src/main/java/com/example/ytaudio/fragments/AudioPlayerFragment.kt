@@ -26,6 +26,7 @@ import com.example.ytaudio.viewmodels.AudioPlayerViewModel
 class AudioPlayerFragment : Fragment() {
 
     companion object {
+        fun getInstance() = AudioPlayerFragment()
         const val ONE_SECOND = 1000
     }
 

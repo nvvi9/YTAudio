@@ -24,8 +24,17 @@ import com.google.android.material.textfield.TextInputEditText
 
 class PlaylistFragment : Fragment() {
 
+    private lateinit var audioId: String
     private lateinit var binding: PlaylistFragmentBinding
     private lateinit var viewModel: PlaylistViewModel
+
+    companion object {
+        fun getInstance() = PlaylistFragment().apply {
+            arguments = Bundle().apply {
+                putString(AUDIO_ID_ARG, audioId)
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,7 +48,7 @@ class PlaylistFragment : Fragment() {
         val application = requireNotNull(this.activity).application
 
         viewModel =
-            ViewModelProvider(this, FactoryUtils.providePlaylistViewModel(application)).get(
+            ViewModelProvider(this, FactoryUtils.providePlaylistViewModel(audioId, application)).get(
                 PlaylistViewModel::class.java
             )
 
@@ -112,3 +121,5 @@ class PlaylistFragment : Fragment() {
             0
         )
 }
+
+private const val AUDIO_ID_ARG = "com.example.ytaudio.fragments.PlaylistFragment.AUDIO_ID"

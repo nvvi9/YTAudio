@@ -27,13 +27,25 @@ object FactoryUtils {
         return MainActivityViewModel.Factory(mediaPlaybackServiceConnection)
     }
 
-    fun providePlaylistViewModel(application: Application): PlaylistViewModel.Factory {
+    fun providePlaylistViewModel(
+        audioId: String,
+        application: Application
+    ): PlaylistViewModel.Factory {
+        val mediaPlaybackServiceConnection =
+            provideMediaPlaybackServiceConnection(application.applicationContext)
         val dataSource = provideAudioDatabaseDao(application.applicationContext)
-        return PlaylistViewModel.Factory(dataSource, application)
+        return PlaylistViewModel.Factory(
+            audioId,
+            mediaPlaybackServiceConnection,
+            dataSource,
+            application
+        )
     }
 
     fun provideAudioPlayerViewModel(application: Application): AudioPlayerViewModel.Factory {
+        val mediaPlaybackServiceConnection =
+            provideMediaPlaybackServiceConnection(application.applicationContext)
         val dataSource = provideAudioDatabaseDao(application.applicationContext)
-        return AudioPlayerViewModel.Factory(dataSource, application)
+        return AudioPlayerViewModel.Factory(mediaPlaybackServiceConnection, dataSource, application)
     }
 }
