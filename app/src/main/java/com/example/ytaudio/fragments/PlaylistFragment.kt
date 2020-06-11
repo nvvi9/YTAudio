@@ -29,8 +29,12 @@ class PlaylistFragment : Fragment() {
     private lateinit var playlistViewModel: PlaylistViewModel
     private lateinit var mainActivityViewModel: MainActivityViewModel
 
+    private val playlistAdapter = PlaylistAdapter(AudioInfoListener {
+        mainActivityViewModel.audioItemClicked(it)
+    })
+
     companion object {
-        fun getInstance() = PlaylistFragment().apply {
+        fun getInstance(audioId: String) = PlaylistFragment().apply {
             arguments = Bundle().apply {
                 putString(AUDIO_ID_ARG, audioId)
             }
@@ -44,37 +48,6 @@ class PlaylistFragment : Fragment() {
     ): View? {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.playlist_fragment, container, false)
-
-        return binding.root
-    }
-
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        audioId = arguments?.getString(AUDIO_ID_ARG) ?: return
-        val application = requireNotNull(this.activity).application
-
-        val playlistAdapter = PlaylistAdapter(AudioInfoListener {
-            mainActivityViewModel.audioItemClicked(it)
-        })
-
-        playlistViewModel =
-            ViewModelProvider(this, FactoryUtils.providePlaylistViewModel(audioId, application))
-                .get(PlaylistViewModel::class.java)
-
-        mainActivityViewModel =
-            ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(application))
-                .get(MainActivityViewModel::class.java)
-
-        playlistViewModel.audioItemList.observe(viewLifecycleOwner, Observer {
-            binding.progressBarSpinner.visibility = if (it.isNotEmpty()) View.GONE else View.VISIBLE
-            playlistAdapter.submitList(it)
-        })
-
-        playlistViewModel.networkFailure.observe(viewLifecycleOwner, Observer {
-            binding.networkFailure.visibility = if (it) View.VISIBLE else View.GONE
-        })
 
         binding.apply {
 
@@ -101,6 +74,37 @@ class PlaylistFragment : Fragment() {
 
             lifecycleOwner = this@PlaylistFragment
         }
+
+        return binding.root
+    }
+
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        val context = activity ?: return
+        val application = requireNotNull(this.activity).application
+        audioId = arguments?.getString(AUDIO_ID_ARG) ?: return
+
+        playlistViewModel = ViewModelProvider(
+            this,
+            FactoryUtils.providePlaylistViewModel(audioId, context, application)
+        ).get(PlaylistViewModel::class.java)
+
+        mainActivityViewModel =
+            ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(context))
+                .get(MainActivityViewModel::class.java)
+
+        playlistViewModel.audioItemList.observe(viewLifecycleOwner, Observer {
+            binding.progressBarSpinner.visibility = if (it.isNotEmpty()) View.GONE else View.VISIBLE
+            playlistAdapter.submitList(it)
+        })
+
+        playlistViewModel.networkFailure.observe(viewLifecycleOwner, Observer {
+            binding.networkFailure.visibility = if (it) View.VISIBLE else View.GONE
+        })
+
+        binding.viewModel = playlistViewModel
     }
 
     override fun onPause() {

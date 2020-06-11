@@ -61,13 +61,13 @@ class PlaylistViewModel(
     private val subscriptionCallback = object : MediaBrowserCompat.SubscriptionCallback() {
         override fun onChildrenLoaded(
             parentId: String,
-            children: MutableList<MediaBrowserCompat.MediaItem>
+            children: List<MediaBrowserCompat.MediaItem>
         ) {
             val items = children.map {
                 AudioItem(
                     it.mediaId!!,
                     it.description.title.toString(),
-                    it.description.subtitle.toString(),
+                    it.description.subtitle?.toString() ?: "",
                     it.description.iconUri!!,
                     getPlaybackStatus(it.mediaId!!)
                 )

@@ -21,19 +21,20 @@ object FactoryUtils {
     private fun provideAudioDatabaseDao(context: Context) =
         AudioDatabase.getInstance(context).audioDatabaseDao
 
-    fun provideMainActivityViewModel(application: Application): MainActivityViewModel.Factory {
+    fun provideMainActivityViewModel(context: Context): MainActivityViewModel.Factory {
         val mediaPlaybackServiceConnection =
-            provideMediaPlaybackServiceConnection(application.applicationContext)
+            provideMediaPlaybackServiceConnection(context.applicationContext)
         return MainActivityViewModel.Factory(mediaPlaybackServiceConnection)
     }
 
     fun providePlaylistViewModel(
         audioId: String,
+        context: Context,
         application: Application
     ): PlaylistViewModel.Factory {
         val mediaPlaybackServiceConnection =
-            provideMediaPlaybackServiceConnection(application.applicationContext)
-        val dataSource = provideAudioDatabaseDao(application.applicationContext)
+            provideMediaPlaybackServiceConnection(context.applicationContext)
+        val dataSource = provideAudioDatabaseDao(context.applicationContext)
         return PlaylistViewModel.Factory(
             audioId,
             mediaPlaybackServiceConnection,
@@ -42,10 +43,14 @@ object FactoryUtils {
         )
     }
 
-    fun provideAudioPlayerViewModel(application: Application): AudioPlayerViewModel.Factory {
+    fun provideAudioPlayerViewModel(context: Context): AudioPlayerViewModel.Factory {
         val mediaPlaybackServiceConnection =
-            provideMediaPlaybackServiceConnection(application.applicationContext)
-        val dataSource = provideAudioDatabaseDao(application.applicationContext)
-        return AudioPlayerViewModel.Factory(mediaPlaybackServiceConnection, dataSource, application)
+            provideMediaPlaybackServiceConnection(context.applicationContext)
+        val dataSource = provideAudioDatabaseDao(context.applicationContext)
+        return AudioPlayerViewModel.Factory(
+            mediaPlaybackServiceConnection,
+            dataSource,
+            context as Application
+        )
     }
 }

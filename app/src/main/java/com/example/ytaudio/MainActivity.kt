@@ -20,10 +20,8 @@ class MainActivity : AppCompatActivity() {
 
         volumeControlStream = AudioManager.STREAM_MUSIC
 
-        val application = requireNotNull(this).application
-
         viewModel =
-            ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(application)).get(
+            ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(this)).get(
                 MainActivityViewModel::class.java
             )
 
@@ -36,18 +34,24 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        viewModel.navigateToPlaylist.observe(this, Observer {
+            it?.getContentIfNotHandled()?.let { audioId ->
+                navigateToPlaylist(audioId)
+            }
+        })
+
         viewModel.rootMediaId.observe(this, Observer {
-            it?.let { id ->
-                navigateToPlaylist(id)
+            it?.let {
+                navigateToPlaylist(it)
             }
         })
     }
 
     private fun navigateToPlaylist(audioId: String) {
         var fragment: PlaylistFragment? =
-            supportFragmentManager.findFragmentByTag(audioId) as PlaylistFragment
+            supportFragmentManager.findFragmentByTag(audioId) as PlaylistFragment?
         if (fragment == null) {
-            fragment = PlaylistFragment.getInstance()
+            fragment = PlaylistFragment.getInstance(audioId)
             viewModel.showFragment(fragment, !isRoot(audioId), audioId)
         }
     }

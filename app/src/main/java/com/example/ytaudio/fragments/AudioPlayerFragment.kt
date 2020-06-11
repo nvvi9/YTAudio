@@ -36,14 +36,14 @@ class AudioPlayerFragment : Fragment() {
         binding = DataBindingUtil
             .inflate(inflater, R.layout.audio_player_fragment, container, false)
 
-        val application = requireNotNull(this.activity).application
+        val context = requireActivity()
 
         audioPlayerViewModel =
-            ViewModelProvider(this, FactoryUtils.provideAudioPlayerViewModel(application))
+            ViewModelProvider(this, FactoryUtils.provideAudioPlayerViewModel(context))
                 .get(AudioPlayerViewModel::class.java)
 
         mainActivityViewModel =
-            ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(application))
+            ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(context))
                 .get(MainActivityViewModel::class.java)
 
         audioPlayerViewModel.apply {

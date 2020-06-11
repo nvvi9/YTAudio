@@ -12,6 +12,7 @@ import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.media.MediaBrowserServiceCompat
 import com.example.ytaudio.database.AudioDatabase
@@ -40,7 +41,6 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
     private lateinit var becomingNoisyReceiver: BecomingNoisyReceiver
     private lateinit var notificationManager: NotificationManager
     private lateinit var mediaSessionConnector: MediaSessionConnector
-    private val database = AudioDatabase.getInstance(applicationContext).audioDatabaseDao
     private val playerListener = PlayerEventListener()
 
     private var isForegroundService = false
@@ -61,6 +61,8 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
 
     override fun onCreate() {
         super.onCreate()
+
+        Log.i(javaClass.name, "onCreate called")
 
         val sessionActivityPendingIntent =
             packageManager.getLaunchIntentForPackage(packageName)
@@ -85,6 +87,8 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
 
         becomingNoisyReceiver = BecomingNoisyReceiver(this, mediaSession.sessionToken)
 
+        val database = AudioDatabase.getInstance(this).audioDatabaseDao
+
         audioSource = DatabaseAudioSource(this, database)
         serviceScope.launch {
             audioSource.load()
@@ -106,18 +110,26 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         clientPackageName: String,
         clientUid: Int,
         rootHints: Bundle?
-    ): BrowserRoot? = BrowserRoot(MEDIA_ROOT_ID, null)
+    ): BrowserRoot? {
+        Log.i(javaClass.name, "onGetRootCalled called")
+        return BrowserRoot(MEDIA_ROOT_ID, null)
+    }
 
     override fun onLoadChildren(
         parentId: String,
         result: Result<MutableList<MediaItem>>
     ) {
+        Log.i(javaClass.name, "onLoadChildren called")
         val resultSent = audioSource.whenReady { initialized ->
             if (initialized) {
-                val children = audioSource.map {
-                    MediaItem(it.description, it.flag)
+                if (parentId == MEDIA_ROOT_ID) {
+                    val children = audioSource.map {
+                        MediaItem(it.description, it.flag)
+                    }
+                    result.sendResult(children as MutableList<MediaItem>?)
+                } else {
+                    result.sendResult(null)
                 }
-                result.sendResult(children as MutableList<MediaItem>?)
             } else {
                 mediaSession.sendSessionEvent(NETWORK_FAILURE, null)
                 result.sendResult(null)
