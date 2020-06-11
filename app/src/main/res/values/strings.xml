@@ -17,4 +17,5 @@
     <string name="notification_pause">pause</string>
     <string name="notification_channel">now playing</string>
     <string name="notification_channel_description">shows what music is playing</string>
+    <string name="audio_button_description">managing playback state button</string>
 </resources>
