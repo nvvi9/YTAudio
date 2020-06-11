@@ -11,7 +11,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
@@ -19,6 +18,7 @@ import com.example.ytaudio.databinding.PlaylistFragmentBinding
 import com.example.ytaudio.utils.AudioInfoListener
 import com.example.ytaudio.utils.FactoryUtils
 import com.example.ytaudio.utils.PlaylistAdapter
+import com.example.ytaudio.viewmodels.MainActivityViewModel
 import com.example.ytaudio.viewmodels.PlaylistViewModel
 import com.google.android.material.textfield.TextInputEditText
 
@@ -26,7 +26,8 @@ class PlaylistFragment : Fragment() {
 
     private lateinit var audioId: String
     private lateinit var binding: PlaylistFragmentBinding
-    private lateinit var viewModel: PlaylistViewModel
+    private lateinit var playlistViewModel: PlaylistViewModel
+    private lateinit var mainActivityViewModel: MainActivityViewModel
 
     companion object {
         fun getInstance() = PlaylistFragment().apply {
@@ -41,47 +42,48 @@ class PlaylistFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding =
             DataBindingUtil.inflate(inflater, R.layout.playlist_fragment, container, false)
 
+        return binding.root
+    }
+
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        audioId = arguments?.getString(AUDIO_ID_ARG) ?: return
         val application = requireNotNull(this.activity).application
 
-        viewModel =
-            ViewModelProvider(this, FactoryUtils.providePlaylistViewModel(audioId, application)).get(
-                PlaylistViewModel::class.java
-            )
+        val playlistAdapter = PlaylistAdapter(AudioInfoListener {
+            mainActivityViewModel.audioItemClicked(it)
+        })
 
-        val adapter = PlaylistAdapter(AudioInfoListener {
-            findNavController().navigate(
-                PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment(it)
-            )
+        playlistViewModel =
+            ViewModelProvider(this, FactoryUtils.providePlaylistViewModel(audioId, application))
+                .get(PlaylistViewModel::class.java)
+
+        mainActivityViewModel =
+            ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(application))
+                .get(MainActivityViewModel::class.java)
+
+        playlistViewModel.audioItemList.observe(viewLifecycleOwner, Observer {
+            binding.progressBarSpinner.visibility = if (it.isNotEmpty()) View.GONE else View.VISIBLE
+            playlistAdapter.submitList(it)
+        })
+
+        playlistViewModel.networkFailure.observe(viewLifecycleOwner, Observer {
+            binding.networkFailure.visibility = if (it) View.VISIBLE else View.GONE
         })
 
         binding.apply {
-            playlistView.layoutManager =
-                LinearLayoutManager(this@PlaylistFragment.context, RecyclerView.VERTICAL, false)
 
-            playlistView.adapter = adapter
-
-            viewModel = viewModel
-
-//            toolbar.setOnMenuItemClickListener {
-//                when (it.itemId) {
-//                    R.id.url_link -> {
-//                        if (!linkText.text.isNullOrBlank()) {
-//                            this@PlaylistFragment.viewModel.onExtract(linkText.text.toString())
-//                            toolbar.hideKeyboard()
-//                        }
-//                        true
-//                    }
-//                    else -> false
-//                }
-//            }
+            playlistView.adapter = playlistAdapter
+            playlistView.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
 
             linkText.setEndIconOnClickListener {
                 if (!binding.linkText.editText?.text.isNullOrBlank()) {
-                    this@PlaylistFragment.viewModel.onExtract(binding.linkText.editText!!.text.toString())
+                    this@PlaylistFragment.playlistViewModel.onExtract(binding.linkText.editText!!.text.toString())
                     it.hideKeyboard()
                     binding.linkText.editText!!.text.clear()
                 }
@@ -89,7 +91,7 @@ class PlaylistFragment : Fragment() {
 
             linkText.editText!!.setOnKeyListener { v, keyCode, event ->
                 if (!(v as TextInputEditText).text.isNullOrBlank() && keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
-                    this@PlaylistFragment.viewModel.onExtract(v.text.toString())
+                    this@PlaylistFragment.playlistViewModel.onExtract(v.text.toString())
                     v.hideKeyboard()
                     v.text?.clear()
                     return@setOnKeyListener true
@@ -99,16 +101,7 @@ class PlaylistFragment : Fragment() {
 
             lifecycleOwner = this@PlaylistFragment
         }
-
-        viewModel.audioPlaylist.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                adapter.submitList(it.sortedBy { audio -> audio.audioTitle })
-            }
-        })
-
-        return binding.root
     }
-
 
     override fun onPause() {
         super.onPause()

@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ytaudio.database.AudioInfo
+import com.example.ytaudio.AudioItem
 import com.example.ytaudio.databinding.ItemPlaylistBinding
 
 class PlaylistAdapter(private val clickListener: AudioInfoListener) :
-    ListAdapter<AudioInfo, PlaylistAdapter.ViewHolder>(AudioInfoDiffCallback()) {
+    ListAdapter<AudioItem, PlaylistAdapter.ViewHolder>(AudioInfoDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)
@@ -23,8 +23,8 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
 
     class ViewHolder private constructor(val binding: ItemPlaylistBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(clickListener: AudioInfoListener, item: AudioInfo) {
-            binding.audio = item
+        fun bind(clickListener: AudioInfoListener, item: AudioItem) {
+            binding.audioItem = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
         }
@@ -41,16 +41,19 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
 }
 
 
-class AudioInfoDiffCallback : DiffUtil.ItemCallback<AudioInfo>() {
+class AudioInfoDiffCallback : DiffUtil.ItemCallback<AudioItem>() {
 
-    override fun areItemsTheSame(oldItem: AudioInfo, newItem: AudioInfo) =
-        oldItem.youtubeId == newItem.youtubeId
+    override fun areItemsTheSame(oldItem: AudioItem, newItem: AudioItem) =
+        oldItem.audioId == newItem.audioId
 
-    override fun areContentsTheSame(oldItem: AudioInfo, newItem: AudioInfo) =
+    override fun areContentsTheSame(oldItem: AudioItem, newItem: AudioItem) =
         oldItem == newItem
+
+    override fun getChangePayload(oldItem: AudioItem, newItem: AudioItem) =
+        if (oldItem.playbackStatus != newItem.playbackStatus) 1 else null
 }
 
 
-class AudioInfoListener(val clickListener: (audioId: Long) -> Unit) {
-    fun onClick(audio: AudioInfo) = clickListener(audio.audioId)
+class AudioInfoListener(val clickListener: (audioItem: AudioItem) -> Unit) {
+    fun onClick(audioItem: AudioItem) = clickListener(audioItem)
 }

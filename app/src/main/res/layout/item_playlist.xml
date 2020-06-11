@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="audio"
-            type="com.example.ytaudio.database.AudioInfo" />
+            name="audioItem"
+            type="com.example.ytaudio.AudioItem" />
 
         <variable
             name="clickListener"
@@ -17,7 +17,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="@{() -> clickListener.onClick(audio)}"
+        android:onClick="@{() -> clickListener.onClick(audioItem)}"
         android:orientation="horizontal">
 
         <TextView
@@ -27,13 +27,13 @@
             android:layout_marginStart="8dp"
 
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:singleLine="true"
             android:textColor="@android:color/white"
             android:textSize="16sp"
-            app:audioTitle="@{audio}"
+            app:audioTitle="@{audioItem}"
             app:layout_constraintBottom_toTopOf="@+id/author"
-            app:layout_constraintEnd_toStartOf="@+id/duration"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/audio_photo"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="spread_inside"
@@ -47,7 +47,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:contentDescription="@string/thumbnail_description"
-            app:audioPhoto="@{audio}"
+            app:audioPhoto="@{audioItem}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -55,29 +55,29 @@
 
         <TextView
             android:id="@+id/author"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
             android:textSize="12sp"
-            app:authorName="@{audio}"
+            app:authorName="@{audioItem}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/duration"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/audio_title"
             app:layout_constraintTop_toBottomOf="@+id/audio_title"
             tools:text="author" />
 
-        <TextView
-            android:id="@+id/duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            app:audioDuration="@{audio}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="00:00" />
+        <ImageView
+            android:id="@+id/playback_state"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="center"
+            app:layout_constraintBottom_toBottomOf="@+id/audio_photo"
+            app:layout_constraintEnd_toEndOf="@+id/audio_photo"
+            app:layout_constraintStart_toStartOf="@+id/audio_photo"
+            app:layout_constraintTop_toTopOf="@+id/audio_photo"
+            android:contentDescription="@string/audio_button_description"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
