@@ -33,8 +33,8 @@ object FactoryUtils {
         application: Application
     ): PlaylistViewModel.Factory {
         val mediaPlaybackServiceConnection =
-            provideMediaPlaybackServiceConnection(context.applicationContext)
-        val dataSource = provideAudioDatabaseDao(context.applicationContext)
+            provideMediaPlaybackServiceConnection(context)
+        val dataSource = provideAudioDatabaseDao(context)
         return PlaylistViewModel.Factory(
             audioId,
             mediaPlaybackServiceConnection,
