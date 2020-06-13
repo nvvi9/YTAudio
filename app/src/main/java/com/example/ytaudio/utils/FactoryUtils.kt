@@ -22,8 +22,11 @@ object FactoryUtils {
         return PlaylistViewModel.Factory(dataSource, application)
     }
 
-    fun provideAudioPlayerViewModel(application: Application): AudioPlayerViewModel.Factory {
+    fun provideAudioPlayerViewModel(
+        audioId: Long,
+        application: Application
+    ): AudioPlayerViewModel.Factory {
         val dataSource = AudioDatabase.getInstance(application.applicationContext).audioDatabaseDao
-        return AudioPlayerViewModel.Factory(dataSource, application)
+        return AudioPlayerViewModel.Factory(audioId, dataSource, application)
     }
 }

@@ -18,13 +18,6 @@ class PlaylistViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
-//    private val extractor = YoutubeJExtractor()
-//    private suspend fun YoutubeJExtractor.getVideoData(id: String): YoutubeVideoData {
-//        return withContext(Dispatchers.IO) {
-//            extract(id)
-//        }
-//    }
-
     private val extractor = object : YoutubeJExtractor() {
         suspend fun getVideoData(videoId: String?): YoutubeVideoData {
             return withContext(Dispatchers.IO) {
@@ -33,17 +26,10 @@ class PlaylistViewModel(
         }
     }
 
-
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     val audioPlaylist = database.getAllAudio()
-
-
-    init {
-        updatePlaylistInfo()
-    }
-
 
     fun onExtract(youtubeUrl: String) {
         val youtubeId = youtubeUrl.takeLastWhile { it != '=' && it != '/' }
@@ -92,56 +78,6 @@ class PlaylistViewModel(
         }
     }
 
-
-    private fun updatePlaylistInfo() {
-        uiScope.launch {
-            try {
-                val startTimeMillis = System.currentTimeMillis()
-                val audioInfoList = database.getAllAudioInfo()
-
-                audioInfoList.forEach {
-                    it.updateInfo()
-                    database.update(it)
-                }
-
-                showToast(((System.currentTimeMillis() - startTimeMillis).toDouble() / 1000).toString())
-            } catch (e: ExtractionException) {
-                showToast("Extraction failed")
-            } catch (e: YoutubeRequestException) {
-                showToast("Check your connection")
-            } catch (e: Exception) {
-                showToast("Unknown error")
-            }
-        }
-    }
-
-
-    private suspend fun AudioInfo.updateInfo() {
-        withContext(Dispatchers.IO) {
-            val videoData = extractor.extract(youtubeId)
-            val adaptiveAudioStream = videoData.streamingData.adaptiveAudioStreams.maxBy {
-                it.averageBitrate
-            }
-            videoData.run {
-                audioUrl = adaptiveAudioStream!!.url
-                photoUrl = videoDetails.thumbnail.thumbnails.maxBy { it.height }!!.url
-                audioTitle = videoDetails.title
-                author = videoDetails.author
-                authorId = videoDetails.channelId
-                description = videoDetails.shortDescription
-                keywords = videoDetails.keywords.joinToString()
-                viewCount = videoDetails.viewCount.toIntOrNull() ?: 0
-                averageRating = videoDetails.averageRating
-                audioFormat = adaptiveAudioStream.extension
-                codec = adaptiveAudioStream.codec
-                bitrate = adaptiveAudioStream.bitrate
-                averageBitrate = adaptiveAudioStream.averageBitrate
-                audioDurationSeconds = videoDetails.lengthSeconds.toLong()
-                lastUpdateTimeSeconds = System.currentTimeMillis() / 1000
-                urlActiveTimeSeconds = streamingData.expiresInSeconds.toLong()
-            }
-        }
-    }
 
     private fun showToast(message: String) =
         Toast.makeText(getApplication(), message, Toast.LENGTH_SHORT).show()

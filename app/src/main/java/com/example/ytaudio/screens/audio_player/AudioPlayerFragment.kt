@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.ytaudio.R
+import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.databinding.AudioPlayerFragmentBinding
 import com.example.ytaudio.utils.FactoryUtils
 
@@ -50,25 +51,18 @@ class AudioPlayerFragment : Fragment() {
         val application = requireNotNull(this.activity).application
 
         viewModel =
-            ViewModelProvider(this, FactoryUtils.provideAudioPlayerViewModel(application)).get(
-                AudioPlayerViewModel::class.java
-            )
+            ViewModelProvider(
+                this,
+                FactoryUtils.provideAudioPlayerViewModel(
+                    audioPlayerFragmentArgs.audioId,
+                    application
+                )
+            ).get(AudioPlayerViewModel::class.java)
 
-        viewModel.getAudioInfoFromDatabase(audioPlayerFragmentArgs.audioId)
 
-        viewModel.isAudioInfoInitialized.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                viewModel.audioInfo?.let {
-                    binding.run {
-                        textTitle.text = it.audioTitle
-                        Glide.with(this@AudioPlayerFragment).load(it.photoUrl).into(photo)
-                        audioUri = Uri.parse(it.audioUrl)
-                        leftTimeText.text = DateUtils.formatElapsedTime(it.audioDurationSeconds)
-                        viewModel.initializationDone()
-                        buttonPause.isClickable = true
-                        buttonPlay.isClickable = true
-                    }
-                }
+        viewModel.initializedAudioInfo.observe(viewLifecycleOwner, Observer {
+            it.getContentIfNotHandled()?.let { audio ->
+                updateUI(audio)
             }
         })
 
@@ -108,6 +102,17 @@ class AudioPlayerFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun updateUI(audioInfo: AudioInfo) {
+        binding.run {
+            textTitle.text = audioInfo.audioTitle
+            Glide.with(this@AudioPlayerFragment).load(audioInfo.photoUrl).into(photo)
+            audioUri = Uri.parse(audioInfo.audioUrl)
+            leftTimeText.text = DateUtils.formatElapsedTime(audioInfo.audioDurationSeconds)
+            buttonPause.isClickable = true
+            buttonPlay.isClickable = true
+        }
     }
 
     override fun onStop() {
