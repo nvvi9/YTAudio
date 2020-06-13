@@ -6,7 +6,7 @@ import java.io.File
 
 private const val AUTHORITY = "com.example.ytaudio.service.library.provider"
 
-fun File.asArtContentUri() = Uri.Builder()
+fun File.asArtContentUri(): Uri = Uri.Builder()
     .scheme(ContentResolver.SCHEME_CONTENT)
     .authority(AUTHORITY)
     .appendPath(this.path)

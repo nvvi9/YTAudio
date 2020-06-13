@@ -53,8 +53,8 @@ class DatabaseAudioSource(context: Context, private val database: AudioDatabaseD
                 MediaMetadataCompat.Builder()
                     .from(it)
                     .apply {
-                        displayIconUri = artUri.toString()
-                        albumArtUri = artUri.toString()
+                        displayIconUri = it.photoUrl
+                        albumArtUri = it.photoUrl
                     }
                     .build()
             }.toList()
@@ -68,10 +68,9 @@ fun MediaMetadataCompat.Builder.from(audioInfo: AudioInfo): MediaMetadataCompat.
     id = audioInfo.audioId.toString()
     title = audioInfo.audioTitle
     artist = audioInfo.author
-    duration = audioInfo.audioDurationSeconds.toString()
+    duration = audioInfo.audioDurationSeconds
     mediaUri = audioInfo.audioUrl
     displayIconUri = audioInfo.photoUrl
-    rating = audioInfo.averageRating.toLong()
     flag = MediaItem.FLAG_PLAYABLE
 
     downloadStatus = STATUS_NOT_DOWNLOADED

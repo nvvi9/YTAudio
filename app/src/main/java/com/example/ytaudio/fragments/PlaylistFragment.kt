@@ -96,7 +96,7 @@ class PlaylistFragment : Fragment() {
                 .get(MainActivityViewModel::class.java)
 
         playlistViewModel.audioItemList.observe(viewLifecycleOwner, Observer {
-            binding.progressBarSpinner.visibility = if (it.isNotEmpty()) View.GONE else View.VISIBLE
+            binding.progressBarSpinner.visibility = if (it.isNotEmpty()) View.INVISIBLE else View.VISIBLE
             playlistAdapter.submitList(it)
         })
 

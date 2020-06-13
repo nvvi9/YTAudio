@@ -27,9 +27,9 @@ class PlaybackPreparer(
                 PlaybackStateCompat.ACTION_PREPARE_FROM_SEARCH or
                 PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
 
-    override fun onPrepare(playWhenReady: Boolean) = Unit
+    override fun onPrepare() = Unit
 
-    override fun onPrepareFromMediaId(mediaId: String, playWhenReady: Boolean, extras: Bundle) {
+    override fun onPrepareFromMediaId(mediaId: String?, extras: Bundle?) {
         audioSource.whenReady {
             val itemToPlay = audioSource.find { item ->
                 item.id == mediaId
@@ -46,9 +46,8 @@ class PlaybackPreparer(
         }
     }
 
-    override fun onPrepareFromUri(uri: Uri, playWhenReady: Boolean, extras: Bundle) = Unit
-
-    override fun onPrepareFromSearch(query: String, playWhenReady: Boolean, extras: Bundle) = Unit
+    override fun onPrepareFromSearch(query: String?, extras: Bundle?) = Unit
+    override fun onPrepareFromUri(uri: Uri?, extras: Bundle?) = Unit
 
     override fun onCommand(
         player: Player,

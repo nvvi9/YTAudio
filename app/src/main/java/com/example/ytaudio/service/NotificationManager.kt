@@ -13,10 +13,6 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import kotlinx.coroutines.*
 
-const val NOW_PLAYING_CHANNEL = "com.example.ytaudio.service.NOW_PLAYING"
-const val NOW_PLAYING_NOTIFICATION = 0xb339
-private const val MODE_READ_ONLY = "r"
-
 
 class NotificationManager(
     private val context: Context,
@@ -63,18 +59,18 @@ class NotificationManager(
         var currentIconUri: Uri? = null
         var bitmap: Bitmap? = null
 
-        override fun createCurrentContentIntent(player: Player): PendingIntent? =
+        override fun createCurrentContentIntent(player: Player?): PendingIntent? =
             controller.sessionActivity
 
-        override fun getCurrentContentText(player: Player) =
+        override fun getCurrentContentText(player: Player?) =
             controller.metadata.description.subtitle.toString()
 
-        override fun getCurrentContentTitle(player: Player) =
+        override fun getCurrentContentTitle(player: Player?) =
             controller.metadata.description.title.toString()
 
         override fun getCurrentLargeIcon(
-            player: Player,
-            callback: PlayerNotificationManager.BitmapCallback
+            player: Player?,
+            callback: PlayerNotificationManager.BitmapCallback?
         ): Bitmap? {
             val iconUri = controller.metadata.description.iconUri
 
@@ -84,7 +80,7 @@ class NotificationManager(
                     bitmap = iconUri?.let {
                         resolveUriAsBitmap(it)
                     }
-                    bitmap?.let { callback.onBitmap(it) }
+                    callback?.onBitmap(bitmap)
                 }
                 null
             } else {
@@ -107,3 +103,7 @@ class NotificationManager(
         }
     }
 }
+
+const val NOW_PLAYING_CHANNEL = "channel"
+const val NOW_PLAYING_NOTIFICATION = 111
+private const val MODE_READ_ONLY = "r"

@@ -122,14 +122,11 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         Log.i(javaClass.name, "onLoadChildren called")
         val resultSent = audioSource.whenReady { initialized ->
             if (initialized) {
-                if (parentId == MEDIA_ROOT_ID) {
-                    val children = audioSource.map {
-                        MediaItem(it.description, it.flag)
-                    }
-                    result.sendResult(children as MutableList<MediaItem>?)
-                } else {
-                    result.sendResult(null)
+                val children = audioSource.map {
+                    MediaItem(it.description, it.flag)
                 }
+                result.sendResult(children as MutableList<MediaItem>?)
+
             } else {
                 mediaSession.sendSessionEvent(NETWORK_FAILURE, null)
                 result.sendResult(null)
@@ -180,7 +177,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
 
         override fun onNotificationPosted(
             notificationId: Int,
-            notification: Notification,
+            notification: Notification?,
             ongoing: Boolean
         ) {
             if (ongoing && !isForegroundService) {

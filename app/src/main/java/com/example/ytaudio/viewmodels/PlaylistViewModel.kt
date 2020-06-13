@@ -47,12 +47,6 @@ class PlaylistViewModel(
         }
     }
 
-    private val mediaPlaybackServiceConnection = mediaPlaybackServiceConnection.also {
-        it.subscribe(audioId, subscriptionCallback)
-        it.playbackState.observeForever(playbackStateObserver)
-        it.nowPlaying.observeForever(mediaMetadataObserver)
-    }
-
     private val _audioItemList = MutableLiveData<List<AudioItem>>()
     val audioItemList: LiveData<List<AudioItem>> = _audioItemList
 
@@ -74,6 +68,12 @@ class PlaylistViewModel(
             }
             _audioItemList.postValue(items)
         }
+    }
+
+    private val mediaPlaybackServiceConnection = mediaPlaybackServiceConnection.also {
+        it.subscribe(audioId, subscriptionCallback)
+        it.playbackState.observeForever(playbackStateObserver)
+        it.nowPlaying.observeForever(mediaMetadataObserver)
     }
 
     private fun getPlaybackStatus(audioId: String): Int {
@@ -116,7 +116,7 @@ class PlaylistViewModel(
 
 
     init {
-        updatePlaylistInfo()
+//        updatePlaylistInfo()
     }
 
 
