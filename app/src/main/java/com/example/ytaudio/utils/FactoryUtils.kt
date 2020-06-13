@@ -43,14 +43,17 @@ object FactoryUtils {
         )
     }
 
-    fun provideAudioPlayerViewModel(context: Context): AudioPlayerViewModel.Factory {
+    fun provideAudioPlayerViewModel(
+        context: Context,
+        application: Application
+    ): AudioPlayerViewModel.Factory {
         val mediaPlaybackServiceConnection =
             provideMediaPlaybackServiceConnection(context.applicationContext)
         val dataSource = provideAudioDatabaseDao(context.applicationContext)
         return AudioPlayerViewModel.Factory(
             mediaPlaybackServiceConnection,
             dataSource,
-            context as Application
+            application
         )
     }
 }

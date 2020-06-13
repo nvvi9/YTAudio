@@ -42,12 +42,6 @@ class AudioPlayerViewModel(
     private var updatePosition = true
     private val handler = Handler(Looper.getMainLooper())
 
-    private val mediaPlaybackServiceConnection = mediaPlaybackServiceConnection.also {
-        it.playbackState.observeForever(playbackStateObserver)
-        it.nowPlaying.observeForever(mediaMetadataObserver)
-        checkPlaybackPosition()
-    }
-
     private fun checkPlaybackPosition(): Boolean = handler.postDelayed({
         val currentPosition = playbackState.currentPlayBackPosition
         if (audioPosition.value != currentPosition)
@@ -64,6 +58,12 @@ class AudioPlayerViewModel(
 
     private val mediaMetadataObserver = Observer<MediaMetadataCompat> {
         updateState(playbackState, it)
+    }
+
+    private val mediaPlaybackServiceConnection = mediaPlaybackServiceConnection.also {
+        it.playbackState.observeForever(playbackStateObserver)
+        it.nowPlaying.observeForever(mediaMetadataObserver)
+        checkPlaybackPosition()
     }
 
     private fun updateState(

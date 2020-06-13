@@ -27,7 +27,6 @@ class PlaybackPreparer(
                 PlaybackStateCompat.ACTION_PREPARE_FROM_SEARCH or
                 PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
 
-    override fun onPrepare() = Unit
 
     override fun onPrepareFromMediaId(mediaId: String?, extras: Bundle?) {
         audioSource.whenReady {
@@ -46,6 +45,7 @@ class PlaybackPreparer(
         }
     }
 
+    override fun onPrepare() = Unit
     override fun onPrepareFromSearch(query: String?, extras: Bundle?) = Unit
     override fun onPrepareFromUri(uri: Uri?, extras: Bundle?) = Unit
 

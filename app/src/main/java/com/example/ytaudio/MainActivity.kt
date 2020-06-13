@@ -26,13 +26,14 @@ class MainActivity : AppCompatActivity() {
             )
 
         viewModel.navigateToFragment.observe(this, Observer {
-            it.getContentIfNotHandled()?.let { request ->
+            it?.getContentIfNotHandled()?.let { request ->
                 val transaction = supportFragmentManager.beginTransaction()
-                transaction.replace(R.id.nav_host_fragment, request.fragment, request.tag)
+                transaction.replace(R.id.fragment_container, request.fragment, request.tag)
                 if (request.addToBackStack) transaction.addToBackStack(null)
                 transaction.commit()
             }
         })
+
 
         viewModel.navigateToPlaylist.observe(this, Observer {
             it?.getContentIfNotHandled()?.let { audioId ->

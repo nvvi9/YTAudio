@@ -177,7 +177,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
 
         override fun onNotificationPosted(
             notificationId: Int,
-            notification: Notification?,
+            notification: Notification,
             ongoing: Boolean
         ) {
             if (ongoing && !isForegroundService) {

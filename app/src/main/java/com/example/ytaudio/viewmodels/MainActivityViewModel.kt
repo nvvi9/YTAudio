@@ -28,9 +28,11 @@ class MainActivityViewModel(
     val navigateToPlaylist: LiveData<Event<String>>
         get() = _navigateToPlaylist
 
+
     private val _navigateToFragment = MutableLiveData<Event<FragmentNavigationRequest>>()
     val navigateToFragment: LiveData<Event<FragmentNavigationRequest>>
         get() = _navigateToFragment
+
 
     fun audioItemClicked(audioItem: AudioItem) {
         playAudio(audioItem, false)

@@ -9,11 +9,7 @@
         android:id="@+id/audioPlayerFragment"
         android:name="com.example.ytaudio.fragments.AudioPlayerFragment"
         android:label="AudioPlayerFragment"
-        tools:layout="@layout/audio_player_fragment">
-        <argument
-            android:name="audioId"
-            app:argType="long" />
-    </fragment>
+        tools:layout="@layout/audio_player_fragment"/>
     <fragment
         android:id="@+id/playlistFragment"
         tools:layout="@layout/playlist_fragment"
