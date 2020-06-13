@@ -12,6 +12,8 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import kotlinx.coroutines.*
+import java.io.IOException
+import java.net.URL
 
 
 class NotificationManager(
@@ -23,14 +25,15 @@ class NotificationManager(
 
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
-    private val notificationManager: PlayerNotificationManager
+    private val playerNotificationManager: PlayerNotificationManager
 
     init {
         val mediaController = MediaControllerCompat(context, sessionToken)
 
-        notificationManager = PlayerNotificationManager(
+        playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
             context,
             NOW_PLAYING_CHANNEL,
+            R.string.notification_channel,
             NOW_PLAYING_NOTIFICATION,
             DescriptionAdapter(mediaController),
             notificationListener
@@ -44,12 +47,12 @@ class NotificationManager(
 
 
     fun hideNotification() {
-        notificationManager.setPlayer(null)
+        playerNotificationManager.setPlayer(null)
     }
 
 
     fun showNotification() {
-        notificationManager.setPlayer(player)
+        playerNotificationManager.setPlayer(player)
     }
 
 
@@ -90,17 +93,28 @@ class NotificationManager(
 
         private suspend fun resolveUriAsBitmap(uri: Uri): Bitmap? {
             return withContext(Dispatchers.IO) {
-                val parcelFileDescriptor =
-                    context.contentResolver.openFileDescriptor(uri, MODE_READ_ONLY)
-                        ?: return@withContext null
-
-                val fileDescriptor = parcelFileDescriptor.fileDescriptor
-
-                BitmapFactory.decodeFileDescriptor(fileDescriptor).apply {
-                    parcelFileDescriptor.close()
+                try {
+                    val url = URL(uri.toString())
+                    BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                } catch (e: IOException) {
+                    null
                 }
             }
         }
+
+//        private suspend fun resolveUriAsBitmap(uri: Uri): Bitmap? {
+//            return withContext(Dispatchers.IO) {
+//                val parcelFileDescriptor =
+//                    context.contentResolver.openFileDescriptor(uri, MODE_READ_ONLY)
+//                        ?: return@withContext null
+//
+//                val fileDescriptor = parcelFileDescriptor.fileDescriptor
+//
+//                BitmapFactory.decodeFileDescriptor(fileDescriptor).apply {
+//                    parcelFileDescriptor.close()
+//                }
+//            }
+//        }
     }
 }
 
