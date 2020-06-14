@@ -16,6 +16,7 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.media.MediaBrowserServiceCompat
 import com.example.ytaudio.database.AudioDatabase
+import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.service.extensions.flag
 import com.example.ytaudio.service.library.AudioSource
 import com.example.ytaudio.service.library.DatabaseAudioSource
@@ -50,6 +51,10 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         .setUsage(C.USAGE_MEDIA)
         .build()
 
+    private val database: AudioDatabaseDao by lazy {
+        AudioDatabase.getInstance(this).audioDatabaseDao
+    }
+
     private val exoPlayer: ExoPlayer by lazy {
         ExoPlayerFactory.newSimpleInstance(this).apply {
             setAudioAttributes(ytAudioAttributes, true)
@@ -57,7 +62,9 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         }
     }
 
-    protected lateinit var mediaSession: MediaSessionCompat
+    private lateinit var mediaSession: MediaSessionCompat
+
+    override fun notifyChildrenChanged(parentId: String) = Unit
 
     override fun onCreate() {
         super.onCreate()
@@ -76,6 +83,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
                 isActive = true
             }
 
+
         sessionToken = mediaSession.sessionToken
 
         notificationManager = NotificationManager(
@@ -86,8 +94,6 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         )
 
         becomingNoisyReceiver = BecomingNoisyReceiver(this, mediaSession.sessionToken)
-
-        val database = AudioDatabase.getInstance(this).audioDatabaseDao
 
         audioSource = DatabaseAudioSource(this, database)
         serviceScope.launch {
@@ -157,10 +163,8 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
                     notificationManager.showNotification()
                     becomingNoisyReceiver.register()
 
-                    if (playbackState == Player.STATE_READY) {
-                        if (!playWhenReady) {
-                            stopForeground(true)
-                        }
+                    if (playbackState == Player.STATE_READY && !playWhenReady) {
+                        stopForeground(false)
                     }
                 }
                 else -> {

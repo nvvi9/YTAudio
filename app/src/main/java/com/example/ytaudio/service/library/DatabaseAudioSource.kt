@@ -43,13 +43,6 @@ class DatabaseAudioSource(context: Context, private val database: AudioDatabaseD
             val audioInfoList = database.getAllAudioInfo()
 
             audioInfoList.map {
-                val artUri = glide.applyDefaultRequestOptions(glideOptions)
-                    .downloadOnly()
-                    .load(it.photoUrl)
-                    .submit(NOTIFICATION_LARGE_ICON_SIZE, NOTIFICATION_LARGE_ICON_SIZE)
-                    .get()
-                    .asArtContentUri()
-
                 MediaMetadataCompat.Builder()
                     .from(it)
                     .apply {

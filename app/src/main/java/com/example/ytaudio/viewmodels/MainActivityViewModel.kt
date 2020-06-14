@@ -33,6 +33,9 @@ class MainActivityViewModel(
     val navigateToFragment: LiveData<Event<FragmentNavigationRequest>>
         get() = _navigateToFragment
 
+    private val _navigateToAudioPlayer = MutableLiveData<Event<FragmentNavigationRequest>>()
+    val navigateToAudioPlayer: LiveData<Event<FragmentNavigationRequest>>
+        get() = _navigateToAudioPlayer
 
     fun audioItemClicked(audioItem: AudioItem) {
         playAudio(audioItem, false)
@@ -41,6 +44,8 @@ class MainActivityViewModel(
 
     fun showFragment(fragment: Fragment, addToBackStack: Boolean = true, tag: String? = null) {
         _navigateToFragment.value = Event(FragmentNavigationRequest(fragment, addToBackStack, tag))
+        _navigateToAudioPlayer.value =
+            Event(FragmentNavigationRequest(fragment, addToBackStack, tag))
     }
 
     fun playAudio(audioItem: AudioItem, pauseAllowed: Boolean) {

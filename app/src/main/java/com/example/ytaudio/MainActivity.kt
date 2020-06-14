@@ -46,6 +46,15 @@ class MainActivity : AppCompatActivity() {
                 navigateToPlaylist(it)
             }
         })
+
+        viewModel.navigateToAudioPlayer.observe(this, Observer {
+            it?.getContentIfNotHandled()?.let { request ->
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, request.fragment, request.tag)
+                    .addToBackStack(null)
+                    .commit()
+            }
+        })
     }
 
     private fun navigateToPlaylist(audioId: String) {

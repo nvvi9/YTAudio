@@ -91,6 +91,8 @@ class MediaPlaybackServiceConnection(context: Context, serviceComponent: Compone
             playbackState.postValue(state ?: EMPTY_PLAYBACK_STATE)
         }
 
+
+
         override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
             nowPlaying.postValue(if (metadata?.id == null) NOTHING_PLAYING else metadata)
         }
