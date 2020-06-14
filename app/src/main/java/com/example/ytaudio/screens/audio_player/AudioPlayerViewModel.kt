@@ -6,6 +6,8 @@ import androidx.lifecycle.*
 import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.utils.Event
+import com.example.ytaudio.utils.needUpdate
+import com.example.ytaudio.utils.updateInfo
 import com.github.kotvertolet.youtubejextractor.YoutubeJExtractor
 import com.github.kotvertolet.youtubejextractor.exception.ExtractionException
 import com.github.kotvertolet.youtubejextractor.exception.YoutubeRequestException
@@ -26,34 +28,34 @@ class AudioPlayerViewModel(
             withContext(Dispatchers.IO) { super.extract(videoId) }
     }
 
-    private suspend fun AudioInfo.updateInfo() {
-        withContext(Dispatchers.IO) {
-            val videoData = extractor.extract(youtubeId)
-            val adaptiveAudioStream =
-                videoData.streamingData.adaptiveAudioStreams.maxBy { it.averageBitrate }
-            videoData.run {
-                audioUrl = adaptiveAudioStream!!.url
-                photoUrl = videoDetails.thumbnail.thumbnails.maxBy { it.height }!!.url
-                audioTitle = videoDetails.title
-                author = videoDetails.author
-                authorId = videoDetails.channelId
-                description = videoDetails.shortDescription
-                keywords = videoDetails.keywords.joinToString()
-                viewCount = videoDetails.viewCount.toIntOrNull() ?: 0
-                averageRating = videoDetails.averageRating
-                audioFormat = adaptiveAudioStream.extension
-                codec = adaptiveAudioStream.codec
-                bitrate = adaptiveAudioStream.bitrate
-                averageBitrate = adaptiveAudioStream.averageBitrate
-                audioDurationSeconds = videoDetails.lengthSeconds.toLong()
-                lastUpdateTimeSeconds = System.currentTimeMillis() / 1000
-                urlActiveTimeSeconds = streamingData.expiresInSeconds.toLong()
-            }
-        }
-    }
+//    private suspend fun AudioInfo.updateInfo() {
+//        withContext(Dispatchers.IO) {
+//            val videoData = extractor.extract(youtubeId)
+//            val adaptiveAudioStream =
+//                videoData.streamingData.adaptiveAudioStreams.maxBy { it.averageBitrate }
+//            videoData.run {
+//                audioUrl = adaptiveAudioStream!!.url
+//                photoUrl = videoDetails.thumbnail.thumbnails.maxBy { it.height }!!.url
+//                audioTitle = videoDetails.title
+//                author = videoDetails.author
+//                authorId = videoDetails.channelId
+//                description = videoDetails.shortDescription
+//                keywords = videoDetails.keywords.joinToString()
+//                viewCount = videoDetails.viewCount.toIntOrNull() ?: 0
+//                averageRating = videoDetails.averageRating
+//                audioFormat = adaptiveAudioStream.extension
+//                codec = adaptiveAudioStream.codec
+//                bitrate = adaptiveAudioStream.bitrate
+//                averageBitrate = adaptiveAudioStream.averageBitrate
+//                audioDurationSeconds = videoDetails.lengthSeconds.toLong()
+//                lastUpdateTimeSeconds = System.currentTimeMillis() / 1000
+//                urlActiveTimeSeconds = streamingData.expiresInSeconds.toLong()
+//            }
+//        }
+//    }
 
-    private fun AudioInfo.needUpdate() =
-        System.currentTimeMillis() > (lastUpdateTimeSeconds + urlActiveTimeSeconds - audioDurationSeconds * 2) * 1000
+//    private fun AudioInfo.needUpdate() =
+//        System.currentTimeMillis() > (lastUpdateTimeSeconds + urlActiveTimeSeconds - audioDurationSeconds * 2) * 1000
 
     private val _initializedAudioInfo = MutableLiveData<Event<AudioInfo>>()
     val initializedAudioInfo: LiveData<Event<AudioInfo>>
@@ -68,7 +70,7 @@ class AudioPlayerViewModel(
         uiScope.launch {
             try {
                 val audioInfo = database.get(audioId)
-                if (audioInfo!!.needUpdate()) {
+                if (audioInfo!!.needUpdate) {
                     audioInfo.updateInfo()
                     database.update(audioInfo)
                 }
@@ -89,7 +91,7 @@ class AudioPlayerViewModel(
             try {
                 val audioInfoList = database.getAllAudioInfo()
                 audioInfoList.forEach {
-                    if (it.needUpdate() && it.audioId != audioId) {
+                    if (it.needUpdate && it.audioId != audioId) {
                         it.updateInfo()
                         database.update(it)
                     }

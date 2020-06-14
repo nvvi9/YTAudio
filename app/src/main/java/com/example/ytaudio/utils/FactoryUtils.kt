@@ -3,6 +3,7 @@ package com.example.ytaudio.utils
 import android.app.Application
 import android.content.ComponentName
 import android.content.Context
+import com.example.ytaudio.MainActivityViewModel
 import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.screens.audio_player.AudioPlayerViewModel
 import com.example.ytaudio.screens.playlist.PlaylistViewModel
@@ -28,5 +29,10 @@ object FactoryUtils {
     ): AudioPlayerViewModel.Factory {
         val dataSource = AudioDatabase.getInstance(application.applicationContext).audioDatabaseDao
         return AudioPlayerViewModel.Factory(audioId, dataSource, application)
+    }
+
+    fun provideMainActivityViewModel(application: Application): MainActivityViewModel.Factory {
+        val dataSource = AudioDatabase.getInstance(application.applicationContext).audioDatabaseDao
+        return MainActivityViewModel.Factory(dataSource, application)
     }
 }
