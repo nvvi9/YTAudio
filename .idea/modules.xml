@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/YTAudio.iml" filepath="$PROJECT_DIR$/YTAudio.iml" group="YTAudio" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="YTAudio/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/YTAudio.iml" filepath="$PROJECT_DIR$/.idea/YTAudio.iml" group="YTAudio" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="YTAudio/app" />
     </modules>
   </component>
 </project>
