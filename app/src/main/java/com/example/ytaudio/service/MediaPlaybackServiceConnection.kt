@@ -3,6 +3,8 @@ package com.example.ytaudio.service
 import android.content.ComponentName
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.ResultReceiver
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
@@ -46,9 +48,8 @@ class MediaPlaybackServiceConnection(context: Context, serviceComponent: Compone
         mediaBrowser.unsubscribe(parentId, callback)
     }
 
-    /*
-    fun sendCommand(command: String, parameters: Bundle?) =
-        sendCommand(command, parameters) { _, _ -> Unit }
+    fun sendCommand(command: String, parameters: Bundle? = null) =
+        sendCommand(command, parameters) { _, _ -> }
 
     fun sendCommand(
         command: String,
@@ -64,7 +65,6 @@ class MediaPlaybackServiceConnection(context: Context, serviceComponent: Compone
     } else {
         false
     }
-    */
 
     private inner class MediaBrowserConnectionCallback(private val context: Context) :
         MediaBrowserCompat.ConnectionCallback() {
@@ -91,8 +91,6 @@ class MediaPlaybackServiceConnection(context: Context, serviceComponent: Compone
             playbackState.postValue(state ?: EMPTY_PLAYBACK_STATE)
         }
 
-
-
         override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
             nowPlaying.postValue(if (metadata?.id == null) NOTHING_PLAYING else metadata)
         }
@@ -104,8 +102,7 @@ class MediaPlaybackServiceConnection(context: Context, serviceComponent: Compone
             }
         }
 
-        override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {
-        }
+        override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {}
 
         override fun onSessionDestroyed() {
             mediaBrowserConnectionCallback.onConnectionSuspended()

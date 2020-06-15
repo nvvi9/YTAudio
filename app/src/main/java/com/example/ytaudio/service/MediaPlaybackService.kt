@@ -8,11 +8,12 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
 import android.os.Bundle
+import android.os.ResultReceiver
 import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
-import android.util.Log
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.media.MediaBrowserServiceCompat
 import com.example.ytaudio.database.AudioDatabase
@@ -64,12 +65,9 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
 
     private lateinit var mediaSession: MediaSessionCompat
 
-    override fun notifyChildrenChanged(parentId: String) = Unit
 
     override fun onCreate() {
         super.onCreate()
-
-        Log.i(javaClass.name, "onCreate called")
 
         val sessionActivityPendingIntent =
             packageManager.getLaunchIntentForPackage(packageName)
@@ -80,6 +78,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         mediaSession = MediaSessionCompat(this, "MediaPlaybackService")
             .apply {
                 setSessionActivity(sessionActivityPendingIntent)
+                setCallback(PlayerSessionCallback())
                 isActive = true
             }
 
@@ -112,20 +111,13 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         }
     }
 
-    override fun onGetRoot(
-        clientPackageName: String,
-        clientUid: Int,
-        rootHints: Bundle?
-    ): BrowserRoot? {
-        Log.i(javaClass.name, "onGetRootCalled called")
-        return BrowserRoot(MEDIA_ROOT_ID, null)
-    }
+    override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?) =
+        BrowserRoot(MEDIA_ROOT_ID, null)
 
     override fun onLoadChildren(
         parentId: String,
         result: Result<MutableList<MediaItem>>
     ) {
-        Log.i(javaClass.name, "onLoadChildren called")
         val resultSent = audioSource.whenReady { initialized ->
             if (initialized) {
                 val children = audioSource.map {
@@ -201,6 +193,19 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
             stopSelf()
         }
     }
+
+    private inner class PlayerSessionCallback : MediaSessionCompat.Callback() {
+
+        override fun onCommand(command: String?, extras: Bundle?, cb: ResultReceiver?) {
+            super.onCommand(command, extras, cb)
+            when (command) {
+                UPDATE_COMMAND -> {
+                    notifyChildrenChanged(MEDIA_ROOT_ID)
+                    Toast.makeText(applicationContext, UPDATE_COMMAND, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 }
 
 
@@ -223,7 +228,6 @@ private class BecomingNoisyReceiver(
 
     private var registered = false
 
-
     fun register() {
         if (!registered) {
             context.registerReceiver(this, noisyIntentFilter)
@@ -231,14 +235,12 @@ private class BecomingNoisyReceiver(
         }
     }
 
-
     fun unregister() {
         if (registered) {
             context.unregisterReceiver(this)
             registered = false
         }
     }
-
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
@@ -248,6 +250,7 @@ private class BecomingNoisyReceiver(
 
 }
 
+const val UPDATE_COMMAND = "update"
 const val NETWORK_FAILURE = "service network failure"
 private const val YTAUDIO_USER_AGENT = "ytaudio.next"
 private const val MEDIA_ROOT_ID = "media_root_id"

@@ -13,15 +13,19 @@ import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.service.EMPTY_PLAYBACK_STATE
 import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.service.NOTHING_PLAYING
+import com.example.ytaudio.service.UPDATE_COMMAND
 import com.example.ytaudio.service.extensions.id
 import com.example.ytaudio.service.extensions.isPlaying
+import com.example.ytaudio.utils.LiveContentException
+import com.example.ytaudio.utils.getAudioInfo
 import com.example.ytaudio.utils.needUpdate
 import com.example.ytaudio.utils.updateInfo
-import com.github.kotvertolet.youtubejextractor.YoutubeJExtractor
 import com.github.kotvertolet.youtubejextractor.exception.ExtractionException
 import com.github.kotvertolet.youtubejextractor.exception.YoutubeRequestException
-import com.github.kotvertolet.youtubejextractor.models.youtube.videoData.YoutubeVideoData
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 
 class PlaylistViewModel(
@@ -38,6 +42,7 @@ class PlaylistViewModel(
         it?.forEach { audio ->
             if (audio.needUpdate) {
                 updateAudio(audio)
+                mediaPlaybackServiceConnection.sendCommand(UPDATE_COMMAND)
             }
         }
         it
@@ -45,10 +50,38 @@ class PlaylistViewModel(
 
     private fun updateAudio(audio: AudioInfo) {
         uiScope.launch {
-            audio.updateInfo()
-            database.update(audio)
+            try {
+                audio.updateInfo()
+                database.update(audio)
+            } catch (e: ExtractionException) {
+                showToast("Extraction failed")
+            } catch (e: YoutubeRequestException) {
+                showToast("Check your connection")
+            } catch (e: Exception) {
+                showToast()
+            }
         }
     }
+
+    fun onExtract(youtubeUrl: String) {
+        uiScope.launch {
+            try {
+                val audioInfo =
+                    getAudioInfo(youtubeUrl.takeLastWhile { it != '=' && it != '/' })
+                database.insert(audioInfo)
+                mediaPlaybackServiceConnection.sendCommand(UPDATE_COMMAND)
+            } catch (e: ExtractionException) {
+                showToast("Extraction failed")
+            } catch (e: YoutubeRequestException) {
+                showToast("Check your connection")
+            } catch (e: LiveContentException) {
+                showToast(e.message)
+            } catch (e: Exception) {
+                showToast()
+            }
+        }
+    }
+
 
     private val playbackStateObserver = Observer<PlaybackStateCompat> {
         val playbackState = it ?: EMPTY_PLAYBACK_STATE
@@ -122,65 +155,8 @@ class PlaylistViewModel(
         } ?: emptyList()
     }
 
-    private val extractor = object : YoutubeJExtractor() {
-        suspend fun getVideoData(videoId: String?): YoutubeVideoData {
-            return withContext(Dispatchers.IO) {
-                super.extract(videoId)
-            }
-        }
-    }
-
-
-    fun onExtract(youtubeUrl: String) {
-        val youtubeId = youtubeUrl.takeLastWhile { it != '=' && it != '/' }
-
-        uiScope.launch {
-            try {
-                val videoData = extractor.getVideoData(youtubeId)
-
-                if (videoData.videoDetails.isLiveContent) {
-                    showToast("live content")
-                    return@launch
-                }
-
-                val adaptiveAudioStream = videoData.streamingData.adaptiveAudioStreams.maxBy {
-                    it.averageBitrate
-                }
-
-                database.insert(videoData.run {
-                    AudioInfo(
-                        youtubeId = videoDetails.videoId,
-                        audioUrl = adaptiveAudioStream!!.url,
-                        photoUrl = videoDetails.thumbnail.thumbnails.maxBy { it.height }!!.url,
-                        audioTitle = videoDetails.title,
-                        author = videoDetails.author,
-                        authorId = videoDetails.channelId,
-                        description = videoDetails.shortDescription,
-                        keywords = videoDetails.keywords.joinToString(),
-                        viewCount = videoDetails.viewCount.toIntOrNull() ?: 0,
-                        averageRating = videoDetails.averageRating,
-                        audioFormat = adaptiveAudioStream.extension,
-                        codec = adaptiveAudioStream.codec,
-                        bitrate = adaptiveAudioStream.bitrate,
-                        averageBitrate = adaptiveAudioStream.averageBitrate,
-                        audioDurationSeconds = videoDetails.lengthSeconds.toLong(),
-                        lastUpdateTimeSeconds = System.currentTimeMillis() / 1000,
-                        urlActiveTimeSeconds = streamingData.expiresInSeconds.toLong()
-                    )
-                })
-            } catch (e: ExtractionException) {
-                showToast("Extraction failed")
-            } catch (e: YoutubeRequestException) {
-                showToast("Check your connection")
-            } catch (e: Exception) {
-                showToast("Unknown error")
-            }
-        }
-    }
-
-
-    private fun showToast(message: String) =
-        Toast.makeText(getApplication(), message, Toast.LENGTH_SHORT).show()
+    private fun showToast(message: String? = null) =
+        Toast.makeText(getApplication(), message ?: "Unknown error", Toast.LENGTH_SHORT).show()
 
     override fun onCleared() {
         super.onCleared()
