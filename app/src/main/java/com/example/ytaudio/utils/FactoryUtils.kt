@@ -1,5 +1,6 @@
 package com.example.ytaudio.utils
 
+import android.app.Activity
 import android.app.Application
 import android.content.ComponentName
 import android.content.Context
@@ -19,42 +20,24 @@ object FactoryUtils {
             ComponentName(context, MediaPlaybackService::class.java)
         )
 
-    private fun provideAudioDatabaseDao(context: Context) =
-        AudioDatabase.getInstance(context).audioDatabaseDao
+    fun provideMainActivityViewModel(activity: Activity) =
+        MainActivityViewModel.Factory(
+            AudioDatabase.getInstance(activity).audioDatabaseDao,
+            provideMediaPlaybackServiceConnection(activity)
+        )
 
-    fun provideMainActivityViewModel(context: Context): MainActivityViewModel.Factory {
-        val mediaPlaybackServiceConnection =
-            provideMediaPlaybackServiceConnection(context.applicationContext)
-        return MainActivityViewModel.Factory(mediaPlaybackServiceConnection)
-    }
-
-    fun providePlaylistViewModel(
-        audioId: String,
-        context: Context,
-        application: Application
-    ): PlaylistViewModel.Factory {
-        val mediaPlaybackServiceConnection =
-            provideMediaPlaybackServiceConnection(context)
-        val dataSource = provideAudioDatabaseDao(context)
-        return PlaylistViewModel.Factory(
+    fun providePlaylistViewModel(audioId: String, application: Application) =
+        PlaylistViewModel.Factory(
             audioId,
-            mediaPlaybackServiceConnection,
-            dataSource,
+            provideMediaPlaybackServiceConnection(application.applicationContext),
+            AudioDatabase.getInstance(application.applicationContext).audioDatabaseDao,
             application
         )
-    }
 
-    fun provideAudioPlayerViewModel(
-        context: Context,
-        application: Application
-    ): AudioPlayerViewModel.Factory {
-        val mediaPlaybackServiceConnection =
-            provideMediaPlaybackServiceConnection(context.applicationContext)
-        val dataSource = provideAudioDatabaseDao(context.applicationContext)
-        return AudioPlayerViewModel.Factory(
-            mediaPlaybackServiceConnection,
-            dataSource,
+    fun provideAudioPlayerViewModel(context: Context, application: Application) =
+        AudioPlayerViewModel.Factory(
+            provideMediaPlaybackServiceConnection(context.applicationContext),
+            AudioDatabase.getInstance(context.applicationContext).audioDatabaseDao,
             application
         )
-    }
 }

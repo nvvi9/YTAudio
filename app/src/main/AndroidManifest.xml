@@ -29,6 +29,7 @@
             android:enabled="true"
             android:exported="false">
             <intent-filter>
+                <action android:name="android.media" />
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />
                 <action android:name="android.media.browse.MediaBrowserService" />

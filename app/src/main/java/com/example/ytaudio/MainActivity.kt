@@ -12,7 +12,11 @@ import com.example.ytaudio.viewmodels.MainActivityViewModel
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: MainActivityViewModel
+    private val viewModel by lazy {
+        ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(this)).get(
+            MainActivityViewModel::class.java
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,41 +24,37 @@ class MainActivity : AppCompatActivity() {
 
         volumeControlStream = AudioManager.STREAM_MUSIC
 
-        viewModel =
-            ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(this)).get(
-                MainActivityViewModel::class.java
-            )
+        viewModel.apply {
+            navigateToFragment.observe(this@MainActivity, Observer {
+                it?.getContentIfNotHandled()?.let { request ->
+                    val transaction = supportFragmentManager.beginTransaction()
+                    transaction.replace(R.id.fragment_container, request.fragment, request.tag)
+                    if (request.addToBackStack) transaction.addToBackStack(null)
+                    transaction.commit()
+                }
+            })
 
-        viewModel.navigateToFragment.observe(this, Observer {
-            it?.getContentIfNotHandled()?.let { request ->
-                val transaction = supportFragmentManager.beginTransaction()
-                transaction.replace(R.id.fragment_container, request.fragment, request.tag)
-                if (request.addToBackStack) transaction.addToBackStack(null)
-                transaction.commit()
-            }
-        })
+            navigateToPlaylist.observe(this@MainActivity, Observer {
+                it?.getContentIfNotHandled()?.let { audioId ->
+                    navigateToPlaylist(audioId)
+                }
+            })
 
+            rootMediaId.observe(this@MainActivity, Observer {
+                it?.let {
+                    navigateToPlaylist(it)
+                }
+            })
 
-        viewModel.navigateToPlaylist.observe(this, Observer {
-            it?.getContentIfNotHandled()?.let { audioId ->
-                navigateToPlaylist(audioId)
-            }
-        })
-
-        viewModel.rootMediaId.observe(this, Observer {
-            it?.let {
-                navigateToPlaylist(it)
-            }
-        })
-
-        viewModel.navigateToAudioPlayer.observe(this, Observer {
-            it?.getContentIfNotHandled()?.let { request ->
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, request.fragment, request.tag)
-                    .addToBackStack(null)
-                    .commit()
-            }
-        })
+            navigateToAudioPlayer.observe(this@MainActivity, Observer {
+                it?.getContentIfNotHandled()?.let { request ->
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, request.fragment, request.tag)
+                        .addToBackStack(null)
+                        .commit()
+                }
+            })
+        }
     }
 
     private fun navigateToPlaylist(audioId: String) {

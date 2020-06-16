@@ -4,28 +4,15 @@ import android.app.Application
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.widget.Toast
 import androidx.lifecycle.*
 import com.example.ytaudio.AudioItem
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioDatabaseDao
-import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.service.EMPTY_PLAYBACK_STATE
 import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.service.NOTHING_PLAYING
-import com.example.ytaudio.service.UPDATE_COMMAND
 import com.example.ytaudio.service.extensions.id
 import com.example.ytaudio.service.extensions.isPlaying
-import com.example.ytaudio.utils.LiveContentException
-import com.example.ytaudio.utils.getAudioInfo
-import com.example.ytaudio.utils.needUpdate
-import com.example.ytaudio.utils.updateInfo
-import com.github.kotvertolet.youtubejextractor.exception.ExtractionException
-import com.github.kotvertolet.youtubejextractor.exception.YoutubeRequestException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 
 class PlaylistViewModel(
@@ -34,54 +21,6 @@ class PlaylistViewModel(
     val database: AudioDatabaseDao,
     application: Application
 ) : AndroidViewModel(application) {
-
-    private val viewModelJob = Job()
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-
-    private val audioInfoList = Transformations.map(database.getAllAudio()) {
-        it?.forEach { audio ->
-            if (audio.needUpdate) {
-                updateAudio(audio)
-                mediaPlaybackServiceConnection.sendCommand(UPDATE_COMMAND)
-            }
-        }
-        it
-    }.observeForever {}
-
-    private fun updateAudio(audio: AudioInfo) {
-        uiScope.launch {
-            try {
-                audio.updateInfo()
-                database.update(audio)
-            } catch (e: ExtractionException) {
-                showToast("Extraction failed")
-            } catch (e: YoutubeRequestException) {
-                showToast("Check your connection")
-            } catch (e: Exception) {
-                showToast()
-            }
-        }
-    }
-
-    fun onExtract(youtubeUrl: String) {
-        uiScope.launch {
-            try {
-                val audioInfo =
-                    getAudioInfo(youtubeUrl.takeLastWhile { it != '=' && it != '/' })
-                database.insert(audioInfo)
-                mediaPlaybackServiceConnection.sendCommand(UPDATE_COMMAND)
-            } catch (e: ExtractionException) {
-                showToast("Extraction failed")
-            } catch (e: YoutubeRequestException) {
-                showToast("Check your connection")
-            } catch (e: LiveContentException) {
-                showToast(e.message)
-            } catch (e: Exception) {
-                showToast()
-            }
-        }
-    }
-
 
     private val playbackStateObserver = Observer<PlaybackStateCompat> {
         val playbackState = it ?: EMPTY_PLAYBACK_STATE
@@ -125,10 +64,10 @@ class PlaylistViewModel(
         }
     }
 
-    private val mediaPlaybackServiceConnection = mediaPlaybackServiceConnection.also {
-        it.subscribe(audioId, subscriptionCallback)
-        it.playbackState.observeForever(playbackStateObserver)
-        it.nowPlaying.observeForever(mediaMetadataObserver)
+    private val mediaPlaybackServiceConnection = mediaPlaybackServiceConnection.apply {
+        subscribe(audioId, subscriptionCallback)
+        playbackState.observeForever(playbackStateObserver)
+        nowPlaying.observeForever(mediaMetadataObserver)
     }
 
     private fun getPlaybackStatus(audioId: String): Int {
@@ -155,17 +94,12 @@ class PlaylistViewModel(
         } ?: emptyList()
     }
 
-    private fun showToast(message: String? = null) =
-        Toast.makeText(getApplication(), message ?: "Unknown error", Toast.LENGTH_SHORT).show()
-
     override fun onCleared() {
         super.onCleared()
 
         mediaPlaybackServiceConnection.playbackState.removeObserver(playbackStateObserver)
         mediaPlaybackServiceConnection.nowPlaying.removeObserver(mediaMetadataObserver)
         mediaPlaybackServiceConnection.unsubscribe(audioId, subscriptionCallback)
-
-        viewModelJob.cancel()
     }
 
 
@@ -187,3 +121,5 @@ class PlaylistViewModel(
         }
     }
 }
+
+private const val LOG_TAG = "PlaylistViewModel"

@@ -5,13 +5,13 @@ import com.github.kotvertolet.youtubejextractor.YoutubeJExtractor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-private val extractor = YoutubeJExtractor()
 
 val AudioInfo.needUpdate: Boolean
     get() = System.currentTimeMillis() >= (lastUpdateTimeSeconds + urlActiveTimeSeconds - audioDurationSeconds * 2) * 1000
 
 suspend fun AudioInfo.updateInfo() {
     withContext(Dispatchers.IO) {
+        val extractor = YoutubeJExtractor()
         val videoData = extractor.extract(youtubeId)
         val adaptiveAudioStream =
             videoData.streamingData.adaptiveAudioStreams.maxBy { it.averageBitrate }
@@ -37,6 +37,7 @@ suspend fun AudioInfo.updateInfo() {
 }
 
 suspend fun getAudioInfo(youtubeId: String) = withContext(Dispatchers.IO) {
+    val extractor = YoutubeJExtractor()
     val videoData = extractor.extract(youtubeId)
 
     if (videoData.videoDetails.isLiveContent) {

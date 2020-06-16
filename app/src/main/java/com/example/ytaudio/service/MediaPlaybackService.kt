@@ -117,7 +117,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
             when (command) {
                 UPDATE_COMMAND -> {
                     notifyChildrenChanged(MEDIA_ROOT_ID)
-                    Log.i(javaClass.simpleName, "notifyChildrenChanged called")
+                    Log.i(LOG_TAG, "handled $UPDATE_COMMAND command")
                 }
             }
         }
@@ -213,7 +213,7 @@ private class QueueNavigator(mediaSession: MediaSessionCompat) :
 
     private val window = Timeline.Window()
 
-    override fun getMediaDescription(player: Player, windowIndex: Int): MediaDescriptionCompat =
+    override fun getMediaDescription(player: Player, windowIndex: Int) =
         player.currentTimeline.getWindow(windowIndex, window, true).tag as MediaDescriptionCompat
 }
 
@@ -254,3 +254,4 @@ const val NETWORK_FAILURE = "service network failure"
 private const val YTAUDIO_USER_AGENT = "ytaudio.next"
 private const val MEDIA_ROOT_ID = "media_root_id"
 private const val EMPTY_MEDIA_ROOT_ID = "empty_root_id"
+private const val LOG_TAG = "MediaPlaybackService"

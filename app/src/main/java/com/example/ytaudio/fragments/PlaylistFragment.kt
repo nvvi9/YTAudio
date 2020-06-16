@@ -56,15 +56,18 @@ class PlaylistFragment : Fragment() {
 
             linkText.setEndIconOnClickListener {
                 if (!binding.linkText.editText?.text.isNullOrBlank()) {
-                    this@PlaylistFragment.playlistViewModel.onExtract(binding.linkText.editText!!.text.toString())
+                    this@PlaylistFragment.mainActivityViewModel.onExtract(binding.linkText.editText!!.text.toString())
                     it.hideKeyboard()
                     binding.linkText.editText!!.text.clear()
                 }
             }
 
             linkText.editText!!.setOnKeyListener { v, keyCode, event ->
-                if (!(v as TextInputEditText).text.isNullOrBlank() && keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
-                    this@PlaylistFragment.playlistViewModel.onExtract(v.text.toString())
+                if (!(v as TextInputEditText).text.isNullOrBlank() &&
+                    keyCode == KeyEvent.KEYCODE_ENTER &&
+                    event.action == KeyEvent.ACTION_UP
+                ) {
+                    this@PlaylistFragment.mainActivityViewModel.onExtract(v.text.toString())
                     v.hideKeyboard()
                     v.text?.clear()
                     return@setOnKeyListener true
@@ -88,7 +91,7 @@ class PlaylistFragment : Fragment() {
 
         playlistViewModel = ViewModelProvider(
             this,
-            FactoryUtils.providePlaylistViewModel(audioId, context, application)
+            FactoryUtils.providePlaylistViewModel(audioId, application)
         ).get(PlaylistViewModel::class.java)
 
         mainActivityViewModel =
