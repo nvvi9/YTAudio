@@ -17,7 +17,7 @@ import java.net.URL
 
 
 class NotificationManager(
-    private val context: Context,
+    context: Context,
     private val player: ExoPlayer,
     sessionToken: MediaSessionCompat.Token,
     notificationListener: PlayerNotificationManager.NotificationListener
@@ -54,7 +54,6 @@ class NotificationManager(
     fun showNotification() {
         playerNotificationManager.setPlayer(player)
     }
-
 
     private inner class DescriptionAdapter(private val controller: MediaControllerCompat) :
         PlayerNotificationManager.MediaDescriptionAdapter {
@@ -101,23 +100,8 @@ class NotificationManager(
                 }
             }
         }
-
-//        private suspend fun resolveUriAsBitmap(uri: Uri): Bitmap? {
-//            return withContext(Dispatchers.IO) {
-//                val parcelFileDescriptor =
-//                    context.contentResolver.openFileDescriptor(uri, MODE_READ_ONLY)
-//                        ?: return@withContext null
-//
-//                val fileDescriptor = parcelFileDescriptor.fileDescriptor
-//
-//                BitmapFactory.decodeFileDescriptor(fileDescriptor).apply {
-//                    parcelFileDescriptor.close()
-//                }
-//            }
-//        }
     }
 }
 
 const val NOW_PLAYING_CHANNEL = "channel"
 const val NOW_PLAYING_NOTIFICATION = 111
-private const val MODE_READ_ONLY = "r"
