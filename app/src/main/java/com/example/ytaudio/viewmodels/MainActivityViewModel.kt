@@ -43,14 +43,10 @@ class MainActivityViewModel(
     val navigateToPlaylist: LiveData<Event<String>>
         get() = _navigateToPlaylist
 
-
     private val _navigateToFragment = MutableLiveData<Event<FragmentNavigationRequest>>()
     val navigateToFragment: LiveData<Event<FragmentNavigationRequest>>
         get() = _navigateToFragment
 
-    private val _navigateToAudioPlayer = MutableLiveData<Event<FragmentNavigationRequest>>()
-    val navigateToAudioPlayer: LiveData<Event<FragmentNavigationRequest>>
-        get() = _navigateToAudioPlayer
 
     fun audioItemClicked(audioItem: AudioItem) {
         playAudio(audioItem, false)
@@ -59,11 +55,9 @@ class MainActivityViewModel(
 
     fun showFragment(fragment: Fragment, addToBackStack: Boolean = true, tag: String? = null) {
         _navigateToFragment.value = Event(FragmentNavigationRequest(fragment, addToBackStack, tag))
-        _navigateToAudioPlayer.value =
-            Event(FragmentNavigationRequest(fragment, addToBackStack, tag))
     }
 
-    fun playAudio(audioItem: AudioItem, pauseAllowed: Boolean) {
+    private fun playAudio(audioItem: AudioItem, pauseAllowed: Boolean) {
         val nowPlaying = mediaPlaybackServiceConnection.nowPlaying.value
         val transportControls = mediaPlaybackServiceConnection.transportControls
 
@@ -111,16 +105,15 @@ class MainActivityViewModel(
     private val nowUpdatingAudioInfoSet = mutableSetOf<AudioInfo>()
 
     private fun updateAudio(audio: AudioInfo) {
-        if (!nowUpdatingAudioInfoSet.contains(audio)) {
+        if (nowUpdatingAudioInfoSet.add(audio)) {
             uiScope.launch {
                 try {
-                    nowUpdatingAudioInfoSet.add(audio)
                     audio.updateInfo()
                     database.update(audio)
                     nowUpdatingAudioInfoSet.remove(audio)
                     Log.i(LOG_TAG, "${audio.audioTitle} updated")
-                    Log.i(LOG_TAG, "Sending $UPDATE_COMMAND command")
                     mediaPlaybackServiceConnection.sendCommand(UPDATE_COMMAND)
+                    Log.i(LOG_TAG, "Sending $UPDATE_COMMAND command")
                 } catch (e: ExtractionException) {
                     showToast("Extraction failed")
                 } catch (e: YoutubeRequestException) {
@@ -139,8 +132,9 @@ class MainActivityViewModel(
                     getAudioInfo(youtubeUrl.takeLastWhile { it != '=' && it != '/' })
                 database.insert(audioInfo)
                 Log.i(LOG_TAG, "${audioInfo.audioTitle} added")
-                Log.i(LOG_TAG, "Sending $UPDATE_COMMAND command")
                 mediaPlaybackServiceConnection.sendCommand(UPDATE_COMMAND)
+                Log.i(LOG_TAG, "Sending $UPDATE_COMMAND command")
+
             } catch (e: ExtractionException) {
                 showToast("Extraction failed")
             } catch (e: YoutubeRequestException) {

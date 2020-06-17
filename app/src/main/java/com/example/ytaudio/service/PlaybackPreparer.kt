@@ -6,6 +6,7 @@ import android.os.ResultReceiver
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import com.example.ytaudio.service.extensions.id
+import com.example.ytaudio.service.extensions.title
 import com.example.ytaudio.service.extensions.toMediaSource
 import com.example.ytaudio.service.library.AudioSource
 import com.google.android.exoplayer2.ControlDispatcher
@@ -34,7 +35,7 @@ class PlaybackPreparer(
             }
 
             itemToPlay?.let { item ->
-                val metadataList = audioSource.sortedBy { it.id }
+                val metadataList = audioSource.sortedBy { it.title }
                 val mediaSource = metadataList.toMediaSource(dataSourceFactory)
                 val initialWindowIndex = metadataList.indexOf(item)
 

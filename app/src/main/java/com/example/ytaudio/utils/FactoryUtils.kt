@@ -26,9 +26,9 @@ object FactoryUtils {
             provideMediaPlaybackServiceConnection(activity)
         )
 
-    fun providePlaylistViewModel(audioId: String, application: Application) =
+    fun providePlaylistViewModel(mediaId: String, application: Application) =
         PlaylistViewModel.Factory(
-            audioId,
+            mediaId,
             provideMediaPlaybackServiceConnection(application.applicationContext),
             AudioDatabase.getInstance(application.applicationContext).audioDatabaseDao,
             application

@@ -40,6 +40,7 @@ class MediaPlaybackServiceConnection(val context: Context, serviceComponent: Com
     ).apply { connect() }
 
     private val mediaControllerCallback = object : MediaControllerCompat.Callback() {
+
         override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
             playbackState.postValue(state ?: EMPTY_PLAYBACK_STATE)
         }
@@ -80,6 +81,7 @@ class MediaPlaybackServiceConnection(val context: Context, serviceComponent: Com
     ) = if (mediaBrowser.isConnected) {
         MediaControllerCompat.getMediaController(context as Activity)
             .sendCommand(command, parameters, object : ResultReceiver(Handler()) {
+
                 override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
                     resultCallback(resultCode, resultData)
                 }

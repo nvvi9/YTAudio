@@ -45,15 +45,6 @@ class MainActivity : AppCompatActivity() {
                     navigateToPlaylist(it)
                 }
             })
-
-            navigateToAudioPlayer.observe(this@MainActivity, Observer {
-                it?.getContentIfNotHandled()?.let { request ->
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, request.fragment, request.tag)
-                        .addToBackStack(null)
-                        .commit()
-                }
-            })
         }
     }
 
