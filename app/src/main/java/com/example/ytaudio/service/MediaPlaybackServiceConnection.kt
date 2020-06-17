@@ -1,5 +1,6 @@
 package com.example.ytaudio.service
 
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.os.Bundle
@@ -14,10 +15,9 @@ import androidx.lifecycle.MutableLiveData
 import com.example.ytaudio.service.extensions.id
 
 
-class MediaPlaybackServiceConnection(context: Context, serviceComponent: ComponentName) {
+class MediaPlaybackServiceConnection(val context: Context, serviceComponent: ComponentName) {
     val isConnected = MutableLiveData<Boolean>().apply { postValue(false) }
     val networkFailure = MutableLiveData<Boolean>().apply { postValue(false) }
-
     val rootMediaId: String
         get() = mediaBrowser.root
 
@@ -29,6 +29,8 @@ class MediaPlaybackServiceConnection(context: Context, serviceComponent: Compone
     val transportControls: MediaControllerCompat.TransportControls
         get() = mediaController.transportControls
 
+    lateinit var mediaController: MediaControllerCompat
+
     private val mediaBrowserConnectionCallback = MediaBrowserConnectionCallback(context)
     private val mediaBrowser = MediaBrowserCompat(
         context,
@@ -37,57 +39,8 @@ class MediaPlaybackServiceConnection(context: Context, serviceComponent: Compone
         null
     ).apply { connect() }
 
-    private lateinit var mediaController: MediaControllerCompat
+    private val mediaControllerCallback = object : MediaControllerCompat.Callback() {
 
-
-    fun subscribe(parentId: String, callback: MediaBrowserCompat.SubscriptionCallback) {
-        mediaBrowser.subscribe(parentId, callback)
-    }
-
-    fun unsubscribe(parentId: String, callback: MediaBrowserCompat.SubscriptionCallback) {
-        mediaBrowser.unsubscribe(parentId, callback)
-    }
-
-    fun sendCommand(command: String, parameters: Bundle?) =
-        sendCommand(command, parameters) { _, _ -> Unit }
-
-    fun sendCommand(
-        command: String,
-        parameters: Bundle?,
-        resultCallback: ((Int, Bundle?) -> Unit)
-    ) = if (mediaBrowser.isConnected) {
-        mediaController.sendCommand(command, parameters, object : ResultReceiver(Handler()) {
-            override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
-                resultCallback(resultCode, resultData)
-            }
-        })
-        true
-    } else {
-        false
-    }
-
-
-    private inner class MediaBrowserConnectionCallback(private val context: Context) :
-        MediaBrowserCompat.ConnectionCallback() {
-
-        override fun onConnected() {
-            mediaController = MediaControllerCompat(context, mediaBrowser.sessionToken).apply {
-                registerCallback(MediaControllerCallback())
-            }
-            isConnected.postValue(true)
-        }
-
-        override fun onConnectionSuspended() {
-            isConnected.postValue(false)
-        }
-
-        override fun onConnectionFailed() {
-            isConnected.postValue(false)
-        }
-    }
-
-
-    private inner class MediaControllerCallback : MediaControllerCompat.Callback() {
         override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
             playbackState.postValue(state ?: EMPTY_PLAYBACK_STATE)
         }
@@ -103,13 +56,59 @@ class MediaPlaybackServiceConnection(context: Context, serviceComponent: Compone
             }
         }
 
-        override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {
-        }
+        override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {}
 
         override fun onSessionDestroyed() {
             mediaBrowserConnectionCallback.onConnectionSuspended()
         }
     }
+
+    fun subscribe(parentId: String, callback: MediaBrowserCompat.SubscriptionCallback) {
+        mediaBrowser.subscribe(parentId, callback)
+    }
+
+    fun unsubscribe(parentId: String, callback: MediaBrowserCompat.SubscriptionCallback) {
+        mediaBrowser.unsubscribe(parentId, callback)
+    }
+
+    fun sendCommand(command: String, parameters: Bundle? = null) =
+        sendCommand(command, parameters) { _, _ -> }
+
+    private fun sendCommand(
+        command: String,
+        parameters: Bundle?,
+        resultCallback: ((Int, Bundle?) -> Unit)
+    ) = if (mediaBrowser.isConnected) {
+        mediaController.sendCommand(command, parameters, object : ResultReceiver(Handler()) {
+            override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
+                resultCallback(resultCode, resultData)
+            }
+        })
+        true
+    } else {
+        false
+    }
+
+    private inner class MediaBrowserConnectionCallback(private val context: Context) :
+        MediaBrowserCompat.ConnectionCallback() {
+
+        override fun onConnected() {
+            mediaController = MediaControllerCompat(context, mediaBrowser.sessionToken).apply {
+                registerCallback(mediaControllerCallback)
+                MediaControllerCompat.setMediaController(context as Activity, this)
+            }
+            isConnected.postValue(true)
+        }
+
+        override fun onConnectionSuspended() {
+            isConnected.postValue(false)
+        }
+
+        override fun onConnectionFailed() {
+            isConnected.postValue(false)
+        }
+    }
+
 
     companion object {
         @Volatile

@@ -12,14 +12,12 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import kotlinx.coroutines.*
-
-const val NOW_PLAYING_CHANNEL = "com.example.ytaudio.service.NOW_PLAYING"
-const val NOW_PLAYING_NOTIFICATION = 0xb339
-private const val MODE_READ_ONLY = "r"
+import java.io.IOException
+import java.net.URL
 
 
 class NotificationManager(
-    private val context: Context,
+    context: Context,
     private val player: ExoPlayer,
     sessionToken: MediaSessionCompat.Token,
     notificationListener: PlayerNotificationManager.NotificationListener
@@ -27,14 +25,15 @@ class NotificationManager(
 
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
-    private val notificationManager: PlayerNotificationManager
+    private val playerNotificationManager: PlayerNotificationManager
 
     init {
         val mediaController = MediaControllerCompat(context, sessionToken)
 
-        notificationManager = PlayerNotificationManager(
+        playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
             context,
             NOW_PLAYING_CHANNEL,
+            R.string.notification_channel,
             NOW_PLAYING_NOTIFICATION,
             DescriptionAdapter(mediaController),
             notificationListener
@@ -48,14 +47,13 @@ class NotificationManager(
 
 
     fun hideNotification() {
-        notificationManager.setPlayer(null)
+        playerNotificationManager.setPlayer(null)
     }
 
 
     fun showNotification() {
-        notificationManager.setPlayer(player)
+        playerNotificationManager.setPlayer(player)
     }
-
 
     private inner class DescriptionAdapter(private val controller: MediaControllerCompat) :
         PlayerNotificationManager.MediaDescriptionAdapter {
@@ -63,18 +61,18 @@ class NotificationManager(
         var currentIconUri: Uri? = null
         var bitmap: Bitmap? = null
 
-        override fun createCurrentContentIntent(player: Player): PendingIntent? =
+        override fun createCurrentContentIntent(player: Player?): PendingIntent? =
             controller.sessionActivity
 
-        override fun getCurrentContentText(player: Player) =
+        override fun getCurrentContentText(player: Player?) =
             controller.metadata.description.subtitle.toString()
 
-        override fun getCurrentContentTitle(player: Player) =
+        override fun getCurrentContentTitle(player: Player?) =
             controller.metadata.description.title.toString()
 
         override fun getCurrentLargeIcon(
-            player: Player,
-            callback: PlayerNotificationManager.BitmapCallback
+            player: Player?,
+            callback: PlayerNotificationManager.BitmapCallback?
         ): Bitmap? {
             val iconUri = controller.metadata.description.iconUri
 
@@ -84,7 +82,7 @@ class NotificationManager(
                     bitmap = iconUri?.let {
                         resolveUriAsBitmap(it)
                     }
-                    bitmap?.let { callback.onBitmap(it) }
+                    callback?.onBitmap(bitmap)
                 }
                 null
             } else {
@@ -94,16 +92,16 @@ class NotificationManager(
 
         private suspend fun resolveUriAsBitmap(uri: Uri): Bitmap? {
             return withContext(Dispatchers.IO) {
-                val parcelFileDescriptor =
-                    context.contentResolver.openFileDescriptor(uri, MODE_READ_ONLY)
-                        ?: return@withContext null
-
-                val fileDescriptor = parcelFileDescriptor.fileDescriptor
-
-                BitmapFactory.decodeFileDescriptor(fileDescriptor).apply {
-                    parcelFileDescriptor.close()
+                try {
+                    val url = URL(uri.toString())
+                    BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                } catch (e: IOException) {
+                    null
                 }
             }
         }
     }
 }
+
+const val NOW_PLAYING_CHANNEL = "channel"
+const val NOW_PLAYING_NOTIFICATION = 111

@@ -9,85 +9,44 @@
         android:padding="8dp">
 
 
-        <ImageButton
-            android:id="@+id/button_play"
-            style="@style/Widget.AppCompat.ImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:background="@android:color/transparent"
-            android:clickable="false"
-            android:contentDescription="@string/button_play_description"
-            android:src="@android:drawable/ic_media_play"
-            android:text="@string/button_play_text"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:src="@android:drawable/ic_media_play" />
-
-        <ImageButton
-            android:id="@+id/button_pause"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:background="@android:color/transparent"
-            android:clickable="false"
-            android:contentDescription="@string/button_pause_description"
-            android:soundEffectsEnabled="false"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@android:drawable/ic_media_pause"
-            tools:srcCompat="@android:drawable/ic_media_pause" />
-
-        <SeekBar
-            android:id="@+id/seekbar_audio"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/button_play" />
-
         <TextView
             android:id="@+id/current_time_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:text="@string/time_zero_text"
             android:textSize="16sp"
-            app:layout_constraintEnd_toStartOf="@+id/left_time_text"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/left_time_text"
+            app:layout_constraintBottom_toTopOf="@+id/duration_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/text_title"
+            app:layout_constraintVertical_chainStyle="spread"
             tools:text="@string/time_zero_text" />
 
         <TextView
-            android:id="@+id/left_time_text"
+            android:id="@+id/duration_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/time_zero_text"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/seekbar_audio"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/current_time_text"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/text_author"
+            app:layout_constraintEnd_toEndOf="@+id/current_time_text"
+            app:layout_constraintStart_toStartOf="@+id/current_time_text"
+            app:layout_constraintTop_toBottomOf="@+id/current_time_text"
             tools:text="@string/time_zero_text" />
 
         <ImageView
-            android:id="@+id/photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
             android:layout_margin="16dp"
             android:contentDescription="@string/photo_description"
-            app:layout_constraintBottom_toTopOf="@+id/text_title"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:srcCompat="@drawable/ic_launcher_background" />
+            app:layout_constraintBottom_toTopOf="@+id/audio_button"
+            tools:layout_editor_absoluteX="8dp"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
         <TextView
             android:id="@+id/text_title"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:ellipsize="marquee"
@@ -100,9 +59,34 @@
             android:textColorHighlight="@android:color/secondary_text_dark_nodisable"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/left_time_text"
-            tools:layout_editor_absoluteX="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/text_author"
+            app:layout_constraintEnd_toStartOf="@+id/current_time_text"
+            app:layout_constraintStart_toEndOf="@+id/audio_button"
+            app:layout_constraintTop_toTopOf="@+id/audio_button"
+            app:layout_constraintVertical_chainStyle="spread"
             tools:text="some title here" />
+
+        <TextView
+            android:id="@+id/text_author"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/audio_button"
+            app:layout_constraintEnd_toEndOf="@+id/text_title"
+            app:layout_constraintStart_toStartOf="@+id/text_title"
+            app:layout_constraintTop_toBottomOf="@+id/text_title"
+            tools:text="author" />
+
+        <ImageButton
+            android:id="@+id/audio_button"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/audio_button_description"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_play_arrow_black" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

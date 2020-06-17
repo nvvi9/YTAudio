@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.ytaudio.screens.playlist.PlaylistViewModel" />
+            type="com.example.ytaudio.viewmodels.PlaylistViewModel" />
     </data>
 
 
@@ -56,6 +56,28 @@
             app:layout_constraintStart_toStartOf="@+id/appBarLayout"
             app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
             tools:listitem="@layout/item_playlist" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/playlist_view" />
+
+        <ImageView
+            android:id="@+id/network_failure"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:contentDescription="@string/network_failure_description"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/playlist_view"
+            app:srcCompat="@drawable/ic_wifi_off_white" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

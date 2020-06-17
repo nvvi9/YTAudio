@@ -14,5 +14,5 @@ class Event<out T>(private val content: T) {
         }
     }
 
-    fun peelContent(): T = content
+    fun peekContent(): T = content
 }

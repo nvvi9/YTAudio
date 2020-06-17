@@ -7,7 +7,7 @@ buildscript {
         navigation_version = '2.2.2'
         jextractor_version = '0.2.8'
         room_version = '2.2.5'
-        exoplayer_version = '2.11.4'
+        exoplayer_version = '2.10.0'
     }
     repositories {
         google()

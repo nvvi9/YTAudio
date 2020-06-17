@@ -17,4 +17,6 @@
     <string name="notification_pause">pause</string>
     <string name="notification_channel">now playing</string>
     <string name="notification_channel_description">shows what music is playing</string>
+    <string name="audio_button_description">managing playback state button</string>
+    <string name="network_failure_description">appears when network failure is happening</string>
 </resources>

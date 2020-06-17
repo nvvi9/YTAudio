@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.RatingCompat
 import androidx.core.net.toUri
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -74,7 +75,7 @@ inline val MediaMetadataCompat.userRating
     get() = getLong(MediaMetadataCompat.METADATA_KEY_USER_RATING)
 
 inline val MediaMetadataCompat.rating
-    get() = getLong(MediaMetadataCompat.METADATA_KEY_RATING)
+    get() = getString(MediaMetadataCompat.METADATA_KEY_RATING)
 
 inline val MediaMetadataCompat.displayTitle: String?
     get() = getString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE)
@@ -120,10 +121,10 @@ inline var MediaMetadataCompat.Builder.artist: String
         putString(MediaMetadataCompat.METADATA_KEY_ARTIST, value)
     }
 
-inline var MediaMetadataCompat.Builder.duration: String
+inline var MediaMetadataCompat.Builder.duration: Long
     get() = throw IllegalAccessException(GET_ERROR)
     set(value) {
-        putString(MediaMetadataCompat.METADATA_KEY_DURATION, value)
+        putLong(MediaMetadataCompat.METADATA_KEY_DURATION, value)
     }
 
 inline var MediaMetadataCompat.Builder.mediaUri: String
@@ -156,10 +157,10 @@ inline var MediaMetadataCompat.Builder.trackNumber: Long
         putLong(MediaMetadataCompat.METADATA_KEY_TRACK_NUMBER, value)
     }
 
-inline var MediaMetadataCompat.Builder.rating: Long
+inline var MediaMetadataCompat.Builder.rating: RatingCompat
     get() = throw IllegalAccessException(GET_ERROR)
     set(value) {
-        putLong(MediaMetadataCompat.METADATA_KEY_RATING, value)
+        putRating(MediaMetadataCompat.METADATA_KEY_RATING, value)
     }
 
 inline var MediaMetadataCompat.Builder.downloadStatus: Long

@@ -6,6 +6,7 @@ import android.os.ResultReceiver
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import com.example.ytaudio.service.extensions.id
+import com.example.ytaudio.service.extensions.title
 import com.example.ytaudio.service.extensions.toMediaSource
 import com.example.ytaudio.service.library.AudioSource
 import com.google.android.exoplayer2.ControlDispatcher
@@ -27,16 +28,14 @@ class PlaybackPreparer(
                 PlaybackStateCompat.ACTION_PREPARE_FROM_SEARCH or
                 PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
 
-    override fun onPrepare(playWhenReady: Boolean) = Unit
-
-    override fun onPrepareFromMediaId(mediaId: String, playWhenReady: Boolean, extras: Bundle) {
+    override fun onPrepareFromMediaId(mediaId: String?, extras: Bundle?) {
         audioSource.whenReady {
             val itemToPlay = audioSource.find { item ->
                 item.id == mediaId
             }
 
             itemToPlay?.let { item ->
-                val metadataList = audioSource.sortedBy { it.id }
+                val metadataList = audioSource.sortedBy { it.title }
                 val mediaSource = metadataList.toMediaSource(dataSourceFactory)
                 val initialWindowIndex = metadataList.indexOf(item)
 
@@ -46,10 +45,6 @@ class PlaybackPreparer(
         }
     }
 
-    override fun onPrepareFromUri(uri: Uri, playWhenReady: Boolean, extras: Bundle) = Unit
-
-    override fun onPrepareFromSearch(query: String, playWhenReady: Boolean, extras: Bundle) = Unit
-
     override fun onCommand(
         player: Player,
         controlDispatcher: ControlDispatcher,
@@ -57,4 +52,8 @@ class PlaybackPreparer(
         extras: Bundle?,
         cb: ResultReceiver?
     ) = false
+
+    override fun onPrepare() = Unit
+    override fun onPrepareFromSearch(query: String?, extras: Bundle?) = Unit
+    override fun onPrepareFromUri(uri: Uri?, extras: Bundle?) = Unit
 }

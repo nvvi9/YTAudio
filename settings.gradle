@@ -1,3 +1,2 @@
-include ':service'
 rootProject.name='YTAudio'
 include ':app'
