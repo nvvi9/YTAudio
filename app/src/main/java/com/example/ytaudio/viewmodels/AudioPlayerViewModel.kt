@@ -10,15 +10,10 @@ import android.text.format.DateUtils
 import androidx.lifecycle.*
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioDatabaseDao
-import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.service.EMPTY_PLAYBACK_STATE
 import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.service.NOTHING_PLAYING
 import com.example.ytaudio.service.extensions.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 class AudioPlayerViewModel(
     mediaPlaybackServiceConnection: MediaPlaybackServiceConnection,
@@ -87,37 +82,12 @@ class AudioPlayerViewModel(
         )
     }
 
-
-    private val viewModelJob = Job()
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-
-    private val _isAudioInfoInitialized = MutableLiveData(false)
-    val isAudioInfoInitialized: LiveData<Boolean>
-        get() = _isAudioInfoInitialized
-
-
-    var audioInfo: AudioInfo? = null
-
-
-    fun getAudioInfoFromDatabase(id: Long) {
-        uiScope.launch {
-            audioInfo = database.get(id)
-            _isAudioInfoInitialized.value = true
-        }
-    }
-
-    fun initializationDone() {
-        _isAudioInfoInitialized.value = false
-    }
-
     override fun onCleared() {
         super.onCleared()
 
         mediaPlaybackServiceConnection.playbackState.removeObserver(playbackStateObserver)
         mediaPlaybackServiceConnection.nowPlaying.removeObserver(mediaMetadataObserver)
         updatePosition = false
-
-        viewModelJob.cancel()
     }
 
     class Factory(

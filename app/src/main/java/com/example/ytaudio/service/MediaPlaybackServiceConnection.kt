@@ -79,13 +79,11 @@ class MediaPlaybackServiceConnection(val context: Context, serviceComponent: Com
         parameters: Bundle?,
         resultCallback: ((Int, Bundle?) -> Unit)
     ) = if (mediaBrowser.isConnected) {
-        MediaControllerCompat.getMediaController(context as Activity)
-            .sendCommand(command, parameters, object : ResultReceiver(Handler()) {
-
-                override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
-                    resultCallback(resultCode, resultData)
-                }
-            })
+        mediaController.sendCommand(command, parameters, object : ResultReceiver(Handler()) {
+            override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
+                resultCallback(resultCode, resultData)
+            }
+        })
         true
     } else {
         false
