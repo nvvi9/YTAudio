@@ -24,28 +24,20 @@ class MainActivity : AppCompatActivity() {
 
         volumeControlStream = AudioManager.STREAM_MUSIC
 
-        viewModel.apply {
-            navigateToFragment.observe(this@MainActivity, Observer {
-                it?.getContentIfNotHandled()?.let { request ->
-                    val transaction = supportFragmentManager.beginTransaction()
-                    transaction.replace(R.id.fragment_container, request.fragment, request.tag)
-                    if (request.addToBackStack) transaction.addToBackStack(null)
-                    transaction.commit()
-                }
-            })
+        viewModel.navigateToFragment.observe(this@MainActivity, Observer {
+            it?.getContentIfNotHandled()?.let { request ->
+                val transaction = supportFragmentManager.beginTransaction()
+                transaction.replace(R.id.fragment_container, request.fragment, request.tag)
+                if (request.addToBackStack) transaction.addToBackStack(null)
+                transaction.commit()
+            }
+        })
 
-            navigateToPlaylist.observe(this@MainActivity, Observer {
-                it?.getContentIfNotHandled()?.let { audioId ->
-                    navigateToPlaylist(audioId)
-                }
-            })
-
-            rootMediaId.observe(this@MainActivity, Observer {
-                it?.let {
-                    navigateToPlaylist(it)
-                }
-            })
-        }
+        viewModel.rootMediaId.observe(this@MainActivity, Observer {
+            it?.let {
+                navigateToPlaylist(it)
+            }
+        })
     }
 
     private fun navigateToPlaylist(audioId: String) {

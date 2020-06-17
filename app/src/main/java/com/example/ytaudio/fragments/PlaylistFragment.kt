@@ -82,7 +82,6 @@ class PlaylistFragment : Fragment() {
         return binding.root
     }
 
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -99,10 +98,10 @@ class PlaylistFragment : Fragment() {
             ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(context))
                 .get(MainActivityViewModel::class.java)
 
-        playlistViewModel.audioItemList.observe(viewLifecycleOwner, Observer {
+        playlistViewModel.audioItemList.observe(viewLifecycleOwner, Observer { list ->
             binding.progressBarSpinner.visibility =
-                if (it.isNotEmpty()) View.INVISIBLE else View.VISIBLE
-            playlistAdapter.submitList(it)
+                if (list.isNotEmpty()) View.INVISIBLE else View.VISIBLE
+            playlistAdapter.submitList(list.sortedBy { it.title })
         })
 
         playlistViewModel.networkFailure.observe(viewLifecycleOwner, Observer {

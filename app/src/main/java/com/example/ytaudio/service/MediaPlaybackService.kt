@@ -15,9 +15,11 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Transformations
 import androidx.media.MediaBrowserServiceCompat
 import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.database.AudioDatabaseDao
+import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.service.extensions.flag
 import com.example.ytaudio.service.library.AudioSource
 import com.example.ytaudio.service.library.DatabaseAudioSource
@@ -40,12 +42,12 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
     private var isForegroundService = false
 
+    private var audioInfoList = listOf<AudioInfo>()
     private lateinit var audioSource: AudioSource
     private lateinit var becomingNoisyReceiver: BecomingNoisyReceiver
     private lateinit var notificationManager: NotificationManager
     private lateinit var mediaSessionConnector: MediaSessionConnector
     private lateinit var mediaSession: MediaSessionCompat
-
 
     private val ytAudioAttributes = AudioAttributes.Builder()
         .setContentType(C.CONTENT_TYPE_MUSIC)
@@ -61,6 +63,106 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
             setAudioAttributes(ytAudioAttributes, true)
             addListener(playerListener)
         }
+    }
+
+    private val audioInfoCheckList = Transformations.map(database.getAllAudio()) {
+        it?.forEachIndexed { index, audioInfo ->
+            if (audioInfo != audioInfoList.getOrNull(index) && audioInfoList.isNotEmpty()) {
+                updateAudioSource(this)
+            }
+        }
+    }.observeForever {}
+
+
+    override fun onCreate() {
+        super.onCreate()
+
+        val sessionActivityPendingIntent =
+            packageManager.getLaunchIntentForPackage(packageName)
+                .let {
+                    PendingIntent.getActivity(this, 0, it, 0)
+                }
+
+        mediaSession = MediaSessionCompat(this, javaClass.simpleName)
+            .apply {
+                setSessionActivity(sessionActivityPendingIntent)
+                setFlags(MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
+                setCallback(playerSessionCallback)
+                isActive = true
+            }
+
+        sessionToken = mediaSession.sessionToken
+
+        notificationManager = NotificationManager(
+            this,
+            exoPlayer,
+            mediaSession.sessionToken,
+            playerNotificationListener
+        )
+
+        becomingNoisyReceiver = BecomingNoisyReceiver(this, mediaSession.sessionToken)
+
+        updateAudioSource(this)
+    }
+
+    private fun updateAudioSource(context: Context) {
+        audioSource = DatabaseAudioSource(context, database)
+        serviceScope.launch {
+            audioSource.load()
+            audioInfoList = database.getAllAudioInfo()
+            mediaSessionConnector = MediaSessionConnector(mediaSession).also {
+                val dataSourceFactory =
+                    DefaultDataSourceFactory(
+                        context,
+                        Util.getUserAgent(context, YTAUDIO_USER_AGENT),
+                        null
+                    )
+
+                val playbackPreparer = PlaybackPreparer(audioSource, exoPlayer, dataSourceFactory)
+
+                it.setPlayer(exoPlayer)
+                it.setPlaybackPreparer(playbackPreparer)
+                it.setQueueNavigator(QueueNavigator(mediaSession))
+            }
+            notifyChildrenChanged(MEDIA_ROOT_ID)
+        }
+    }
+
+    override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?) =
+        BrowserRoot(MEDIA_ROOT_ID, null)
+
+    override fun onLoadChildren(
+        parentId: String,
+        result: Result<MutableList<MediaItem>>
+    ) {
+        val resultSent = audioSource.whenReady { initialized ->
+            if (initialized) {
+                val children = audioSource.map {
+                    MediaItem(it.description, it.flag)
+                }
+                result.sendResult(children as MutableList<MediaItem>?)
+
+            } else {
+                mediaSession.sendSessionEvent(NETWORK_FAILURE, null)
+                result.sendResult(null)
+            }
+        }
+
+        if (!resultSent) {
+            result.detach()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaSession.run {
+            isActive = false
+            release()
+        }
+
+        serviceJob.cancel()
+        exoPlayer.removeListener(playerListener)
+        exoPlayer.release()
     }
 
 
@@ -122,89 +224,6 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
             }
         }
     }
-
-
-    override fun onCreate() {
-        super.onCreate()
-
-        val sessionActivityPendingIntent =
-            packageManager.getLaunchIntentForPackage(packageName)
-                .let {
-                    PendingIntent.getActivity(this, 0, it, 0)
-                }
-
-        mediaSession = MediaSessionCompat(this, javaClass.simpleName)
-            .apply {
-                setSessionActivity(sessionActivityPendingIntent)
-                setFlags(MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
-                setCallback(playerSessionCallback)
-                isActive = true
-            }
-
-        sessionToken = mediaSession.sessionToken
-
-        notificationManager = NotificationManager(
-            this,
-            exoPlayer,
-            mediaSession.sessionToken,
-            playerNotificationListener
-        )
-
-        becomingNoisyReceiver = BecomingNoisyReceiver(this, mediaSession.sessionToken)
-
-        audioSource = DatabaseAudioSource(this, database)
-        serviceScope.launch {
-            audioSource.load()
-        }
-
-        mediaSessionConnector = MediaSessionConnector(mediaSession).also {
-            val dataSourceFactory =
-                DefaultDataSourceFactory(this, Util.getUserAgent(this, YTAUDIO_USER_AGENT), null)
-
-            val playbackPreparer = PlaybackPreparer(audioSource, exoPlayer, dataSourceFactory)
-
-            it.setPlayer(exoPlayer)
-            it.setPlaybackPreparer(playbackPreparer)
-            it.setQueueNavigator(QueueNavigator(mediaSession))
-        }
-    }
-
-    override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?) =
-        BrowserRoot(MEDIA_ROOT_ID, null)
-
-    override fun onLoadChildren(
-        parentId: String,
-        result: Result<MutableList<MediaItem>>
-    ) {
-        val resultSent = audioSource.whenReady { initialized ->
-            if (initialized) {
-                val children = audioSource.map {
-                    MediaItem(it.description, it.flag)
-                }
-                result.sendResult(children as MutableList<MediaItem>?)
-
-            } else {
-                mediaSession.sendSessionEvent(NETWORK_FAILURE, null)
-                result.sendResult(null)
-            }
-        }
-
-        if (!resultSent) {
-            result.detach()
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mediaSession.run {
-            isActive = false
-            release()
-        }
-
-        serviceJob.cancel()
-        exoPlayer.removeListener(playerListener)
-        exoPlayer.release()
-    }
 }
 
 
@@ -253,5 +272,4 @@ const val UPDATE_COMMAND = "update"
 const val NETWORK_FAILURE = "service network failure"
 private const val YTAUDIO_USER_AGENT = "ytaudio.next"
 private const val MEDIA_ROOT_ID = "media_root_id"
-private const val EMPTY_MEDIA_ROOT_ID = "empty_root_id"
 private const val LOG_TAG = "MediaPlaybackService"
