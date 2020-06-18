@@ -88,41 +88,50 @@ class MainActivityViewModel(
         }
     }
 
-    private val audioInfoList = Transformations.map(database.getAllAudio()) {
-        it?.forEach { audio ->
-            if (audio.needUpdate && nowUpdatingAudioInfoSet.add(audio)) {
-                uiScope.launch {
-                    updateAudio(audio)
-                    nowUpdatingAudioInfoSet.remove(audio)
-                }
-            }
+    val needUpdateAudioInfoList = Transformations.map(database.getAllAudio()) { list ->
+        list?.filter {
+            it.needUpdate
         }
-        it
-    }.observeForever {}
+    }
 
     private val nowUpdatingAudioInfoSet = mutableSetOf<AudioInfo>()
 
-    private suspend fun updateAudio(audio: AudioInfo) {
-        try {
-            audio.updateInfo()
-            database.update(audio)
-            Log.i(LOG_TAG, "${audio.audioTitle} updated")
-        } catch (e: ExtractionException) {
-            showToast("Extraction failed")
-        } catch (e: YoutubeRequestException) {
-            showToast("Check your connection")
-        } catch (e: Exception) {
-            showToast()
+    fun updateAudioInfoList(audioInfoList: List<AudioInfo>) {
+        if (nowUpdatingAudioInfoSet.addAll(audioInfoList)) {
+            uiScope.launch {
+                try {
+                    val startTime = System.currentTimeMillis()
+                    audioInfoList.forEachParallel {
+                        it.updateInfo()
+                    }
+                    database.update(audioInfoList)
+                    nowUpdatingAudioInfoSet.removeAll(audioInfoList)
+                    Log.i(
+                        LOG_TAG,
+                        "${audioInfoList.size} items updated in ${System.currentTimeMillis() - startTime} ms"
+                    )
+                } catch (e: ExtractionException) {
+                    showToast("Extraction failed")
+                } catch (e: YoutubeRequestException) {
+                    showToast("Check your connection")
+                } catch (e: Exception) {
+                    showToast()
+                }
+            }
         }
     }
 
     fun onExtract(youtubeUrl: String) {
         uiScope.launch {
             try {
+                val startTime = System.currentTimeMillis()
                 val audioInfo =
                     getAudioInfo(youtubeUrl.takeLastWhile { it != '=' && it != '/' })
                 database.insert(audioInfo)
-                Log.i(LOG_TAG, "${audioInfo.audioTitle} added")
+                Log.i(
+                    LOG_TAG,
+                    "${audioInfo.audioTitle} added in ${System.currentTimeMillis() - startTime} ms"
+                )
             } catch (e: ExtractionException) {
                 showToast("Extraction failed")
             } catch (e: YoutubeRequestException) {

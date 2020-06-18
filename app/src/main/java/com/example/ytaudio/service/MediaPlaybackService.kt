@@ -8,12 +8,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
 import android.os.Bundle
-import android.os.ResultReceiver
 import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Transformations
 import androidx.media.MediaBrowserServiceCompat
@@ -86,8 +84,6 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         mediaSession = MediaSessionCompat(this, javaClass.simpleName)
             .apply {
                 setSessionActivity(sessionActivityPendingIntent)
-                setFlags(MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
-                setCallback(playerSessionCallback)
                 isActive = true
             }
 
@@ -212,19 +208,6 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
                 stopSelf()
             }
         }
-
-    private val playerSessionCallback = object : MediaSessionCompat.Callback() {
-
-        override fun onCommand(command: String?, extras: Bundle?, cb: ResultReceiver?) {
-            super.onCommand(command, extras, cb)
-            when (command) {
-                UPDATE_COMMAND -> {
-                    notifyChildrenChanged(MEDIA_ROOT_ID)
-                    Log.i(LOG_TAG, "handled $UPDATE_COMMAND command")
-                }
-            }
-        }
-    }
 }
 
 
@@ -269,7 +252,6 @@ private class BecomingNoisyReceiver(
     }
 }
 
-const val UPDATE_COMMAND = "update"
 const val NETWORK_FAILURE = "service network failure"
 private const val YTAUDIO_USER_AGENT = "ytaudio.next"
 private const val MEDIA_ROOT_ID = "media_root_id"

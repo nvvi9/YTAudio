@@ -3,6 +3,8 @@ package com.example.ytaudio.utils
 import com.example.ytaudio.database.AudioInfo
 import com.github.kotvertolet.youtubejextractor.YoutubeJExtractor
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 
@@ -70,5 +72,12 @@ suspend fun getAudioInfo(youtubeId: String) = withContext(Dispatchers.IO) {
     }
 }
 
+fun <T> Collection<T>.forEachParallel(task: suspend (T) -> Unit) = runBlocking {
+    map {
+        async {
+            task
+        }
+    }.forEach { it.await() }
+}
 
 class LiveContentException(msg: String) : Exception(msg)
