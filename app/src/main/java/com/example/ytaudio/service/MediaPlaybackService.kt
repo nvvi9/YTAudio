@@ -135,6 +135,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         parentId: String,
         result: Result<MutableList<MediaItem>>
     ) {
+        result.detach()
         val resultSent = audioSource.whenReady { initialized ->
             if (initialized) {
                 val children = audioSource.map {
