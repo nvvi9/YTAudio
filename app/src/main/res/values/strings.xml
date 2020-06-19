@@ -19,4 +19,6 @@
     <string name="notification_channel_description">shows what music is playing</string>
     <string name="audio_button_description">managing playback state button</string>
     <string name="network_failure_description">appears when network failure is happening</string>
+    <string name="action_delete_title">delete</string>
+    <string name="action_select_all_title">select all</string>
 </resources>

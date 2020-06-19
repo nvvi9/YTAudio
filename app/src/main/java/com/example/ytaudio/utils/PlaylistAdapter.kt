@@ -12,30 +12,22 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
     ListAdapter<AudioItem, PlaylistAdapter.ViewHolder>(AudioInfoDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder.from(parent)
+        val binding =
+            ItemPlaylistBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
     }
-
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(clickListener, getItem(position))
     }
 
 
-    class ViewHolder private constructor(val binding: ItemPlaylistBinding) :
+    inner class ViewHolder(private val binding: ItemPlaylistBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(clickListener: AudioInfoListener, item: AudioItem) {
             binding.audioItem = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
-        }
-
-        companion object {
-            fun from(parent: ViewGroup): ViewHolder {
-                val binding =
-                    ItemPlaylistBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-
-                return ViewHolder(binding)
-            }
         }
     }
 }

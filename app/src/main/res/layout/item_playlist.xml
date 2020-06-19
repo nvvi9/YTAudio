@@ -15,6 +15,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="@{() -> clickListener.onClick(audioItem)}"
@@ -72,12 +73,12 @@
             android:id="@+id/playback_state"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:contentDescription="@string/audio_button_description"
             android:scaleType="center"
             app:layout_constraintBottom_toBottomOf="@+id/audio_photo"
             app:layout_constraintEnd_toEndOf="@+id/audio_photo"
             app:layout_constraintStart_toStartOf="@+id/audio_photo"
-            app:layout_constraintTop_toTopOf="@+id/audio_photo"
-            android:contentDescription="@string/audio_button_description"/>
+            app:layout_constraintTop_toTopOf="@+id/audio_photo" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
