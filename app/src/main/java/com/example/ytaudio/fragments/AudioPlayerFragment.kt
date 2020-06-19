@@ -19,13 +19,13 @@ import com.example.ytaudio.viewmodels.MainActivityViewModel
 
 class AudioPlayerFragment : Fragment() {
 
-    companion object {
-        fun getInstance() = AudioPlayerFragment()
-    }
-
     private lateinit var binding: AudioPlayerFragmentBinding
     private lateinit var audioPlayerViewModel: AudioPlayerViewModel
     private lateinit var mainActivityViewModel: MainActivityViewModel
+
+    companion object {
+        fun getInstance() = AudioPlayerFragment()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
