@@ -99,24 +99,28 @@ class MainActivityViewModel(
     fun updateAudioInfoList(audioInfoList: List<AudioInfo>) {
         if (nowUpdatingAudioInfoSet.addAll(audioInfoList)) {
             uiScope.launch {
-                try {
-                    val startTime = System.currentTimeMillis()
-                    audioInfoList.forEachParallel {
+                val startTime = System.currentTimeMillis()
+                var updatedSuccessfully = 0
+                audioInfoList.forEachParallel {
+                    try {
                         it.updateInfo()
+                        updatedSuccessfully++
+                    } catch (e: ExtractionException) {
+                        Log.i(LOG_TAG, "${it.audioTitle} extraction failed")
+                        database.delete(it)
+                    } catch (e: YoutubeRequestException) {
+                        Log.i(LOG_TAG, "network failure")
+                    } catch (e: Exception) {
+                        Log.i(LOG_TAG, e.toString())
                     }
-                    database.update(audioInfoList)
-                    nowUpdatingAudioInfoSet.removeAll(audioInfoList)
-                    Log.i(
-                        LOG_TAG,
-                        "${audioInfoList.size} items updated in ${System.currentTimeMillis() - startTime} ms"
-                    )
-                } catch (e: ExtractionException) {
-                    showToast("Extraction failed")
-                } catch (e: YoutubeRequestException) {
-                    showToast("Check your connection")
-                } catch (e: Exception) {
-                    showToast()
                 }
+
+                database.update(audioInfoList)
+                nowUpdatingAudioInfoSet.removeAll(audioInfoList)
+                Log.i(
+                    LOG_TAG,
+                    "$updatedSuccessfully/${audioInfoList.size} items updated in ${System.currentTimeMillis() - startTime} ms"
+                )
             }
         }
     }

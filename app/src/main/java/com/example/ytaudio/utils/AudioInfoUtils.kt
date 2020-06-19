@@ -4,14 +4,14 @@ import com.example.ytaudio.database.AudioInfo
 import com.github.kotvertolet.youtubejextractor.YoutubeJExtractor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 
 
 val AudioInfo.needUpdate: Boolean
     get() = System.currentTimeMillis() >= (lastUpdateTimeSeconds + urlActiveTimeSeconds - audioDurationSeconds * 2) * 1000
 
-suspend fun AudioInfo.updateInfo() {
+suspend fun AudioInfo.updateInfo() =
     withContext(Dispatchers.IO) {
         val extractor = YoutubeJExtractor()
         val videoData = extractor.extract(youtubeId)
@@ -36,7 +36,7 @@ suspend fun AudioInfo.updateInfo() {
             urlActiveTimeSeconds = streamingData.expiresInSeconds.toLong()
         }
     }
-}
+
 
 suspend fun getAudioInfo(youtubeId: String) = withContext(Dispatchers.IO) {
     val extractor = YoutubeJExtractor()
@@ -72,12 +72,13 @@ suspend fun getAudioInfo(youtubeId: String) = withContext(Dispatchers.IO) {
     }
 }
 
-fun <T> Collection<T>.forEachParallel(task: suspend (T) -> Unit) = runBlocking {
-    map {
-        async {
-            task
-        }
-    }.forEach { it.await() }
-}
+suspend fun <T> Iterable<T>.forEachParallel(task: suspend (T) -> Unit) =
+    withContext(Dispatchers.IO) {
+        map {
+            async {
+                task(it)
+            }
+        }.awaitAll()
+    }
 
 class LiveContentException(msg: String) : Exception(msg)

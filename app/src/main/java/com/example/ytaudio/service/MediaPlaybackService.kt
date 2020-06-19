@@ -65,7 +65,10 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
 
     private val audioInfoCheckList = Transformations.map(database.getAllAudio()) {
         it?.forEachIndexed { index, audioInfo ->
-            if (audioInfo != audioInfoList.getOrNull(index) && audioInfoList.isNotEmpty()) {
+            if (it.size != audioInfoList.size &&
+                audioInfo != audioInfoList.getOrNull(index) &&
+                audioInfoList.isNotEmpty()
+            ) {
                 updateAudioSource(this)
             }
         }

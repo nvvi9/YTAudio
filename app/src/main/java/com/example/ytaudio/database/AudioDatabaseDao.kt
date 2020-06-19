@@ -18,9 +18,6 @@ interface AudioDatabaseDao {
     @Query("SELECT * FROM audio_playlist_table WHERE audioId = :key")
     suspend fun get(key: Long): AudioInfo?
 
-    @Query("DELETE FROM audio_playlist_table")
-    suspend fun clear()
-
     @Query("SELECT * FROM audio_playlist_table ORDER BY audioId DESC")
     suspend fun getAllAudioInfo(): List<AudioInfo>
 
@@ -29,4 +26,10 @@ interface AudioDatabaseDao {
 
     @Query("SELECT * FROM audio_playlist_table ORDER BY audioId DESC LIMIT 1")
     fun getLastAudio(): AudioInfo?
+
+    @Delete
+    suspend fun delete(audio: AudioInfo)
+
+    @Query("DELETE FROM audio_playlist_table")
+    suspend fun clear()
 }
