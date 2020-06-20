@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
@@ -47,13 +48,18 @@ class PlaylistFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding =
-            DataBindingUtil.inflate(inflater, R.layout.playlist_fragment, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.playlist_fragment, container, false)
 
         binding.apply {
 
             playlistView.adapter = playlistAdapter
             playlistView.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            playlistView.addItemDecoration(
+                DividerItemDecoration(
+                    activity,
+                    DividerItemDecoration.VERTICAL
+                )
+            )
 
             linkText.setEndIconOnClickListener {
                 if (!binding.linkText.editText?.text.isNullOrBlank()) {
