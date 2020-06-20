@@ -18,7 +18,6 @@
         android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="@{() -> clickListener.onClick(audioItem)}"
         android:orientation="horizontal">
 
         <TextView

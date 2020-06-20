@@ -30,6 +30,9 @@ interface AudioDatabaseDao {
     @Delete
     suspend fun delete(audio: AudioInfo)
 
+    @Query("DELETE FROM audio_playlist_table WHERE audioId IN (:idList)")
+    suspend fun delete(idList: List<Long>)
+
     @Query("DELETE FROM audio_playlist_table")
     suspend fun clear()
 }

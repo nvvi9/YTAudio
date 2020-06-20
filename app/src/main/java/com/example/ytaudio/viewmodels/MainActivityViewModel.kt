@@ -148,6 +148,12 @@ class MainActivityViewModel(
         }
     }
 
+    fun deleteAudioInfo(idList: List<Long>) {
+        uiScope.launch {
+            database.delete(idList)
+        }
+    }
+
     private fun showToast(message: String? = null) =
         Toast.makeText(
             mediaPlaybackServiceConnection.context,

@@ -2,10 +2,7 @@ package com.example.ytaudio.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -14,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ytaudio.AudioItem
 import com.example.ytaudio.R
 import com.example.ytaudio.databinding.PlaylistFragmentBinding
 import com.example.ytaudio.utils.AudioInfoListener
@@ -30,10 +28,64 @@ class PlaylistFragment : Fragment() {
     private lateinit var binding: PlaylistFragmentBinding
     private lateinit var playlistViewModel: PlaylistViewModel
     private lateinit var mainActivityViewModel: MainActivityViewModel
+    private var actionMode: ActionMode? = null
 
-    private val playlistAdapter = PlaylistAdapter(AudioInfoListener {
-        mainActivityViewModel.audioItemClicked(it)
-    })
+    private val actionModeCallback = object : ActionMode.Callback {
+
+        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?) = mode?.run {
+            menuInflater.inflate(R.menu.playlist_toolbar_action_mode, menu)
+            binding.toolbar.inflateMenu(R.menu.playlist_toolbar_action_mode)
+            true
+        } ?: false
+
+        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+            return when (item?.itemId) {
+                R.id.action_select_all -> {
+                    playlistAdapter.selectAll()
+                    true
+                }
+                R.id.action_delete -> {
+                    mainActivityViewModel.deleteAudioInfo(
+                        playlistAdapter.selectedAudioItems
+                            .map { it.audioId.toLong() }
+                    )
+                    mode?.finish()
+                    actionMode = null
+                    true
+                }
+                else -> false
+            }
+        }
+
+        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?) = false
+
+        override fun onDestroyActionMode(mode: ActionMode?) {
+            playlistAdapter.clearSelected()
+            playlistAdapter.actionMode = false
+            actionMode = null
+        }
+    }
+
+
+    private val audioInfoListener = object : AudioInfoListener {
+        
+        override fun onClick(item: AudioItem) {
+            mainActivityViewModel.audioItemClicked(item)
+        }
+
+        override fun onLongClick(item: AudioItem) =
+            startActionMode()
+    }
+
+    private val playlistAdapter = PlaylistAdapter(audioInfoListener)
+
+    private fun startActionMode() {
+        if (actionMode == null) {
+            actionMode = activity?.startActionMode(actionModeCallback)
+            playlistAdapter.actionMode = true
+        }
+    }
+
 
     companion object {
         fun getInstance(audioId: String) = PlaylistFragment().apply {
