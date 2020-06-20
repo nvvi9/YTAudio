@@ -12,15 +12,21 @@ import com.example.ytaudio.databinding.ItemPlaylistBinding
 class PlaylistAdapter(private val clickListener: AudioInfoListener) :
     ListAdapter<AudioItem, PlaylistAdapter.ViewHolder>(AudioInfoDiffCallback()) {
 
-    val selectedAudioItems = mutableSetOf<AudioItem>()
+    private val _selectedAudioItems = mutableSetOf<AudioItem>()
+    val selectedAudioItems: List<AudioItem>
+        get() = _selectedAudioItems.toList()
+
     var actionMode = false
 
     fun selectAll() {
-        selectedAudioItems.addAll(currentList)
+        _selectedAudioItems.addAll(currentList)
+        notifyDataSetChanged()
     }
 
-    fun clearSelected() =
-        selectedAudioItems.clear()
+    fun clearSelected() {
+        _selectedAudioItems.clear()
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding =
@@ -40,12 +46,10 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
         RecyclerView.ViewHolder(binding.root) {
 
         private fun itemClicked(item: AudioItem) {
-            if (selectedAudioItems.add(item)) {
-                binding.itemLayout.setBackgroundColor(Color.GRAY)
-            } else {
-                selectedAudioItems.remove(item)
-                binding.itemLayout.setBackgroundColor(Color.TRANSPARENT)
+            if (!_selectedAudioItems.add(item)) {
+                _selectedAudioItems.remove(item)
             }
+            notifyDataSetChanged()
         }
 
         fun bind(clickListener: AudioInfoListener, item: AudioItem, payloads: MutableList<Any>) {
@@ -61,6 +65,8 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
                 }
             }
 
+            binding.itemLayout.setBackgroundColor(if (item in _selectedAudioItems) Color.GRAY else Color.TRANSPARENT)
+
             if (refresh) {
                 binding.audioItem = item
             }
@@ -70,6 +76,7 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
                     clickListener.onClick(item)
                 } else {
                     itemClicked(item)
+                    clickListener.onActiveModeClick()
                 }
             }
 
@@ -100,6 +107,7 @@ class AudioInfoDiffCallback : DiffUtil.ItemCallback<AudioItem>() {
 interface AudioInfoListener {
     fun onClick(item: AudioItem)
     fun onLongClick(item: AudioItem)
+    fun onActiveModeClick()
 }
 
 const val PLAYBACK_STATE_CHANGED = 1

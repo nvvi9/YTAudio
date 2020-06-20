@@ -33,8 +33,8 @@ class PlaylistFragment : Fragment() {
     private val actionModeCallback = object : ActionMode.Callback {
 
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?) = mode?.run {
+            binding.appBarLayout.visibility = View.GONE
             menuInflater.inflate(R.menu.playlist_toolbar_action_mode, menu)
-            binding.toolbar.inflateMenu(R.menu.playlist_toolbar_action_mode)
             true
         } ?: false
 
@@ -62,27 +62,44 @@ class PlaylistFragment : Fragment() {
         override fun onDestroyActionMode(mode: ActionMode?) {
             playlistAdapter.clearSelected()
             playlistAdapter.actionMode = false
+            actionMode?.finish()
             actionMode = null
+            binding.appBarLayout.visibility = View.VISIBLE
         }
     }
 
 
-    private val audioInfoListener = object : AudioInfoListener {
-        
+    private inner class CustomAudioInfoListener : AudioInfoListener {
+
         override fun onClick(item: AudioItem) {
             mainActivityViewModel.audioItemClicked(item)
         }
 
-        override fun onLongClick(item: AudioItem) =
+        override fun onActiveModeClick() {
+            val selectedItemsCount = playlistAdapter.selectedAudioItems.size
+            if (selectedItemsCount != 0) {
+                actionMode?.title = "${playlistAdapter.selectedAudioItems.size} selected"
+            } else {
+                playlistAdapter.actionMode = false
+                actionMode?.finish()
+                actionMode = null
+                binding.appBarLayout.visibility = View.VISIBLE
+            }
+        }
+
+        override fun onLongClick(item: AudioItem) {
             startActionMode()
+            actionMode?.title = "1 selected"
+        }
     }
 
-    private val playlistAdapter = PlaylistAdapter(audioInfoListener)
+    private val playlistAdapter = PlaylistAdapter(CustomAudioInfoListener())
 
     private fun startActionMode() {
         if (actionMode == null) {
             actionMode = activity?.startActionMode(actionModeCallback)
             playlistAdapter.actionMode = true
+            playlistAdapter.notifyDataSetChanged()
         }
     }
 
