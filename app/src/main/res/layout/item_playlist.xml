@@ -74,11 +74,12 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:contentDescription="@string/audio_button_description"
-            android:scaleType="center"
+            android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="@+id/audio_photo"
             app:layout_constraintEnd_toEndOf="@+id/audio_photo"
             app:layout_constraintStart_toStartOf="@+id/audio_photo"
-            app:layout_constraintTop_toTopOf="@+id/audio_photo" />
+            app:layout_constraintTop_toTopOf="@+id/audio_photo"
+            tools:srcCompat="@drawable/ic_play_arrow_black" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
