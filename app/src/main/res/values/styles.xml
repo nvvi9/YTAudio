@@ -8,4 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="YTAudioTheme" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
 </resources>

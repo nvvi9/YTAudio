@@ -15,9 +15,9 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="@{() -> clickListener.onClick(audioItem)}"
         android:orientation="horizontal">
 
         <TextView
@@ -72,12 +72,13 @@
             android:id="@+id/playback_state"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:scaleType="center"
+            android:contentDescription="@string/audio_button_description"
+            android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="@+id/audio_photo"
             app:layout_constraintEnd_toEndOf="@+id/audio_photo"
             app:layout_constraintStart_toStartOf="@+id/audio_photo"
             app:layout_constraintTop_toTopOf="@+id/audio_photo"
-            android:contentDescription="@string/audio_button_description"/>
+            tools:srcCompat="@drawable/ic_play_arrow_black" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

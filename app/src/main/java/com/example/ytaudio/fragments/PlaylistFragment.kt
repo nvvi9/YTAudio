@@ -2,17 +2,16 @@ package com.example.ytaudio.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ytaudio.AudioItem
 import com.example.ytaudio.R
 import com.example.ytaudio.databinding.PlaylistFragmentBinding
 import com.example.ytaudio.utils.AudioInfoListener
@@ -29,10 +28,78 @@ class PlaylistFragment : Fragment() {
     private lateinit var binding: PlaylistFragmentBinding
     private lateinit var playlistViewModel: PlaylistViewModel
     private lateinit var mainActivityViewModel: MainActivityViewModel
+    private var actionMode: ActionMode? = null
 
-    private val playlistAdapter = PlaylistAdapter(AudioInfoListener {
-        mainActivityViewModel.audioItemClicked(it)
-    })
+    private val actionModeCallback = object : ActionMode.Callback {
+
+        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?) = mode?.run {
+            menuInflater.inflate(R.menu.playlist_toolbar_action_mode, menu)
+            true
+        } ?: false
+
+        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+            return when (item?.itemId) {
+                R.id.action_select_all -> {
+                    playlistAdapter.selectAll()
+                    actionMode?.title =
+                        getString(R.string.selected_items, playlistAdapter.selectedAudioItems.size)
+                    true
+                }
+                R.id.action_delete -> {
+                    mainActivityViewModel.deleteAudioInfo(
+                        playlistAdapter.selectedAudioItems
+                            .map { it.audioId.toLong() }
+                    )
+                    mode?.finish()
+                    actionMode = null
+                    true
+                }
+                else -> false
+            }
+        }
+
+        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?) = false
+
+        override fun onDestroyActionMode(mode: ActionMode?) {
+            playlistAdapter.clearSelected()
+            playlistAdapter.actionMode = false
+            actionMode?.finish()
+            actionMode = null
+        }
+    }
+
+
+    private inner class AdapterAudioInfoListener : AudioInfoListener {
+
+        override fun onClick(item: AudioItem) {
+            mainActivityViewModel.audioItemClicked(item)
+        }
+
+        override fun onActiveModeClick() {
+            val selectedItemsCount = playlistAdapter.selectedAudioItems.size
+            if (selectedItemsCount != 0) {
+                actionMode?.title =
+                    getString(R.string.selected_items, selectedItemsCount)
+            } else {
+                playlistAdapter.actionMode = false
+                actionMode?.finish()
+                actionMode = null
+                binding.appBarLayout.visibility = View.VISIBLE
+            }
+        }
+
+        override fun onLongClick(item: AudioItem) {
+            if (actionMode == null) {
+                actionMode = activity?.startActionMode(actionModeCallback)
+                playlistAdapter.actionMode = true
+                playlistAdapter.notifyDataSetChanged()
+                actionMode?.title =
+                    getString(R.string.selected_items, playlistAdapter.selectedAudioItems.size)
+            }
+        }
+    }
+
+    private val playlistAdapter = PlaylistAdapter(AdapterAudioInfoListener())
 
     companion object {
         fun getInstance(audioId: String) = PlaylistFragment().apply {
@@ -47,13 +114,18 @@ class PlaylistFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding =
-            DataBindingUtil.inflate(inflater, R.layout.playlist_fragment, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.playlist_fragment, container, false)
 
         binding.apply {
 
             playlistView.adapter = playlistAdapter
             playlistView.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            playlistView.addItemDecoration(
+                DividerItemDecoration(
+                    activity,
+                    DividerItemDecoration.VERTICAL
+                )
+            )
 
             linkText.setEndIconOnClickListener {
                 if (!binding.linkText.editText?.text.isNullOrBlank()) {

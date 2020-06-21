@@ -76,8 +76,8 @@ class PlaylistViewModel(
 
         return when {
             !isActive -> 0
-            isPlaying -> R.drawable.ic_pause_black
-            else -> R.drawable.ic_play_arrow_black
+            isPlaying -> R.drawable.ic_play_arrow_black
+            else -> R.drawable.ic_pause_black
         }
     }
 
@@ -85,8 +85,8 @@ class PlaylistViewModel(
         playbackState: PlaybackStateCompat,
         mediaMetadata: MediaMetadataCompat
     ): List<AudioItem> {
-        val newPlaybackStatus = if (playbackState.isPlaying) R.drawable.ic_pause_black
-        else R.drawable.ic_play_arrow_black
+        val newPlaybackStatus = if (playbackState.isPlaying) R.drawable.ic_play_arrow_black
+        else R.drawable.ic_pause_black
 
         return audioItemList.value?.map {
             val playbackStatus = if (it.audioId == mediaMetadata.id) newPlaybackStatus else 0

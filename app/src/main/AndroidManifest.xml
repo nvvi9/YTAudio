@@ -16,7 +16,7 @@
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MaterialComponents.NoActionBar">
+            android:theme="@style/YTAudioTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
