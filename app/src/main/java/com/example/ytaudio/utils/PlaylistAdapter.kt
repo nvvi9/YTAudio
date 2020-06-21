@@ -13,8 +13,8 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
     ListAdapter<AudioItem, PlaylistAdapter.ViewHolder>(AudioInfoDiffCallback()) {
 
     private val _selectedAudioItems = mutableSetOf<AudioItem>()
-    val selectedAudioItems: List<AudioItem>
-        get() = _selectedAudioItems.toList()
+    val selectedAudioItems: Set<AudioItem>
+        get() = _selectedAudioItems
 
     var actionMode = false
 
@@ -81,8 +81,8 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
             }
 
             binding.itemLayout.setOnLongClickListener {
-                clickListener.onLongClick(item)
                 itemClicked(item)
+                clickListener.onLongClick(item)
                 true
             }
 

@@ -33,7 +33,6 @@ class PlaylistFragment : Fragment() {
     private val actionModeCallback = object : ActionMode.Callback {
 
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?) = mode?.run {
-            binding.appBarLayout.visibility = View.GONE
             menuInflater.inflate(R.menu.playlist_toolbar_action_mode, menu)
             true
         } ?: false
@@ -42,6 +41,8 @@ class PlaylistFragment : Fragment() {
             return when (item?.itemId) {
                 R.id.action_select_all -> {
                     playlistAdapter.selectAll()
+                    actionMode?.title =
+                        getString(R.string.selected_items, playlistAdapter.selectedAudioItems.size)
                     true
                 }
                 R.id.action_delete -> {
@@ -64,7 +65,6 @@ class PlaylistFragment : Fragment() {
             playlistAdapter.actionMode = false
             actionMode?.finish()
             actionMode = null
-            binding.appBarLayout.visibility = View.VISIBLE
         }
     }
 
@@ -78,7 +78,8 @@ class PlaylistFragment : Fragment() {
         override fun onActiveModeClick() {
             val selectedItemsCount = playlistAdapter.selectedAudioItems.size
             if (selectedItemsCount != 0) {
-                actionMode?.title = "${playlistAdapter.selectedAudioItems.size} selected"
+                actionMode?.title =
+                    getString(R.string.selected_items, playlistAdapter.selectedAudioItems.size)
             } else {
                 playlistAdapter.actionMode = false
                 actionMode?.finish()
@@ -89,7 +90,8 @@ class PlaylistFragment : Fragment() {
 
         override fun onLongClick(item: AudioItem) {
             startActionMode()
-            actionMode?.title = "1 selected"
+            actionMode?.title =
+                getString(R.string.selected_items, playlistAdapter.selectedAudioItems.size)
         }
     }
 
