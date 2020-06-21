@@ -69,7 +69,7 @@ class PlaylistFragment : Fragment() {
     }
 
 
-    private inner class CustomAudioInfoListener : AudioInfoListener {
+    private inner class AdapterAudioInfoListener : AudioInfoListener {
 
         override fun onClick(item: AudioItem) {
             mainActivityViewModel.audioItemClicked(item)
@@ -79,7 +79,7 @@ class PlaylistFragment : Fragment() {
             val selectedItemsCount = playlistAdapter.selectedAudioItems.size
             if (selectedItemsCount != 0) {
                 actionMode?.title =
-                    getString(R.string.selected_items, playlistAdapter.selectedAudioItems.size)
+                    getString(R.string.selected_items, selectedItemsCount)
             } else {
                 playlistAdapter.actionMode = false
                 actionMode?.finish()
@@ -89,22 +89,17 @@ class PlaylistFragment : Fragment() {
         }
 
         override fun onLongClick(item: AudioItem) {
-            startActionMode()
-            actionMode?.title =
-                getString(R.string.selected_items, playlistAdapter.selectedAudioItems.size)
+            if (actionMode == null) {
+                actionMode = activity?.startActionMode(actionModeCallback)
+                playlistAdapter.actionMode = true
+                playlistAdapter.notifyDataSetChanged()
+                actionMode?.title =
+                    getString(R.string.selected_items, playlistAdapter.selectedAudioItems.size)
+            }
         }
     }
 
-    private val playlistAdapter = PlaylistAdapter(CustomAudioInfoListener())
-
-    private fun startActionMode() {
-        if (actionMode == null) {
-            actionMode = activity?.startActionMode(actionModeCallback)
-            playlistAdapter.actionMode = true
-            playlistAdapter.notifyDataSetChanged()
-        }
-    }
-
+    private val playlistAdapter = PlaylistAdapter(AdapterAudioInfoListener())
 
     companion object {
         fun getInstance(audioId: String) = PlaylistFragment().apply {

@@ -81,7 +81,9 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
             }
 
             binding.itemLayout.setOnLongClickListener {
-                itemClicked(item)
+                if (_selectedAudioItems.isEmpty()) {
+                    itemClicked(item)
+                }
                 clickListener.onLongClick(item)
                 true
             }
