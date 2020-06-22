@@ -52,6 +52,7 @@ class PlaylistFragment : Fragment() {
                         playlistAdapter.selectedAudioItems
                             .map { it.audioId }
                     )
+                    playlistAdapter.stopActionMode()
                     mode?.finish()
                     actionMode = null
                     true
@@ -63,8 +64,7 @@ class PlaylistFragment : Fragment() {
         override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?) = false
 
         override fun onDestroyActionMode(mode: ActionMode?) {
-            playlistAdapter.clearSelected()
-            playlistAdapter.actionMode = false
+            playlistAdapter.stopActionMode()
             actionMode?.finish()
             actionMode = null
         }

@@ -23,8 +23,9 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
         notifyDataSetChanged()
     }
 
-    fun clearSelected() {
+    fun stopActionMode() {
         _selectedAudioItems.clear()
+        actionMode = false
         notifyDataSetChanged()
     }
 
