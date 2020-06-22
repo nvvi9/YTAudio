@@ -10,20 +10,20 @@ import com.example.ytaudio.database.AudioInfo
 
 
 @BindingAdapter("audioTitle")
-fun TextView.setTitle(item: AudioItem?) {
-    text = item?.title
+fun TextView.setTitle(item: AudioInfo?) {
+    text = item?.audioTitle
 }
 
 
 @BindingAdapter("authorName")
-fun TextView.setAuthor(item: AudioItem?) {
-    text = item?.subtitle
+fun TextView.setAuthor(item: AudioInfo?) {
+    text = item?.author
 }
 
 @BindingAdapter("audioPhoto")
-fun ImageView.setImage(item: AudioItem?) {
+fun ImageView.setImage(item: AudioInfo?) {
     item?.let {
-        Glide.with(context).load(it.thumbnailUri).into(this)
+        Glide.with(context).load(it.photoUrl).into(this)
     }
 }
 

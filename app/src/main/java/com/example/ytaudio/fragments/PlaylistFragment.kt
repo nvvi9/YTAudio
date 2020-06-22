@@ -1,9 +1,11 @@
 package com.example.ytaudio.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -11,8 +13,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ytaudio.AudioItem
 import com.example.ytaudio.R
+import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.databinding.PlaylistFragmentBinding
 import com.example.ytaudio.utils.AudioInfoListener
 import com.example.ytaudio.utils.FactoryUtils
@@ -48,7 +50,7 @@ class PlaylistFragment : Fragment() {
                 R.id.action_delete -> {
                     mainActivityViewModel.deleteAudioInfo(
                         playlistAdapter.selectedAudioItems
-                            .map { it.audioId.toLong() }
+                            .map { it.audioId }
                     )
                     mode?.finish()
                     actionMode = null
@@ -71,7 +73,7 @@ class PlaylistFragment : Fragment() {
 
     private inner class AdapterAudioInfoListener : AudioInfoListener {
 
-        override fun onClick(item: AudioItem) {
+        override fun onClick(item: AudioInfo) {
             mainActivityViewModel.audioItemClicked(item)
         }
 
@@ -88,7 +90,7 @@ class PlaylistFragment : Fragment() {
             }
         }
 
-        override fun onLongClick(item: AudioItem) {
+        override fun onLongClick(item: AudioInfo) {
             if (actionMode == null) {
                 actionMode = activity?.startActionMode(actionModeCallback)
                 playlistAdapter.actionMode = true
@@ -109,6 +111,7 @@ class PlaylistFragment : Fragment() {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -128,10 +131,11 @@ class PlaylistFragment : Fragment() {
             )
 
             linkText.setEndIconOnClickListener {
-                if (!binding.linkText.editText?.text.isNullOrBlank()) {
-                    this@PlaylistFragment.mainActivityViewModel.onExtract(binding.linkText.editText!!.text.toString())
-                    it.hideKeyboard()
-                    binding.linkText.editText!!.text.clear()
+                binding.linkText.editText?.let {
+                    if (it.text.isNotBlank()) {
+                        this@PlaylistFragment.mainActivityViewModel.onExtract(it.text.toString())
+                        it.clearScreen()
+                    }
                 }
             }
 
@@ -141,10 +145,14 @@ class PlaylistFragment : Fragment() {
                     event.action == KeyEvent.ACTION_UP
                 ) {
                     this@PlaylistFragment.mainActivityViewModel.onExtract(v.text.toString())
-                    v.hideKeyboard()
-                    v.text?.clear()
+                    v.clearScreen()
                     return@setOnKeyListener true
                 }
+                false
+            }
+
+            linkText.editText!!.setOnTouchListener { v, _ ->
+                v.isFocusableInTouchMode = true
                 false
             }
 
@@ -170,10 +178,9 @@ class PlaylistFragment : Fragment() {
             ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(context))
                 .get(MainActivityViewModel::class.java)
 
-        playlistViewModel.audioItemList.observe(viewLifecycleOwner, Observer { list ->
-            binding.progressBarSpinner.visibility =
-                if (list.isNotEmpty()) View.INVISIBLE else View.VISIBLE
-            playlistAdapter.submitList(list.sortedBy { it.title })
+        mainActivityViewModel.databaseAudioInfo.observe(viewLifecycleOwner, Observer { list ->
+            binding.nothingToPlay.visibility = if (list.isNullOrEmpty()) View.VISIBLE else View.GONE
+            playlistAdapter.submitList(list?.sortedBy { it.audioTitle })
         })
 
         playlistViewModel.networkFailure.observe(viewLifecycleOwner, Observer {
@@ -186,6 +193,12 @@ class PlaylistFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         binding.root.hideKeyboard()
+    }
+
+    private fun EditText.clearScreen() {
+        hideKeyboard()
+        text.clear()
+        isFocusable = false
     }
 
     private fun View.hideKeyboard() =

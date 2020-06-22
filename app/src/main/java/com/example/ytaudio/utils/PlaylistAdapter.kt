@@ -6,14 +6,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ytaudio.AudioItem
+import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.databinding.ItemPlaylistBinding
 
 class PlaylistAdapter(private val clickListener: AudioInfoListener) :
-    ListAdapter<AudioItem, PlaylistAdapter.ViewHolder>(AudioInfoDiffCallback()) {
+    ListAdapter<AudioInfo, PlaylistAdapter.ViewHolder>(AudioInfoDiffCallback()) {
 
-    private val _selectedAudioItems = mutableSetOf<AudioItem>()
-    val selectedAudioItems: Set<AudioItem>
+    private val _selectedAudioItems = mutableSetOf<AudioInfo>()
+    val selectedAudioItems: Set<AudioInfo>
         get() = _selectedAudioItems
 
     var actionMode = false
@@ -45,21 +45,21 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
     inner class ViewHolder(private val binding: ItemPlaylistBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        private fun itemClicked(item: AudioItem) {
+        private fun itemClicked(item: AudioInfo) {
             if (!_selectedAudioItems.add(item)) {
                 _selectedAudioItems.remove(item)
             }
             notifyDataSetChanged()
         }
 
-        fun bind(clickListener: AudioInfoListener, item: AudioItem, payloads: MutableList<Any>) {
+        fun bind(clickListener: AudioInfoListener, item: AudioInfo, payloads: MutableList<Any>) {
             var refresh = payloads.isEmpty()
 
             if (payloads.isNotEmpty()) {
                 payloads.forEach {
                     when (it) {
                         PLAYBACK_STATE_CHANGED ->
-                            binding.playbackState.setImageResource(item.playbackStatus)
+                            binding.playbackState.setImageResource(item.playbackState)
                         else -> refresh = true
                     }
                 }
@@ -94,21 +94,21 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
 }
 
 
-class AudioInfoDiffCallback : DiffUtil.ItemCallback<AudioItem>() {
+class AudioInfoDiffCallback : DiffUtil.ItemCallback<AudioInfo>() {
 
-    override fun areItemsTheSame(oldItem: AudioItem, newItem: AudioItem) =
+    override fun areItemsTheSame(oldItem: AudioInfo, newItem: AudioInfo) =
         oldItem.audioId == newItem.audioId
 
-    override fun areContentsTheSame(oldItem: AudioItem, newItem: AudioItem) =
+    override fun areContentsTheSame(oldItem: AudioInfo, newItem: AudioInfo) =
         oldItem == newItem
 
-    override fun getChangePayload(oldItem: AudioItem, newItem: AudioItem) =
-        if (oldItem.playbackStatus != newItem.playbackStatus) PLAYBACK_STATE_CHANGED else null
+    override fun getChangePayload(oldItem: AudioInfo, newItem: AudioInfo) =
+        if (oldItem.playbackState != newItem.playbackState) PLAYBACK_STATE_CHANGED else null
 }
 
 interface AudioInfoListener {
-    fun onClick(item: AudioItem)
-    fun onLongClick(item: AudioItem)
+    fun onClick(item: AudioInfo)
+    fun onLongClick(item: AudioInfo)
     fun onActiveModeClick()
 }
 

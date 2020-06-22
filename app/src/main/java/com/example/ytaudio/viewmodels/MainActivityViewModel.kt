@@ -4,7 +4,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
-import com.example.ytaudio.AudioItem
 import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.fragments.AudioPlayerFragment
@@ -29,6 +28,8 @@ class MainActivityViewModel(
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
+    val databaseAudioInfo = database.getAllAudio()
+
     val rootMediaId: LiveData<String> =
         Transformations.map(mediaPlaybackServiceConnection.isConnected) {
             if (it) {
@@ -43,7 +44,7 @@ class MainActivityViewModel(
         get() = _navigateToFragment
 
 
-    fun audioItemClicked(audioItem: AudioItem) {
+    fun audioItemClicked(audioItem: AudioInfo) {
         playAudio(audioItem, false)
         showFragment(AudioPlayerFragment.getInstance())
     }
@@ -52,13 +53,13 @@ class MainActivityViewModel(
         _navigateToFragment.value = Event(FragmentNavigationRequest(fragment, addToBackStack, tag))
     }
 
-    private fun playAudio(audioItem: AudioItem, pauseAllowed: Boolean) {
+    private fun playAudio(audioItem: AudioInfo, pauseAllowed: Boolean) {
         val nowPlaying = mediaPlaybackServiceConnection.nowPlaying.value
         val transportControls = mediaPlaybackServiceConnection.transportControls
 
         val isPrepared = mediaPlaybackServiceConnection.playbackState.value?.isPrepared ?: false
 
-        if (isPrepared && audioItem.audioId == nowPlaying?.id) {
+        if (isPrepared && audioItem.audioId.toString() == nowPlaying?.id) {
             mediaPlaybackServiceConnection.playbackState.value?.let {
                 when {
                     it.isPlaying -> if (pauseAllowed) transportControls.pause() else Unit
@@ -66,7 +67,7 @@ class MainActivityViewModel(
                 }
             }
         } else {
-            transportControls.playFromMediaId(audioItem.audioId, null)
+            transportControls.playFromMediaId(audioItem.audioId.toString(), null)
         }
     }
 
@@ -88,7 +89,7 @@ class MainActivityViewModel(
         }
     }
 
-    val needUpdateAudioInfoList = Transformations.map(database.getAllAudio()) { list ->
+    val needUpdateAudioInfoList = Transformations.map(databaseAudioInfo) { list ->
         list?.filter {
             it.needUpdate
         }

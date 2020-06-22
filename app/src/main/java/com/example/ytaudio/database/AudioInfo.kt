@@ -28,5 +28,6 @@ data class AudioInfo(
     @ColumnInfo(name = "average_bitrate") var averageBitrate: Int = 0,
     @ColumnInfo(name = "audio_duration_seconds") var audioDurationSeconds: Long = 0L,
     @ColumnInfo(name = "last_update_time_seconds") var lastUpdateTimeSeconds: Long = 0L,
-    @ColumnInfo(name = "url_active_time_seconds") var urlActiveTimeSeconds: Long = 0L
+    @ColumnInfo(name = "url_active_time_seconds") var urlActiveTimeSeconds: Long = 0L,
+    @ColumnInfo(name = "playback_state") var playbackState: Int = 0
 )

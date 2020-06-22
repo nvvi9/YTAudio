@@ -22,6 +22,8 @@ class PlaylistViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
+    val databaseAudioInfo = database.getAllAudio()
+
     private val playbackStateObserver = Observer<PlaybackStateCompat> {
         val playbackState = it ?: EMPTY_PLAYBACK_STATE
         val data = mediaPlaybackServiceConnection.nowPlaying.value ?: NOTHING_PLAYING

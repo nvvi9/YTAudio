@@ -22,4 +22,5 @@
     <string name="action_delete_title">delete</string>
     <string name="action_select_all_title">select all</string>
     <string name="selected_items">%d selected</string>
+    <string name="nothing_to_play_msg">Nothing to play</string>
 </resources>
