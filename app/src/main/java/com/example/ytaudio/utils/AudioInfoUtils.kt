@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 
 
 val AudioInfo.needUpdate: Boolean
-    get() = System.currentTimeMillis() >= (lastUpdateTimeSeconds + urlActiveTimeSeconds - audioDurationSeconds * 2) * 1000
+    get() = System.currentTimeMillis() >= (lastUpdateTimeSeconds + urlActiveTimeSeconds - 10) * 1000
 
 suspend fun AudioInfo.updateInfo() =
     withContext(Dispatchers.IO) {
