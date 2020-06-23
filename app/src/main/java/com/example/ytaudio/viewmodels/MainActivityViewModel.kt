@@ -137,6 +137,7 @@ class MainActivityViewModel(
                     LOG_TAG,
                     "${audioInfo.audioTitle} added in ${System.currentTimeMillis() - startTime} ms"
                 )
+                Log.i(LOG_TAG, audioInfo.toString())
             } catch (e: ExtractionException) {
                 showToast("Extraction failed")
             } catch (e: YoutubeRequestException) {

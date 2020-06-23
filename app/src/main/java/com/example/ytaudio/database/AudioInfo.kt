@@ -30,4 +30,25 @@ data class AudioInfo(
     @ColumnInfo(name = "last_update_time_seconds") var lastUpdateTimeSeconds: Long = 0L,
     @ColumnInfo(name = "url_active_time_seconds") var urlActiveTimeSeconds: Long = 0L,
     @ColumnInfo(name = "playback_state") var playbackState: Int = 0
-)
+) {
+
+    override fun toString() =
+        "ID: $authorId\n" +
+                "YouTube ID: $youtubeId\n" +
+                "Audio URI: $audioUrl\n" +
+                "Thumbnail URI: $photoUrl\n" +
+                "Audio title: $audioTitle\n" +
+                "Author: $author\n" +
+                "Author ID: $authorId\n" +
+                "Description: $description\n" +
+                "Keywords: $keywords\n" +
+                "Number of views: $viewCount\n" +
+                "Average rating: $averageRating\n" +
+                "Audio format: $audioFormat\n" +
+                "Codec: $codec\n" +
+                "Bitrate: $bitrate\n" +
+                "Average bitrate: $averageBitrate\n" +
+                "Duration (seconds): $audioDurationSeconds\n" +
+                "Last update (seconds): $lastUpdateTimeSeconds\n" +
+                "Active URI time (seconds): $urlActiveTimeSeconds\n"
+}
