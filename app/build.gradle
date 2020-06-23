@@ -27,6 +27,8 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "YOUTUBE_API_KEY", YOUTUBE_API_KEY)
     }
 
     buildTypes {
