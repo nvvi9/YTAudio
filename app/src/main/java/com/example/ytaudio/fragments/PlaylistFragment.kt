@@ -178,11 +178,6 @@ class PlaylistFragment : Fragment() {
             ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(context))
                 .get(MainActivityViewModel::class.java)
 
-        mainActivityViewModel.databaseAudioInfo.observe(viewLifecycleOwner, Observer { list ->
-            binding.nothingToPlay.visibility = if (list.isNullOrEmpty()) View.VISIBLE else View.GONE
-            playlistAdapter.submitList(list?.sortedBy { it.audioTitle })
-        })
-
         playlistViewModel.networkFailure.observe(viewLifecycleOwner, Observer {
             binding.networkFailure.visibility = if (it) View.VISIBLE else View.GONE
         })

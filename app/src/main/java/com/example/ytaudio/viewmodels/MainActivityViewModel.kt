@@ -26,9 +26,19 @@ class MainActivityViewModel(
 ) : ViewModel() {
 
     private val viewModelJob = Job()
-    private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    val databaseAudioInfo = database.getAllAudio()
+    private val needUpdateObserver = Observer<List<AudioInfo>?> { list ->
+        list?.filter { it.needUpdate }?.let {
+            if (it.isNotEmpty()) {
+                updateAudioInfoList(it)
+            }
+        }
+    }
+
+    private val databaseAudioInfo = database.getAllAudio().apply {
+        observeForever(needUpdateObserver)
+    }
 
     val rootMediaId: LiveData<String> =
         Transformations.map(mediaPlaybackServiceConnection.isConnected) {
@@ -89,17 +99,11 @@ class MainActivityViewModel(
         }
     }
 
-    val needUpdateAudioInfoList = Transformations.map(databaseAudioInfo) { list ->
-        list?.filter {
-            it.needUpdate
-        }
-    }
-
     private val nowUpdatingAudioInfoSet = mutableSetOf<AudioInfo>()
 
-    fun updateAudioInfoList(audioInfoList: List<AudioInfo>) {
+    private fun updateAudioInfoList(audioInfoList: List<AudioInfo>) {
         if (nowUpdatingAudioInfoSet.addAll(audioInfoList)) {
-            uiScope.launch {
+            coroutineScope.launch {
                 val startTime = System.currentTimeMillis()
                 var updatedSuccessfully = 0
                 audioInfoList.forEachParallel {
@@ -127,7 +131,7 @@ class MainActivityViewModel(
     }
 
     fun onExtract(youtubeUrl: String) {
-        uiScope.launch {
+        coroutineScope.launch {
             try {
                 val startTime = System.currentTimeMillis()
                 val audioInfo =
@@ -151,7 +155,7 @@ class MainActivityViewModel(
     }
 
     fun deleteAudioInfo(idList: List<Long>) {
-        uiScope.launch {
+        coroutineScope.launch {
             database.delete(idList)
         }
     }
@@ -165,6 +169,7 @@ class MainActivityViewModel(
 
     override fun onCleared() {
         viewModelJob.cancel()
+        databaseAudioInfo.removeObserver(needUpdateObserver)
         super.onCleared()
     }
 

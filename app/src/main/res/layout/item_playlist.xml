@@ -9,9 +9,6 @@
             name="audioItem"
             type="com.example.ytaudio.database.AudioInfo" />
 
-        <variable
-            name="clickListener"
-            type="com.example.ytaudio.utils.AudioInfoListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

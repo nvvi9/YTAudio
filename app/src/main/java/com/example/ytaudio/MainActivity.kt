@@ -42,12 +42,6 @@ class MainActivity : AppCompatActivity() {
                 navigateToPlaylist(it)
             }
         })
-
-        viewModel.needUpdateAudioInfoList.observe(this, Observer {
-            if (!it.isNullOrEmpty()) {
-                viewModel.updateAudioInfoList(it)
-            }
-        })
     }
 
     private fun navigateToPlaylist(audioId: String) {
