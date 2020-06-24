@@ -10,18 +10,19 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.databinding.PlaylistFragmentBinding
+import com.example.ytaudio.service.MEDIA_ROOT_ID
 import com.example.ytaudio.utils.AudioInfoListener
 import com.example.ytaudio.utils.FactoryUtils
 import com.example.ytaudio.utils.PlaylistAdapter
 import com.example.ytaudio.viewmodels.MainActivityViewModel
 import com.example.ytaudio.viewmodels.PlaylistViewModel
-import com.google.android.material.textfield.TextInputEditText
 
 
 class PlaylistFragment : Fragment() {
@@ -75,6 +76,7 @@ class PlaylistFragment : Fragment() {
 
         override fun onClick(item: AudioInfo) {
             mainActivityViewModel.audioItemClicked(item)
+            findNavController().navigate(PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment())
         }
 
         override fun onActiveModeClick() {
@@ -86,7 +88,6 @@ class PlaylistFragment : Fragment() {
                 playlistAdapter.actionMode = false
                 actionMode?.finish()
                 actionMode = null
-                binding.appBarLayout.visibility = View.VISIBLE
             }
         }
 
@@ -103,14 +104,6 @@ class PlaylistFragment : Fragment() {
 
     private val playlistAdapter = PlaylistAdapter(AdapterAudioInfoListener())
 
-    companion object {
-        fun getInstance(audioId: String) = PlaylistFragment().apply {
-            arguments = Bundle().apply {
-                putString(AUDIO_ID_ARG, audioId)
-            }
-        }
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -119,55 +112,8 @@ class PlaylistFragment : Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.playlist_fragment, container, false)
 
-        binding.apply {
-
-            playlistView.adapter = playlistAdapter
-            playlistView.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            playlistView.addItemDecoration(
-                DividerItemDecoration(
-                    activity,
-                    DividerItemDecoration.VERTICAL
-                )
-            )
-
-            linkText.setEndIconOnClickListener {
-                binding.linkText.editText?.let {
-                    if (it.text.isNotBlank()) {
-                        this@PlaylistFragment.mainActivityViewModel.onExtract(it.text.toString())
-                        it.clearScreen()
-                    }
-                }
-            }
-
-            linkText.editText!!.setOnKeyListener { v, keyCode, event ->
-                if (!(v as TextInputEditText).text.isNullOrBlank() &&
-                    keyCode == KeyEvent.KEYCODE_ENTER &&
-                    event.action == KeyEvent.ACTION_UP
-                ) {
-                    this@PlaylistFragment.mainActivityViewModel.onExtract(v.text.toString())
-                    v.clearScreen()
-                    return@setOnKeyListener true
-                }
-                false
-            }
-
-            linkText.editText!!.setOnTouchListener { v, _ ->
-                v.isFocusableInTouchMode = true
-                false
-            }
-
-            lifecycleOwner = this@PlaylistFragment
-        }
-
-        return binding.root
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        val context = activity ?: return
         val application = requireNotNull(this.activity).application
-        audioId = arguments?.getString(AUDIO_ID_ARG) ?: return
+        audioId = MEDIA_ROOT_ID
 
         playlistViewModel = ViewModelProvider(
             this,
@@ -175,7 +121,7 @@ class PlaylistFragment : Fragment() {
         ).get(PlaylistViewModel::class.java)
 
         mainActivityViewModel =
-            ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(context))
+            ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(application))
                 .get(MainActivityViewModel::class.java)
 
         playlistViewModel.networkFailure.observe(viewLifecycleOwner, Observer {
@@ -183,6 +129,22 @@ class PlaylistFragment : Fragment() {
         })
 
         binding.viewModel = playlistViewModel
+
+        binding.apply {
+
+            playlistView.adapter = playlistAdapter
+            playlistView.layoutManager = LinearLayoutManager(application, RecyclerView.VERTICAL, false)
+            playlistView.addItemDecoration(
+                DividerItemDecoration(
+                    activity,
+                    DividerItemDecoration.VERTICAL
+                )
+            )
+
+            lifecycleOwner = this@PlaylistFragment
+        }
+
+        return binding.root
     }
 
     override fun onPause() {

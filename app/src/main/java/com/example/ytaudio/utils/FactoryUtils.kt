@@ -1,6 +1,5 @@
 package com.example.ytaudio.utils
 
-import android.app.Activity
 import android.app.Application
 import android.content.ComponentName
 import android.content.Context
@@ -20,10 +19,10 @@ object FactoryUtils {
             ComponentName(context, MediaPlaybackService::class.java)
         )
 
-    fun provideMainActivityViewModel(activity: Activity) =
+    fun provideMainActivityViewModel(application: Application) =
         MainActivityViewModel.Factory(
-            AudioDatabase.getInstance(activity).audioDatabaseDao,
-            provideMediaPlaybackServiceConnection(activity)
+            AudioDatabase.getInstance(application.applicationContext).audioDatabaseDao,
+            provideMediaPlaybackServiceConnection(application.applicationContext)
         )
 
     fun providePlaylistViewModel(mediaId: String, application: Application) =
@@ -34,10 +33,10 @@ object FactoryUtils {
             application
         )
 
-    fun provideAudioPlayerViewModel(context: Context, application: Application) =
+    fun provideAudioPlayerViewModel(application: Application) =
         AudioPlayerViewModel.Factory(
-            provideMediaPlaybackServiceConnection(context.applicationContext),
-            AudioDatabase.getInstance(context.applicationContext).audioDatabaseDao,
+            provideMediaPlaybackServiceConnection(application.applicationContext),
+            AudioDatabase.getInstance(application.applicationContext).audioDatabaseDao,
             application
         )
 }

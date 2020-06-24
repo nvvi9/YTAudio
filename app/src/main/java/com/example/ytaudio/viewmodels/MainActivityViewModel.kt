@@ -2,11 +2,11 @@ package com.example.ytaudio.viewmodels
 
 import android.util.Log
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.*
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.database.AudioInfo
-import com.example.ytaudio.fragments.AudioPlayerFragment
 import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.service.extensions.id
 import com.example.ytaudio.service.extensions.isPlayEnabled
@@ -40,27 +40,8 @@ class MainActivityViewModel(
         observeForever(needUpdateObserver)
     }
 
-    val rootMediaId: LiveData<String> =
-        Transformations.map(mediaPlaybackServiceConnection.isConnected) {
-            if (it) {
-                mediaPlaybackServiceConnection.rootMediaId
-            } else {
-                null
-            }
-        }
-
-    private val _navigateToFragment = MutableLiveData<Event<FragmentNavigationRequest>>()
-    val navigateToFragment: LiveData<Event<FragmentNavigationRequest>>
-        get() = _navigateToFragment
-
-
     fun audioItemClicked(audioItem: AudioInfo) {
         playAudio(audioItem, false)
-        showFragment(AudioPlayerFragment.getInstance())
-    }
-
-    fun showFragment(fragment: Fragment, addToBackStack: Boolean = true, tag: String? = null) {
-        _navigateToFragment.value = Event(FragmentNavigationRequest(fragment, addToBackStack, tag))
     }
 
     private fun playAudio(audioItem: AudioInfo, pauseAllowed: Boolean) {
@@ -186,11 +167,5 @@ class MainActivityViewModel(
         }
     }
 }
-
-data class FragmentNavigationRequest(
-    val fragment: Fragment,
-    val addToBackStack: Boolean = false,
-    val tag: String? = null
-)
 
 private const val LOG_TAG = "MainActivityViewModel"

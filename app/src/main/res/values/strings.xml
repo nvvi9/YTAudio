@@ -23,4 +23,8 @@
     <string name="action_select_all_title">select all</string>
     <string name="selected_items">%d selected</string>
     <string name="nothing_to_play_msg">Nothing to play</string>
+    <string name="playlist">Playlist</string>
+    <string name="search">Search</string>
+    <string name="open">open drawer</string>
+    <string name="close">close drawer</string>
 </resources>

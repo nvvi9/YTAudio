@@ -23,9 +23,6 @@ class AudioPlayerFragment : Fragment() {
     private lateinit var audioPlayerViewModel: AudioPlayerViewModel
     private lateinit var mainActivityViewModel: MainActivityViewModel
 
-    companion object {
-        fun getInstance() = AudioPlayerFragment()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,21 +33,14 @@ class AudioPlayerFragment : Fragment() {
         binding = DataBindingUtil
             .inflate(inflater, R.layout.audio_player_fragment, container, false)
 
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val context = requireActivity()
         val application = requireNotNull(activity).application
 
         audioPlayerViewModel =
-            ViewModelProvider(this, FactoryUtils.provideAudioPlayerViewModel(context, application))
+            ViewModelProvider(this, FactoryUtils.provideAudioPlayerViewModel(application))
                 .get(AudioPlayerViewModel::class.java)
 
         mainActivityViewModel =
-            ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(context))
+            ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(application))
                 .get(MainActivityViewModel::class.java)
 
         audioPlayerViewModel.apply {
@@ -70,6 +60,8 @@ class AudioPlayerFragment : Fragment() {
                 mainActivityViewModel.playAudio(it.audioId)
             }
         }
+
+        return binding.root
     }
 
     private fun updateUI(currentAudioInfo: AudioPlayerViewModel.NowPlayingAudioInfo) {
