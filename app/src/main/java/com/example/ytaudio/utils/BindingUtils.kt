@@ -10,6 +10,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.ytaudio.AudioItem
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioInfo
+import com.example.ytaudio.network.VideoItem
 
 
 @BindingAdapter("audioTitle")
@@ -30,6 +31,7 @@ fun ImageView.setImage(item: AudioInfo?) {
             .load(it.photoUrl)
             .apply(
                 RequestOptions()
+                    .placeholder(R.drawable.ic_notification)
                     .error(R.drawable.ic_notification)
             ).into(this)
     }
@@ -50,4 +52,33 @@ fun TextView.setDuration(item: AudioInfo?) {
 @BindingAdapter("audioPlaylist")
 fun RecyclerView.setPlaylist(playlist: List<AudioInfo>?) {
     (adapter as PlaylistAdapter).submitList(playlist?.sortedBy { it.audioTitle })
+}
+
+@BindingAdapter("videoItemList")
+fun RecyclerView.setVideoItems(videoItemList: List<VideoItem>?) {
+    (adapter as VideoItemAdapter).submitList(videoItemList)
+}
+
+@BindingAdapter("videoTitle")
+fun TextView.setVideoTitle(video: VideoItem?) {
+    text = video?.snippet?.title
+}
+
+@BindingAdapter("channelTitle")
+fun TextView.setAuthor(video: VideoItem?) {
+    text = video?.snippet?.channelTitle
+}
+
+@BindingAdapter("videoThumbnail")
+fun ImageView.setThumbnail(video: VideoItem?) {
+    video?.let {
+        Glide.with(context)
+            .load(it.snippet.thumbnails.high.url)
+            .apply(
+                RequestOptions()
+                    .placeholder(R.drawable.photo_white)
+                    .error(R.drawable.photo_white)
+            )
+            .into(this)
+    }
 }

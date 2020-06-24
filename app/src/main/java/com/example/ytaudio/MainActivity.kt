@@ -29,13 +29,13 @@ class MainActivity : AppCompatActivity() {
 
         drawer = binding.drawerLayout
 
-        val drawerToggle = ActionBarDrawerToggle(this, drawer, R.string.open, R.string.close)
-        drawer.addDrawerListener(drawerToggle)
-        drawerToggle.syncState()
-
         val navController = this.findNavController(R.id.nav_host_fragment)
         NavigationUI.setupActionBarWithNavController(this, navController, drawer)
         appBarConfiguration = AppBarConfiguration(navController.graph, drawer)
+
+        val drawerToggle = ActionBarDrawerToggle(this, drawer, R.string.open, R.string.close)
+        drawer.addDrawerListener(drawerToggle)
+        drawerToggle.syncState()
 
         navController.addOnDestinationChangedListener { controller, destination, _ ->
             drawer.setDrawerLockMode(

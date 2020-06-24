@@ -71,13 +71,13 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
                 }
             }
 
-            binding.itemLayout.setBackgroundColor(if (item in _selectedAudioItems) Color.GRAY else Color.TRANSPARENT)
+            binding.root.setBackgroundColor(if (item in _selectedAudioItems) Color.GRAY else Color.TRANSPARENT)
 
             if (refresh) {
                 binding.audioItem = item
             }
 
-            binding.itemLayout.setOnClickListener {
+            binding.root.setOnClickListener {
                 if (!actionMode) {
                     clickListener.onClick(item)
                 } else {
@@ -86,7 +86,7 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
                 }
             }
 
-            binding.itemLayout.setOnLongClickListener {
+            binding.root.setOnLongClickListener {
                 if (_selectedAudioItems.isEmpty()) {
                     itemClicked(item)
                 }

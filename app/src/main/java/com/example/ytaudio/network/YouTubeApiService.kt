@@ -11,7 +11,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 private const val BASE_URL =
-    "https://googleapis.com/youtube/v3/"
+    "https://www.googleapis.com/youtube/v3/"
 
 private const val API_KEY = BuildConfig.YOUTUBE_API_KEY
 
@@ -30,8 +30,8 @@ interface YouTubeApiService {
     @GET("search")
     fun getSearchResponse(
         @Query("q") q: String,
-        @Query("part") part: String = "snippet",
         @Query("maxResults") maxResults: Int = 25,
+        @Query("part") part: String = "snippet",
         @Query("type") type: String = "video",
         @Query("key") key: String = API_KEY
     ): Deferred<Response>

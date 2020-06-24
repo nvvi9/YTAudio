@@ -9,7 +9,7 @@
         android:id="@+id/playlistFragment"
         android:name="com.example.ytaudio.fragments.PlaylistFragment"
         android:label="PlaylistFragment"
-        tools:layout="@layout/playlist_fragment" >
+        tools:layout="@layout/playlist_fragment">
         <action
             android:id="@+id/action_playlistFragment_to_audioPlayerFragment"
             app:destination="@id/audioPlayerFragment" />
@@ -19,4 +19,9 @@
         android:name="com.example.ytaudio.fragments.AudioPlayerFragment"
         android:label="AudioPlayerFragment"
         tools:layout="@layout/audio_player_fragment" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.example.ytaudio.fragments.SearchFragment"
+        android:label="SearchFragment"
+        tools:layout="@layout/search_fragment" />
 </navigation>

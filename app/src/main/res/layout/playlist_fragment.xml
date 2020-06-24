@@ -21,7 +21,6 @@
             android:layout_height="match_parent"
             android:scrollbars="vertical"
             app:audioPlaylist="@{viewModel.databaseAudioInfo}"
-            app:layout_constraintBottom_toBottomOf="parent"
             tools:listitem="@layout/item_playlist" />
 
         <TextView
