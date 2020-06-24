@@ -27,7 +27,6 @@ import com.example.ytaudio.viewmodels.PlaylistViewModel
 
 class PlaylistFragment : Fragment() {
 
-    private lateinit var audioId: String
     private lateinit var binding: PlaylistFragmentBinding
     private lateinit var playlistViewModel: PlaylistViewModel
     private lateinit var mainActivityViewModel: MainActivityViewModel
@@ -85,7 +84,7 @@ class PlaylistFragment : Fragment() {
                 actionMode?.title =
                     getString(R.string.selected_items, selectedItemsCount)
             } else {
-                playlistAdapter.actionMode = false
+                playlistAdapter.stopActionMode()
                 actionMode?.finish()
                 actionMode = null
             }
@@ -94,8 +93,7 @@ class PlaylistFragment : Fragment() {
         override fun onLongClick(item: AudioInfo) {
             if (actionMode == null) {
                 actionMode = activity?.startActionMode(actionModeCallback)
-                playlistAdapter.actionMode = true
-                playlistAdapter.notifyDataSetChanged()
+                playlistAdapter.startActionMode()
                 actionMode?.title =
                     getString(R.string.selected_items, playlistAdapter.selectedAudioItems.size)
             }
@@ -113,7 +111,7 @@ class PlaylistFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.playlist_fragment, container, false)
 
         val application = requireNotNull(this.activity).application
-        audioId = MEDIA_ROOT_ID
+        val audioId = MEDIA_ROOT_ID
 
         playlistViewModel = ViewModelProvider(
             this,
@@ -133,7 +131,8 @@ class PlaylistFragment : Fragment() {
         binding.apply {
 
             playlistView.adapter = playlistAdapter
-            playlistView.layoutManager = LinearLayoutManager(application, RecyclerView.VERTICAL, false)
+            playlistView.layoutManager =
+                LinearLayoutManager(application, RecyclerView.VERTICAL, false)
             playlistView.addItemDecoration(
                 DividerItemDecoration(
                     activity,
@@ -144,12 +143,28 @@ class PlaylistFragment : Fragment() {
             lifecycleOwner = this@PlaylistFragment
         }
 
+        setHasOptionsMenu(true)
         return binding.root
     }
 
-    override fun onPause() {
-        super.onPause()
-        binding.root.hideKeyboard()
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.overflow_playlist_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.delete -> {
+                if (actionMode == null) {
+                    actionMode = activity?.startActionMode(actionModeCallback)
+                    playlistAdapter.startActionMode()
+                    actionMode?.title =
+                        getString(R.string.selected_items, playlistAdapter.selectedAudioItems.size)
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun EditText.clearScreen() {

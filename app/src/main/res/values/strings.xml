@@ -27,4 +27,5 @@
     <string name="search">Search</string>
     <string name="open">open drawer</string>
     <string name="close">close drawer</string>
+    <string name="delete">Delete</string>
 </resources>
