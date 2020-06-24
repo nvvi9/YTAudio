@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -71,7 +70,7 @@ class PlaylistFragment : Fragment() {
     }
 
 
-    private inner class AdapterAudioInfoListener : AudioInfoListener {
+    private inner class AdapterAudioInfoListener : AudioInfoListener() {
 
         override fun onClick(item: AudioInfo) {
             mainActivityViewModel.audioItemClicked(item)
@@ -108,8 +107,8 @@ class PlaylistFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.playlist_fragment, container, false)
-
+//        binding = DataBindingUtil.inflate(inflater, R.layout.playlist_fragment, container, false)
+        binding = PlaylistFragmentBinding.inflate(inflater)
         val application = requireNotNull(this.activity).application
         val audioId = MEDIA_ROOT_ID
 

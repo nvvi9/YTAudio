@@ -40,13 +40,9 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        onBindViewHolder(holder, position, mutableListOf())
-    }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) =
+        holder.bind(clickListener, getItem(position))
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
-        holder.bind(clickListener, getItem(position), payloads)
-    }
 
     inner class ViewHolder(private val binding: ItemPlaylistBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -58,43 +54,30 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
             notifyDataSetChanged()
         }
 
-        fun bind(clickListener: AudioInfoListener, item: AudioInfo, payloads: MutableList<Any>) {
-            var refresh = payloads.isEmpty()
+        fun bind(clickListener: AudioInfoListener, item: AudioInfo) {
+            binding.apply {
+                audioItem = item
+                root.setBackgroundColor(if (item in _selectedAudioItems) Color.GRAY else Color.TRANSPARENT)
 
-            if (payloads.isNotEmpty()) {
-                payloads.forEach {
-                    when (it) {
-                        PLAYBACK_STATE_CHANGED ->
-                            binding.playbackState.setImageResource(item.playbackState)
-                        else -> refresh = true
+                root.setOnClickListener {
+                    if (!actionMode) {
+                        clickListener.onClick(item)
+                    } else {
+                        itemClicked(item)
+                        clickListener.onActiveModeClick()
                     }
                 }
-            }
 
-            binding.root.setBackgroundColor(if (item in _selectedAudioItems) Color.GRAY else Color.TRANSPARENT)
-
-            if (refresh) {
-                binding.audioItem = item
-            }
-
-            binding.root.setOnClickListener {
-                if (!actionMode) {
-                    clickListener.onClick(item)
-                } else {
-                    itemClicked(item)
-                    clickListener.onActiveModeClick()
+                root.setOnLongClickListener {
+                    if (_selectedAudioItems.isEmpty()) {
+                        itemClicked(item)
+                    }
+                    clickListener.onLongClick(item)
+                    true
                 }
-            }
 
-            binding.root.setOnLongClickListener {
-                if (_selectedAudioItems.isEmpty()) {
-                    itemClicked(item)
-                }
-                clickListener.onLongClick(item)
-                true
+                executePendingBindings()
             }
-
-            binding.executePendingBindings()
         }
     }
 }
@@ -103,19 +86,13 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
 class AudioInfoDiffCallback : DiffUtil.ItemCallback<AudioInfo>() {
 
     override fun areItemsTheSame(oldItem: AudioInfo, newItem: AudioInfo) =
-        oldItem.audioId == newItem.audioId
+        oldItem === newItem
 
     override fun areContentsTheSame(oldItem: AudioInfo, newItem: AudioInfo) =
         oldItem == newItem
-
-    override fun getChangePayload(oldItem: AudioInfo, newItem: AudioInfo) =
-        if (oldItem.playbackState != newItem.playbackState) PLAYBACK_STATE_CHANGED else null
 }
 
-interface AudioInfoListener {
-    fun onClick(item: AudioInfo)
-    fun onLongClick(item: AudioInfo)
-    fun onActiveModeClick()
-}
 
-const val PLAYBACK_STATE_CHANGED = 1
+abstract class AudioInfoListener : ClickListener<AudioInfo> {
+    abstract fun onActiveModeClick()
+}

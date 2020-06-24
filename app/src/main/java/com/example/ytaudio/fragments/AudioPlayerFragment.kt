@@ -6,7 +6,6 @@ import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -29,9 +28,7 @@ class AudioPlayerFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        binding = DataBindingUtil
-            .inflate(inflater, R.layout.audio_player_fragment, container, false)
+        binding = AudioPlayerFragmentBinding.inflate(inflater)
 
         val application = requireNotNull(activity).application
 

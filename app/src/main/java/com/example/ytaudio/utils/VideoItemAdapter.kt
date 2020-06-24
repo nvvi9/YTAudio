@@ -8,24 +8,33 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.databinding.VideoItemBinding
 import com.example.ytaudio.network.VideoItem
 
-class VideoItemAdapter(private val clickListener: (videoItem: VideoItem) -> Unit) :
+class VideoItemAdapter(private val clickListener: ClickListener<VideoItem>) :
     ListAdapter<VideoItem, VideoItemAdapter.ViewHolder>(VideoItemDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ViewHolder.from(parent)
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) =
         holder.bind(getItem(position), clickListener)
-    }
+
 
     class ViewHolder private constructor(val binding: VideoItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(videoItem: VideoItem, clickListener: (videoItem: VideoItem) -> Unit) {
-            binding.videoItem = videoItem
-            binding.root.setOnClickListener {
-                clickListener(videoItem)
+
+        fun bind(item: VideoItem, clickListener: ClickListener<VideoItem>) {
+            binding.apply {
+                videoItem = item
+                root.setOnClickListener {
+                    clickListener.onClick(item)
+                }
+
+                root.setOnLongClickListener {
+                    clickListener.onLongClick(item)
+                    true
+                }
+
+                executePendingBindings()
             }
-            binding.executePendingBindings()
         }
 
         companion object {
@@ -37,8 +46,8 @@ class VideoItemAdapter(private val clickListener: (videoItem: VideoItem) -> Unit
             }
         }
     }
-
 }
+
 
 class VideoItemDiffCallback : DiffUtil.ItemCallback<VideoItem>() {
 

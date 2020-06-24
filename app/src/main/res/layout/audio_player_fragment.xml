@@ -41,7 +41,6 @@
             android:layout_margin="16dp"
             android:contentDescription="@string/photo_description"
             app:layout_constraintBottom_toTopOf="@+id/audio_button"
-            tools:layout_editor_absoluteX="8dp"
             tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
         <TextView
