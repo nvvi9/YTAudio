@@ -20,8 +20,8 @@ class SearchViewModel : ViewModel() {
     val response: LiveData<Response>
         get() = _response
 
-    private val _autoComplete = MutableLiveData<String>()
-    val autoComplete: LiveData<String>
+    private val _autoComplete = MutableLiveData<List<String>>()
+    val autoComplete: LiveData<List<String>>
         get() = _autoComplete
 
     fun getResponse(query: String, maxResults: Int = 25) {
@@ -36,19 +36,13 @@ class SearchViewModel : ViewModel() {
         }
     }
 
-    init {
-        getAutoComplete("ra")
-    }
-
     fun getAutoComplete(query: String) {
         coroutineScope.launch {
             val getAutoCompleteDeferred =
-                YouTubeApi.retrofitAutoComplete.getAutoComplete(query)
+                YouTubeApi.retrofitAutoCompleteService.getAutoComplete(query)
             try {
                 val result = getAutoCompleteDeferred.await()
-                _autoComplete.value = result.items?.joinToString {
-                    it.suggestion?.data ?: ""
-                }
+                _autoComplete.value = result.items?.mapNotNull { it.suggestion?.data }
             } catch (t: Throwable) {
                 Log.i("SearchViewModel", t.message ?: "error")
             }

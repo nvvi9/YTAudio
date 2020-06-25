@@ -1,6 +1,9 @@
 package com.example.ytaudio.utils
 
+import android.content.Context
 import android.text.format.DateUtils
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
@@ -82,3 +85,7 @@ fun ImageView.setThumbnail(video: VideoItem?) {
             .into(this)
     }
 }
+
+fun View.hideKeyboard(context: Context?) =
+    (context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
+        ?.hideSoftInputFromWindow(windowToken, 0)

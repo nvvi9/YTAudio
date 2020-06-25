@@ -29,7 +29,7 @@ private val retrofit = Retrofit.Builder()
     .baseUrl(BASE_URL)
     .build()
 
-private val retrofitComplete = Retrofit.Builder()
+private val retrofitAutoComplete = Retrofit.Builder()
     .addConverterFactory(SimpleXmlConverterFactory.create())
     .addCallAdapterFactory(CoroutineCallAdapterFactory())
     .baseUrl(AUTOCOMPLETE_URL)
@@ -59,7 +59,7 @@ object YouTubeApi {
         retrofit.create(YouTubeApiService::class.java)
     }
 
-    val retrofitAutoComplete: YouTubeApiService by lazy {
-        retrofitComplete.create(YouTubeApiService::class.java)
+    val retrofitAutoCompleteService: YouTubeApiService by lazy {
+        retrofitAutoComplete.create(YouTubeApiService::class.java)
     }
 }

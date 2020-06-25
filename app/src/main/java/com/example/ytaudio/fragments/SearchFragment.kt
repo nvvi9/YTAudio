@@ -1,12 +1,16 @@
 package com.example.ytaudio.fragments
 
-import android.graphics.Color
+import android.app.SearchManager
+import android.database.Cursor
+import android.database.MatrixCursor
 import android.os.Bundle
+import android.provider.BaseColumns
 import android.view.*
-import android.widget.EditText
+import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.MenuItemCompat
+import androidx.cursoradapter.widget.CursorAdapter
+import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -16,6 +20,7 @@ import com.example.ytaudio.databinding.SearchFragmentBinding
 import com.example.ytaudio.network.VideoItem
 import com.example.ytaudio.utils.ClickListener
 import com.example.ytaudio.utils.VideoItemAdapter
+import com.example.ytaudio.utils.hideKeyboard
 import com.example.ytaudio.viewmodels.SearchViewModel
 
 class SearchFragment : Fragment() {
@@ -23,8 +28,6 @@ class SearchFragment : Fragment() {
     private val viewModel: SearchViewModel by lazy {
         ViewModelProvider(this).get(SearchViewModel::class.java)
     }
-
-    private lateinit var searchView: SearchView
 
     private val adapter = VideoItemAdapter(object : ClickListener<VideoItem> {
         override fun onClick(item: VideoItem) {
@@ -58,14 +61,7 @@ class SearchFragment : Fragment() {
             lifecycleOwner = this@SearchFragment
         }
 
-        viewModel.autoComplete.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            }
-        })
-
         setHasOptionsMenu(true)
-
         return binding.root
     }
 
@@ -73,33 +69,66 @@ class SearchFragment : Fragment() {
         inflater.inflate(R.menu.search_toolbar_menu, menu)
 
         val searchItem = menu.findItem(R.id.action_search)
-        searchItem?.let { item ->
-            searchView = MenuItemCompat.getActionView(item) as SearchView
-            searchView.setOnCloseListener(object : SearchView.OnCloseListener {
+        val searchView = searchItem?.actionView as SearchView
 
-                override fun onClose() = true
-            })
+        searchView.queryHint = getString(R.string.search)
+        searchView.findViewById<AutoCompleteTextView>(androidx.appcompat.R.id.search_src_text)
+            .threshold = 1
 
-            val searchPlate: EditText =
-                searchView.findViewById(androidx.appcompat.R.id.search_src_text)
+        val from = arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1)
+        val to = intArrayOf(R.id.item_suggest)
+        val cursorAdapter = SimpleCursorAdapter(
+            context,
+            R.layout.item_search_suggest,
+            null,
+            from,
+            to,
+            CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+        )
 
-            searchPlate.hint = "Search"
+        searchView.suggestionsAdapter = cursorAdapter
 
-            val searchPlateView: View =
-                searchView.findViewById(androidx.appcompat.R.id.search_plate)
+        viewModel.autoComplete.observe(viewLifecycleOwner, Observer {
+            val cursor =
+                MatrixCursor(arrayOf(BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1))
+            it.forEachIndexed { index, s ->
+                cursor.addRow(arrayOf(index, s))
+            }
+            cursorAdapter.changeCursor(cursor)
+        })
 
-            searchPlateView.setBackgroundColor(Color.TRANSPARENT)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
-            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                searchView.hideKeyboard(context)
+                query?.let {
+                    viewModel.getResponse(it)
+                }
+                return false
+            }
 
-                override fun onQueryTextSubmit(query: String?) =
-                    query?.let {
-                        viewModel.getResponse(it)
-                        true
-                    } ?: false
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let {
+                    viewModel.getAutoComplete(it)
+                }
+                return true
+            }
+        })
 
-                override fun onQueryTextChange(newText: String?): Boolean = false
-            })
-        }
+        searchView.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
+
+            override fun onSuggestionSelect(position: Int): Boolean = false
+
+            override fun onSuggestionClick(position: Int): Boolean {
+                val cursor = searchView.suggestionsAdapter.getItem(position) as Cursor
+                val selection =
+                    cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1))
+                searchView.setQuery(selection, false)
+
+                return true
+            }
+        })
+
+        super.onCreateOptionsMenu(menu, inflater)
     }
 }
