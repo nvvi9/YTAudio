@@ -7,8 +7,12 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Deferred
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+
+private const val AUTOCOMPLETE_URL =
+    "https://suggestqueries.google.com/complete/"
 
 private const val BASE_URL =
     "https://www.googleapis.com/youtube/v3/"
@@ -25,6 +29,11 @@ private val retrofit = Retrofit.Builder()
     .baseUrl(BASE_URL)
     .build()
 
+private val retrofitComplete = Retrofit.Builder()
+    .addConverterFactory(SimpleXmlConverterFactory.create())
+    .addCallAdapterFactory(CoroutineCallAdapterFactory())
+    .baseUrl(AUTOCOMPLETE_URL)
+    .build()
 
 interface YouTubeApiService {
     @GET("search")
@@ -35,11 +44,22 @@ interface YouTubeApiService {
         @Query("type") type: String = "video",
         @Query("key") key: String = API_KEY
     ): Deferred<Response>
+
+    @GET("search")
+    fun getAutoComplete(
+        @Query("q") q: String,
+        @Query("client") client: String = "toolbar",
+        @Query("ds") ds: String = "yt"
+    ): Deferred<AutoComplete>
 }
 
 
 object YouTubeApi {
     val retrofitService: YouTubeApiService by lazy {
         retrofit.create(YouTubeApiService::class.java)
+    }
+
+    val retrofitAutoComplete: YouTubeApiService by lazy {
+        retrofitComplete.create(YouTubeApiService::class.java)
     }
 }
