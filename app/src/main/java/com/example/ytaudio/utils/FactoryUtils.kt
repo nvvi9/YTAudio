@@ -9,6 +9,7 @@ import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.viewmodels.AudioPlayerViewModel
 import com.example.ytaudio.viewmodels.MainActivityViewModel
 import com.example.ytaudio.viewmodels.PlaylistViewModel
+import com.example.ytaudio.viewmodels.SearchViewModel
 
 
 object FactoryUtils {
@@ -39,4 +40,7 @@ object FactoryUtils {
             AudioDatabase.getInstance(application.applicationContext).audioDatabaseDao,
             application
         )
+
+    fun provideSearchViewModel(application: Application) =
+        SearchViewModel.Factory(AudioDatabase.getInstance(application.applicationContext).audioDatabaseDao)
 }

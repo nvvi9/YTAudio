@@ -9,4 +9,9 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always" />
 
+    <group>
+        <item
+            android:id="@+id/add"
+            android:title="@string/add" />
+    </group>
 </menu>

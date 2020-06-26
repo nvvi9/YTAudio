@@ -16,7 +16,7 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
     val selectedAudioItems: Set<AudioInfo>
         get() = _selectedAudioItems
 
-    var actionMode = false
+    var inActionMode = false
 
     fun selectAll() {
         _selectedAudioItems.addAll(currentList)
@@ -24,13 +24,13 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
     }
 
     fun startActionMode() {
-        actionMode = true
+        inActionMode = true
         notifyDataSetChanged()
     }
 
     fun stopActionMode() {
         _selectedAudioItems.clear()
-        actionMode = false
+        inActionMode = false
         notifyDataSetChanged()
     }
 
@@ -60,7 +60,7 @@ class PlaylistAdapter(private val clickListener: AudioInfoListener) :
                 root.setBackgroundColor(if (item in _selectedAudioItems) Color.GRAY else Color.TRANSPARENT)
 
                 root.setOnClickListener {
-                    if (!actionMode) {
+                    if (!inActionMode) {
                         clickListener.onClick(item)
                     } else {
                         itemClicked(item)

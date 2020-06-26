@@ -18,30 +18,74 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.ytaudio.R
 import com.example.ytaudio.databinding.SearchFragmentBinding
 import com.example.ytaudio.network.VideoItem
-import com.example.ytaudio.utils.ClickListener
+import com.example.ytaudio.utils.FactoryUtils
 import com.example.ytaudio.utils.VideoItemAdapter
+import com.example.ytaudio.utils.VideoItemListener
 import com.example.ytaudio.utils.hideKeyboard
 import com.example.ytaudio.viewmodels.SearchViewModel
 
 class SearchFragment : Fragment() {
 
-    private val viewModel: SearchViewModel by lazy {
-        ViewModelProvider(this).get(SearchViewModel::class.java)
+    private lateinit var viewModel: SearchViewModel
+    private var actionMode: ActionMode? = null
+
+    private val actionModeCallback = object : ActionMode.Callback {
+        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+            return when (item?.itemId) {
+                R.id.action_add -> {
+                    viewModel.insertInDatabase(videoItemAdapter.selectedItems.toList())
+                    videoItemAdapter.stopActionMode()
+                    mode?.finish()
+                    actionMode = null
+                    true
+                }
+                else -> false
+            }
+        }
+
+        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?) = mode?.run {
+            menuInflater.inflate(R.menu.search_toolbar_action_mode, menu)
+            true
+        } ?: false
+
+        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?) = false
+
+        override fun onDestroyActionMode(mode: ActionMode?) {
+            videoItemAdapter.stopActionMode()
+            mode?.finish()
+            actionMode = null
+        }
     }
 
-    private val adapter = VideoItemAdapter(object : ClickListener<VideoItem> {
+    private val videoItemAdapter = VideoItemAdapter(AdapterVideoItemListener())
+
+    private inner class AdapterVideoItemListener : VideoItemListener() {
         override fun onClick(item: VideoItem) {
             Toast.makeText(this@SearchFragment.context, item.id.videoId, Toast.LENGTH_SHORT).show()
         }
 
-        override fun onLongClick(item: VideoItem) {
-            Toast.makeText(
-                this@SearchFragment.context,
-                item.snippet.liveBroadcastContent,
-                Toast.LENGTH_SHORT
-            ).show()
+        override fun onActiveModeClick() {
+            val selectedItemsCount = videoItemAdapter.selectedItems.size
+            if (selectedItemsCount != 0) {
+                actionMode?.title =
+                    getString(R.string.selected_items, selectedItemsCount)
+            } else {
+                videoItemAdapter.stopActionMode()
+                actionMode?.finish()
+                actionMode = null
+            }
         }
-    })
+
+        override fun onLongClick(item: VideoItem) {
+            if (actionMode == null) {
+                actionMode = activity?.startActionMode(actionModeCallback)
+                videoItemAdapter.startActionMode()
+                actionMode?.title =
+                    getString(R.string.selected_items, videoItemAdapter.selectedItems.size)
+            }
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,9 +93,16 @@ class SearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val binding = SearchFragmentBinding.inflate(inflater)
+
+        val application = requireNotNull(activity).application
+
+        viewModel =
+            ViewModelProvider(this, FactoryUtils.provideSearchViewModel(application))
+                .get(SearchViewModel::class.java)
+
         binding.apply {
             viewModel = this@SearchFragment.viewModel
-            videoItemsView.adapter = adapter
+            videoItemsView.adapter = videoItemAdapter
             videoItemsView.addItemDecoration(
                 DividerItemDecoration(
                     activity,
@@ -130,5 +181,20 @@ class SearchFragment : Fragment() {
         })
 
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.add -> {
+                if (actionMode == null) {
+                    actionMode = activity?.startActionMode(actionModeCallback)
+                    videoItemAdapter.startActionMode()
+                    actionMode?.title =
+                        getString(R.string.selected_items, videoItemAdapter.selectedItems.size)
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

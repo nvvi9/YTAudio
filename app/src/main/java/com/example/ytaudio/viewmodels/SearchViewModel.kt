@@ -4,14 +4,21 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.network.Response
+import com.example.ytaudio.network.VideoItem
 import com.example.ytaudio.network.YouTubeApi
+import com.example.ytaudio.utils.getAudioInfo
+import com.example.ytaudio.utils.mapParallel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class SearchViewModel : ViewModel() {
+class SearchViewModel(
+    private val databaseDao: AudioDatabaseDao
+) : ViewModel() {
 
     private val job = Job()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
@@ -46,6 +53,22 @@ class SearchViewModel : ViewModel() {
             } catch (t: Throwable) {
                 Log.i("SearchViewModel", t.message ?: "error")
             }
+        }
+    }
+
+    fun insertInDatabase(items: List<VideoItem>) {
+        coroutineScope.launch {
+            databaseDao.insert(items.mapParallel {
+                getAudioInfo(it.id.videoId)
+            })
+        }
+    }
+
+    class Factory(private val databaseDao: AudioDatabaseDao) : ViewModelProvider.Factory {
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return SearchViewModel(databaseDao) as T
         }
     }
 }

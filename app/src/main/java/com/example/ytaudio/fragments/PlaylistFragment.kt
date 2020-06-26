@@ -62,7 +62,7 @@ class PlaylistFragment : Fragment() {
 
         override fun onDestroyActionMode(mode: ActionMode?) {
             playlistAdapter.stopActionMode()
-            actionMode?.finish()
+            mode?.finish()
             actionMode = null
         }
     }
