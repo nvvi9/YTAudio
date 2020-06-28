@@ -1,4 +1,4 @@
-package com.example.ytaudio.network
+package com.example.ytaudio.network.autocomplete
 
 import org.simpleframework.xml.Attribute
 import org.simpleframework.xml.Element

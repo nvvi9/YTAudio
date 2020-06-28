@@ -1,6 +1,6 @@
-package com.example.ytaudio.network
+package com.example.ytaudio.network.youtube
 
-data class Response(
+data class YTResponse(
     val kind: String,
     val etag: String,
     val nextPageToken: String,

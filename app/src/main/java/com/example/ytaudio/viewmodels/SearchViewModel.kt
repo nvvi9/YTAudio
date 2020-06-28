@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.ytaudio.database.AudioDatabaseDao
-import com.example.ytaudio.network.Response
-import com.example.ytaudio.network.VideoItem
-import com.example.ytaudio.network.YouTubeApi
+import com.example.ytaudio.network.ApiService
+import com.example.ytaudio.network.youtube.VideoItem
+import com.example.ytaudio.network.youtube.YTResponse
 import com.example.ytaudio.utils.getAudioInfo
 import com.example.ytaudio.utils.mapParallel
 import kotlinx.coroutines.CoroutineScope
@@ -23,31 +23,31 @@ class SearchViewModel(
     private val job = Job()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
 
-    private val _response = MutableLiveData<Response>()
-    val response: LiveData<Response>
-        get() = _response
+    private val _ytResponse = MutableLiveData<YTResponse>()
+    val ytResponse: LiveData<YTResponse>
+        get() = _ytResponse
 
     private val _autoComplete = MutableLiveData<List<String>>()
     val autoComplete: LiveData<List<String>>
         get() = _autoComplete
 
-    fun getResponse(query: String, maxResults: Int = 25) {
+    fun setResponse(query: String, maxResults: Int = 25) {
         coroutineScope.launch {
-            val getResponseDeferred = YouTubeApi.retrofitService.getSearchResponse(query)
+            val getResponseDeferred = ApiService.ytService.getYTResponse(query)
             try {
                 val resultResponse = getResponseDeferred.await()
-                _response.value = resultResponse
+                _ytResponse.value = resultResponse
             } catch (t: Throwable) {
                 Log.i("SearchViewModel", t.message ?: "error")
             }
         }
     }
 
-    fun getAutoComplete(query: String) {
+    fun setAutoComplete(query: String) {
         coroutineScope.launch {
-            val getAutoCompleteDeferred =
-                YouTubeApi.retrofitAutoCompleteService.getAutoComplete(query)
             try {
+                val getAutoCompleteDeferred =
+                    ApiService.autoCompleteService.getAutoComplete(query)
                 val result = getAutoCompleteDeferred.await()
                 _autoComplete.value = result.items?.mapNotNull { it.suggestion?.data }
             } catch (t: Throwable) {

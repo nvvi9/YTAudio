@@ -13,7 +13,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.ytaudio.AudioItem
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioInfo
-import com.example.ytaudio.network.VideoItem
+import com.example.ytaudio.network.youtube.VideoItem
 
 
 @BindingAdapter("audioTitle")

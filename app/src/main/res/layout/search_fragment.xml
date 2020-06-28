@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:scrollbars="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:videoItemList="@{viewModel.response.items}"
+            app:videoItemList="@{viewModel.ytResponse.items}"
             tools:listitem="@layout/video_item" />
 
         <TextView

@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.databinding.VideoItemBinding
-import com.example.ytaudio.network.VideoItem
+import com.example.ytaudio.network.youtube.VideoItem
 
 class VideoItemAdapter(private val clickListener: VideoItemListener) :
     ListAdapter<VideoItem, VideoItemAdapter.ViewHolder>(VideoItemDiffCallback()) {
@@ -16,7 +16,7 @@ class VideoItemAdapter(private val clickListener: VideoItemListener) :
     val selectedItems: Set<VideoItem>
         get() = _selectedItems
 
-    var inActionMode = false
+    private var inActionMode = false
 
     fun selectAll() {
         _selectedItems.addAll(currentList)

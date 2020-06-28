@@ -17,7 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.ytaudio.R
 import com.example.ytaudio.databinding.SearchFragmentBinding
-import com.example.ytaudio.network.VideoItem
+import com.example.ytaudio.network.youtube.VideoItem
 import com.example.ytaudio.utils.FactoryUtils
 import com.example.ytaudio.utils.VideoItemAdapter
 import com.example.ytaudio.utils.VideoItemListener
@@ -153,14 +153,14 @@ class SearchFragment : Fragment() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 searchView.hideKeyboard(context)
                 query?.let {
-                    viewModel.getResponse(it)
+                    viewModel.setResponse(it)
                 }
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 newText?.let {
-                    viewModel.getAutoComplete(it)
+                    viewModel.setAutoComplete(it)
                 }
                 return true
             }

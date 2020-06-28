@@ -7,7 +7,7 @@
 
         <variable
             name="videoItem"
-            type="com.example.ytaudio.network.VideoItem" />
+            type="com.example.ytaudio.network.youtube.VideoItem" />
 
     </data>
 
