@@ -9,12 +9,14 @@ import android.view.*
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.MenuItemCompat
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.transition.TransitionManager
 import com.example.ytaudio.R
 import com.example.ytaudio.databinding.SearchFragmentBinding
 import com.example.ytaudio.network.youtube.VideoItem
@@ -27,6 +29,7 @@ import com.example.ytaudio.viewmodels.SearchViewModel
 class SearchFragment : Fragment() {
 
     private lateinit var viewModel: SearchViewModel
+    private lateinit var binding: SearchFragmentBinding
     private var actionMode: ActionMode? = null
 
     private val actionModeCallback = object : ActionMode.Callback {
@@ -87,7 +90,7 @@ class SearchFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = SearchFragmentBinding.inflate(inflater)
+        binding = SearchFragmentBinding.inflate(inflater)
 
         val application = requireNotNull(activity).application
 
@@ -175,6 +178,17 @@ class SearchFragment : Fragment() {
             }
         })
 
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                searchView.isIconified = false
+                searchView.requestFocusFromTouch()
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?) = true
+        })
+
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -186,8 +200,20 @@ class SearchFragment : Fragment() {
                 }
                 true
             }
+            R.id.action_search -> {
+                activity?.let {
+                    TransitionManager.beginDelayedTransition(it.findViewById(R.id.toolbar))
+                    MenuItemCompat.expandActionView(item)
+                }
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onPause() {
+        binding.root.hideKeyboard(context)
+        super.onPause()
     }
 
     private fun startActionMode() {
