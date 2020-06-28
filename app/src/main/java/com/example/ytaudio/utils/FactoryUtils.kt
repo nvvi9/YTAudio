@@ -3,13 +3,13 @@ package com.example.ytaudio.utils
 import android.app.Application
 import android.content.ComponentName
 import android.content.Context
+import com.example.ytaudio.MainActivityViewModel
 import com.example.ytaudio.database.AudioDatabase
+import com.example.ytaudio.player.PlayerViewModel
+import com.example.ytaudio.playlist.PlaylistViewModel
+import com.example.ytaudio.search.SearchViewModel
 import com.example.ytaudio.service.MediaPlaybackService
 import com.example.ytaudio.service.MediaPlaybackServiceConnection
-import com.example.ytaudio.viewmodels.AudioPlayerViewModel
-import com.example.ytaudio.viewmodels.MainActivityViewModel
-import com.example.ytaudio.viewmodels.PlaylistViewModel
-import com.example.ytaudio.viewmodels.SearchViewModel
 
 
 object FactoryUtils {
@@ -35,7 +35,7 @@ object FactoryUtils {
         )
 
     fun provideAudioPlayerViewModel(application: Application) =
-        AudioPlayerViewModel.Factory(
+        PlayerViewModel.Factory(
             provideMediaPlaybackServiceConnection(application.applicationContext),
             AudioDatabase.getInstance(application.applicationContext).audioDatabaseDao,
             application

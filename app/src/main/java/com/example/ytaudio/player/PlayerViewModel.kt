@@ -1,4 +1,4 @@
-package com.example.ytaudio.viewmodels
+package com.example.ytaudio.player
 
 import android.app.Application
 import android.net.Uri
@@ -15,7 +15,7 @@ import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.service.NOTHING_PLAYING
 import com.example.ytaudio.service.extensions.*
 
-class AudioPlayerViewModel(
+class PlayerViewModel(
     mediaPlaybackServiceConnection: MediaPlaybackServiceConnection,
     val database: AudioDatabaseDao,
     application: Application
@@ -98,7 +98,7 @@ class AudioPlayerViewModel(
 
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return AudioPlayerViewModel(
+            return PlayerViewModel(
                 mediaPlaybackServiceConnection,
                 dataSource,
                 application

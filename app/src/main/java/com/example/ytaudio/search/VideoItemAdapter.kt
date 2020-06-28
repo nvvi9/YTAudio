@@ -1,4 +1,4 @@
-package com.example.ytaudio.utils
+package com.example.ytaudio.search
 
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.databinding.VideoItemBinding
 import com.example.ytaudio.network.youtube.VideoItem
+import com.example.ytaudio.utils.ClickListener
 
 class VideoItemAdapter(private val clickListener: VideoItemListener) :
     ListAdapter<VideoItem, VideoItemAdapter.ViewHolder>(VideoItemDiffCallback()) {

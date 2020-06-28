@@ -1,4 +1,5 @@
-package com.example.ytaudio.fragments
+package com.example.ytaudio.search
+
 
 import android.app.SearchManager
 import android.database.Cursor
@@ -21,10 +22,7 @@ import com.example.ytaudio.R
 import com.example.ytaudio.databinding.SearchFragmentBinding
 import com.example.ytaudio.network.youtube.VideoItem
 import com.example.ytaudio.utils.FactoryUtils
-import com.example.ytaudio.utils.VideoItemAdapter
-import com.example.ytaudio.utils.VideoItemListener
 import com.example.ytaudio.utils.hideKeyboard
-import com.example.ytaudio.viewmodels.SearchViewModel
 
 class SearchFragment : Fragment() {
 

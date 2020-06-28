@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.ytaudio.viewmodels.PlaylistViewModel" />
+            type="com.example.ytaudio.playlist.PlaylistViewModel" />
     </data>
 
 

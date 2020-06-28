@@ -1,4 +1,4 @@
-package com.example.ytaudio.viewmodels
+package com.example.ytaudio.search
 
 import android.util.Log
 import androidx.lifecycle.LiveData

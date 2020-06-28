@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/playlistFragment"
-        android:name="com.example.ytaudio.fragments.PlaylistFragment"
+        android:name="com.example.ytaudio.playlist.PlaylistFragment"
         android:label="PlaylistFragment"
         tools:layout="@layout/playlist_fragment">
         <action
@@ -16,12 +16,12 @@
     </fragment>
     <fragment
         android:id="@+id/audioPlayerFragment"
-        android:name="com.example.ytaudio.fragments.AudioPlayerFragment"
+        android:name="com.example.ytaudio.player.PlayerFragment"
         android:label="AudioPlayerFragment"
         tools:layout="@layout/audio_player_fragment" />
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.example.ytaudio.fragments.SearchFragment"
+        android:name="com.example.ytaudio.search.SearchFragment"
         android:label="SearchFragment"
         tools:layout="@layout/search_fragment" />
 </navigation>

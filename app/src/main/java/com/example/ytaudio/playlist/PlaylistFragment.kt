@@ -1,4 +1,4 @@
-package com.example.ytaudio.fragments
+package com.example.ytaudio.playlist
 
 import android.os.Bundle
 import android.view.*
@@ -10,16 +10,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ytaudio.MainActivityViewModel
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.databinding.PlaylistFragmentBinding
 import com.example.ytaudio.service.MEDIA_ROOT_ID
-import com.example.ytaudio.utils.AudioInfoListener
 import com.example.ytaudio.utils.FactoryUtils
-import com.example.ytaudio.utils.PlaylistAdapter
 import com.example.ytaudio.utils.hideKeyboard
-import com.example.ytaudio.viewmodels.MainActivityViewModel
-import com.example.ytaudio.viewmodels.PlaylistViewModel
 
 
 class PlaylistFragment : Fragment() {

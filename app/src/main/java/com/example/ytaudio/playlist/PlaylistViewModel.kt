@@ -1,4 +1,4 @@
-package com.example.ytaudio.viewmodels
+package com.example.ytaudio.playlist
 
 import android.app.Application
 import android.support.v4.media.MediaBrowserCompat

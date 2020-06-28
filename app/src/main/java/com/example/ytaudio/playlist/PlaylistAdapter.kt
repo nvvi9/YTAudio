@@ -1,4 +1,5 @@
-package com.example.ytaudio.utils
+package com.example.ytaudio.playlist
+
 
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.databinding.ItemPlaylistBinding
+import com.example.ytaudio.utils.ClickListener
 
 class PlaylistAdapter(private val clickListener: AudioInfoListener) :
     ListAdapter<AudioInfo, PlaylistAdapter.ViewHolder>(AudioInfoDiffCallback()) {

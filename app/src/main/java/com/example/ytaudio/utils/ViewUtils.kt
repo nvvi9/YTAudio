@@ -14,6 +14,8 @@ import com.example.ytaudio.AudioItem
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.network.youtube.VideoItem
+import com.example.ytaudio.playlist.PlaylistAdapter
+import com.example.ytaudio.search.VideoItemAdapter
 
 
 @BindingAdapter("audioTitle")
