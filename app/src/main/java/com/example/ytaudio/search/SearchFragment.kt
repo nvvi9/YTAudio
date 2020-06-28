@@ -19,68 +19,19 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.transition.TransitionManager
 import com.example.ytaudio.R
+import com.example.ytaudio.adapter.ClickListener
 import com.example.ytaudio.databinding.SearchFragmentBinding
 import com.example.ytaudio.network.youtube.VideoItem
 import com.example.ytaudio.utils.FactoryUtils
 import com.example.ytaudio.utils.hideKeyboard
+
 
 class SearchFragment : Fragment() {
 
     private lateinit var viewModel: SearchViewModel
     private lateinit var binding: SearchFragmentBinding
     private var actionMode: ActionMode? = null
-
-    private val actionModeCallback = object : ActionMode.Callback {
-        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-            return when (item?.itemId) {
-                R.id.action_add -> {
-                    viewModel.insertInDatabase(videoItemAdapter.selectedItems.toList())
-                    videoItemAdapter.stopActionMode()
-                    mode?.finish()
-                    actionMode = null
-                    true
-                }
-                else -> false
-            }
-        }
-
-        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?) = mode?.run {
-            menuInflater.inflate(R.menu.search_toolbar_action_mode, menu)
-            true
-        } ?: false
-
-        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?) = false
-
-        override fun onDestroyActionMode(mode: ActionMode?) {
-            videoItemAdapter.stopActionMode()
-            mode?.finish()
-            actionMode = null
-        }
-    }
-
     private val videoItemAdapter = VideoItemAdapter(AdapterVideoItemListener())
-
-    private inner class AdapterVideoItemListener : VideoItemListener() {
-        override fun onClick(item: VideoItem) {
-            Toast.makeText(this@SearchFragment.context, item.id.videoId, Toast.LENGTH_SHORT).show()
-        }
-
-        override fun onActiveModeClick() {
-            val selectedItemsCount = videoItemAdapter.selectedItems.size
-            if (selectedItemsCount != 0) {
-                actionMode?.title =
-                    getString(R.string.selected_items, selectedItemsCount)
-            } else {
-                videoItemAdapter.stopActionMode()
-                actionMode?.finish()
-                actionMode = null
-            }
-        }
-
-        override fun onLongClick(item: VideoItem) {
-            startActionMode()
-        }
-    }
 
 
     override fun onCreateView(
@@ -220,6 +171,58 @@ class SearchFragment : Fragment() {
             videoItemAdapter.startActionMode()
             actionMode?.title =
                 getString(R.string.selected_items, videoItemAdapter.selectedItems.size)
+        }
+    }
+
+
+    private val actionModeCallback = object : ActionMode.Callback {
+        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+            return when (item?.itemId) {
+                R.id.action_add -> {
+                    viewModel.insertInDatabase(videoItemAdapter.selectedItems.toList())
+                    videoItemAdapter.stopActionMode()
+                    mode?.finish()
+                    actionMode = null
+                    true
+                }
+                else -> false
+            }
+        }
+
+        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?) = mode?.run {
+            menuInflater.inflate(R.menu.search_toolbar_action_mode, menu)
+            true
+        } ?: false
+
+        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?) = false
+
+        override fun onDestroyActionMode(mode: ActionMode?) {
+            videoItemAdapter.stopActionMode()
+            mode?.finish()
+            actionMode = null
+        }
+    }
+
+
+    private inner class AdapterVideoItemListener : ClickListener<VideoItem> {
+        override fun onClick(item: VideoItem) {
+            Toast.makeText(this@SearchFragment.context, item.id.videoId, Toast.LENGTH_SHORT).show()
+        }
+
+        override fun onActiveModeClick() {
+            val selectedItemsCount = videoItemAdapter.selectedItems.size
+            if (selectedItemsCount != 0) {
+                actionMode?.title =
+                    getString(R.string.selected_items, selectedItemsCount)
+            } else {
+                videoItemAdapter.stopActionMode()
+                actionMode?.finish()
+                actionMode = null
+            }
+        }
+
+        override fun onLongClick(item: VideoItem) {
+            startActionMode()
         }
     }
 }
