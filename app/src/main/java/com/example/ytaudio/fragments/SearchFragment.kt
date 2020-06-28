@@ -77,12 +77,7 @@ class SearchFragment : Fragment() {
         }
 
         override fun onLongClick(item: VideoItem) {
-            if (actionMode == null) {
-                actionMode = activity?.startActionMode(actionModeCallback)
-                videoItemAdapter.startActionMode()
-                actionMode?.title =
-                    getString(R.string.selected_items, videoItemAdapter.selectedItems.size)
-            }
+            startActionMode()
         }
     }
 
@@ -186,15 +181,21 @@ class SearchFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.add -> {
-                if (actionMode == null) {
-                    actionMode = activity?.startActionMode(actionModeCallback)
-                    videoItemAdapter.startActionMode()
-                    actionMode?.title =
-                        getString(R.string.selected_items, videoItemAdapter.selectedItems.size)
+                if (!viewModel.ytResponse.value?.items.isNullOrEmpty()) {
+                    startActionMode()
                 }
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun startActionMode() {
+        if (actionMode == null) {
+            actionMode = activity?.startActionMode(actionModeCallback)
+            videoItemAdapter.startActionMode()
+            actionMode?.title =
+                getString(R.string.selected_items, videoItemAdapter.selectedItems.size)
         }
     }
 }

@@ -5,9 +5,7 @@ import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-
 private const val YOUTUBE_API_KEY = BuildConfig.YOUTUBE_API_KEY
-
 
 interface YouTubeApiService {
 
