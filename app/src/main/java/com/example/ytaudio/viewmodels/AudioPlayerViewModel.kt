@@ -71,7 +71,7 @@ class AudioPlayerViewModel(
                 mediaMetadata.albumArtUri,
                 mediaMetadata.title,
                 mediaMetadata.displaySubtitle,
-                DateUtils.formatElapsedTime(mediaMetadata.duration / 1000)
+                DateUtils.formatElapsedTime(mediaMetadata.duration)
             )
             currentAudioInfo.postValue(nowPlayingAudioInfo)
         }

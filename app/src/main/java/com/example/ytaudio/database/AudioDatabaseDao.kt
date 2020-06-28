@@ -9,6 +9,9 @@ interface AudioDatabaseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(audio: AudioInfo)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(audioList: List<AudioInfo>)
+
     @Update
     suspend fun update(audio: AudioInfo)
 

@@ -15,47 +15,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appBarLayout"
-            style="@style/Widget.MaterialComponents.Toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/link_text"
-                    style="@style/Widget.Design.TextInputLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:endIconDrawable="@drawable/ic_add"
-                    app:endIconMode="custom"
-                    app:hintEnabled="false">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:hint="@string/link_hint"
-                        android:singleLine="true"
-                        android:textSize="16sp" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </com.google.android.material.appbar.MaterialToolbar>
-        </com.google.android.material.appbar.AppBarLayout>
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/playlist_view"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:scrollbars="vertical"
             app:audioPlaylist="@{viewModel.databaseAudioInfo}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/appBarLayout"
-            app:layout_constraintStart_toStartOf="@+id/appBarLayout"
-            app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
             tools:listitem="@layout/item_playlist" />
 
         <TextView

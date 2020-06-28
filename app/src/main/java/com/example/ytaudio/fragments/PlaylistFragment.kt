@@ -1,32 +1,29 @@
 package com.example.ytaudio.fragments
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.databinding.PlaylistFragmentBinding
+import com.example.ytaudio.service.MEDIA_ROOT_ID
 import com.example.ytaudio.utils.AudioInfoListener
 import com.example.ytaudio.utils.FactoryUtils
 import com.example.ytaudio.utils.PlaylistAdapter
+import com.example.ytaudio.utils.hideKeyboard
 import com.example.ytaudio.viewmodels.MainActivityViewModel
 import com.example.ytaudio.viewmodels.PlaylistViewModel
-import com.google.android.material.textfield.TextInputEditText
 
 
 class PlaylistFragment : Fragment() {
 
-    private lateinit var audioId: String
     private lateinit var binding: PlaylistFragmentBinding
     private lateinit var playlistViewModel: PlaylistViewModel
     private lateinit var mainActivityViewModel: MainActivityViewModel
@@ -65,16 +62,17 @@ class PlaylistFragment : Fragment() {
 
         override fun onDestroyActionMode(mode: ActionMode?) {
             playlistAdapter.stopActionMode()
-            actionMode?.finish()
+            mode?.finish()
             actionMode = null
         }
     }
 
 
-    private inner class AdapterAudioInfoListener : AudioInfoListener {
+    private inner class AdapterAudioInfoListener : AudioInfoListener() {
 
         override fun onClick(item: AudioInfo) {
             mainActivityViewModel.audioItemClicked(item)
+            findNavController().navigate(PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment())
         }
 
         override fun onActiveModeClick() {
@@ -83,18 +81,16 @@ class PlaylistFragment : Fragment() {
                 actionMode?.title =
                     getString(R.string.selected_items, selectedItemsCount)
             } else {
-                playlistAdapter.actionMode = false
+                playlistAdapter.stopActionMode()
                 actionMode?.finish()
                 actionMode = null
-                binding.appBarLayout.visibility = View.VISIBLE
             }
         }
 
         override fun onLongClick(item: AudioInfo) {
             if (actionMode == null) {
                 actionMode = activity?.startActionMode(actionModeCallback)
-                playlistAdapter.actionMode = true
-                playlistAdapter.notifyDataSetChanged()
+                playlistAdapter.startActionMode()
                 actionMode?.title =
                     getString(R.string.selected_items, playlistAdapter.selectedAudioItems.size)
             }
@@ -103,71 +99,14 @@ class PlaylistFragment : Fragment() {
 
     private val playlistAdapter = PlaylistAdapter(AdapterAudioInfoListener())
 
-    companion object {
-        fun getInstance(audioId: String) = PlaylistFragment().apply {
-            arguments = Bundle().apply {
-                putString(AUDIO_ID_ARG, audioId)
-            }
-        }
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater, R.layout.playlist_fragment, container, false)
-
-        binding.apply {
-
-            playlistView.adapter = playlistAdapter
-            playlistView.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-            playlistView.addItemDecoration(
-                DividerItemDecoration(
-                    activity,
-                    DividerItemDecoration.VERTICAL
-                )
-            )
-
-            linkText.setEndIconOnClickListener {
-                binding.linkText.editText?.let {
-                    if (it.text.isNotBlank()) {
-                        this@PlaylistFragment.mainActivityViewModel.onExtract(it.text.toString())
-                        it.clearScreen()
-                    }
-                }
-            }
-
-            linkText.editText!!.setOnKeyListener { v, keyCode, event ->
-                if (!(v as TextInputEditText).text.isNullOrBlank() &&
-                    keyCode == KeyEvent.KEYCODE_ENTER &&
-                    event.action == KeyEvent.ACTION_UP
-                ) {
-                    this@PlaylistFragment.mainActivityViewModel.onExtract(v.text.toString())
-                    v.clearScreen()
-                    return@setOnKeyListener true
-                }
-                false
-            }
-
-            linkText.editText!!.setOnTouchListener { v, _ ->
-                v.isFocusableInTouchMode = true
-                false
-            }
-
-            lifecycleOwner = this@PlaylistFragment
-        }
-
-        return binding.root
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        val context = activity ?: return
+        binding = PlaylistFragmentBinding.inflate(inflater)
         val application = requireNotNull(this.activity).application
-        audioId = arguments?.getString(AUDIO_ID_ARG) ?: return
+        val audioId = MEDIA_ROOT_ID
 
         playlistViewModel = ViewModelProvider(
             this,
@@ -175,7 +114,7 @@ class PlaylistFragment : Fragment() {
         ).get(PlaylistViewModel::class.java)
 
         mainActivityViewModel =
-            ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(context))
+            ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(application))
                 .get(MainActivityViewModel::class.java)
 
         playlistViewModel.networkFailure.observe(viewLifecycleOwner, Observer {
@@ -183,24 +122,51 @@ class PlaylistFragment : Fragment() {
         })
 
         binding.viewModel = playlistViewModel
+
+        binding.apply {
+
+            playlistView.adapter = playlistAdapter
+            playlistView.layoutManager =
+                LinearLayoutManager(application, RecyclerView.VERTICAL, false)
+            playlistView.addItemDecoration(
+                DividerItemDecoration(
+                    activity,
+                    DividerItemDecoration.VERTICAL
+                )
+            )
+
+            lifecycleOwner = this@PlaylistFragment
+        }
+
+        setHasOptionsMenu(true)
+        return binding.root
     }
 
-    override fun onPause() {
-        super.onPause()
-        binding.root.hideKeyboard()
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.overflow_playlist_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.delete -> {
+                if (actionMode == null) {
+                    actionMode = activity?.startActionMode(actionModeCallback)
+                    playlistAdapter.startActionMode()
+                    actionMode?.title =
+                        getString(R.string.selected_items, playlistAdapter.selectedAudioItems.size)
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun EditText.clearScreen() {
-        hideKeyboard()
+        hideKeyboard(context)
         text.clear()
         isFocusable = false
     }
-
-    private fun View.hideKeyboard() =
-        (context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)?.hideSoftInputFromWindow(
-            windowToken,
-            0
-        )
 }
 
 private const val AUDIO_ID_ARG = "com.example.ytaudio.fragments.PlaylistFragment.AUDIO_ID"

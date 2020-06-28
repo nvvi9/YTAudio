@@ -255,5 +255,5 @@ private class BecomingNoisyReceiver(
 
 const val NETWORK_FAILURE = "service network failure"
 private const val YTAUDIO_USER_AGENT = "ytaudio.next"
-private const val MEDIA_ROOT_ID = "media_root_id"
+const val MEDIA_ROOT_ID = "media_root_id"
 private const val LOG_TAG = "MediaPlaybackService"

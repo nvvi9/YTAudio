@@ -1,6 +1,5 @@
 package com.example.ytaudio.service
 
-import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.os.Bundle
@@ -95,7 +94,7 @@ class MediaPlaybackServiceConnection(val context: Context, serviceComponent: Com
         override fun onConnected() {
             mediaController = MediaControllerCompat(context, mediaBrowser.sessionToken).apply {
                 registerCallback(mediaControllerCallback)
-                MediaControllerCompat.setMediaController(context as Activity, this)
+//                MediaControllerCompat.setMediaController(context as Activity, this)
             }
             isConnected.postValue(true)
         }

@@ -2,56 +2,66 @@ package com.example.ytaudio
 
 import android.media.AudioManager
 import android.os.Bundle
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.example.ytaudio.fragments.PlaylistFragment
-import com.example.ytaudio.utils.FactoryUtils
-import com.example.ytaudio.viewmodels.MainActivityViewModel
+import androidx.core.view.GravityCompat
+import androidx.databinding.DataBindingUtil
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
+import com.example.ytaudio.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel by lazy {
-        ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(this)).get(
-            MainActivityViewModel::class.java
-        )
-    }
-
-    companion object {
-        fun getInstance() = MainActivity()
-    }
+    private lateinit var drawer: DrawerLayout
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
         volumeControlStream = AudioManager.STREAM_MUSIC
 
-        viewModel.navigateToFragment.observe(this, Observer {
-            it?.getContentIfNotHandled()?.let { request ->
-                val transaction = supportFragmentManager.beginTransaction()
-                transaction.replace(R.id.fragment_container, request.fragment, request.tag)
-                if (request.addToBackStack) transaction.addToBackStack(null)
-                transaction.commit()
-            }
-        })
+        println(javaClass.simpleName)
 
-        viewModel.rootMediaId.observe(this, Observer {
-            it?.let {
-                navigateToPlaylist(it)
-            }
-        })
+        val binding =
+            DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        drawer = binding.drawerLayout
+
+        val navController = this.findNavController(R.id.nav_host_fragment)
+        NavigationUI.setupActionBarWithNavController(this, navController, drawer)
+        appBarConfiguration = AppBarConfiguration(navController.graph, drawer)
+
+        val drawerToggle = ActionBarDrawerToggle(this, drawer, R.string.open, R.string.close)
+        drawer.addDrawerListener(drawerToggle)
+        drawerToggle.syncState()
+
+        navController.addOnDestinationChangedListener { controller, destination, _ ->
+            drawer.setDrawerLockMode(
+                when (destination.id) {
+                    controller.graph.startDestination -> DrawerLayout.LOCK_MODE_UNLOCKED
+                    else -> DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+                }
+            )
+        }
+
+        NavigationUI.setupWithNavController(binding.navView, navController)
     }
 
-    private fun navigateToPlaylist(audioId: String) {
-        var fragment: PlaylistFragment? =
-            supportFragmentManager.findFragmentByTag(audioId) as PlaylistFragment?
-        if (fragment == null) {
-            fragment = PlaylistFragment.getInstance(audioId)
-            viewModel.showFragment(fragment, !isRoot(audioId), audioId)
+    override fun onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
         }
     }
 
-    private fun isRoot(audioId: String) = audioId == viewModel.rootMediaId.value
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = this.findNavController(R.id.nav_host_fragment)
+        return NavigationUI.navigateUp(navController, appBarConfiguration)
+    }
 }
