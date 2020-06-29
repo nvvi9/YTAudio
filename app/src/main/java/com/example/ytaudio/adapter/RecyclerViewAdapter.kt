@@ -1,6 +1,5 @@
 package com.example.ytaudio.adapter
 
-import android.annotation.SuppressLint
 import android.graphics.Color
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
@@ -9,8 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 abstract class RecyclerViewAdapter<T, B : ViewDataBinding>(
+    diffCallback: DiffUtil.ItemCallback<T>,
     private val clickListener: ClickListener<T>
-) : ListAdapter<T, RecyclerViewAdapter<T, B>.ViewHolder<B>>(DiffCallback<T>()) {
+) : ListAdapter<T, RecyclerViewAdapter<T, B>.ViewHolder<B>>(diffCallback) {
 
     private val _selectedItems = mutableSetOf<T>()
     val selectedItems: Set<T>
@@ -74,15 +74,4 @@ abstract class RecyclerViewAdapter<T, B : ViewDataBinding>(
             binding.executePendingBindings()
         }
     }
-}
-
-
-private class DiffCallback<T> : DiffUtil.ItemCallback<T>() {
-
-    override fun areItemsTheSame(oldItem: T, newItem: T) =
-        oldItem === newItem
-
-    @SuppressLint("DiffUtilEquals")
-    override fun areContentsTheSame(oldItem: T, newItem: T) =
-        oldItem?.equals(newItem) ?: true
 }

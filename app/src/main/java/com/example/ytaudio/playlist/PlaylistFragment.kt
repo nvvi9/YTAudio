@@ -161,4 +161,3 @@ class PlaylistFragment : Fragment() {
     }
 }
 
-private const val AUDIO_ID_ARG = "com.example.ytaudio.fragments.PlaylistFragment.AUDIO_ID"

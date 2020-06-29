@@ -130,4 +130,3 @@ class PlaylistViewModel(
     }
 }
 
-private const val LOG_TAG = "PlaylistViewModel"

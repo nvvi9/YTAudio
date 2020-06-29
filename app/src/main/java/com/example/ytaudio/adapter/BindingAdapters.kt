@@ -19,7 +19,6 @@ fun TextView.setTitle(item: PlaylistItem?) {
     text = item?.title
 }
 
-
 @BindingAdapter("authorName")
 fun TextView.setAuthor(item: PlaylistItem?) {
     text = item?.author
