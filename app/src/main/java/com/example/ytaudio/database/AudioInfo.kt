@@ -1,9 +1,14 @@
 package com.example.ytaudio.database
 
+import android.net.Uri
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.example.ytaudio.domain.PlaylistItem
+import com.example.ytaudio.network.extractor.YTExtractor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Entity(
     tableName = "audio_playlist_table",
@@ -32,6 +37,42 @@ data class AudioInfo(
     @ColumnInfo(name = "playback_state") var playbackState: Int = 0
 ) {
 
+    val needUpdate: Boolean
+        get() = System.currentTimeMillis() >= (lastUpdateTimeSeconds + urlActiveTimeSeconds - 10) * 1000
+
+    fun toPlaylistItem() =
+        PlaylistItem(
+            id = audioId.toString(),
+            title = audioTitle,
+            author = author,
+            thumbnailUri = Uri.parse(photoUrl),
+            duration = audioDurationSeconds,
+            playbackState = playbackState
+        )
+
+    suspend fun update() {
+        withContext(Dispatchers.Default) {
+            YTExtractor().extractAudioInfo(youtubeId).let {
+                audioUrl = it.audioUrl
+                photoUrl = it.photoUrl
+                audioTitle = it.audioTitle
+                author = it.author
+                authorId = it.authorId
+                description = it.description
+                keywords = it.keywords
+                viewCount = it.viewCount
+                averageRating = it.averageRating
+                audioFormat = it.audioFormat
+                codec = it.codec
+                bitrate = it.bitrate
+                averageBitrate = it.averageBitrate
+                audioDurationSeconds = it.audioDurationSeconds
+                lastUpdateTimeSeconds = it.lastUpdateTimeSeconds
+                urlActiveTimeSeconds = it.urlActiveTimeSeconds
+            }
+        }
+    }
+
     override fun toString() =
         "ID: $authorId\n" +
                 "YouTube ID: $youtubeId\n" +
@@ -52,3 +93,7 @@ data class AudioInfo(
                 "Last update (seconds): $lastUpdateTimeSeconds\n" +
                 "Active URI time (seconds): $urlActiveTimeSeconds\n"
 }
+
+
+fun List<AudioInfo>.asPlaylistItems() =
+    map { it.toPlaylistItem() }

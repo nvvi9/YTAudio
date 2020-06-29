@@ -7,10 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.network.ApiService
+import com.example.ytaudio.network.extractor.YTExtractor
 import com.example.ytaudio.network.youtube.VideoItem
 import com.example.ytaudio.network.youtube.YTResponse
-import com.example.ytaudio.utils.getAudioInfo
-import com.example.ytaudio.utils.mapParallel
+import com.example.ytaudio.utils.extensions.mapParallel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -59,7 +59,7 @@ class SearchViewModel(
     fun insertInDatabase(items: List<VideoItem>) {
         coroutineScope.launch {
             databaseDao.insert(items.mapParallel {
-                getAudioInfo(it.id.videoId)
+                YTExtractor().extractAudioInfo(it.id.videoId)
             })
         }
     }

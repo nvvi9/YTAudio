@@ -7,12 +7,13 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.*
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioDatabaseDao
+import com.example.ytaudio.domain.PlaylistItem
+import com.example.ytaudio.repository.AudioRepository
 import com.example.ytaudio.service.EMPTY_PLAYBACK_STATE
 import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.service.NOTHING_PLAYING
 import com.example.ytaudio.service.extensions.id
 import com.example.ytaudio.service.extensions.isPlaying
-import com.example.ytaudio.utils.AudioItem
 
 
 class PlaylistViewModel(
@@ -22,7 +23,11 @@ class PlaylistViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
+    private val audioRepository = AudioRepository(database)
+
     val databaseAudioInfo = database.getAllAudio()
+
+    val playlistItems = audioRepository.playlistItems
 
     private val playbackStateObserver = Observer<PlaybackStateCompat> {
         val playbackState = it ?: EMPTY_PLAYBACK_STATE
@@ -43,8 +48,8 @@ class PlaylistViewModel(
         }
     }
 
-    private val _audioItemList = MutableLiveData<List<AudioItem>>()
-    val audioItemList: LiveData<List<AudioItem>> = _audioItemList
+    private val _audioItemList = MutableLiveData<List<PlaylistItem>>()
+    val audioItemList: LiveData<List<PlaylistItem>> = _audioItemList
 
     val networkFailure = Transformations.map(mediaPlaybackServiceConnection.networkFailure) { it }
 
@@ -54,11 +59,19 @@ class PlaylistViewModel(
             children: List<MediaBrowserCompat.MediaItem>
         ) {
             val items = children.map {
-                AudioItem(
+//                AudioItem(
+//                    it.mediaId!!,
+//                    it.description.title.toString(),
+//                    it.description.subtitle?.toString() ?: "",
+//                    it.description.iconUri!!,
+//                    getPlaybackStatus(it.mediaId!!)
+//                )
+                PlaylistItem(
                     it.mediaId!!,
                     it.description.title.toString(),
-                    it.description.subtitle?.toString() ?: "",
+                    it.description.subtitle.toString(),
                     it.description.iconUri!!,
+                    0,
                     getPlaybackStatus(it.mediaId!!)
                 )
             }
@@ -86,13 +99,13 @@ class PlaylistViewModel(
     private fun updateState(
         playbackState: PlaybackStateCompat,
         mediaMetadata: MediaMetadataCompat
-    ): List<AudioItem> {
+    ): List<PlaylistItem> {
         val newPlaybackStatus = if (playbackState.isPlaying) R.drawable.ic_play_arrow_black
         else R.drawable.ic_pause_black
 
         return audioItemList.value?.map {
-            val playbackStatus = if (it.audioId == mediaMetadata.id) newPlaybackStatus else 0
-            it.copy(playbackStatus = playbackStatus)
+            val playbackStatus = if (it.id == mediaMetadata.id) newPlaybackStatus else 0
+            it.copy(playbackState = playbackStatus)
         } ?: emptyList()
     }
 

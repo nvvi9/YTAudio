@@ -1,9 +1,6 @@
-package com.example.ytaudio.utils
+package com.example.ytaudio.adapter
 
-import android.content.Context
 import android.text.format.DateUtils
-import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
@@ -15,6 +12,7 @@ import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.network.youtube.VideoItem
 import com.example.ytaudio.playlist.PlaylistAdapter
 import com.example.ytaudio.search.VideoItemAdapter
+import com.example.ytaudio.utils.AudioItem
 
 
 @BindingAdapter("audioTitle")
@@ -86,7 +84,3 @@ fun ImageView.setThumbnail(video: VideoItem?) {
             .into(this)
     }
 }
-
-fun View.hideKeyboard(context: Context?) =
-    (context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
-        ?.hideSoftInputFromWindow(windowToken, 0)

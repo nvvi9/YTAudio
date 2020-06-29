@@ -23,7 +23,7 @@ import com.example.ytaudio.adapter.ClickListener
 import com.example.ytaudio.databinding.SearchFragmentBinding
 import com.example.ytaudio.network.youtube.VideoItem
 import com.example.ytaudio.utils.FactoryUtils
-import com.example.ytaudio.utils.hideKeyboard
+import com.example.ytaudio.utils.extensions.hideKeyboard
 
 
 class SearchFragment : Fragment() {
