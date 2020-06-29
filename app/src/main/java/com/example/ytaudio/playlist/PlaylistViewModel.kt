@@ -5,7 +5,6 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.*
-import com.example.ytaudio.AudioItem
 import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.service.EMPTY_PLAYBACK_STATE
@@ -13,6 +12,7 @@ import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.service.NOTHING_PLAYING
 import com.example.ytaudio.service.extensions.id
 import com.example.ytaudio.service.extensions.isPlaying
+import com.example.ytaudio.utils.AudioItem
 
 
 class PlaylistViewModel(

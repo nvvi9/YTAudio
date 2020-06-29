@@ -9,8 +9,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ytaudio.MainActivityViewModel
 import com.example.ytaudio.R
+import com.example.ytaudio.activity.MainActivityViewModel
 import com.example.ytaudio.adapter.ClickListener
 import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.databinding.PlaylistFragmentBinding

@@ -1,4 +1,4 @@
-package com.example.ytaudio
+package com.example.ytaudio.activity
 
 import android.media.AudioManager
 import android.os.Bundle
@@ -10,6 +10,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import com.example.ytaudio.R
 import com.example.ytaudio.databinding.ActivityMainBinding
 
 
