@@ -4,12 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.ytaudio.adapter.ClickListener
 import com.example.ytaudio.adapter.RecyclerViewAdapter
-import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.databinding.ItemPlaylistBinding
+import com.example.ytaudio.domain.PlaylistItem
 
 
-class PlaylistAdapter(clickListener: ClickListener<AudioInfo>) :
-    RecyclerViewAdapter<AudioInfo, ItemPlaylistBinding>(clickListener) {
+class PlaylistAdapter(clickListener: ClickListener<PlaylistItem>) :
+    RecyclerViewAdapter<PlaylistItem, ItemPlaylistBinding>(clickListener) {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,

@@ -14,7 +14,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.ytaudio.service.extensions.id
 
 
-class MediaPlaybackServiceConnection(val context: Context, serviceComponent: ComponentName) {
+class MediaPlaybackServiceConnection(context: Context, serviceComponent: ComponentName) {
     val isConnected = MutableLiveData<Boolean>().apply { postValue(false) }
     val networkFailure = MutableLiveData<Boolean>().apply { postValue(false) }
     val rootMediaId: String

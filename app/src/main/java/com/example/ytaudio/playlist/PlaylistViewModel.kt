@@ -59,13 +59,6 @@ class PlaylistViewModel(
             children: List<MediaBrowserCompat.MediaItem>
         ) {
             val items = children.map {
-//                AudioItem(
-//                    it.mediaId!!,
-//                    it.description.title.toString(),
-//                    it.description.subtitle?.toString() ?: "",
-//                    it.description.iconUri!!,
-//                    getPlaybackStatus(it.mediaId!!)
-//                )
                 PlaylistItem(
                     it.mediaId!!,
                     it.description.title.toString(),

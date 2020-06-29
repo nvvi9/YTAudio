@@ -13,6 +13,7 @@ import com.github.kotvertolet.youtubejextractor.exception.YoutubeRequestExceptio
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AudioRepository(private val databaseDao: AudioDatabaseDao) {
 
@@ -24,12 +25,25 @@ class AudioRepository(private val databaseDao: AudioDatabaseDao) {
             it?.asPlaylistItems()
         }
 
+    fun updateAllAudioInfo() {
+        coroutineScope.launch {
+            val audioInfoList = databaseDao.getAllAudioInfo()
+            runUpdate(audioInfoList)
+        }
+    }
+
     fun updateAudioInfoList(audioList: List<AudioInfo>) {
-        if (nowUpdatingSet.addAll(audioList)) {
-            coroutineScope.launch {
+        coroutineScope.launch {
+            runUpdate(audioList)
+        }
+    }
+
+    private suspend fun runUpdate(list: List<AudioInfo>) {
+        if (nowUpdatingSet.addAll(list)) {
+            withContext(Dispatchers.IO) {
                 val startTime = System.nanoTime()
                 var updatedSuccessfully = 0
-                audioList.forEachParallel {
+                list.forEachParallel {
                     try {
                         it.update()
                         updatedSuccessfully++
@@ -45,11 +59,11 @@ class AudioRepository(private val databaseDao: AudioDatabaseDao) {
                         Log.e(javaClass.simpleName, e.toString())
                     }
                 }
-                databaseDao.update(audioList)
-                nowUpdatingSet.removeAll(audioList)
+                databaseDao.update(list)
+                nowUpdatingSet.removeAll(list)
                 Log.i(
                     javaClass.simpleName,
-                    "$updatedSuccessfully/${audioList.size} items updated in ${(System.nanoTime() - startTime) / 10e5} ms"
+                    "$updatedSuccessfully/${list.size} items updated in ${(System.nanoTime() - startTime) / 10e5} ms"
                 )
             }
         }

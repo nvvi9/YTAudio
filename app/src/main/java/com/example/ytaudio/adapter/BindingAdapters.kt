@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.ytaudio.R
-import com.example.ytaudio.database.AudioInfo
+import com.example.ytaudio.domain.PlaylistItem
 import com.example.ytaudio.network.youtube.VideoItem
 import com.example.ytaudio.playlist.PlaylistAdapter
 import com.example.ytaudio.search.VideoItemAdapter
@@ -16,21 +16,21 @@ import com.example.ytaudio.utils.AudioItem
 
 
 @BindingAdapter("audioTitle")
-fun TextView.setTitle(item: AudioInfo?) {
-    text = item?.audioTitle
+fun TextView.setTitle(item: PlaylistItem?) {
+    text = item?.title
 }
 
 
 @BindingAdapter("authorName")
-fun TextView.setAuthor(item: AudioInfo?) {
+fun TextView.setAuthor(item: PlaylistItem?) {
     text = item?.author
 }
 
 @BindingAdapter("audioPhoto")
-fun ImageView.setImage(item: AudioInfo?) {
+fun ImageView.setImage(item: PlaylistItem?) {
     item?.let {
         Glide.with(context)
-            .load(it.photoUrl)
+            .load(it.thumbnailUri)
             .apply(
                 RequestOptions()
                     .placeholder(R.drawable.ic_notification)
@@ -47,13 +47,13 @@ fun ImageView.setPlaybackState(item: AudioItem?) {
 }
 
 @BindingAdapter("audioDuration")
-fun TextView.setDuration(item: AudioInfo?) {
-    text = DateUtils.formatElapsedTime(item?.audioDurationSeconds ?: 0)
+fun TextView.setDuration(item: PlaylistItem?) {
+    text = DateUtils.formatElapsedTime(item?.duration ?: 0)
 }
 
 @BindingAdapter("audioPlaylist")
-fun RecyclerView.setPlaylist(playlist: List<AudioInfo>?) {
-    (adapter as PlaylistAdapter).submitList(playlist?.sortedBy { it.audioTitle })
+fun RecyclerView.setPlaylist(playlist: List<PlaylistItem>?) {
+    (adapter as PlaylistAdapter).submitList(playlist?.sortedBy { it.title })
 }
 
 @BindingAdapter("videoItemList")

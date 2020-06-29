@@ -37,17 +37,17 @@ class MainActivityViewModel(
         observeForever(needUpdateObserver)
     }
 
-    fun audioItemClicked(audioItem: AudioInfo) {
-        playAudio(audioItem, false)
+    fun audioItemClicked(audioId: String) {
+        playAudio(audioId, false)
     }
 
-    private fun playAudio(audioItem: AudioInfo, pauseAllowed: Boolean) {
+    private fun playAudio(audioId: String, pauseAllowed: Boolean) {
         val nowPlaying = mediaPlaybackServiceConnection.nowPlaying.value
         val transportControls = mediaPlaybackServiceConnection.transportControls
 
         val isPrepared = mediaPlaybackServiceConnection.playbackState.value?.isPrepared ?: false
 
-        if (isPrepared && audioItem.audioId.toString() == nowPlaying?.id) {
+        if (isPrepared && audioId == nowPlaying?.id) {
             mediaPlaybackServiceConnection.playbackState.value?.let {
                 when {
                     it.isPlaying -> if (pauseAllowed) transportControls.pause() else Unit
@@ -55,7 +55,7 @@ class MainActivityViewModel(
                 }
             }
         } else {
-            transportControls.playFromMediaId(audioItem.audioId.toString(), null)
+            transportControls.playFromMediaId(audioId, null)
         }
     }
 

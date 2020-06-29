@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
 import com.example.ytaudio.activity.MainActivityViewModel
 import com.example.ytaudio.adapter.ClickListener
-import com.example.ytaudio.database.AudioInfo
 import com.example.ytaudio.databinding.PlaylistFragmentBinding
+import com.example.ytaudio.domain.PlaylistItem
 import com.example.ytaudio.service.MEDIA_ROOT_ID
 import com.example.ytaudio.utils.FactoryUtils
 
@@ -115,7 +115,7 @@ class PlaylistFragment : Fragment() {
                 R.id.action_delete -> {
                     mainActivityViewModel.deleteAudioInfo(
                         playlistAdapter.selectedItems
-                            .map { it.audioId }
+                            .map { it.id.toLong() }      // TODO change id to Long
                     )
                     playlistAdapter.stopActionMode()
                     mode?.finish()
@@ -136,10 +136,10 @@ class PlaylistFragment : Fragment() {
     }
 
 
-    private inner class AdapterAudioInfoListener : ClickListener<AudioInfo> {
+    private inner class AdapterAudioInfoListener : ClickListener<PlaylistItem> {
 
-        override fun onClick(item: AudioInfo) {
-            mainActivityViewModel.audioItemClicked(item)
+        override fun onClick(item: PlaylistItem) {
+            mainActivityViewModel.audioItemClicked(item.id)
             findNavController().navigate(PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment())
         }
 
@@ -155,7 +155,7 @@ class PlaylistFragment : Fragment() {
             }
         }
 
-        override fun onLongClick(item: AudioInfo) {
+        override fun onLongClick(item: PlaylistItem) {
             startActionMode()
         }
     }
