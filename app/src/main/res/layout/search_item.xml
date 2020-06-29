@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="videoItem"
-            type="com.example.ytaudio.network.youtube.VideoItem" />
+            name="searchItem"
+            type="com.example.ytaudio.domain.SearchItem" />
 
     </data>
 
@@ -22,13 +22,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:singleLine="true"
             android:textColor="@android:color/white"
             android:textSize="16sp"
-            app:videoTitle="@{videoItem}"
+            app:videoTitle="@{searchItem}"
             app:layout_constraintBottom_toTopOf="@+id/channel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/video_thumbnail"
@@ -44,7 +43,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:contentDescription="@string/thumbnail_description"
-            app:videoThumbnail="@{videoItem}"
+            app:videoThumbnail="@{searchItem}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -57,7 +56,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
             android:textSize="12sp"
-            app:channelTitle="@{videoItem}"
+            app:channelTitle="@{searchItem}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

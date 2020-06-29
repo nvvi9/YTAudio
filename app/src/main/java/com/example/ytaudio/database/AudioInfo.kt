@@ -1,6 +1,5 @@
 package com.example.ytaudio.database
 
-import android.net.Uri
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
@@ -45,7 +44,7 @@ data class AudioInfo(
             id = audioId.toString(),
             title = audioTitle,
             author = author,
-            thumbnailUri = Uri.parse(photoUrl),
+            thumbnailUri = photoUrl,
             duration = audioDurationSeconds,
             playbackState = playbackState
         )

@@ -21,8 +21,8 @@
             android:layout_height="match_parent"
             android:scrollbars="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:videoItemList="@{viewModel.ytResponse.items}"
-            tools:listitem="@layout/video_item" />
+            app:searchItemList="@{viewModel.searchItemList}"
+            tools:listitem="@layout/search_item" />
 
         <TextView
             android:id="@+id/test_text"

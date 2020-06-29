@@ -6,10 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.ytaudio.database.AudioDatabaseDao
+import com.example.ytaudio.domain.SearchItem
 import com.example.ytaudio.network.ApiService
 import com.example.ytaudio.network.extractor.YTExtractor
-import com.example.ytaudio.network.youtube.VideoItem
-import com.example.ytaudio.network.youtube.YTResponse
 import com.example.ytaudio.utils.extensions.mapParallel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,9 +22,9 @@ class SearchViewModel(
     private val job = Job()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
 
-    private val _ytResponse = MutableLiveData<YTResponse>()
-    val ytResponse: LiveData<YTResponse>
-        get() = _ytResponse
+    private val _searchItemList = MutableLiveData<List<SearchItem>>()
+    val searchItemList: LiveData<List<SearchItem>>
+        get() = _searchItemList
 
     private val _autoComplete = MutableLiveData<List<String>>()
     val autoComplete: LiveData<List<String>>
@@ -33,10 +32,9 @@ class SearchViewModel(
 
     fun setResponse(query: String, maxResults: Int = 25) {
         coroutineScope.launch {
-            val getResponseDeferred = ApiService.ytService.getYTResponse(query)
             try {
-                val resultResponse = getResponseDeferred.await()
-                _ytResponse.value = resultResponse
+                val ytResponse = ApiService.ytService.getYTResponse(query).await()
+                _searchItemList.value = ytResponse.searchItemList
             } catch (t: Throwable) {
                 Log.i("SearchViewModel", t.message ?: "error")
             }
@@ -56,10 +54,10 @@ class SearchViewModel(
         }
     }
 
-    fun insertInDatabase(items: List<VideoItem>) {
+    fun insertInDatabase(items: List<SearchItem>) {
         coroutineScope.launch {
             databaseDao.insert(items.mapParallel {
-                YTExtractor().extractAudioInfo(it.id.videoId)
+                YTExtractor().extractAudioInfo(it.videoId)
             })
         }
     }

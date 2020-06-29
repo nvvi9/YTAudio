@@ -21,7 +21,7 @@ import androidx.transition.TransitionManager
 import com.example.ytaudio.R
 import com.example.ytaudio.adapter.ClickListener
 import com.example.ytaudio.databinding.SearchFragmentBinding
-import com.example.ytaudio.network.youtube.VideoItem
+import com.example.ytaudio.domain.SearchItem
 import com.example.ytaudio.utils.FactoryUtils
 import com.example.ytaudio.utils.extensions.hideKeyboard
 
@@ -31,7 +31,7 @@ class SearchFragment : Fragment() {
     private lateinit var viewModel: SearchViewModel
     private lateinit var binding: SearchFragmentBinding
     private var actionMode: ActionMode? = null
-    private val videoItemAdapter = VideoItemAdapter(AdapterVideoItemListener())
+    private val videoItemAdapter = SearchAdapter(AdapterVideoItemListener())
 
 
     override fun onCreateView(
@@ -144,7 +144,7 @@ class SearchFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.add -> {
-                if (!viewModel.ytResponse.value?.items.isNullOrEmpty()) {
+                if (!viewModel.searchItemList.value.isNullOrEmpty()) {
                     startActionMode()
                 }
                 true
@@ -204,9 +204,9 @@ class SearchFragment : Fragment() {
     }
 
 
-    private inner class AdapterVideoItemListener : ClickListener<VideoItem> {
-        override fun onClick(item: VideoItem) {
-            Toast.makeText(this@SearchFragment.context, item.id.videoId, Toast.LENGTH_SHORT).show()
+    private inner class AdapterVideoItemListener : ClickListener<SearchItem> {
+        override fun onClick(item: SearchItem) {
+            Toast.makeText(this@SearchFragment.context, item.videoId, Toast.LENGTH_SHORT).show()
         }
 
         override fun onActiveModeClick() {
@@ -221,7 +221,7 @@ class SearchFragment : Fragment() {
             }
         }
 
-        override fun onLongClick(item: VideoItem) {
+        override fun onLongClick(item: SearchItem) {
             startActionMode()
         }
     }

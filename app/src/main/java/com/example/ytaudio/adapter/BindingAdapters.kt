@@ -9,10 +9,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.ytaudio.R
 import com.example.ytaudio.domain.PlaylistItem
-import com.example.ytaudio.network.youtube.VideoItem
+import com.example.ytaudio.domain.SearchItem
 import com.example.ytaudio.playlist.PlaylistAdapter
-import com.example.ytaudio.search.VideoItemAdapter
-import com.example.ytaudio.utils.AudioItem
+import com.example.ytaudio.search.SearchAdapter
 
 
 @BindingAdapter("audioTitle")
@@ -40,9 +39,9 @@ fun ImageView.setImage(item: PlaylistItem?) {
 }
 
 @BindingAdapter("playbackState")
-fun ImageView.setPlaybackState(item: AudioItem?) {
+fun ImageView.setPlaybackState(item: PlaylistItem?) {
     item?.let {
-        this.setImageResource(it.playbackStatus)
+        this.setImageResource(it.playbackState)
     }
 }
 
@@ -56,26 +55,26 @@ fun RecyclerView.setPlaylist(playlist: List<PlaylistItem>?) {
     (adapter as PlaylistAdapter).submitList(playlist?.sortedBy { it.title })
 }
 
-@BindingAdapter("videoItemList")
-fun RecyclerView.setVideoItems(videoItemList: List<VideoItem>?) {
-    (adapter as VideoItemAdapter).submitList(videoItemList)
+@BindingAdapter("searchItemList")
+fun RecyclerView.setSearchItemList(searchItemList: List<SearchItem>?) {
+    (adapter as SearchAdapter).submitList(searchItemList)
 }
 
 @BindingAdapter("videoTitle")
-fun TextView.setVideoTitle(video: VideoItem?) {
-    text = video?.snippet?.title
+fun TextView.setVideoTitle(item: SearchItem?) {
+    text = item?.title
 }
 
 @BindingAdapter("channelTitle")
-fun TextView.setAuthor(video: VideoItem?) {
-    text = video?.snippet?.channelTitle
+fun TextView.setChannelTitle(item: SearchItem?) {
+    text = item?.channelTitle
 }
 
 @BindingAdapter("videoThumbnail")
-fun ImageView.setThumbnail(video: VideoItem?) {
-    video?.let {
+fun ImageView.setThumbnail(item: SearchItem?) {
+    item?.let {
         Glide.with(context)
-            .load(it.snippet.thumbnails.high.url)
+            .load(it.thumbnailUri)
             .apply(
                 RequestOptions()
                     .placeholder(R.drawable.photo_white)

@@ -1,5 +1,7 @@
 package com.example.ytaudio.network.youtube
 
+import com.example.ytaudio.domain.SearchItem
+
 data class YTResponse(
     val kind: String,
     val etag: String,
@@ -7,7 +9,18 @@ data class YTResponse(
     val regionCode: String,
     val pageInfo: PageInfo,
     val items: List<VideoItem>
-)
+) {
+
+    val searchItemList
+        get() = items.map {
+            SearchItem(
+                it.id.videoId,
+                it.snippet.title,
+                it.snippet.thumbnails.default.url,
+                it.snippet.channelTitle
+            )
+        }
+}
 
 data class PageInfo(
     val totalResults: Int,

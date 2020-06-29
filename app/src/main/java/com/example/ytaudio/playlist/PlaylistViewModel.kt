@@ -63,7 +63,7 @@ class PlaylistViewModel(
                     it.mediaId!!,
                     it.description.title.toString(),
                     it.description.subtitle.toString(),
-                    it.description.iconUri!!,
+                    it.description.iconUri.toString(),
                     0,
                     getPlaybackStatus(it.mediaId!!)
                 )
