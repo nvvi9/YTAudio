@@ -78,7 +78,7 @@ class MainActivityViewModel(
     }
 
 
-    fun deleteAudioInfo(idList: List<Long>) {
+    fun deleteAudioInfo(idList: List<String>) {
         coroutineScope.launch {
             database.delete(idList)
         }

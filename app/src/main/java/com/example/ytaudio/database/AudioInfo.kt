@@ -15,12 +15,11 @@ import kotlinx.coroutines.withContext
 )
 data class AudioInfo(
 
-    @PrimaryKey(autoGenerate = true) val audioId: Long = 0L,
-    @ColumnInfo(name = "youtube_id") val youtubeId: String = "",
-    @ColumnInfo(name = "audio_url") var audioUrl: String = "",
-    @ColumnInfo(name = "photo_url") var photoUrl: String = "",
-    @ColumnInfo(name = "audio_title") var audioTitle: String = "",
-    @ColumnInfo(name = "video_author") var author: String = "",
+    @ColumnInfo(name = "youtube_id") @PrimaryKey val youtubeId: String = "",
+    @ColumnInfo(name = "streaming_uri") var audioStreamingUri: String = "",
+    @ColumnInfo(name = "thumbnail_uri") var thumbnailUri: String = "",
+    @ColumnInfo(name = "title") var title: String = "",
+    @ColumnInfo(name = "author") var author: String = "",
     @ColumnInfo(name = "author_id") var authorId: String = "",
     @ColumnInfo(name = "description") var description: String = "",
     @ColumnInfo(name = "keywords") var keywords: String = "",
@@ -32,29 +31,27 @@ data class AudioInfo(
     @ColumnInfo(name = "average_bitrate") var averageBitrate: Int = 0,
     @ColumnInfo(name = "audio_duration_seconds") var audioDurationSeconds: Long = 0L,
     @ColumnInfo(name = "last_update_time_seconds") var lastUpdateTimeSeconds: Long = 0L,
-    @ColumnInfo(name = "url_active_time_seconds") var urlActiveTimeSeconds: Long = 0L,
-    @ColumnInfo(name = "playback_state") var playbackState: Int = 0
+    @ColumnInfo(name = "streaming_uri_active_time_seconds") var streamingUriActiveTimeSeconds: Long = 0L
 ) {
 
     val needUpdate: Boolean
-        get() = System.currentTimeMillis() >= (lastUpdateTimeSeconds + urlActiveTimeSeconds - 10) * 1000
+        get() = System.currentTimeMillis() >= (lastUpdateTimeSeconds + streamingUriActiveTimeSeconds - 10) * 1000
 
     fun toPlaylistItem() =
         PlaylistItem(
-            id = audioId.toString(),
-            title = audioTitle,
+            id = youtubeId,
+            title = title,
             author = author,
-            thumbnailUri = photoUrl,
-            duration = audioDurationSeconds,
-            playbackState = playbackState
+            thumbnailUri = thumbnailUri,
+            duration = audioDurationSeconds
         )
 
     suspend fun update() {
         withContext(Dispatchers.Default) {
             YTExtractor().extractAudioInfo(youtubeId).let {
-                audioUrl = it.audioUrl
-                photoUrl = it.photoUrl
-                audioTitle = it.audioTitle
+                audioStreamingUri = it.audioStreamingUri
+                thumbnailUri = it.thumbnailUri
+                title = it.title
                 author = it.author
                 authorId = it.authorId
                 description = it.description
@@ -67,7 +64,7 @@ data class AudioInfo(
                 averageBitrate = it.averageBitrate
                 audioDurationSeconds = it.audioDurationSeconds
                 lastUpdateTimeSeconds = it.lastUpdateTimeSeconds
-                urlActiveTimeSeconds = it.urlActiveTimeSeconds
+                streamingUriActiveTimeSeconds = it.streamingUriActiveTimeSeconds
             }
         }
     }
@@ -75,9 +72,9 @@ data class AudioInfo(
     override fun toString() =
         "ID: $authorId\n" +
                 "YouTube ID: $youtubeId\n" +
-                "Audio URI: $audioUrl\n" +
-                "Thumbnail URI: $photoUrl\n" +
-                "Audio title: $audioTitle\n" +
+                "Audio URI: $audioStreamingUri\n" +
+                "Thumbnail URI: $thumbnailUri\n" +
+                "Audio title: $title\n" +
                 "Author: $author\n" +
                 "Author ID: $authorId\n" +
                 "Description: $description\n" +
@@ -90,7 +87,7 @@ data class AudioInfo(
                 "Average bitrate: $averageBitrate\n" +
                 "Duration (seconds): $audioDurationSeconds\n" +
                 "Last update (seconds): $lastUpdateTimeSeconds\n" +
-                "Active URI time (seconds): $urlActiveTimeSeconds\n"
+                "Active URI time (seconds): $streamingUriActiveTimeSeconds\n"
 }
 
 

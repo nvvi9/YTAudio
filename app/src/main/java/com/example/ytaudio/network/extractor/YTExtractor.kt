@@ -22,9 +22,10 @@ class YTExtractor : YoutubeJExtractor() {
             streamingData.adaptiveAudioStreams.maxBy { it.averageBitrate }
 
         return AudioInfo(
-            audioUrl = adaptiveAudioStream!!.url,
-            photoUrl = videoDetails.thumbnail.thumbnails.maxBy { it.height }!!.url,
-            audioTitle = videoDetails.title,
+            youtubeId = videoDetails.videoId,
+            audioStreamingUri = adaptiveAudioStream!!.url,
+            thumbnailUri = videoDetails.thumbnail.thumbnails.maxBy { it.height }!!.url,
+            title = videoDetails.title,
             author = videoDetails.author,
             authorId = videoDetails.channelId,
             description = videoDetails.shortDescription,
@@ -37,7 +38,7 @@ class YTExtractor : YoutubeJExtractor() {
             averageBitrate = adaptiveAudioStream.averageBitrate,
             audioDurationSeconds = videoDetails.lengthSeconds.toLong(),
             lastUpdateTimeSeconds = System.currentTimeMillis() / 1000,
-            urlActiveTimeSeconds = streamingData.expiresInSeconds.toLong()
+            streamingUriActiveTimeSeconds = streamingData.expiresInSeconds.toLong()
         )
     }
 

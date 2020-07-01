@@ -48,12 +48,12 @@ class AudioRepository(private val databaseDao: AudioDatabaseDao) {
                         it.update()
                         updatedSuccessfully++
                     } catch (e: ExtractionException) {
-                        Log.e(javaClass.simpleName, "${it.audioTitle} extraction failed")
+                        Log.e(javaClass.simpleName, "${it.title} extraction failed")
                         databaseDao.delete(it)
                     } catch (e: YoutubeRequestException) {
                         Log.e(
                             javaClass.simpleName,
-                            "network failure while updating ${it.audioTitle}"
+                            "network failure while updating ${it.title}"
                         )
                     } catch (e: Exception) {
                         Log.e(javaClass.simpleName, e.toString())

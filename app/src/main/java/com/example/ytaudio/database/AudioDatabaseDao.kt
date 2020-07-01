@@ -18,23 +18,20 @@ interface AudioDatabaseDao {
     @Update
     suspend fun update(audioList: List<AudioInfo>)
 
-    @Query("SELECT * FROM audio_playlist_table WHERE audioId = :key")
-    suspend fun get(key: Long): AudioInfo?
+    @Query("SELECT * FROM audio_playlist_table WHERE youtube_id = :id")
+    suspend fun get(id:String): AudioInfo?
 
-    @Query("SELECT * FROM audio_playlist_table ORDER BY audioId DESC")
+    @Query("SELECT * FROM audio_playlist_table ORDER BY last_update_time_seconds")
     suspend fun getAllAudioInfo(): List<AudioInfo>
 
-    @Query("SELECT * FROM audio_playlist_table ORDER BY audioId DESC")
+    @Query("SELECT * FROM audio_playlist_table ORDER BY last_update_time_seconds")
     fun getAllAudio(): LiveData<List<AudioInfo>?>
-
-    @Query("SELECT * FROM audio_playlist_table ORDER BY audioId DESC LIMIT 1")
-    fun getLastAudio(): AudioInfo?
 
     @Delete
     suspend fun delete(audio: AudioInfo)
 
-    @Query("DELETE FROM audio_playlist_table WHERE audioId IN (:idList)")
-    suspend fun delete(idList: List<Long>)
+    @Query("DELETE FROM audio_playlist_table WHERE youtube_id IN (:idList)")
+    suspend fun delete(idList: List<String>)
 
     @Query("DELETE FROM audio_playlist_table")
     suspend fun clear()

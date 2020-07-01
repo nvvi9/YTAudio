@@ -7,5 +7,5 @@ data class PlaylistItem(
     val author: String,
     val thumbnailUri: String,
     val duration: Long,
-    val playbackState: Int
+    val playbackState: Int=0
 )

@@ -115,7 +115,7 @@ class PlaylistFragment : Fragment() {
                 R.id.action_delete -> {
                     mainActivityViewModel.deleteAudioInfo(
                         playlistAdapter.selectedItems
-                            .map { it.id.toLong() }      // TODO change id to Long
+                            .map { it.id }
                     )
                     playlistAdapter.stopActionMode()
                     mode?.finish()

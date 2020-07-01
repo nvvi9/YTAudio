@@ -146,9 +146,9 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
             }
         }
 
-        if (!resultSent) {
-            result.detach()
-        }
+//        if (!resultSent) {
+//            result.detach()
+//        }
     }
 
     override fun onDestroy() {
