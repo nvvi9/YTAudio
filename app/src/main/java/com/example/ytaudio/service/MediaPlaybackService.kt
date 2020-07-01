@@ -13,7 +13,7 @@ import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.Observer
 import androidx.media.MediaBrowserServiceCompat
 import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.database.AudioDatabaseDao
@@ -63,15 +63,40 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         }
     }
 
-    private val audioInfoCheckList = Transformations.map(database.getAllAudio()) {
-        it?.forEachIndexed { index, audioInfo ->
-            if (it.size != audioInfoList.size || audioInfo != audioInfoList.getOrNull(index)
-            ) {
-                updateAudioSource(this)
-            }
-        }
-    }.observeForever {}
+    private val audioInfoCheckList = database.getAllAudio()
 
+    private val databaseObserver = Observer<List<AudioInfo>?> {
+        if (it != audioInfoList) {
+            updateAudioSource(this)
+        }
+    }
+
+    init {
+        audioInfoCheckList.observeForever(databaseObserver)
+    }
+
+    private fun updateAudioSource(context: Context) {
+        audioSource = DatabaseAudioSource(context, database)
+        serviceScope.launch {
+            audioSource.load()
+            audioInfoList = database.getAllAudioInfo()
+            mediaSessionConnector = MediaSessionConnector(mediaSession).also {
+                val dataSourceFactory =
+                    DefaultDataSourceFactory(
+                        context,
+                        Util.getUserAgent(context, YTAUDIO_USER_AGENT),
+                        null
+                    )
+
+                val playbackPreparer = PlaybackPreparer(audioSource, exoPlayer, dataSourceFactory)
+
+                it.setPlayer(exoPlayer)
+                it.setPlaybackPreparer(playbackPreparer)
+                it.setQueueNavigator(QueueNavigator(mediaSession))
+            }
+            notifyChildrenChanged(MEDIA_ROOT_ID)
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -100,29 +125,6 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         becomingNoisyReceiver = BecomingNoisyReceiver(this, mediaSession.sessionToken)
 
         updateAudioSource(this)
-    }
-
-    private fun updateAudioSource(context: Context) {
-        audioSource = DatabaseAudioSource(context, database)
-        serviceScope.launch {
-            audioSource.load()
-            audioInfoList = database.getAllAudioInfo()
-            mediaSessionConnector = MediaSessionConnector(mediaSession).also {
-                val dataSourceFactory =
-                    DefaultDataSourceFactory(
-                        context,
-                        Util.getUserAgent(context, YTAUDIO_USER_AGENT),
-                        null
-                    )
-
-                val playbackPreparer = PlaybackPreparer(audioSource, exoPlayer, dataSourceFactory)
-
-                it.setPlayer(exoPlayer)
-                it.setPlaybackPreparer(playbackPreparer)
-                it.setQueueNavigator(QueueNavigator(mediaSession))
-            }
-            notifyChildrenChanged(MEDIA_ROOT_ID)
-        }
     }
 
     override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?) =
@@ -158,6 +160,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
             release()
         }
 
+        audioInfoCheckList.removeObserver(databaseObserver)
         serviceJob.cancel()
         exoPlayer.removeListener(playerListener)
         exoPlayer.release()

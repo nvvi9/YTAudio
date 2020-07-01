@@ -15,7 +15,7 @@ import kotlinx.coroutines.withContext
 )
 data class AudioInfo(
 
-    @ColumnInfo(name = "youtube_id") @PrimaryKey val youtubeId: String = "",
+    @ColumnInfo(name = "youtube_id") @PrimaryKey val youtubeId: String,
     @ColumnInfo(name = "streaming_uri") var audioStreamingUri: String = "",
     @ColumnInfo(name = "thumbnail_uri") var thumbnailUri: String = "",
     @ColumnInfo(name = "title") var title: String = "",
