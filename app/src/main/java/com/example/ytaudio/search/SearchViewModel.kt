@@ -12,15 +12,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+
 class SearchViewModel(application: Application) : AndroidViewModel(application) {
 
     private val job = Job()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
-    
+
     private val repository = SearchRepository(application)
 
     val searchItemList = repository.searchItemList
-
     val autoComplete = repository.autoCompleteList
 
     fun setResponse(query: String, maxResults: Int = 25) {

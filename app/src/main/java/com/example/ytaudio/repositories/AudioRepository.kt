@@ -11,33 +11,28 @@ import com.example.ytaudio.network.extractor.YTExtractor
 import com.example.ytaudio.utils.extensions.mapParallel
 import com.github.kotvertolet.youtubejextractor.exception.ExtractionException
 import com.github.kotvertolet.youtubejextractor.exception.YoutubeRequestException
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class AudioRepository(context: Context) {
-
-    private val job = SupervisorJob()
-    private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
 
     private val databaseDao = AudioDatabase.getInstance(context).audioDatabaseDao
 
     val audioInfoList = databaseDao.getAllAudio()
 
     val playlistItems: LiveData<List<PlaylistItem>> =
-        Transformations.map(audioInfoList) { list ->
+        Transformations.map(databaseDao.getAllAudio()) { list ->
             list?.map { it.toPlaylistItem() }
         }
 
-    fun updateAllAudioInfo() {
-        coroutineScope.launch {
+    suspend fun updateAllAudioInfo() {
+        withContext(Dispatchers.IO) {
             val startTime = System.nanoTime()
             val audioInfoList =
                 databaseDao.getAllAudioInfo().mapParallel {
                     try {
-                        AudioInfo(YTExtractor().extract(it.youtubeId))
+                        YTExtractor().extractAudioInfo(it.youtubeId)
                     } catch (e: ExtractionException) {
                         Log.e(javaClass.simpleName, "${it.title} extraction failed")
                         databaseDao.delete(it)
@@ -49,8 +44,8 @@ class AudioRepository(context: Context) {
                         Log.e(javaClass.simpleName, e.toString())
                         null
                     }
-                }
-            databaseDao.update(audioInfoList.filterNotNull())
+                }.filterNotNull()
+            databaseDao.update(audioInfoList)
             Log.i(
                 javaClass.simpleName,
                 "Full database update in ${(System.nanoTime() - startTime) / 1e6} ms"
@@ -58,8 +53,8 @@ class AudioRepository(context: Context) {
         }
     }
 
-    fun updateAudioInfoList(audioList: List<AudioInfo>) {
-        coroutineScope.launch {
+    suspend fun updateAudioInfoList(audioList: List<AudioInfo>) {
+        withContext(Dispatchers.IO) {
             val startTime = System.nanoTime()
             val list = audioList.mapParallel {
                 try {
@@ -81,6 +76,12 @@ class AudioRepository(context: Context) {
                 javaClass.simpleName,
                 "${audioList.size} items updated in ${(System.nanoTime() - startTime) / 1e6} ms"
             )
+        }
+    }
+
+    suspend fun deleteFromDatabase(idList: List<String>) {
+        withContext(Dispatchers.IO) {
+            databaseDao.delete(idList)
         }
     }
 }

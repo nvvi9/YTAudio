@@ -14,7 +14,6 @@ import com.example.ytaudio.activity.MainActivityViewModel
 import com.example.ytaudio.adapter.ClickListener
 import com.example.ytaudio.databinding.PlaylistFragmentBinding
 import com.example.ytaudio.domain.PlaylistItem
-import com.example.ytaudio.service.MEDIA_ROOT_ID
 import com.example.ytaudio.utils.FactoryUtils
 
 
@@ -26,7 +25,6 @@ class PlaylistFragment : Fragment() {
     private var actionMode: ActionMode? = null
     private val playlistAdapter = PlaylistAdapter(AdapterAudioInfoListener())
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -34,11 +32,10 @@ class PlaylistFragment : Fragment() {
     ): View? {
         binding = PlaylistFragmentBinding.inflate(inflater)
         val application = requireNotNull(this.activity).application
-        val audioId = MEDIA_ROOT_ID
 
         playlistViewModel = ViewModelProvider(
             this,
-            FactoryUtils.providePlaylistViewModel(audioId, application)
+            FactoryUtils.providePlaylistViewModel(application)
         ).get(PlaylistViewModel::class.java)
 
         mainActivityViewModel =
@@ -78,7 +75,7 @@ class PlaylistFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.delete -> {
-                if (!playlistViewModel.databaseAudioInfo.value.isNullOrEmpty()) {
+                if (!playlistViewModel.playlistItems.value.isNullOrEmpty()) {
                     startActionMode()
                 }
                 true

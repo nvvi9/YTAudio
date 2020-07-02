@@ -6,10 +6,10 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.*
 import com.example.ytaudio.R
-import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.domain.PlaylistItem
 import com.example.ytaudio.repositories.AudioRepository
 import com.example.ytaudio.service.EMPTY_PLAYBACK_STATE
+import com.example.ytaudio.service.MEDIA_ROOT_ID
 import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.service.NOTHING_PLAYING
 import com.example.ytaudio.service.extensions.id
@@ -21,7 +21,6 @@ import kotlinx.coroutines.launch
 
 
 class PlaylistViewModel(
-    private val audioId: String,
     mediaPlaybackServiceConnection: MediaPlaybackServiceConnection,
     application: Application
 ) : AndroidViewModel(application) {
@@ -29,13 +28,9 @@ class PlaylistViewModel(
     private val supervisorJob = SupervisorJob()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + supervisorJob)
 
-    private val database = AudioDatabase.getInstance(application).audioDatabaseDao
+    private val repository = AudioRepository(application)
 
-    private val audioRepository = AudioRepository(application)
-
-    val databaseAudioInfo = database.getAllAudio()
-
-    val playlistItems = audioRepository.playlistItems
+    val playlistItems = repository.playlistItems
 
     private val playbackStateObserver = Observer<PlaybackStateCompat> {
         val playbackState = it ?: EMPTY_PLAYBACK_STATE
@@ -61,7 +56,7 @@ class PlaylistViewModel(
 
     fun deleteFromDatabase(idList: List<String>) {
         coroutineScope.launch {
-            database.delete(idList)
+            repository.deleteFromDatabase(idList)
         }
     }
 
@@ -87,7 +82,7 @@ class PlaylistViewModel(
     }
 
     private val mediaPlaybackServiceConnection = mediaPlaybackServiceConnection.apply {
-        subscribe(audioId, subscriptionCallback)
+        subscribe(MEDIA_ROOT_ID, subscriptionCallback)
         playbackState.observeForever(playbackStateObserver)
         nowPlaying.observeForever(mediaMetadataObserver)
     }
@@ -121,12 +116,11 @@ class PlaylistViewModel(
 
         mediaPlaybackServiceConnection.playbackState.removeObserver(playbackStateObserver)
         mediaPlaybackServiceConnection.nowPlaying.removeObserver(mediaMetadataObserver)
-        mediaPlaybackServiceConnection.unsubscribe(audioId, subscriptionCallback)
+        mediaPlaybackServiceConnection.unsubscribe(MEDIA_ROOT_ID, subscriptionCallback)
     }
 
 
     class Factory(
-        private val audioId: String,
         private val mediaPlaybackServiceConnection: MediaPlaybackServiceConnection,
         private val application: Application
     ) : ViewModelProvider.Factory {
@@ -134,7 +128,6 @@ class PlaylistViewModel(
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return PlaylistViewModel(
-                audioId,
                 mediaPlaybackServiceConnection,
                 application
             ) as T

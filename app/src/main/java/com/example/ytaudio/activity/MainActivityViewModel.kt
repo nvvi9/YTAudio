@@ -14,25 +14,36 @@ import com.example.ytaudio.service.extensions.isPlaying
 import com.example.ytaudio.service.extensions.isPrepared
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class MainActivityViewModel(
     application: Application,
     private val mediaPlaybackServiceConnection: MediaPlaybackServiceConnection
 ) : AndroidViewModel(application) {
 
-    private val viewModelJob = Job()
-    private val coroutineScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    private val job = SupervisorJob()
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
 
     private val repository = AudioRepository(application)
 
     private val needUpdateObserver = Observer<List<AudioInfo>?> { list ->
-        list?.filter {
-            it.needUpdate
-        }?.let {
+        list?.filter { it.needUpdate }?.let {
             if (it.isNotEmpty()) {
-                repository.updateAudioInfoList(it)
+                updateAudioInfo(it)
             }
+        }
+    }
+
+    init {
+        coroutineScope.launch {
+            repository.updateAllAudioInfo()
+        }
+    }
+
+    private fun updateAudioInfo(audioList: List<AudioInfo>) {
+        coroutineScope.launch {
+            repository.updateAudioInfoList(audioList)
         }
     }
 
@@ -81,7 +92,7 @@ class MainActivityViewModel(
     }
 
     override fun onCleared() {
-        viewModelJob.cancel()
+        job.cancel()
         databaseAudioInfo.removeObserver(needUpdateObserver)
         super.onCleared()
     }
