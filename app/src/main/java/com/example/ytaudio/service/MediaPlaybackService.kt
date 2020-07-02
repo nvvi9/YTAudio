@@ -17,7 +17,7 @@ import androidx.lifecycle.Observer
 import androidx.media.MediaBrowserServiceCompat
 import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.database.AudioDatabaseDao
-import com.example.ytaudio.database.AudioInfo
+import com.example.ytaudio.database.entities.AudioInfo
 import com.example.ytaudio.service.extensions.flag
 import com.example.ytaudio.service.library.AudioSource
 import com.example.ytaudio.service.library.DatabaseAudioSource

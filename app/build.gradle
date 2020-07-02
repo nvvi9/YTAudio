@@ -98,7 +98,11 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-simplexml:$retrofit_version"
 
+    // Retrofit Coroutines adapter
     implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:$retrofit_coroutines_adapter_version"
+
+    // Gson
+    implementation "com.google.code.gson:gson:$gson_version"
 
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"

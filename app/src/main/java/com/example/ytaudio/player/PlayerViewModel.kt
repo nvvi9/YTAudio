@@ -9,7 +9,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.text.format.DateUtils
 import androidx.lifecycle.*
 import com.example.ytaudio.R
-import com.example.ytaudio.database.AudioDatabaseDao
+import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.service.EMPTY_PLAYBACK_STATE
 import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.service.NOTHING_PLAYING
@@ -17,9 +17,10 @@ import com.example.ytaudio.service.extensions.*
 
 class PlayerViewModel(
     mediaPlaybackServiceConnection: MediaPlaybackServiceConnection,
-    val database: AudioDatabaseDao,
     application: Application
 ) : AndroidViewModel(application) {
+
+    private val database = AudioDatabase.getInstance(application).audioDatabaseDao
 
     data class NowPlayingAudioInfo(
         val audioId: String,
@@ -92,7 +93,6 @@ class PlayerViewModel(
 
     class Factory(
         private val mediaPlaybackServiceConnection: MediaPlaybackServiceConnection,
-        private val dataSource: AudioDatabaseDao,
         private val application: Application
     ) : ViewModelProvider.Factory {
 
@@ -100,7 +100,6 @@ class PlayerViewModel(
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             return PlayerViewModel(
                 mediaPlaybackServiceConnection,
-                dataSource,
                 application
             ) as T
         }

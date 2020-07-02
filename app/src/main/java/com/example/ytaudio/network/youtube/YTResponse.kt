@@ -32,7 +32,15 @@ data class VideoItem(
     val etag: String,
     val id: Id,
     val snippet: Snippet
-)
+) {
+
+    fun toSearchItem() =
+        SearchItem(
+            id.videoId, snippet.title,
+            snippet.thumbnails.default.url,
+            snippet.channelTitle
+        )
+}
 
 data class Id(
     val kind: String,

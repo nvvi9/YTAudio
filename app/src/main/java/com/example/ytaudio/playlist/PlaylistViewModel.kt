@@ -6,24 +6,32 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.*
 import com.example.ytaudio.R
-import com.example.ytaudio.database.AudioDatabaseDao
+import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.domain.PlaylistItem
-import com.example.ytaudio.repository.AudioRepository
+import com.example.ytaudio.repositories.AudioRepository
 import com.example.ytaudio.service.EMPTY_PLAYBACK_STATE
 import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.service.NOTHING_PLAYING
 import com.example.ytaudio.service.extensions.id
 import com.example.ytaudio.service.extensions.isPlaying
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 
 class PlaylistViewModel(
     private val audioId: String,
     mediaPlaybackServiceConnection: MediaPlaybackServiceConnection,
-    val database: AudioDatabaseDao,
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val audioRepository = AudioRepository(database)
+    private val supervisorJob = SupervisorJob()
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + supervisorJob)
+
+    private val database = AudioDatabase.getInstance(application).audioDatabaseDao
+
+    private val audioRepository = AudioRepository(application)
 
     val databaseAudioInfo = database.getAllAudio()
 
@@ -50,6 +58,12 @@ class PlaylistViewModel(
 
     private val _audioItemList = MutableLiveData<List<PlaylistItem>>()
     val audioItemList: LiveData<List<PlaylistItem>> = _audioItemList
+
+    fun deleteFromDatabase(idList: List<String>) {
+        coroutineScope.launch {
+            database.delete(idList)
+        }
+    }
 
     val networkFailure = Transformations.map(mediaPlaybackServiceConnection.networkFailure) { it }
 
@@ -114,7 +128,6 @@ class PlaylistViewModel(
     class Factory(
         private val audioId: String,
         private val mediaPlaybackServiceConnection: MediaPlaybackServiceConnection,
-        private val dataSource: AudioDatabaseDao,
         private val application: Application
     ) : ViewModelProvider.Factory {
 
@@ -123,7 +136,6 @@ class PlaylistViewModel(
             return PlaylistViewModel(
                 audioId,
                 mediaPlaybackServiceConnection,
-                dataSource,
                 application
             ) as T
         }

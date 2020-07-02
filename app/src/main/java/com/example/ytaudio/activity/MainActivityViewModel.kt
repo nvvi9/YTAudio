@@ -1,11 +1,12 @@
 package com.example.ytaudio.activity
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.ytaudio.database.AudioDatabaseDao
-import com.example.ytaudio.database.AudioInfo
-import com.example.ytaudio.repository.AudioRepository
+import com.example.ytaudio.database.entities.AudioInfo
+import com.example.ytaudio.repositories.AudioRepository
 import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.service.extensions.id
 import com.example.ytaudio.service.extensions.isPlayEnabled
@@ -14,26 +15,28 @@ import com.example.ytaudio.service.extensions.isPrepared
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 class MainActivityViewModel(
-    private val database: AudioDatabaseDao,
+    application: Application,
     private val mediaPlaybackServiceConnection: MediaPlaybackServiceConnection
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
-    private val repository = AudioRepository(database)
     private val viewModelJob = Job()
     private val coroutineScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
+    private val repository = AudioRepository(application)
+
     private val needUpdateObserver = Observer<List<AudioInfo>?> { list ->
-        list?.filter { it.needUpdate }?.let {
+        list?.filter {
+            it.needUpdate
+        }?.let {
             if (it.isNotEmpty()) {
                 repository.updateAudioInfoList(it)
             }
         }
     }
 
-    private val databaseAudioInfo = database.getAllAudio().apply {
+    private val databaseAudioInfo = repository.audioInfoList.apply {
         observeForever(needUpdateObserver)
     }
 
@@ -77,29 +80,21 @@ class MainActivityViewModel(
         }
     }
 
-
-    fun deleteAudioInfo(idList: List<String>) {
-        coroutineScope.launch {
-            database.delete(idList)
-        }
-    }
-
     override fun onCleared() {
         viewModelJob.cancel()
         databaseAudioInfo.removeObserver(needUpdateObserver)
         super.onCleared()
     }
 
-
     class Factory(
-        private val databaseDao: AudioDatabaseDao,
+        private val application: Application,
         private val mediaPlaybackServiceConnection: MediaPlaybackServiceConnection
     ) :
         ViewModelProvider.Factory {
 
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return MainActivityViewModel(databaseDao, mediaPlaybackServiceConnection) as T
+            return MainActivityViewModel(application, mediaPlaybackServiceConnection) as T
         }
     }
 }

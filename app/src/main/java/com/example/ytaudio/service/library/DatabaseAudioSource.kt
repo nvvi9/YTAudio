@@ -7,7 +7,7 @@ import android.support.v4.media.MediaMetadataCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.example.ytaudio.database.AudioDatabaseDao
-import com.example.ytaudio.database.AudioInfo
+import com.example.ytaudio.database.entities.AudioInfo
 import com.example.ytaudio.service.extensions.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -43,8 +43,8 @@ class DatabaseAudioSource(context: Context, private val database: AudioDatabaseD
                 MediaMetadataCompat.Builder()
                     .from(it)
                     .apply {
-                        displayIconUri = it.thumbnailUri
-                        albumArtUri = it.thumbnailUri
+                        displayIconUri = it.thumbnails.maxBy { it.height }!!.uri
+                        albumArtUri = it.thumbnails.maxBy { it.height }!!.uri
                     }
                     .build()
             }.toList()
@@ -58,9 +58,9 @@ fun MediaMetadataCompat.Builder.from(audioInfo: AudioInfo): MediaMetadataCompat.
     id = audioInfo.youtubeId
     title = audioInfo.title
     artist = audioInfo.author
-    duration = audioInfo.audioDurationSeconds
-    mediaUri = audioInfo.audioStreamingUri
-    displayIconUri = audioInfo.thumbnailUri
+    duration = audioInfo.durationSeconds.toLong()
+    mediaUri = audioInfo.audioStreams.maxBy { it.sampleRate }!!.uri
+    displayIconUri = audioInfo.thumbnails.minBy { it.height }!!.uri
     flag = MediaItem.FLAG_PLAYABLE
 
     downloadStatus = STATUS_NOT_DOWNLOADED

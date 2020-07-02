@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import com.example.ytaudio.activity.MainActivityViewModel
-import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.player.PlayerViewModel
 import com.example.ytaudio.playlist.PlaylistViewModel
 import com.example.ytaudio.search.SearchViewModel
@@ -22,7 +21,7 @@ object FactoryUtils {
 
     fun provideMainActivityViewModel(application: Application) =
         MainActivityViewModel.Factory(
-            AudioDatabase.getInstance(application.applicationContext).audioDatabaseDao,
+            application,
             provideMediaPlaybackServiceConnection(application.applicationContext)
         )
 
@@ -30,17 +29,15 @@ object FactoryUtils {
         PlaylistViewModel.Factory(
             mediaId,
             provideMediaPlaybackServiceConnection(application.applicationContext),
-            AudioDatabase.getInstance(application.applicationContext).audioDatabaseDao,
             application
         )
 
     fun provideAudioPlayerViewModel(application: Application) =
         PlayerViewModel.Factory(
             provideMediaPlaybackServiceConnection(application.applicationContext),
-            AudioDatabase.getInstance(application.applicationContext).audioDatabaseDao,
             application
         )
 
     fun provideSearchViewModel(application: Application) =
-        SearchViewModel.Factory(AudioDatabase.getInstance(application.applicationContext).audioDatabaseDao)
+        SearchViewModel.Factory(application)
 }

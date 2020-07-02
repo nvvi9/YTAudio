@@ -46,7 +46,7 @@ fun ImageView.setPlaybackState(item: PlaylistItem?) {
 
 @BindingAdapter("audioDuration")
 fun TextView.setDuration(item: PlaylistItem?) {
-    text = DateUtils.formatElapsedTime(item?.duration ?: 0)
+    text = DateUtils.formatElapsedTime(item?.duration?.toLong() ?: 0)
 }
 
 @BindingAdapter("audioPlaylist")

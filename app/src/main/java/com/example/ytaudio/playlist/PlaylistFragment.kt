@@ -113,7 +113,7 @@ class PlaylistFragment : Fragment() {
                     true
                 }
                 R.id.action_delete -> {
-                    mainActivityViewModel.deleteAudioInfo(
+                    playlistViewModel.deleteFromDatabase(
                         playlistAdapter.selectedItems
                             .map { it.id }
                     )
