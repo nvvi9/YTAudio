@@ -28,7 +28,7 @@ class PlaybackPreparer(
                 PlaybackStateCompat.ACTION_PREPARE_FROM_SEARCH or
                 PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
 
-    override fun onPrepareFromMediaId(mediaId: String?, extras: Bundle?) {
+    override fun onPrepareFromMediaId(mediaId: String, playWhenReady: Boolean, extras: Bundle?) {
         audioSource.whenReady {
             val itemToPlay = audioSource.find { item ->
                 item.id == mediaId
@@ -41,6 +41,7 @@ class PlaybackPreparer(
 
                 exoPlayer.prepare(mediaSource)
                 exoPlayer.seekTo(initialWindowIndex, 0)
+                exoPlayer.playWhenReady = playWhenReady
             } ?: Log.w(javaClass.name, "Content not found: id=$mediaId")
         }
     }
@@ -53,7 +54,7 @@ class PlaybackPreparer(
         cb: ResultReceiver?
     ) = false
 
-    override fun onPrepare() = Unit
-    override fun onPrepareFromSearch(query: String?, extras: Bundle?) = Unit
-    override fun onPrepareFromUri(uri: Uri?, extras: Bundle?) = Unit
+    override fun onPrepare(playWhenReady: Boolean) = Unit
+    override fun onPrepareFromSearch(query: String, playWhenReady: Boolean, extras: Bundle?) = Unit
+    override fun onPrepareFromUri(uri: Uri, playWhenReady: Boolean, extras: Bundle?) = Unit
 }

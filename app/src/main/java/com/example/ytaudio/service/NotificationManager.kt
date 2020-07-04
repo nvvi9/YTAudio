@@ -3,21 +3,19 @@ package com.example.ytaudio.service
 import android.app.PendingIntent
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
+import com.bumptech.glide.Glide
 import com.example.ytaudio.R
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import kotlinx.coroutines.*
-import java.io.IOException
-import java.net.URL
 
 
 class NotificationManager(
-    context: Context,
+    private val context: Context,
     private val player: ExoPlayer,
     sessionToken: MediaSessionCompat.Token,
     notificationListener: PlayerNotificationManager.NotificationListener
@@ -61,18 +59,18 @@ class NotificationManager(
         var currentIconUri: Uri? = null
         var bitmap: Bitmap? = null
 
-        override fun createCurrentContentIntent(player: Player?): PendingIntent? =
+        override fun createCurrentContentIntent(player: Player): PendingIntent? =
             controller.sessionActivity
 
-        override fun getCurrentContentText(player: Player?) =
+        override fun getCurrentContentText(player: Player) =
             controller.metadata.description.subtitle.toString()
 
-        override fun getCurrentContentTitle(player: Player?) =
+        override fun getCurrentContentTitle(player: Player) =
             controller.metadata.description.title.toString()
 
         override fun getCurrentLargeIcon(
-            player: Player?,
-            callback: PlayerNotificationManager.BitmapCallback?
+            player: Player,
+            callback: PlayerNotificationManager.BitmapCallback
         ): Bitmap? {
             val iconUri = controller.metadata.description.iconUri
 
@@ -82,7 +80,7 @@ class NotificationManager(
                     bitmap = iconUri?.let {
                         resolveUriAsBitmap(it)
                     }
-                    callback?.onBitmap(bitmap)
+                    bitmap?.let { callback.onBitmap(it) }
                 }
                 null
             } else {
@@ -90,16 +88,10 @@ class NotificationManager(
             }
         }
 
-        private suspend fun resolveUriAsBitmap(uri: Uri): Bitmap? {
-            return withContext(Dispatchers.IO) {
-                try {
-                    val url = URL(uri.toString())
-                    BitmapFactory.decodeStream(url.openConnection().getInputStream())
-                } catch (e: IOException) {
-                    null
-                }
+        private suspend fun resolveUriAsBitmap(uri: Uri) =
+            withContext(Dispatchers.IO) {
+                Glide.with(context).asBitmap().load(uri).submit().get()
             }
-        }
     }
 }
 
