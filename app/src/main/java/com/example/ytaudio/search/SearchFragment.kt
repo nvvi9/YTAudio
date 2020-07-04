@@ -13,7 +13,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuItemCompat
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -22,17 +21,34 @@ import com.example.ytaudio.R
 import com.example.ytaudio.adapter.ClickListener
 import com.example.ytaudio.databinding.SearchFragmentBinding
 import com.example.ytaudio.domain.SearchItem
+import com.example.ytaudio.fragment.ActionModeFragment
 import com.example.ytaudio.utils.FactoryUtils
 import com.example.ytaudio.utils.extensions.hideKeyboard
 
 
-class SearchFragment : Fragment() {
+class SearchFragment : ActionModeFragment() {
 
-    private lateinit var viewModel: SearchViewModel
     private lateinit var binding: SearchFragmentBinding
-    private var actionMode: ActionMode? = null
-    private val videoItemAdapter = SearchAdapter(AdapterVideoItemListener())
 
+    lateinit var viewModel: SearchViewModel
+        private set
+
+    private val adapterClickListener = object : ClickListener<SearchItem> {
+        override fun onClick(item: SearchItem) {
+            Toast.makeText(this@SearchFragment.context, item.videoId, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private val videoItemAdapter = SearchAdapter(this, adapterClickListener)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val application = requireNotNull(activity).application
+        viewModel =
+            ViewModelProvider(this, FactoryUtils.provideSearchViewModel(application))
+                .get(SearchViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,20 +57,11 @@ class SearchFragment : Fragment() {
     ): View? {
         binding = SearchFragmentBinding.inflate(inflater)
 
-        val application = requireNotNull(activity).application
-
-        viewModel =
-            ViewModelProvider(this, FactoryUtils.provideSearchViewModel(application))
-                .get(SearchViewModel::class.java)
-
         binding.apply {
             viewModel = this@SearchFragment.viewModel
             videoItemsView.adapter = videoItemAdapter
             videoItemsView.addItemDecoration(
-                DividerItemDecoration(
-                    activity,
-                    DividerItemDecoration.VERTICAL
-                )
+                DividerItemDecoration(activity, DividerItemDecoration.VERTICAL)
             )
             lifecycleOwner = this@SearchFragment
         }
@@ -76,12 +83,8 @@ class SearchFragment : Fragment() {
         val from = arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1)
         val to = intArrayOf(R.id.item_suggest)
         val cursorAdapter = SimpleCursorAdapter(
-            context,
-            R.layout.item_search_suggest,
-            null,
-            from,
-            to,
-            CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+            context, R.layout.item_search_suggest,
+            null, from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
         )
 
         searchView.suggestionsAdapter = cursorAdapter
@@ -145,7 +148,7 @@ class SearchFragment : Fragment() {
         return when (item.itemId) {
             R.id.add -> {
                 if (!viewModel.searchItemList.value.isNullOrEmpty()) {
-                    startActionMode()
+                    videoItemAdapter.startActionMode()
                 }
                 true
             }
@@ -163,66 +166,5 @@ class SearchFragment : Fragment() {
     override fun onPause() {
         binding.root.hideKeyboard(context)
         super.onPause()
-    }
-
-    private fun startActionMode() {
-        if (actionMode == null) {
-            actionMode = activity?.startActionMode(actionModeCallback)
-            videoItemAdapter.startActionMode()
-            actionMode?.title =
-                getString(R.string.selected_items, videoItemAdapter.selectedItems.size)
-        }
-    }
-
-
-    private val actionModeCallback = object : ActionMode.Callback {
-        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-            return when (item?.itemId) {
-                R.id.action_add -> {
-                    viewModel.insertInDatabase(videoItemAdapter.selectedItems.toList())
-                    videoItemAdapter.stopActionMode()
-                    mode?.finish()
-                    actionMode = null
-                    true
-                }
-                else -> false
-            }
-        }
-
-        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?) = mode?.run {
-            menuInflater.inflate(R.menu.search_toolbar_action_mode, menu)
-            true
-        } ?: false
-
-        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?) = false
-
-        override fun onDestroyActionMode(mode: ActionMode?) {
-            videoItemAdapter.stopActionMode()
-            mode?.finish()
-            actionMode = null
-        }
-    }
-
-
-    private inner class AdapterVideoItemListener : ClickListener<SearchItem> {
-        override fun onClick(item: SearchItem) {
-            Toast.makeText(this@SearchFragment.context, item.videoId, Toast.LENGTH_SHORT).show()
-        }
-
-        override fun onActiveModeClick() {
-            val selectedItemsCount = videoItemAdapter.selectedItems.size
-            if (selectedItemsCount != 0) {
-                actionMode?.title =
-                    getString(R.string.selected_items, selectedItemsCount)
-            } else {
-                videoItemAdapter.stopActionMode()
-                actionMode?.finish()
-                actionMode = null
-            }
-        }
-
-        override fun onLongClick(item: SearchItem) {
-            startActionMode()
-        }
     }
 }

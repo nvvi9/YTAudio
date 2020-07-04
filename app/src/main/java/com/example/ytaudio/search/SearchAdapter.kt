@@ -1,16 +1,34 @@
 package com.example.ytaudio.search
 
-import android.view.LayoutInflater
-import android.view.ViewGroup
+import android.view.*
 import androidx.recyclerview.widget.DiffUtil
+import com.example.ytaudio.R
 import com.example.ytaudio.adapter.ClickListener
 import com.example.ytaudio.adapter.RecyclerViewAdapter
 import com.example.ytaudio.databinding.SearchItemBinding
 import com.example.ytaudio.domain.SearchItem
 
 
-class SearchAdapter(clickListener: ClickListener<SearchItem>) :
-    RecyclerViewAdapter<SearchItem, SearchItemBinding>(DiffCallback(), clickListener) {
+class SearchAdapter(
+    private val fragment: SearchFragment,
+    clickListener: ClickListener<SearchItem>
+) : RecyclerViewAdapter<SearchItem, SearchItemBinding>(fragment, DiffCallback(), clickListener) {
+
+    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean =
+        when (item?.itemId) {
+            R.id.action_add -> {
+                fragment.viewModel.insertInDatabase(selectedItems.toList())
+                stopActionMode()
+                true
+            }
+            else -> false
+        }
+
+    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?) =
+        mode?.run {
+            menuInflater.inflate(R.menu.search_toolbar_action_mode, menu)
+            true
+        } ?: false
 
     override fun onCreateViewHolder(
         parent: ViewGroup,

@@ -30,7 +30,7 @@ class AudioRepository(context: Context) {
         withContext(Dispatchers.IO) {
             val startTime = System.nanoTime()
             val audioInfoList =
-                databaseDao.getAllAudioInfo().mapParallel {
+                databaseDao.getAllAudioInfo().mapParallel(Dispatchers.IO) {
                     try {
                         YTExtractor().extractAudioInfo(it.youtubeId)
                     } catch (e: ExtractionException) {
@@ -56,7 +56,7 @@ class AudioRepository(context: Context) {
     suspend fun updateAudioInfoList(audioList: List<AudioInfo>) {
         withContext(Dispatchers.IO) {
             val startTime = System.nanoTime()
-            val list = audioList.mapParallel {
+            val list = audioList.mapParallel(Dispatchers.IO) {
                 try {
                     AudioInfo(YTExtractor().extract(it.youtubeId))
                 } catch (e: ExtractionException) {

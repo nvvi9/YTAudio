@@ -1,16 +1,42 @@
 package com.example.ytaudio.playlist
 
-import android.view.LayoutInflater
-import android.view.ViewGroup
+import android.view.*
 import androidx.recyclerview.widget.DiffUtil
+import com.example.ytaudio.R
 import com.example.ytaudio.adapter.ClickListener
 import com.example.ytaudio.adapter.RecyclerViewAdapter
 import com.example.ytaudio.databinding.ItemPlaylistBinding
 import com.example.ytaudio.domain.PlaylistItem
 
 
-class PlaylistAdapter(clickListener: ClickListener<PlaylistItem>) :
-    RecyclerViewAdapter<PlaylistItem, ItemPlaylistBinding>(DiffCallback(), clickListener) {
+class PlaylistAdapter(
+    private val fragment: PlaylistFragment,
+    clickListener: ClickListener<PlaylistItem>
+) : RecyclerViewAdapter<PlaylistItem, ItemPlaylistBinding>(
+    fragment, DiffCallback(), clickListener
+) {
+
+    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean =
+        when (item?.itemId) {
+            R.id.action_select_all -> {
+                selectAll()
+                fragment.actionMode?.title =
+                    fragment.getString(R.string.selected_items, selectedItems.size)
+                true
+            }
+            R.id.action_delete -> {
+                fragment.playlistViewModel.deleteFromDatabase(selectedItems.map { it.id })
+                stopActionMode()
+                true
+            }
+            else -> false
+        }
+
+    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean =
+        mode?.run {
+            menuInflater.inflate(R.menu.playlist_toolbar_action_mode, menu)
+            true
+        } ?: false
 
     override fun onCreateViewHolder(
         parent: ViewGroup,

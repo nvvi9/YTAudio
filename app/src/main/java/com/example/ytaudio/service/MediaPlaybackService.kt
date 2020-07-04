@@ -135,6 +135,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         result: Result<MutableList<MediaItem>>
     ) {
         result.detach()
+
         val resultSent = audioSource.whenReady { initialized ->
             if (initialized) {
                 val children = audioSource.map {
@@ -148,9 +149,9 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
             }
         }
 
-//        if (!resultSent) {
-//            result.detach()
-//        }
+        if (!resultSent) {
+            result.detach()
+        }
     }
 
     override fun onDestroy() {
@@ -259,4 +260,3 @@ private class BecomingNoisyReceiver(
 const val NETWORK_FAILURE = "service network failure"
 private const val YTAUDIO_USER_AGENT = "ytaudio.next"
 const val MEDIA_ROOT_ID = "media_root_id"
-private const val LOG_TAG = "MediaPlaybackService"

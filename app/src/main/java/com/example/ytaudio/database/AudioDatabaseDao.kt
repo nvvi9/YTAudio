@@ -19,9 +19,6 @@ interface AudioDatabaseDao {
     @Update
     suspend fun update(audioList: List<AudioInfo>)
 
-    @Query("SELECT * FROM AudioInfo WHERE youtubeId = :id")
-    suspend fun get(id: String): AudioInfo?
-
     @Query("SELECT * FROM AudioInfo ORDER BY title")
     suspend fun getAllAudioInfo(): List<AudioInfo>
 

@@ -46,14 +46,14 @@ class SearchRepository(context: Context) {
         }
     }
 
-    suspend fun addToDatabase(items: List<SearchItem>) {
+    suspend fun addToDatabase(items: List<String>) {
         withContext(Dispatchers.IO) {
             val startTime = System.nanoTime()
-            val audioInfoList = items.mapParallel {
+            val audioInfoList = items.mapParallel(Dispatchers.IO) {
                 try {
-                    YTExtractor().extractAudioInfo(it.videoId)
+                    YTExtractor().extractAudioInfo(it)
                 } catch (e: ExtractionException) {
-                    Log.e(javaClass.simpleName, "${it.title} extraction failed")
+                    Log.e(javaClass.simpleName, "id: $it extraction failed")
                     null
                 } catch (e: YoutubeRequestException) {
                     Log.e(javaClass.simpleName, "network failure")

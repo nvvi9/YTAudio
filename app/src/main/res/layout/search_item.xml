@@ -15,6 +15,7 @@
         android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/item_background"
         android:orientation="horizontal">
 
         <TextView
@@ -27,12 +28,12 @@
             android:singleLine="true"
             android:textColor="@android:color/white"
             android:textSize="16sp"
-            app:videoTitle="@{searchItem}"
             app:layout_constraintBottom_toTopOf="@+id/channel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/video_thumbnail"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="spread_inside"
+            app:videoTitle="@{searchItem}"
             tools:text="title" />
 
         <ImageView
@@ -43,10 +44,10 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:contentDescription="@string/thumbnail_description"
-            app:videoThumbnail="@{searchItem}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:videoThumbnail="@{searchItem}"
             tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
         <TextView

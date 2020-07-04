@@ -51,6 +51,9 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation "androidx.core:core-ktx:$core_version"
 
+    // RecyclerView-Selection
+//    implementation "androidx.recyclerview:recyclerview-selection:$recycler_view_selection_version"
+
     // Constraint layout
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
 
@@ -72,7 +75,7 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer:$exoplayer_version"
     implementation "com.google.android.exoplayer:extension-mediasession:$exoplayer_version"
 
-    // Extracting
+    // JExtractor
     implementation "com.github.kotvertolet:youtube-jextractor:$jextractor_version"
 
     // Room
