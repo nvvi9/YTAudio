@@ -7,10 +7,11 @@ import retrofit2.http.Query
 
 private const val YOUTUBE_API_KEY = BuildConfig.YOUTUBE_API_KEY
 
+
 interface YouTubeApiService {
 
     @GET("search")
-    fun getYTResponse(
+    fun getYTResponseAsync(
         @Query("q") q: String,
         @Query("maxResults") maxResults: Int = 25,
         @Query("part") part: String = "snippet",

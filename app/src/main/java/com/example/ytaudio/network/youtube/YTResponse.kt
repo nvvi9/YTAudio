@@ -9,18 +9,7 @@ data class YTResponse(
     val regionCode: String,
     val pageInfo: PageInfo,
     val items: List<VideoItem>
-) {
-
-    val searchItemList
-        get() = items.map {
-            SearchItem(
-                it.id.videoId,
-                it.snippet.title,
-                it.snippet.thumbnails.default.url,
-                it.snippet.channelTitle
-            )
-        }
-}
+)
 
 data class PageInfo(
     val totalResults: Int,

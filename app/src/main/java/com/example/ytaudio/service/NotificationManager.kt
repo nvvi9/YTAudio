@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.util.Log
 import com.bumptech.glide.Glide
 import com.example.ytaudio.R
 import com.google.android.exoplayer2.ExoPlayer
@@ -59,6 +60,7 @@ class NotificationManager(
         var currentIconUri: Uri? = null
         var bitmap: Bitmap? = null
 
+
         override fun createCurrentContentIntent(player: Player): PendingIntent? =
             controller.sessionActivity
 
@@ -88,9 +90,14 @@ class NotificationManager(
             }
         }
 
-        private suspend fun resolveUriAsBitmap(uri: Uri) =
+        private suspend fun resolveUriAsBitmap(uri: Uri): Bitmap? =
             withContext(Dispatchers.IO) {
-                Glide.with(context).asBitmap().load(uri).submit().get()
+                try {
+                    Glide.with(context).asBitmap().load(uri).submit().get()
+                } catch (e: Exception) {
+                    Log.e(javaClass.simpleName, e.toString())
+                    null
+                }
             }
     }
 }

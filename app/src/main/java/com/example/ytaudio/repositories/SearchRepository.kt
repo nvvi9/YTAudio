@@ -30,7 +30,7 @@ class SearchRepository(context: Context) {
     suspend fun setItemsFromResponse(query: String, maxResults: Int = 25) {
         withContext(Dispatchers.IO) {
             val list =
-                ApiService.ytService.getYTResponse(query, maxResults).await()
+                ApiService.ytService.getYTResponseAsync(query, maxResults).await()
                     .items.map { it.toSearchItem() }
             _searchItemList.postValue(list)
         }

@@ -6,6 +6,9 @@ import android.support.v4.media.MediaDescriptionCompat.STATUS_NOT_DOWNLOADED
 import android.support.v4.media.MediaMetadataCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
+import com.example.ytaudio.R
 import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.database.entities.AudioInfo
 import com.example.ytaudio.service.extensions.*
@@ -14,6 +17,10 @@ import kotlinx.coroutines.withContext
 
 class DatabaseAudioSource(context: Context, private val database: AudioDatabaseDao) :
     AbstractAudioSource() {
+
+    private val glideOptions = RequestOptions()
+        .fallback(R.drawable.ic_notification)
+        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
 
     private var catalog: List<MediaMetadataCompat> = emptyList()
     private val glide: RequestManager
@@ -39,12 +46,19 @@ class DatabaseAudioSource(context: Context, private val database: AudioDatabaseD
         return withContext(Dispatchers.IO) {
             val audioInfoList = database.getAllAudioInfo()
 
-            audioInfoList.map {
+            audioInfoList.map { audioInfo ->
+
+                val thumbnailUri =
+                    audioInfo.thumbnails.run {
+                        maxBy { it.height } ?: last()
+                    }.uri
+
                 MediaMetadataCompat.Builder()
-                    .from(it)
+                    .from(audioInfo)
                     .apply {
-                        displayIconUri = it.thumbnails.maxBy { it.height }!!.uri
-                        albumArtUri = it.thumbnails.maxBy { it.height }!!.uri
+
+                        displayIconUri = thumbnailUri
+                        albumArtUri = thumbnailUri
                     }
                     .build()
             }.toList()

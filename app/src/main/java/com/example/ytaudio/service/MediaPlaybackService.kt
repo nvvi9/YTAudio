@@ -12,6 +12,7 @@ import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.media.MediaBrowserServiceCompat
@@ -57,7 +58,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
     }
 
     private val exoPlayer: ExoPlayer by lazy {
-        ExoPlayerFactory.newSimpleInstance(this).apply {
+        SimpleExoPlayer.Builder(this).build().apply {
             setAudioAttributes(ytAudioAttributes, true)
             addListener(playerListener)
         }
@@ -79,6 +80,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         audioSource = DatabaseAudioSource(context, database)
         serviceScope.launch {
             audioSource.load()
+
             audioInfoList = database.getAllAudioInfo()
             mediaSessionConnector = MediaSessionConnector(mediaSession).also {
                 val dataSourceFactory =
@@ -116,15 +118,13 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         sessionToken = mediaSession.sessionToken
 
         notificationManager = NotificationManager(
-            this,
-            exoPlayer,
-            mediaSession.sessionToken,
+            this, exoPlayer, mediaSession.sessionToken,
             playerNotificationListener
         )
 
         becomingNoisyReceiver = BecomingNoisyReceiver(this, mediaSession.sessionToken)
 
-        updateAudioSource(this)
+//        updateAudioSource(this)
     }
 
     override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?) =
@@ -134,7 +134,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         parentId: String,
         result: Result<MutableList<MediaItem>>
     ) {
-        result.detach()
+//        result.detach()
 
         val resultSent = audioSource.whenReady { initialized ->
             if (initialized) {
@@ -185,6 +185,10 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
                     becomingNoisyReceiver.unregister()
                 }
             }
+        }
+
+        override fun onPlayerError(error: ExoPlaybackException) {
+            Log.e(javaClass.simpleName, error.toString())
         }
     }
 
