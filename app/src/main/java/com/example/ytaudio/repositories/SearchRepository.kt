@@ -39,7 +39,7 @@ class SearchRepository(context: Context) {
     suspend fun setAutocomplete(query: String) {
         withContext(Dispatchers.IO) {
             val list =
-                ApiService.autoCompleteService.getAutoComplete(query).await()
+                ApiService.autoCompleteService.getAutoCompleteAsync(query).await()
                     .items?.mapNotNull { it.suggestion?.data }
 
             _autoCompleteList.postValue(list)

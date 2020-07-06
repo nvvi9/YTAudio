@@ -12,7 +12,9 @@ class PlaylistAdapter(
     private val fragment: PlaylistFragment,
     clickListener: (PlaylistItem) -> Unit
 ) : RecyclerViewAdapter<PlaylistItem, ItemPlaylistBinding>(
-    fragment, DiffCallback(), clickListener
+    fragment,
+    DiffCallback(),
+    clickListener
 ) {
 
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean =

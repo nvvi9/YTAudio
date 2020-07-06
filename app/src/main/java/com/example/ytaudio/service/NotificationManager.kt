@@ -8,6 +8,7 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.ytaudio.R
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
@@ -93,7 +94,14 @@ class NotificationManager(
         private suspend fun resolveUriAsBitmap(uri: Uri): Bitmap? =
             withContext(Dispatchers.IO) {
                 try {
-                    Glide.with(context).asBitmap().load(uri).submit().get()
+                    Glide.with(context).asBitmap()
+                        .load(uri).apply(
+                            RequestOptions()
+                                .placeholder(R.drawable.ic_notification)
+                                .error(R.drawable.ic_notification)
+                        )
+                        .submit()
+                        .get()
                 } catch (e: Exception) {
                     Log.e(javaClass.simpleName, e.toString())
                     null

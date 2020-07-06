@@ -23,12 +23,6 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     val searchItemList = repository.searchItemList
     val autoComplete = repository.autoCompleteList
 
-    private var selectedVideoIdList = listOf<String>()
-
-    fun updateSelectedItems(idList: List<String>) {
-        selectedVideoIdList = idList
-    }
-
     fun setResponse(query: String, maxResults: Int = 25) {
         coroutineScope.launch {
             try {

@@ -37,12 +37,6 @@ class AudioRepository(context: Context) {
                         Log.e(javaClass.simpleName, "${it.title} extraction failed")
                         databaseDao.delete(it)
                         null
-                    } catch (e: YoutubeRequestException) {
-                        Log.e(javaClass.simpleName, "network failure")
-                        null
-                    } catch (e: Exception) {
-                        Log.e(javaClass.simpleName, e.toString())
-                        null
                     }
                 }.filterNotNull()
             databaseDao.update(audioInfoList)

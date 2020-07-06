@@ -51,9 +51,6 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation "androidx.core:core-ktx:$core_version"
 
-    // RecyclerView-Selection
-//    implementation "androidx.recyclerview:recyclerview-selection:$recycler_view_selection_version"
-
     // Constraint layout
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
 
@@ -83,11 +80,6 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
 
-    // Testing
-    testImplementation "junit:junit:$junit_version"
-    androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
-
     // Google Play services
     implementation "com.google.android.gms:play-services-auth:$play_services_auth_version"
     implementation "com.google.apis:google-api-services-youtube:$youtube_api_version"
@@ -110,4 +102,13 @@ dependencies {
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
+
+    // Work
+    implementation "androidx.work:work-runtime-ktx:$work_version"
+
+    // Testing
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation "androidx.work:work-testing:$work_version"
 }

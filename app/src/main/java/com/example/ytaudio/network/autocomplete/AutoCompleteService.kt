@@ -8,7 +8,7 @@ import retrofit2.http.Query
 interface AutoCompleteService {
 
     @GET("search")
-    fun getAutoComplete(
+    fun getAutoCompleteAsync(
         @Query("q") q: String,
         @Query("ds") ds: String = "yt",
         @Query("client") client: String = "toolbar"

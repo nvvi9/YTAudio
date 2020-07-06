@@ -15,10 +15,8 @@ class Converter {
     }
 
     @TypeConverter
-    fun fromAudioStreamList(list: List<AudioStream>): String {
-        val gson = Gson()
-        return gson.toJson(list)
-    }
+    fun fromAudioStreamList(list: List<AudioStream>): String =
+        Gson().toJson(list)
 
     @TypeConverter
     fun toThumbnailList(value: String): List<Thumbnail> {
@@ -27,16 +25,14 @@ class Converter {
     }
 
     @TypeConverter
-    fun fromThumbnailList(list: List<Thumbnail>): String {
-        val gson = Gson()
-        return gson.toJson(list)
-    }
+    fun fromThumbnailList(list: List<Thumbnail>): String =
+        Gson().toJson(list)
 
     @TypeConverter
     fun toStringList(value: String): List<String> =
-        value.split(", ")
+        value.split(",")
 
     @TypeConverter
     fun fromStringList(list: List<String>): String =
-        list.joinToString()
+        list.joinToString(",")
 }

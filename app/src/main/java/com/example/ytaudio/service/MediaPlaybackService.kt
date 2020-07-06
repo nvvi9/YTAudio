@@ -85,9 +85,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
             mediaSessionConnector = MediaSessionConnector(mediaSession).also {
                 val dataSourceFactory =
                     DefaultDataSourceFactory(
-                        context,
-                        Util.getUserAgent(context, YTAUDIO_USER_AGENT),
-                        null
+                        context, Util.getUserAgent(context, YTAUDIO_USER_AGENT), null
                     )
 
                 val playbackPreparer = PlaybackPreparer(audioSource, exoPlayer, dataSourceFactory)
