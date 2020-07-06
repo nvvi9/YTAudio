@@ -10,9 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
 import com.example.ytaudio.activity.MainActivityViewModel
-import com.example.ytaudio.adapter.ClickListener
 import com.example.ytaudio.databinding.PlaylistFragmentBinding
-import com.example.ytaudio.domain.PlaylistItem
 import com.example.ytaudio.fragment.ActionModeFragment
 import com.example.ytaudio.utils.FactoryUtils
 
@@ -25,15 +23,10 @@ class PlaylistFragment : ActionModeFragment() {
     private lateinit var binding: PlaylistFragmentBinding
     private lateinit var mainActivityViewModel: MainActivityViewModel
 
-    private val adapterClickListener = object : ClickListener<PlaylistItem> {
-
-        override fun onClick(item: PlaylistItem) {
-            mainActivityViewModel.audioItemClicked(item.id)
-            findNavController().navigate(PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment())
-        }
+    private val playlistAdapter = PlaylistAdapter(this) {
+        mainActivityViewModel.audioItemClicked(it.id)
+        findNavController().navigate(PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment())
     }
-
-    private val playlistAdapter = PlaylistAdapter(this, adapterClickListener)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

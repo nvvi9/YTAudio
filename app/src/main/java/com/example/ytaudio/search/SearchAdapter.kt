@@ -3,7 +3,6 @@ package com.example.ytaudio.search
 import android.view.*
 import androidx.recyclerview.widget.DiffUtil
 import com.example.ytaudio.R
-import com.example.ytaudio.adapter.ClickListener
 import com.example.ytaudio.adapter.RecyclerViewAdapter
 import com.example.ytaudio.databinding.SearchItemBinding
 import com.example.ytaudio.domain.SearchItem
@@ -11,7 +10,7 @@ import com.example.ytaudio.domain.SearchItem
 
 class SearchAdapter(
     private val fragment: SearchFragment,
-    clickListener: ClickListener<SearchItem>
+    clickListener: (SearchItem) -> Unit
 ) : RecyclerViewAdapter<SearchItem, SearchItemBinding>(fragment, DiffCallback(), clickListener) {
 
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean =

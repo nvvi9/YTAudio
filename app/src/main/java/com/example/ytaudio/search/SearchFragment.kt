@@ -18,9 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.transition.TransitionManager
 import com.example.ytaudio.R
-import com.example.ytaudio.adapter.ClickListener
 import com.example.ytaudio.databinding.SearchFragmentBinding
-import com.example.ytaudio.domain.SearchItem
 import com.example.ytaudio.fragment.ActionModeFragment
 import com.example.ytaudio.utils.FactoryUtils
 import com.example.ytaudio.utils.extensions.hideKeyboard
@@ -33,13 +31,9 @@ class SearchFragment : ActionModeFragment() {
     lateinit var viewModel: SearchViewModel
         private set
 
-    private val adapterClickListener = object : ClickListener<SearchItem> {
-        override fun onClick(item: SearchItem) {
-            Toast.makeText(this@SearchFragment.context, item.videoId, Toast.LENGTH_SHORT).show()
-        }
+    private val videoItemAdapter = SearchAdapter(this) {
+        Toast.makeText(this@SearchFragment.context, it.videoId, Toast.LENGTH_SHORT).show()
     }
-
-    private val videoItemAdapter = SearchAdapter(this, adapterClickListener)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

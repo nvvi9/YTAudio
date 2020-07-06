@@ -14,7 +14,7 @@ import com.example.ytaudio.fragment.ActionModeFragment
 abstract class RecyclerViewAdapter<T, B : ViewDataBinding>(
     private val fragment: ActionModeFragment,
     diffCallback: DiffUtil.ItemCallback<T>,
-    private val clickListener: ClickListener<T>
+    private val clickListener: (T) -> Unit
 ) : ListAdapter<T, RecyclerViewAdapter<T, B>.ViewHolder<B>>(diffCallback), ActionMode.Callback {
 
     protected val selectedItems = mutableSetOf<T>()
@@ -74,7 +74,7 @@ abstract class RecyclerViewAdapter<T, B : ViewDataBinding>(
 
                 setOnClickListener {
                     if (!inActionMode) {
-                        clickListener.onClick(item)
+                        clickListener(item)
                     } else {
                         itemClicked(item)
                         val selectedItemsSize = selectedItems.size

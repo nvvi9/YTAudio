@@ -3,7 +3,6 @@ package com.example.ytaudio.playlist
 import android.view.*
 import androidx.recyclerview.widget.DiffUtil
 import com.example.ytaudio.R
-import com.example.ytaudio.adapter.ClickListener
 import com.example.ytaudio.adapter.RecyclerViewAdapter
 import com.example.ytaudio.databinding.ItemPlaylistBinding
 import com.example.ytaudio.domain.PlaylistItem
@@ -11,7 +10,7 @@ import com.example.ytaudio.domain.PlaylistItem
 
 class PlaylistAdapter(
     private val fragment: PlaylistFragment,
-    clickListener: ClickListener<PlaylistItem>
+    clickListener: (PlaylistItem) -> Unit
 ) : RecyclerViewAdapter<PlaylistItem, ItemPlaylistBinding>(
     fragment, DiffCallback(), clickListener
 ) {
