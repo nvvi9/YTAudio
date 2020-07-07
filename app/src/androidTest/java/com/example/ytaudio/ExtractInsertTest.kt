@@ -7,12 +7,14 @@ import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.network.extractor.YTExtractor
 import com.example.ytaudio.utils.extensions.mapParallel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
+
 
 @RunWith(AndroidJUnit4::class)
 class ExtractInsertTest {
@@ -39,7 +41,7 @@ class ExtractInsertTest {
         runBlocking {
             val audioInfoList =
                 listOf("qkKT-0FWyfs", "1F5WLJ7Ni9c", "lkFkuC9aqS4", "3yOlBB-B32E", "WkIHxF4dPDk")
-                    .mapParallel {
+                    .mapParallel(Dispatchers.IO) {
                         YTExtractor().extractAudioInfo(it)
                     }.filterNotNull()
 
