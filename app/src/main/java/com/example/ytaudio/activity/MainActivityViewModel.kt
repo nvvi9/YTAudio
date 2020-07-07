@@ -1,7 +1,6 @@
 package com.example.ytaudio.activity
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
@@ -32,20 +31,6 @@ class MainActivityViewModel(
         list?.filter { it.needUpdate }?.let {
             if (it.isNotEmpty()) {
                 updateAudioInfo(it)
-            }
-        }
-    }
-
-    init {
-        refreshDatabase()
-    }
-
-    private fun refreshDatabase() {
-        coroutineScope.launch {
-            try {
-                repository.updateAllAudioInfo()
-            } catch (t: Throwable) {
-                Log.e(javaClass.simpleName, t.toString())
             }
         }
     }
