@@ -12,8 +12,8 @@ class PlaylistAdapter(
     private val fragment: PlaylistFragment,
     clickListener: (PlaylistItem) -> Unit
 ) : RecyclerViewAdapter<PlaylistItem, ItemPlaylistBinding>(
-    fragment,
     DiffCallback(),
+    fragment,
     clickListener
 ) {
 

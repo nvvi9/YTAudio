@@ -12,8 +12,8 @@ import com.example.ytaudio.fragment.ActionModeFragment
 
 
 abstract class RecyclerViewAdapter<T, B : ViewDataBinding>(
-    private val fragment: ActionModeFragment,
     diffCallback: DiffUtil.ItemCallback<T>,
+    private val fragment: ActionModeFragment,
     private val clickListener: (T) -> Unit
 ) : ListAdapter<T, RecyclerViewAdapter<T, B>.ViewHolder<B>>(diffCallback), ActionMode.Callback {
 

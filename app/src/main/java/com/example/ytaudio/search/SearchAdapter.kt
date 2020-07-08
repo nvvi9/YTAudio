@@ -11,7 +11,7 @@ import com.example.ytaudio.domain.SearchItem
 class SearchAdapter(
     private val fragment: SearchFragment,
     clickListener: (SearchItem) -> Unit
-) : RecyclerViewAdapter<SearchItem, SearchItemBinding>(fragment, DiffCallback(), clickListener) {
+) : RecyclerViewAdapter<SearchItem, SearchItemBinding>(DiffCallback(), fragment, clickListener) {
 
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean =
         when (item?.itemId) {

@@ -50,8 +50,6 @@
             android:ellipsize="marquee"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
             android:singleLine="true"
             android:textColor="@android:color/secondary_text_dark_nodisable"
             android:textColorHighlight="@android:color/secondary_text_dark_nodisable"

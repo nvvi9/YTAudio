@@ -5,9 +5,11 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.ytaudio.database.AudioDatabase
+import com.example.ytaudio.database.entities.AudioInfo
 import com.example.ytaudio.domain.SearchItem
 import com.example.ytaudio.network.ApiService
 import com.example.ytaudio.network.extractor.YTExtractor
+import com.example.ytaudio.utils.extensions.forEachParallel
 import com.example.ytaudio.utils.extensions.mapParallel
 import com.github.kotvertolet.youtubejextractor.exception.ExtractionException
 import com.github.kotvertolet.youtubejextractor.exception.YoutubeRequestException
@@ -27,12 +29,31 @@ class SearchRepository(context: Context) {
     val autoCompleteList: LiveData<List<String>>
         get() = _autoCompleteList
 
-    suspend fun setItemsFromResponse(query: String, maxResults: Int = 25) {
+    private val audioInfoList = mutableSetOf<AudioInfo>()
+
+    suspend fun setItemsFromResponse(query: String, maxResults: Int = 50) {
         withContext(Dispatchers.IO) {
             val list =
                 ApiService.ytService.getYTResponseAsync(query, maxResults).await()
                     .items.map { it.toSearchItem() }
             _searchItemList.postValue(list)
+
+            list.forEachParallel(Dispatchers.IO) { searchItem ->
+                try {
+                    YTExtractor().extractAudioInfo(searchItem.videoId)
+                } catch (e: ExtractionException) {
+                    Log.e(javaClass.simpleName, "id: $searchItem extraction failed")
+                    null
+                } catch (e: YoutubeRequestException) {
+                    Log.e(javaClass.simpleName, "network failure")
+                    null
+                } catch (e: Exception) {
+                    Log.e(javaClass.simpleName, e.toString())
+                    null
+                }?.let {
+                    audioInfoList.add(it)
+                }
+            }
         }
     }
 
@@ -46,14 +67,15 @@ class SearchRepository(context: Context) {
         }
     }
 
-    suspend fun addToDatabase(items: List<String>) {
+    suspend fun addDatabase(items: List<SearchItem>) {
         withContext(Dispatchers.IO) {
-            val startTime = System.nanoTime()
-            val audioInfoList = items.mapParallel(Dispatchers.IO) {
+            val list = items.mapParallel(Dispatchers.IO) { searchItem ->
                 try {
-                    YTExtractor().extractAudioInfo(it)
+                    audioInfoList.find { audioInfo ->
+                        audioInfo.youtubeId == searchItem.videoId
+                    } ?: YTExtractor().extractAudioInfo(searchItem.videoId)
                 } catch (e: ExtractionException) {
-                    Log.e(javaClass.simpleName, "id: $it extraction failed")
+                    Log.e(javaClass.simpleName, "id: ${searchItem.videoId} extraction failed")
                     null
                 } catch (e: YoutubeRequestException) {
                     Log.e(javaClass.simpleName, "network failure")
@@ -64,11 +86,7 @@ class SearchRepository(context: Context) {
                 }
             }.filterNotNull()
 
-            database.insert(audioInfoList)
-            Log.i(
-                javaClass.simpleName,
-                "${items.size} items added in ${(System.nanoTime() - startTime) / 1e6} ms"
-            )
+            database.insert(list)
         }
     }
 }

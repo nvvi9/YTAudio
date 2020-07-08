@@ -29,10 +29,12 @@ class Converter {
         Gson().toJson(list)
 
     @TypeConverter
-    fun toStringList(value: String): List<String> =
-        value.split(",")
+    fun toStringList(value: String): List<String> {
+        val type = object : TypeToken<List<String>>() {}.type
+        return Gson().fromJson(value, type)
+    }
 
     @TypeConverter
     fun fromStringList(list: List<String>): String =
-        list.joinToString(",")
+        Gson().toJson(list)
 }

@@ -23,6 +23,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     val searchItemList = repository.searchItemList
     val autoComplete = repository.autoCompleteList
 
+
     fun setResponse(query: String, maxResults: Int = 25) {
         coroutineScope.launch {
             try {
@@ -45,7 +46,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
 
     fun insertInDatabase(items: List<SearchItem>) {
         coroutineScope.launch {
-            repository.addToDatabase(items.map { it.videoId })
+            repository.addDatabase(items)
         }
     }
 
