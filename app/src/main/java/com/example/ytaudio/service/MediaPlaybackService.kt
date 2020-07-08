@@ -53,7 +53,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         .setUsage(C.USAGE_MEDIA)
         .build()
 
-    private val database: AudioDatabaseDao by lazy {
+    private val databaseDao: AudioDatabaseDao by lazy {
         AudioDatabase.getInstance(this).audioDatabaseDao
     }
 
@@ -64,7 +64,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         }
     }
 
-    private val audioInfoCheckList = database.getAllAudio()
+    private val audioInfoCheckList = databaseDao.getAllAudio()
 
     private val databaseObserver = Observer<List<AudioInfo>?> {
         if (it != audioInfoList) {
@@ -77,11 +77,10 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
     }
 
     private fun updateAudioSource(context: Context) {
-        audioSource = DatabaseAudioSource(context, database)
         serviceScope.launch {
             audioSource.load()
 
-            audioInfoList = database.getAllAudioInfo()
+            audioInfoList = databaseDao.getAllAudioInfo()
             mediaSessionConnector = MediaSessionConnector(mediaSession).also {
                 val dataSourceFactory =
                     DefaultDataSourceFactory(
@@ -122,6 +121,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
 
         becomingNoisyReceiver = BecomingNoisyReceiver(this, mediaSession.sessionToken)
 
+        audioSource = DatabaseAudioSource(this, databaseDao)
 //        updateAudioSource(this)
     }
 
