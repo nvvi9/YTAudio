@@ -28,9 +28,7 @@ class PlaylistFragment : ActionModeFragment() {
         findNavController().navigate(PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment())
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreate() {
         val application = requireNotNull(this.activity).application
 
         playlistViewModel = ViewModelProvider(
@@ -72,7 +70,6 @@ class PlaylistFragment : ActionModeFragment() {
             lifecycleOwner = this@PlaylistFragment
         }
 
-        setHasOptionsMenu(true)
         return binding.root
     }
 

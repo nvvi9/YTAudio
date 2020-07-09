@@ -27,9 +27,7 @@ class SearchFragment : ActionModeFragment() {
         Toast.makeText(this@SearchFragment.context, it.videoId, Toast.LENGTH_SHORT).show()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onCreate() {
         val application = requireNotNull(activity).application
         viewModel =
             ViewModelProvider(this, FactoryUtils.provideSearchViewModel(application))
@@ -52,7 +50,6 @@ class SearchFragment : ActionModeFragment() {
             lifecycleOwner = this@SearchFragment
         }
 
-        setHasOptionsMenu(true)
         return binding.root
     }
 
