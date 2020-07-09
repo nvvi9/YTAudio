@@ -3,7 +3,6 @@ package com.example.ytaudio.search
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuItemCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -57,44 +56,17 @@ class SearchFragment : ActionModeFragment() {
         inflater.inflate(R.menu.search_toolbar_menu, menu)
 
         val searchItem = menu.findItem(R.id.action_search)
-        val searchView = searchItem?.actionView as SearchView
 
-        val searchAutoComplete = SearchAutoComplete(context, searchView)
-
-        searchView.queryHint = getString(R.string.search)
+        val searchManager = SearchManager(
+            searchItem, context,
+            SearchManager.QueryTextListener(
+                { viewModel.setResponse(it) },
+                { viewModel.setAutoComplete(it) })
+        )
 
         viewModel.autoComplete.observe(viewLifecycleOwner, Observer {
-            searchAutoComplete.updateRows(it)
+            searchManager.updateAutoCompleteRows(it)
         })
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                searchView.hideKeyboard(context)
-                query?.let {
-                    viewModel.setResponse(it)
-                }
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                newText?.let {
-                    viewModel.setAutoComplete(it)
-                }
-                return true
-            }
-        })
-
-        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
-                searchView.isIconified = false
-                searchView.requestFocusFromTouch()
-                return true
-            }
-
-            override fun onMenuItemActionCollapse(item: MenuItem?) = true
-        })
-
 
         super.onCreateOptionsMenu(menu, inflater)
     }
