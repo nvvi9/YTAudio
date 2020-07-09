@@ -55,10 +55,8 @@ class SearchFragment : ActionModeFragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_toolbar_menu, menu)
 
-        val searchItem = menu.findItem(R.id.action_search)
-
         val searchManager = SearchManager(
-            searchItem, context,
+            menu.findItem(R.id.action_search), context,
             SearchManager.QueryTextListener(
                 { viewModel.setResponse(it) },
                 { viewModel.setAutoComplete(it) })
