@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 
 class YTExtractor : YoutubeJExtractor() {
 
-    suspend fun extractAudioInfo(videoId: String, maxTries: Int = 3) =
+    suspend fun extractAudioInfo(videoId: String) =
         withContext(Dispatchers.IO) {
             val youtubeVideoData = super.extract(videoId)
             AudioInfo.from(youtubeVideoData)

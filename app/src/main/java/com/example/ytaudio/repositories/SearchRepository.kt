@@ -7,8 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.database.entities.AudioInfo
 import com.example.ytaudio.domain.SearchItem
-import com.example.ytaudio.network.ApiService
-import com.example.ytaudio.network.extractor.YTExtractor
+import com.example.ytaudio.network.NetworkService
 import com.example.ytaudio.utils.LiveContentException
 import com.example.ytaudio.utils.UriAliveTimeMissException
 import com.example.ytaudio.utils.extensions.forEachParallel
@@ -36,13 +35,13 @@ class SearchRepository(context: Context) {
     suspend fun setItemsFromResponse(query: String, maxResults: Int = 50) {
         withContext(Dispatchers.IO) {
             val list =
-                ApiService.ytService.getYTResponseAsync(query, maxResults).await()
+                NetworkService.ytService.getYTResponseAsync(query, maxResults).await()
                     .items.map { SearchItem.from(it) }
             _searchItemList.postValue(list)
 
             list.forEachParallel(Dispatchers.IO) { searchItem ->
                 try {
-                    YTExtractor().extractAudioInfo(searchItem.videoId)
+                    NetworkService.ytExtractor.extractAudioInfo(searchItem.videoId)
                 } catch (e: ExtractionException) {
                     Log.e(javaClass.simpleName, "id: $searchItem extraction failed")
                     null
@@ -62,7 +61,7 @@ class SearchRepository(context: Context) {
     suspend fun setAutocomplete(query: String) {
         withContext(Dispatchers.IO) {
             val list =
-                ApiService.autoCompleteService.getAutoCompleteAsync(query).await()
+                NetworkService.autoCompleteService.getAutoCompleteAsync(query).await()
                     .items?.mapNotNull { it.suggestion?.data }
 
             _autoCompleteList.postValue(list)
@@ -75,7 +74,7 @@ class SearchRepository(context: Context) {
                 try {
                     audioInfoList.find { audioInfo ->
                         audioInfo.youtubeId == searchItem.videoId
-                    } ?: YTExtractor().extractAudioInfo(searchItem.videoId)
+                    } ?: NetworkService.ytExtractor.extractAudioInfo(searchItem.videoId)
                 } catch (e: ExtractionException) {
                     Log.e(javaClass.simpleName, "id: ${searchItem.videoId} extraction failed")
                     null

@@ -1,6 +1,7 @@
 package com.example.ytaudio.network
 
 import com.example.ytaudio.network.autocomplete.AutoCompleteService
+import com.example.ytaudio.network.extractor.YTExtractor
 import com.example.ytaudio.network.youtube.YouTubeApiService
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
@@ -32,7 +33,7 @@ private val retrofitAutoComplete = Retrofit.Builder()
     .build()
 
 
-object ApiService {
+object NetworkService {
 
     val ytService: YouTubeApiService by lazy {
         retrofitYTResponse.create(YouTubeApiService::class.java)
@@ -40,5 +41,9 @@ object ApiService {
 
     val autoCompleteService: AutoCompleteService by lazy {
         retrofitAutoComplete.create(AutoCompleteService::class.java)
+    }
+
+    val ytExtractor: YTExtractor by lazy {
+        YTExtractor()
     }
 }

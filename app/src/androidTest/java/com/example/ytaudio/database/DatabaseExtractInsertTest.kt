@@ -1,12 +1,11 @@
-package com.example.ytaudio
+package com.example.ytaudio.database
 
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.example.ytaudio.database.AudioDatabase
-import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.network.extractor.YTExtractor
 import com.example.ytaudio.utils.extensions.mapParallel
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -17,7 +16,7 @@ import java.io.IOException
 
 
 @RunWith(AndroidJUnit4::class)
-class ExtractInsertTest {
+class DatabaseExtractInsertTest {
 
     private lateinit var databaseDao: AudioDatabaseDao
     private lateinit var database: AudioDatabase
@@ -25,8 +24,7 @@ class ExtractInsertTest {
     @Before
     fun setUp() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
-        database = Room.inMemoryDatabaseBuilder(context, AudioDatabase::class.java)
-            .build()
+        database = Room.inMemoryDatabaseBuilder(context, AudioDatabase::class.java).build()
         databaseDao = database.audioDatabaseDao
     }
 
@@ -39,13 +37,21 @@ class ExtractInsertTest {
     @Test
     fun testExtractInsert() {
         runBlocking {
-            val audioInfoList =
+            val idList =
                 listOf("qkKT-0FWyfs", "1F5WLJ7Ni9c", "lkFkuC9aqS4", "3yOlBB-B32E", "WkIHxF4dPDk")
-                    .mapParallel(Dispatchers.IO) {
-                        YTExtractor().extractAudioInfo(it)
-                    }.filterNotNull()
+
+            val audioInfoList =
+                idList.mapParallel(Dispatchers.IO) {
+                    YTExtractor().extractAudioInfo(it)
+                }
 
             databaseDao.insert(audioInfoList)
+
+            val databaseAudioInfo = databaseDao.getAllAudioInfo()
+
+            idList.forEach { id ->
+                assertTrue(id in databaseAudioInfo.map { it.youtubeId })
+            }
         }
     }
 }

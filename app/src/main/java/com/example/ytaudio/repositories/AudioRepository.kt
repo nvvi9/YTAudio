@@ -7,7 +7,7 @@ import androidx.lifecycle.Transformations
 import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.database.entities.AudioInfo
 import com.example.ytaudio.domain.PlaylistItem
-import com.example.ytaudio.network.extractor.YTExtractor
+import com.example.ytaudio.network.NetworkService
 import com.example.ytaudio.utils.UriAliveTimeMissException
 import com.example.ytaudio.utils.extensions.mapParallel
 import com.github.kotvertolet.youtubejextractor.exception.ExtractionException
@@ -33,7 +33,7 @@ class AudioRepository(context: Context) {
             val audioInfoList =
                 databaseDao.getAllAudioInfo().mapParallel(Dispatchers.IO) {
                     try {
-                        YTExtractor().extractAudioInfo(it.youtubeId)
+                        NetworkService.ytExtractor.extractAudioInfo(it.youtubeId)
                     } catch (e: ExtractionException) {
                         Log.e(javaClass.simpleName, "${it.audioDetails.title} extraction failed")
                         databaseDao.delete(it)
@@ -57,7 +57,7 @@ class AudioRepository(context: Context) {
             val startTime = System.nanoTime()
             val list = audioList.mapParallel(Dispatchers.IO) {
                 try {
-                    YTExtractor().extractAudioInfo(it.youtubeId)
+                    NetworkService.ytExtractor.extractAudioInfo(it.youtubeId)
                 } catch (e: ExtractionException) {
                     Log.e(javaClass.simpleName, "${it.audioDetails.title} extraction failed")
                     databaseDao.delete(it)
