@@ -5,18 +5,13 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.example.ytaudio.domain.SearchItem
 import com.example.ytaudio.repositories.SearchRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
 class SearchViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val job = Job()
-    private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
 
     private val repository = SearchRepository(application)
 
@@ -25,7 +20,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
 
 
     fun setResponse(query: String, maxResults: Int = 25) {
-        coroutineScope.launch {
+        viewModelScope.launch {
             try {
                 repository.setItemsFromResponse(query, maxResults)
             } catch (t: Throwable) {
@@ -35,7 +30,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun setAutoComplete(query: String) {
-        coroutineScope.launch {
+        viewModelScope.launch {
             try {
                 repository.setAutocomplete(query)
             } catch (t: Throwable) {
@@ -45,7 +40,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun insertInDatabase(items: List<SearchItem>) {
-        coroutineScope.launch {
+        viewModelScope.launch {
             repository.addDatabase(items)
         }
     }

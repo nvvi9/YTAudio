@@ -1,10 +1,7 @@
 package com.example.ytaudio.activity
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.example.ytaudio.database.entities.AudioInfo
 import com.example.ytaudio.repositories.AudioRepository
 import com.example.ytaudio.service.MediaPlaybackServiceConnection
@@ -12,18 +9,12 @@ import com.example.ytaudio.service.extensions.id
 import com.example.ytaudio.service.extensions.isPlayEnabled
 import com.example.ytaudio.service.extensions.isPlaying
 import com.example.ytaudio.service.extensions.isPrepared
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 class MainActivityViewModel(
     application: Application,
     private val mediaPlaybackServiceConnection: MediaPlaybackServiceConnection
 ) : AndroidViewModel(application) {
-
-    private val job = SupervisorJob()
-    private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
 
     private val repository = AudioRepository(application)
 
@@ -36,7 +27,7 @@ class MainActivityViewModel(
     }
 
     private fun updateAudioInfo(audioList: List<AudioInfo>) {
-        coroutineScope.launch {
+        viewModelScope.launch {
             repository.updateAudioInfoList(audioList)
         }
     }
@@ -86,7 +77,6 @@ class MainActivityViewModel(
     }
 
     override fun onCleared() {
-        job.cancel()
         databaseAudioInfo.removeObserver(needUpdateObserver)
         super.onCleared()
     }

@@ -70,9 +70,9 @@ class DatabaseAudioSource(context: Context, private val database: AudioDatabaseD
 fun MediaMetadataCompat.Builder.from(audioInfo: AudioInfo): MediaMetadataCompat.Builder {
 
     id = audioInfo.youtubeId
-    title = audioInfo.title
-    artist = audioInfo.author
-    duration = audioInfo.durationSeconds.toLong()
+    title = audioInfo.audioDetails.title
+    artist = audioInfo.audioDetails.author
+    duration = audioInfo.audioDetails.durationSeconds.toLong()
     mediaUri = audioInfo.audioStreams.maxBy { it.sampleRate }!!.uri
     displayIconUri = audioInfo.thumbnails.minBy { it.height }!!.uri
     flag = MediaItem.FLAG_PLAYABLE

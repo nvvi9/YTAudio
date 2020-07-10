@@ -9,6 +9,8 @@ import com.example.ytaudio.database.entities.AudioInfo
 import com.example.ytaudio.domain.SearchItem
 import com.example.ytaudio.network.ApiService
 import com.example.ytaudio.network.extractor.YTExtractor
+import com.example.ytaudio.utils.LiveContentException
+import com.example.ytaudio.utils.UriAliveTimeMissException
 import com.example.ytaudio.utils.extensions.forEachParallel
 import com.example.ytaudio.utils.extensions.mapParallel
 import com.github.kotvertolet.youtubejextractor.exception.ExtractionException
@@ -35,7 +37,7 @@ class SearchRepository(context: Context) {
         withContext(Dispatchers.IO) {
             val list =
                 ApiService.ytService.getYTResponseAsync(query, maxResults).await()
-                    .items.map { it.toSearchItem() }
+                    .items.map { SearchItem.from(it) }
             _searchItemList.postValue(list)
 
             list.forEachParallel(Dispatchers.IO) { searchItem ->
@@ -79,6 +81,12 @@ class SearchRepository(context: Context) {
                     null
                 } catch (e: YoutubeRequestException) {
                     Log.e(javaClass.simpleName, "network failure")
+                    null
+                } catch (e: LiveContentException) {
+                    Log.e(javaClass.simpleName, e.message!!)
+                    null
+                } catch (e: UriAliveTimeMissException) {
+                    Log.e(javaClass.simpleName, e.message!!)
                     null
                 } catch (e: Exception) {
                     Log.e(javaClass.simpleName, e.toString())

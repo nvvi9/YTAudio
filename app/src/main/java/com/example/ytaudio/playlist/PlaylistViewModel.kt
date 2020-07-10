@@ -14,9 +14,6 @@ import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.service.NOTHING_PLAYING
 import com.example.ytaudio.service.extensions.id
 import com.example.ytaudio.service.extensions.isPlaying
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 
@@ -24,9 +21,6 @@ class PlaylistViewModel(
     mediaPlaybackServiceConnection: MediaPlaybackServiceConnection,
     application: Application
 ) : AndroidViewModel(application) {
-
-    private val supervisorJob = SupervisorJob()
-    private val coroutineScope = CoroutineScope(Dispatchers.Main + supervisorJob)
 
     private val repository = AudioRepository(application)
 
@@ -55,7 +49,7 @@ class PlaylistViewModel(
     val audioItemList: LiveData<List<PlaylistItem>> = _audioItemList
 
     fun deleteFromDatabase(idList: List<String>) {
-        coroutineScope.launch {
+        viewModelScope.launch {
             repository.deleteFromDatabase(idList)
         }
     }
@@ -113,7 +107,6 @@ class PlaylistViewModel(
 
     override fun onCleared() {
         super.onCleared()
-
         mediaPlaybackServiceConnection.playbackState.removeObserver(playbackStateObserver)
         mediaPlaybackServiceConnection.nowPlaying.removeObserver(mediaMetadataObserver)
         mediaPlaybackServiceConnection.unsubscribe(MEDIA_ROOT_ID, subscriptionCallback)

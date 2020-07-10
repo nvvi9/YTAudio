@@ -11,11 +11,6 @@ class YTExtractor : YoutubeJExtractor() {
     suspend fun extractAudioInfo(videoId: String, maxTries: Int = 3) =
         withContext(Dispatchers.IO) {
             val youtubeVideoData = super.extract(videoId)
-
-            if (!youtubeVideoData.videoDetails.isLiveContent) {
-                AudioInfo(youtubeVideoData)
-            } else {
-                null
-            }
+            AudioInfo.from(youtubeVideoData)
         }
 }

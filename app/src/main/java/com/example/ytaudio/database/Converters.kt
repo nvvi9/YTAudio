@@ -6,7 +6,7 @@ import com.example.ytaudio.database.entities.Thumbnail
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class Converter {
+class Converters {
 
     @TypeConverter
     fun toAudioStreamList(value: String): List<AudioStream> {

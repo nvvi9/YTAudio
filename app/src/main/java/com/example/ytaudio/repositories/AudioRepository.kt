@@ -8,6 +8,7 @@ import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.database.entities.AudioInfo
 import com.example.ytaudio.domain.PlaylistItem
 import com.example.ytaudio.network.extractor.YTExtractor
+import com.example.ytaudio.utils.UriAliveTimeMissException
 import com.example.ytaudio.utils.extensions.mapParallel
 import com.github.kotvertolet.youtubejextractor.exception.ExtractionException
 import com.github.kotvertolet.youtubejextractor.exception.YoutubeRequestException
@@ -23,7 +24,7 @@ class AudioRepository(context: Context) {
 
     val playlistItems: LiveData<List<PlaylistItem>> =
         Transformations.map(databaseDao.getAllAudio()) { list ->
-            list?.map { it.toPlaylistItem() }
+            list?.map { PlaylistItem.from(it) }
         }
 
     suspend fun updateAllAudioInfo() {
@@ -34,7 +35,11 @@ class AudioRepository(context: Context) {
                     try {
                         YTExtractor().extractAudioInfo(it.youtubeId)
                     } catch (e: ExtractionException) {
-                        Log.e(javaClass.simpleName, "${it.title} extraction failed")
+                        Log.e(javaClass.simpleName, "${it.audioDetails.title} extraction failed")
+                        databaseDao.delete(it)
+                        null
+                    } catch (e: UriAliveTimeMissException) {
+                        Log.e(javaClass.simpleName, e.message!!)
                         databaseDao.delete(it)
                         null
                     }
@@ -52,13 +57,16 @@ class AudioRepository(context: Context) {
             val startTime = System.nanoTime()
             val list = audioList.mapParallel(Dispatchers.IO) {
                 try {
-                    AudioInfo(YTExtractor().extract(it.youtubeId))
+                    YTExtractor().extractAudioInfo(it.youtubeId)
                 } catch (e: ExtractionException) {
-                    Log.e(javaClass.simpleName, "${it.title} extraction failed")
+                    Log.e(javaClass.simpleName, "${it.audioDetails.title} extraction failed")
                     databaseDao.delete(it)
                     null
                 } catch (e: YoutubeRequestException) {
                     Log.e(javaClass.simpleName, "network failure")
+                    null
+                } catch (e: UriAliveTimeMissException) {
+                    Log.e(javaClass.simpleName, e.message!!)
                     null
                 } catch (e: Exception) {
                     Log.e(javaClass.simpleName, e.toString())

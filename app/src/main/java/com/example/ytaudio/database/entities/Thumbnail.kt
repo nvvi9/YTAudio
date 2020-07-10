@@ -8,6 +8,11 @@ data class Thumbnail(
     val height: Int
 ) {
 
-    constructor(thumbnail: ThumbnailsItem) :
-            this(thumbnail.url, thumbnail.width, thumbnail.height)
+    companion object {
+
+        fun from(thumbnail: ThumbnailsItem) =
+            thumbnail.run {
+                Thumbnail(url, width, height)
+            }
+    }
 }

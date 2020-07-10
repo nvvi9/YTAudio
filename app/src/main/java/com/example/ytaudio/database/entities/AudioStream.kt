@@ -13,11 +13,14 @@ data class AudioStream(
     val sampleRate: Int
 ) {
 
-    constructor(stream: AdaptiveAudioStream) :
-            this(
-                stream.url, stream.codec,
-                stream.extension, stream.getiTag(),
-                stream.bitrate, stream.averageBitrate,
-                stream.audioChannels, stream.audioSampleRate
-            )
+    companion object {
+
+        fun from(stream: AdaptiveAudioStream) =
+            stream.run {
+                AudioStream(
+                    url, codec, extension, getiTag(), bitrate,
+                    averageBitrate, audioChannels, audioSampleRate
+                )
+            }
+    }
 }

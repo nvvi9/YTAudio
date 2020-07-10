@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 import com.example.ytaudio.database.entities.AudioInfo
 
 @Database(entities = [AudioInfo::class], version = 1, exportSchema = false)
-@TypeConverters(Converter::class)
+@TypeConverters(Converters::class)
 abstract class AudioDatabase : RoomDatabase() {
 
     abstract val audioDatabaseDao: AudioDatabaseDao
