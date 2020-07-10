@@ -1,4 +1,4 @@
-package com.example.ytaudio.adapter
+package com.example.ytaudio.adapters
 
 import android.text.format.DateUtils
 import android.widget.ImageView

@@ -9,11 +9,11 @@ abstract class ActionModeFragment : Fragment() {
 
     open var actionMode: ActionMode? = null
 
-    abstract fun onCreate()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
+    final override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        onCreate()
+        onCreateActionModeFragment(savedInstanceState)
     }
+
+    abstract fun onCreateActionModeFragment(savedInstanceState: Bundle?)
 }

@@ -2,7 +2,7 @@ package com.example.ytaudio
 
 import android.app.Application
 import androidx.work.*
-import com.example.ytaudio.work.RefreshDatabaseWorker
+import com.example.ytaudio.workers.RefreshDatabaseWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

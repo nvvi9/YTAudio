@@ -28,7 +28,7 @@ class PlaylistFragment : ActionModeFragment() {
         findNavController().navigate(PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment())
     }
 
-    override fun onCreate() {
+    override fun onCreateActionModeFragment(savedInstanceState: Bundle?) {
         val application = requireNotNull(this.activity).application
 
         playlistViewModel = ViewModelProvider(

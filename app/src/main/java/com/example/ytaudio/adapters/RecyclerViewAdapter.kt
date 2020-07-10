@@ -1,4 +1,4 @@
-package com.example.ytaudio.adapter
+package com.example.ytaudio.adapters
 
 import android.view.ActionMode
 import android.view.Menu
@@ -25,13 +25,13 @@ abstract class RecyclerViewAdapter<T, B : ViewDataBinding>(
         holder.bind(getItem(position))
     }
 
-    override fun onDestroyActionMode(mode: ActionMode?) {
+    final override fun onDestroyActionMode(mode: ActionMode?) {
         stopActionMode()
         mode?.finish()
         fragment.actionMode = null
     }
 
-    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?) = false
+    final override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?) = false
 
     fun startActionMode() {
         if (fragment.actionMode == null || !inActionMode) {

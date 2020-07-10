@@ -2,14 +2,15 @@ package com.example.ytaudio.activity
 
 import android.media.AudioManager
 import android.os.Bundle
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.ytaudio.R
 import com.example.ytaudio.databinding.ActivityMainBinding
 
@@ -23,34 +24,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         volumeControlStream = AudioManager.STREAM_MUSIC
 
-        println(javaClass.simpleName)
-
         val binding =
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-
         drawer = binding.drawerLayout
 
-        val navController = this.findNavController(R.id.nav_host_fragment)
-        NavigationUI.setupActionBarWithNavController(this, navController, drawer)
-        appBarConfiguration = AppBarConfiguration(navController.graph, drawer)
+        appBarConfiguration =
+            AppBarConfiguration.Builder(R.id.playlistFragment, R.id.searchFragment)
+                .setOpenableLayout(drawer)
+                .build()
 
-        val drawerToggle = ActionBarDrawerToggle(this, drawer, R.string.open, R.string.close)
-        drawer.addDrawerListener(drawerToggle)
-        drawerToggle.syncState()
+        val navController = findNavController(R.id.nav_host_fragment)
 
-        navController.addOnDestinationChangedListener { controller, destination, _ ->
-            drawer.setDrawerLockMode(
-                when (destination.id) {
-                    controller.graph.startDestination -> DrawerLayout.LOCK_MODE_UNLOCKED
-                    else -> DrawerLayout.LOCK_MODE_LOCKED_CLOSED
-                }
-            )
-        }
-
-        NavigationUI.setupWithNavController(binding.navView, navController)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        binding.navView.setupWithNavController(navController)
     }
 
     override fun onBackPressed() {
@@ -61,8 +49,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = this.findNavController(R.id.nav_host_fragment)
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-    }
+    override fun onSupportNavigateUp(): Boolean =
+        findNavController(R.id.nav_host_fragment).navigateUp(appBarConfiguration)
+                || super.onSupportNavigateUp()
 }

@@ -3,7 +3,7 @@ package com.example.ytaudio.search
 import android.view.*
 import androidx.recyclerview.widget.DiffUtil
 import com.example.ytaudio.R
-import com.example.ytaudio.adapter.RecyclerViewAdapter
+import com.example.ytaudio.adapters.RecyclerViewAdapter
 import com.example.ytaudio.databinding.SearchItemBinding
 import com.example.ytaudio.domain.SearchItem
 
