@@ -93,7 +93,7 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
                 it.setPlaybackPreparer(playbackPreparer)
                 it.setQueueNavigator(QueueNavigator(mediaSession))
             }
-            notifyChildrenChanged(MEDIA_ROOT_ID)
+//            notifyChildrenChanged(MEDIA_ROOT_ID)
         }
     }
 

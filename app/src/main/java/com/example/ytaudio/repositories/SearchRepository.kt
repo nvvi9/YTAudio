@@ -1,26 +1,18 @@
 package com.example.ytaudio.repositories
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.database.entities.AudioInfo
 import com.example.ytaudio.domain.SearchItem
 import com.example.ytaudio.network.NetworkService
-import com.example.ytaudio.utils.LiveContentException
-import com.example.ytaudio.utils.UriAliveTimeMissException
 import com.example.ytaudio.utils.extensions.forEachParallel
 import com.example.ytaudio.utils.extensions.mapParallel
-import com.github.kotvertolet.youtubejextractor.exception.ExtractionException
-import com.github.kotvertolet.youtubejextractor.exception.YoutubeRequestException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 
-class SearchRepository(context: Context) {
-
-    private val database = AudioDatabase.getInstance(context).audioDatabaseDao
+class SearchRepository(context: Context) : BaseRepository(context) {
 
     private val _searchItemList = MutableLiveData<List<SearchItem>>()
     val searchItemList: LiveData<List<SearchItem>>
@@ -34,24 +26,12 @@ class SearchRepository(context: Context) {
 
     suspend fun setItemsFromResponse(query: String, maxResults: Int = 50) {
         withContext(Dispatchers.IO) {
-            val list =
-                NetworkService.ytService.getYTResponseAsync(query, maxResults).await()
-                    .items.map { SearchItem.from(it) }
+            val list = NetworkService.ytService.getYTResponseAsync(query, maxResults).await()
+                .items.map { SearchItem.from(it) }
             _searchItemList.postValue(list)
 
             list.forEachParallel(Dispatchers.IO) { searchItem ->
-                try {
-                    NetworkService.ytExtractor.extractAudioInfo(searchItem.videoId)
-                } catch (e: ExtractionException) {
-                    Log.e(javaClass.simpleName, "id: $searchItem extraction failed")
-                    null
-                } catch (e: YoutubeRequestException) {
-                    Log.e(javaClass.simpleName, "network failure")
-                    null
-                } catch (e: Exception) {
-                    Log.e(javaClass.simpleName, e.toString())
-                    null
-                }?.let {
+                extractAudioInfo(searchItem.videoId)?.let {
                     audioInfoList.add(it)
                 }
             }
@@ -71,29 +51,12 @@ class SearchRepository(context: Context) {
     suspend fun addDatabase(items: List<SearchItem>) {
         withContext(Dispatchers.IO) {
             val list = items.mapParallel(Dispatchers.IO) { searchItem ->
-                try {
-                    audioInfoList.find { audioInfo ->
-                        audioInfo.youtubeId == searchItem.videoId
-                    } ?: NetworkService.ytExtractor.extractAudioInfo(searchItem.videoId)
-                } catch (e: ExtractionException) {
-                    Log.e(javaClass.simpleName, "id: ${searchItem.videoId} extraction failed")
-                    null
-                } catch (e: YoutubeRequestException) {
-                    Log.e(javaClass.simpleName, "network failure")
-                    null
-                } catch (e: LiveContentException) {
-                    Log.e(javaClass.simpleName, e.message!!)
-                    null
-                } catch (e: UriAliveTimeMissException) {
-                    Log.e(javaClass.simpleName, e.message!!)
-                    null
-                } catch (e: Exception) {
-                    Log.e(javaClass.simpleName, e.toString())
-                    null
-                }
+                audioInfoList.find { audioInfo ->
+                    audioInfo.youtubeId == searchItem.videoId
+                } ?: extractAudioInfo(searchItem.videoId)
             }.filterNotNull()
 
-            database.insert(list)
+            databaseDao.insert(list)
         }
     }
 }
