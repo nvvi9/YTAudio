@@ -1,4 +1,4 @@
-package com.example.ytaudio.activity
+package com.example.ytaudio.main
 
 import android.media.AudioManager
 import android.os.Bundle

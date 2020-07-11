@@ -3,7 +3,7 @@ package com.example.ytaudio.utils
 import android.app.Application
 import android.content.ComponentName
 import android.content.Context
-import com.example.ytaudio.activity.MainActivityViewModel
+import com.example.ytaudio.main.MainActivityViewModel
 import com.example.ytaudio.player.PlayerViewModel
 import com.example.ytaudio.playlist.PlaylistViewModel
 import com.example.ytaudio.search.SearchViewModel
