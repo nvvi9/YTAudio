@@ -134,23 +134,25 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         parentId: String,
         result: Result<MutableList<MediaItem>>
     ) {
+        try {
 //        result.detach()
-
-        val resultSent = audioSource.whenReady { initialized ->
-            if (initialized) {
-                val children = audioSource.map {
-                    MediaItem(it.description, it.flag)
+            val resultSent = audioSource.whenReady { initialized ->
+                if (initialized) {
+                    val children = audioSource.map {
+                        MediaItem(it.description, it.flag)
+                    }
+                    result.sendResult(children as MutableList<MediaItem>?)
+                } else {
+                    mediaSession.sendSessionEvent(NETWORK_FAILURE, null)
+                    result.sendResult(null)
                 }
-                result.sendResult(children as MutableList<MediaItem>?)
-
-            } else {
-                mediaSession.sendSessionEvent(NETWORK_FAILURE, null)
-                result.sendResult(null)
             }
-        }
 
-        if (!resultSent) {
-            result.detach()
+            if (!resultSent) {
+                result.detach()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
