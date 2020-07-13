@@ -1,10 +1,8 @@
 package com.example.ytaudio.repositories
 
-import android.content.Context
 import android.util.Log
-import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.database.entities.AudioInfo
-import com.example.ytaudio.network.NetworkService
+import com.example.ytaudio.network.extractor.YTExtractor
 import com.example.ytaudio.utils.LiveContentException
 import com.example.ytaudio.utils.UriAliveTimeMissException
 import com.github.kotvertolet.youtubejextractor.exception.ExtractionException
@@ -13,14 +11,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 
-open class BaseRepository(context: Context) {
-
-    protected val databaseDao = AudioDatabase.getInstance(context).audioDatabaseDao
+open class BaseRepository(private val ytExtractor: YTExtractor) {
 
     protected suspend fun extractAudioInfo(id: String): AudioInfo? =
         withContext(Dispatchers.IO) {
             try {
-                NetworkService.ytExtractor.extractAudioInfo(id)
+                ytExtractor.extractAudioInfo(id)
             } catch (e: ExtractionException) {
                 Log.e(javaClass.simpleName, "id: $id extraction failed")
                 null

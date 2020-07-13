@@ -1,18 +1,28 @@
 package com.example.ytaudio.repositories
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.database.entities.AudioInfo
 import com.example.ytaudio.domain.SearchItem
-import com.example.ytaudio.network.NetworkService
+import com.example.ytaudio.network.autocomplete.AutoCompleteService
+import com.example.ytaudio.network.extractor.YTExtractor
+import com.example.ytaudio.network.youtube.YouTubeApiService
 import com.example.ytaudio.utils.extensions.forEachParallel
 import com.example.ytaudio.utils.extensions.mapParallel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
 
-class SearchRepository(context: Context) : BaseRepository(context) {
+@Singleton
+class SearchRepository @Inject constructor(
+    private val databaseDao: AudioDatabaseDao,
+    private val ytService: YouTubeApiService,
+    private val autoCompleteService: AutoCompleteService,
+    private val ytExtractor: YTExtractor
+) : BaseRepository(ytExtractor) {
 
     private val _searchItemList = MutableLiveData<List<SearchItem>>()
     val searchItemList: LiveData<List<SearchItem>>
@@ -26,7 +36,7 @@ class SearchRepository(context: Context) : BaseRepository(context) {
 
     suspend fun setItemsFromResponse(query: String, maxResults: Int = 50) {
         withContext(Dispatchers.IO) {
-            val list = NetworkService.ytService.getYTResponseAsync(query, maxResults).await()
+            val list = ytService.getYTResponseAsync(query, maxResults).await()
                 .items.map { SearchItem.from(it) }
             _searchItemList.postValue(list)
 
@@ -41,7 +51,7 @@ class SearchRepository(context: Context) : BaseRepository(context) {
     suspend fun setAutocomplete(query: String) {
         withContext(Dispatchers.IO) {
             val list =
-                NetworkService.autoCompleteService.getAutoCompleteAsync(query).await()
+                autoCompleteService.getAutoCompleteAsync(query).await()
                     .items?.mapNotNull { it.suggestion?.data }
 
             _autoCompleteList.postValue(list)

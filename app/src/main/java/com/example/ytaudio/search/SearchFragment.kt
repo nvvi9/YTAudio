@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.core.view.MenuItemCompat
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -11,26 +12,23 @@ import androidx.transition.TransitionManager
 import com.example.ytaudio.R
 import com.example.ytaudio.databinding.SearchFragmentBinding
 import com.example.ytaudio.fragment.ActionModeFragment
-import com.example.ytaudio.utils.FactoryUtils
 import com.example.ytaudio.utils.extensions.hideKeyboard
+import javax.inject.Inject
 
 
 class SearchFragment : ActionModeFragment() {
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
     private lateinit var binding: SearchFragmentBinding
 
-    lateinit var viewModel: SearchViewModel
-        private set
+    val viewModel: SearchViewModel by viewModels {
+        viewModelFactory
+    }
 
     private val videoItemAdapter = SearchAdapter(this) {
         Toast.makeText(this@SearchFragment.context, it.videoId, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onCreateActionModeFragment(savedInstanceState: Bundle?) {
-        val application = requireNotNull(activity).application
-        viewModel =
-            ViewModelProvider(this, FactoryUtils.provideSearchViewModel(application))
-                .get(SearchViewModel::class.java)
     }
 
     override fun onCreateView(
