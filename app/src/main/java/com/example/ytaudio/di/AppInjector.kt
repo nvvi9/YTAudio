@@ -12,6 +12,7 @@ import dagger.android.HasAndroidInjector
 import dagger.android.support.AndroidSupportInjection
 
 object AppInjector {
+
     fun init(ytAudioApplication: YTAudioApplication) {
         DaggerAppComponent.builder()
             .application(ytAudioApplication)

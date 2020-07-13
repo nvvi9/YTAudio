@@ -21,7 +21,7 @@ class SearchRepository @Inject constructor(
     private val databaseDao: AudioDatabaseDao,
     private val ytService: YouTubeApiService,
     private val autoCompleteService: AutoCompleteService,
-    private val ytExtractor: YTExtractor
+    ytExtractor: YTExtractor
 ) : BaseRepository(ytExtractor) {
 
     private val _searchItemList = MutableLiveData<List<SearchItem>>()

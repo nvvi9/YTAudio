@@ -10,14 +10,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.example.ytaudio.R
-import com.example.ytaudio.repositories.AudioRepository
 import com.example.ytaudio.service.EMPTY_PLAYBACK_STATE
+import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.service.NOTHING_PLAYING
 import com.example.ytaudio.service.extensions.*
 import javax.inject.Inject
 
 
-class PlayerViewModel @Inject constructor(private val repository: AudioRepository) : ViewModel() {
+class PlayerViewModel @Inject constructor(
+    mediaPlaybackServiceConnection: MediaPlaybackServiceConnection
+) : ViewModel() {
 
     data class NowPlayingAudioInfo(
         val audioId: String,
@@ -45,7 +47,7 @@ class PlayerViewModel @Inject constructor(private val repository: AudioRepositor
 
     private val playbackStateObserver = Observer<PlaybackStateCompat> {
         playbackState = it ?: EMPTY_PLAYBACK_STATE
-        val data = repository.mediaPlaybackServiceConnection.nowPlaying.value ?: NOTHING_PLAYING
+        val data = mediaPlaybackServiceConnection.nowPlaying.value ?: NOTHING_PLAYING
         updateState(playbackState, data)
     }
 
@@ -53,7 +55,7 @@ class PlayerViewModel @Inject constructor(private val repository: AudioRepositor
         updateState(playbackState, it)
     }
 
-    private val mediaPlaybackServiceConnection = repository.mediaPlaybackServiceConnection.also {
+    private val mediaPlaybackServiceConnection = mediaPlaybackServiceConnection.also {
         it.playbackState.observeForever(playbackStateObserver)
         it.nowPlaying.observeForever(mediaMetadataObserver)
         checkPlaybackPosition()

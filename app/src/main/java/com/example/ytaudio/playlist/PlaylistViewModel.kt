@@ -9,6 +9,7 @@ import com.example.ytaudio.domain.PlaylistItem
 import com.example.ytaudio.repositories.AudioRepository
 import com.example.ytaudio.service.EMPTY_PLAYBACK_STATE
 import com.example.ytaudio.service.MEDIA_ROOT_ID
+import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.service.NOTHING_PLAYING
 import com.example.ytaudio.service.extensions.id
 import com.example.ytaudio.service.extensions.isPlaying
@@ -16,19 +17,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class PlaylistViewModel @Inject constructor(private val repository: AudioRepository) : ViewModel() {
-
-    private val mediaPlaybackServiceConnection = repository.mediaPlaybackServiceConnection.apply {
-        subscribe(MEDIA_ROOT_ID, subscriptionCallback)
-        playbackState.observeForever(playbackStateObserver)
-        nowPlaying.observeForever(mediaMetadataObserver)
-    }
+class PlaylistViewModel @Inject constructor(
+    private val repository: AudioRepository,
+    mediaPlaybackServiceConnection: MediaPlaybackServiceConnection
+) : ViewModel() {
 
     val playlistItems = repository.playlistItems
 
     private val playbackStateObserver = Observer<PlaybackStateCompat> {
         val playbackState = it ?: EMPTY_PLAYBACK_STATE
-        val data = repository.mediaPlaybackServiceConnection.nowPlaying.value ?: NOTHING_PLAYING
+        val data = mediaPlaybackServiceConnection.nowPlaying.value ?: NOTHING_PLAYING
 
         data.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)?.let {
             _audioItemList.postValue(updateState(playbackState, data))
@@ -37,7 +35,7 @@ class PlaylistViewModel @Inject constructor(private val repository: AudioReposit
 
     private val mediaMetadataObserver = Observer<MediaMetadataCompat> {
         val playbackState =
-            repository.mediaPlaybackServiceConnection.playbackState.value ?: EMPTY_PLAYBACK_STATE
+            mediaPlaybackServiceConnection.playbackState.value ?: EMPTY_PLAYBACK_STATE
         val data = it ?: NOTHING_PLAYING
 
         data.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID)?.let {
@@ -75,6 +73,12 @@ class PlaylistViewModel @Inject constructor(private val repository: AudioReposit
         }
     }
 
+    private val mediaPlaybackServiceConnection = mediaPlaybackServiceConnection.apply {
+        subscribe(MEDIA_ROOT_ID, subscriptionCallback)
+        playbackState.observeForever(playbackStateObserver)
+        nowPlaying.observeForever(mediaMetadataObserver)
+    }
+
     private fun getPlaybackStatus(audioId: String): Int {
         val isActive = audioId == mediaPlaybackServiceConnection.nowPlaying.value?.id
         val isPlaying = mediaPlaybackServiceConnection.playbackState.value?.isPlaying ?: false
@@ -106,4 +110,3 @@ class PlaylistViewModel @Inject constructor(private val repository: AudioReposit
         mediaPlaybackServiceConnection.unsubscribe(MEDIA_ROOT_ID, subscriptionCallback)
     }
 }
-
