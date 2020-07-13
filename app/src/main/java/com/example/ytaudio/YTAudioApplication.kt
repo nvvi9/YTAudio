@@ -2,6 +2,7 @@ package com.example.ytaudio
 
 import android.app.Application
 import androidx.work.*
+import com.example.ytaudio.di.AppComponent
 import com.example.ytaudio.di.AppInjector
 import com.example.ytaudio.workers.RefreshDatabaseWorker
 import dagger.android.DispatchingAndroidInjector
@@ -18,11 +19,22 @@ class YTAudioApplication : Application(), HasAndroidInjector {
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
 
+    private lateinit var appComponent: AppComponent
+
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
     override fun onCreate() {
         super.onCreate()
-        AppInjector.init(this)
+        appComponent = AppInjector.init(this)
+
+        val workerFactory = appComponent.factory()
+
+        WorkManager.initialize(
+            this,
+            Configuration.Builder()
+                .setWorkerFactory(workerFactory)
+                .build()
+        )
         delayedInit()
     }
 
@@ -35,7 +47,7 @@ class YTAudioApplication : Application(), HasAndroidInjector {
 
     private fun setupWork() {
         val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.NOT_ROAMING)
+            .setRequiredNetworkType(NetworkType.CONNECTED)
             .setRequiresBatteryNotLow(true)
             .build()
 
@@ -44,7 +56,7 @@ class YTAudioApplication : Application(), HasAndroidInjector {
                 .setConstraints(constraints)
                 .build()
 
-        WorkManager.getInstance()
+        WorkManager.getInstance(this)
             .enqueueUniquePeriodicWork(
                 RefreshDatabaseWorker.WORK_NAME,
                 ExistingPeriodicWorkPolicy.KEEP,

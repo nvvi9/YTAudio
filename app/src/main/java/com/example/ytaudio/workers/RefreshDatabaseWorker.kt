@@ -2,26 +2,17 @@ package com.example.ytaudio.workers
 
 import android.content.Context
 import androidx.work.CoroutineWorker
+import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
-import com.example.ytaudio.YTAudioApplication
-import com.example.ytaudio.di.DaggerAppComponent
 import com.example.ytaudio.repositories.AudioRepository
 import javax.inject.Inject
 
 
-class RefreshDatabaseWorker(context: Context, params: WorkerParameters) :
-    CoroutineWorker(context, params) {
-
-    @Inject
-    lateinit var audioRepository: AudioRepository
-
-    init {
-        DaggerAppComponent.builder()
-            .application(context as YTAudioApplication)
-            .context(context)
-            .build()
-            .inject(this)
-    }
+class RefreshDatabaseWorker(
+    private val audioRepository: AudioRepository,
+    context: Context,
+    params: WorkerParameters
+) : CoroutineWorker(context, params) {
 
     companion object {
         const val WORK_NAME = "RefreshDatabaseWorker"
@@ -33,6 +24,15 @@ class RefreshDatabaseWorker(context: Context, params: WorkerParameters) :
             Result.success()
         } catch (t: Throwable) {
             Result.retry()
+        }
+    }
+
+
+    class Factory @Inject constructor(
+        private val audioRepository: AudioRepository
+    ) : ChildWorkerFactory {
+        override fun create(context: Context, params: WorkerParameters): ListenableWorker {
+            return RefreshDatabaseWorker(audioRepository, context, params)
         }
     }
 }

@@ -1,7 +1,9 @@
-package com.example.ytaudio.di
+package com.example.ytaudio.di.modules
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.ytaudio.di.factories.ViewModelFactory
+import com.example.ytaudio.di.keys.ViewModelKey
 import com.example.ytaudio.main.MainActivityViewModel
 import com.example.ytaudio.player.PlayerViewModel
 import com.example.ytaudio.playlist.PlaylistViewModel

@@ -44,6 +44,12 @@
             </intent-filter>
         </receiver>
 
+        <provider
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:authorities="${applicationId}.workmanager-init"
+            android:enabled="false"
+            android:exported="false" />
+
     </application>
 
 </manifest>

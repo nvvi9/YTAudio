@@ -1,4 +1,4 @@
-package com.example.ytaudio.di
+package com.example.ytaudio.di.factories
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

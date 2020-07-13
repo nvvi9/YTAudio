@@ -1,4 +1,4 @@
-package com.example.ytaudio.di
+package com.example.ytaudio.di.modules
 
 import com.example.ytaudio.service.MediaPlaybackService
 import dagger.Module

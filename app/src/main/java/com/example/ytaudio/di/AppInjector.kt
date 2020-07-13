@@ -13,12 +13,12 @@ import dagger.android.support.AndroidSupportInjection
 
 object AppInjector {
 
-    fun init(ytAudioApplication: YTAudioApplication) {
-        DaggerAppComponent.builder()
+    fun init(ytAudioApplication: YTAudioApplication): AppComponent {
+        val appComponent = DaggerAppComponent.builder()
             .application(ytAudioApplication)
             .context(ytAudioApplication)
             .build()
-            .inject(ytAudioApplication)
+        appComponent.inject(ytAudioApplication)
 
         ytAudioApplication.registerActivityLifecycleCallbacks(object :
             Application.ActivityLifecycleCallbacks {
@@ -34,6 +34,8 @@ object AppInjector {
             override fun onActivityStopped(activity: Activity) = Unit
             override fun onActivityResumed(activity: Activity) = Unit
         })
+
+        return appComponent
     }
 
     private fun handleActivity(activity: Activity) {

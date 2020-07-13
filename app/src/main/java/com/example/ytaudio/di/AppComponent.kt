@@ -3,21 +3,29 @@ package com.example.ytaudio.di
 import android.app.Application
 import android.content.Context
 import com.example.ytaudio.YTAudioApplication
-import com.example.ytaudio.workers.RefreshDatabaseWorker
+import com.example.ytaudio.di.factories.YTAudioWorkerFactory
+import com.example.ytaudio.di.modules.AppModule
+import com.example.ytaudio.di.modules.MainActivityModule
+import com.example.ytaudio.di.modules.MediaPlaybackServiceModule
+import com.example.ytaudio.di.modules.WorkerModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
+import dagger.android.AndroidInjector
 import javax.inject.Singleton
 
 
 @Singleton
 @Component(
-    modules = [AndroidInjectionModule::class,
+    modules = [
+        AndroidInjectionModule::class,
         AppModule::class,
         MainActivityModule::class,
-        MediaPlaybackServiceModule::class]
+        MediaPlaybackServiceModule::class,
+        WorkerModule::class
+    ]
 )
-interface AppComponent {
+interface AppComponent : AndroidInjector<YTAudioApplication> {
 
     @Component.Builder
     interface Builder {
@@ -31,6 +39,6 @@ interface AppComponent {
         fun build(): AppComponent
     }
 
-    fun inject(ytAudioApplication: YTAudioApplication)
-    fun inject(worker: RefreshDatabaseWorker)
+    override fun inject(ytAudioApplication: YTAudioApplication)
+    fun factory(): YTAudioWorkerFactory
 }

@@ -1,4 +1,4 @@
-package com.example.ytaudio.di
+package com.example.ytaudio.di.modules
 
 import com.example.ytaudio.main.MainActivity
 import dagger.Module

@@ -1,4 +1,4 @@
-package com.example.ytaudio.di
+package com.example.ytaudio.di.modules
 
 import android.content.ComponentName
 import android.content.Context
@@ -58,7 +58,7 @@ class AppModule {
     @Singleton
     @Provides
     fun provideDb(context: Context) =
-        Room.databaseBuilder(context, AudioDatabase::class.java, "audio_playlist_database")
+        Room.databaseBuilder(context, AudioDatabase::class.java, "YTAudio.db")
             .fallbackToDestructiveMigration()
             .build()
 
