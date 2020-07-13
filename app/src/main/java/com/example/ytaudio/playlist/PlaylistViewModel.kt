@@ -1,6 +1,5 @@
 package com.example.ytaudio.playlist
 
-import android.app.Application
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -15,14 +14,13 @@ import com.example.ytaudio.service.NOTHING_PLAYING
 import com.example.ytaudio.service.extensions.id
 import com.example.ytaudio.service.extensions.isPlaying
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
-class PlaylistViewModel(
-    mediaPlaybackServiceConnection: MediaPlaybackServiceConnection,
-    application: Application
-) : AndroidViewModel(application) {
-
-    private val repository = AudioRepository(application)
+class PlaylistViewModel @Inject constructor(
+    private val repository: AudioRepository,
+    mediaPlaybackServiceConnection: MediaPlaybackServiceConnection
+) : ViewModel() {
 
     val playlistItems = repository.playlistItems
 
@@ -111,20 +109,4 @@ class PlaylistViewModel(
         mediaPlaybackServiceConnection.nowPlaying.removeObserver(mediaMetadataObserver)
         mediaPlaybackServiceConnection.unsubscribe(MEDIA_ROOT_ID, subscriptionCallback)
     }
-
-
-    class Factory(
-        private val mediaPlaybackServiceConnection: MediaPlaybackServiceConnection,
-        private val application: Application
-    ) : ViewModelProvider.Factory {
-
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return PlaylistViewModel(
-                mediaPlaybackServiceConnection,
-                application
-            ) as T
-        }
-    }
 }
-

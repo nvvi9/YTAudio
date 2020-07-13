@@ -1,7 +1,8 @@
 package com.example.ytaudio.main
 
-import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.ytaudio.database.entities.AudioInfo
 import com.example.ytaudio.repositories.AudioRepository
 import com.example.ytaudio.service.MediaPlaybackServiceConnection
@@ -10,13 +11,12 @@ import com.example.ytaudio.service.extensions.isPlayEnabled
 import com.example.ytaudio.service.extensions.isPlaying
 import com.example.ytaudio.service.extensions.isPrepared
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainActivityViewModel(
-    application: Application,
+class MainActivityViewModel @Inject constructor(
+    private val repository: AudioRepository,
     private val mediaPlaybackServiceConnection: MediaPlaybackServiceConnection
-) : AndroidViewModel(application) {
-
-    private val repository = AudioRepository(application)
+) : ViewModel() {
 
     private val needUpdateObserver = Observer<List<AudioInfo>?> { list ->
         list?.filter { it.needUpdate }?.let {
@@ -79,17 +79,5 @@ class MainActivityViewModel(
     override fun onCleared() {
         databaseAudioInfo.removeObserver(needUpdateObserver)
         super.onCleared()
-    }
-
-    class Factory(
-        private val application: Application,
-        private val mediaPlaybackServiceConnection: MediaPlaybackServiceConnection
-    ) :
-        ViewModelProvider.Factory {
-
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return MainActivityViewModel(application, mediaPlaybackServiceConnection) as T
-        }
     }
 }

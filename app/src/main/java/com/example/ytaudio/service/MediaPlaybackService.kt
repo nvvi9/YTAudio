@@ -14,9 +14,9 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.media.MediaBrowserServiceCompat
-import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.database.entities.AudioInfo
 import com.example.ytaudio.service.extensions.flag
@@ -29,13 +29,18 @@ import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import dagger.android.AndroidInjection
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 open class MediaPlaybackService : MediaBrowserServiceCompat() {
+
+    @Inject
+    lateinit var databaseDao: AudioDatabaseDao
 
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -48,14 +53,11 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
     private lateinit var mediaSessionConnector: MediaSessionConnector
     private lateinit var mediaSession: MediaSessionCompat
 
-    private val ytAudioAttributes = AudioAttributes.Builder()
-        .setContentType(C.CONTENT_TYPE_MUSIC)
-        .setUsage(C.USAGE_MEDIA)
-        .build()
-
-    private val databaseDao: AudioDatabaseDao by lazy {
-        AudioDatabase.getInstance(this).audioDatabaseDao
-    }
+    private val ytAudioAttributes =
+        AudioAttributes.Builder()
+            .setContentType(C.CONTENT_TYPE_MUSIC)
+            .setUsage(C.USAGE_MEDIA)
+            .build()
 
     private val exoPlayer: ExoPlayer by lazy {
         SimpleExoPlayer.Builder(this).build().apply {
@@ -64,16 +66,12 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         }
     }
 
-    private val audioInfoCheckList = databaseDao.getAllAudio()
+    private lateinit var audioInfoCheckList: LiveData<List<AudioInfo>?>
 
     private val databaseObserver = Observer<List<AudioInfo>?> {
         if (it != audioInfoList) {
             updateAudioSource(this)
         }
-    }
-
-    init {
-        audioInfoCheckList.observeForever(databaseObserver)
     }
 
     private fun updateAudioSource(context: Context) {
@@ -93,12 +91,16 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
                 it.setPlaybackPreparer(playbackPreparer)
                 it.setQueueNavigator(QueueNavigator(mediaSession))
             }
-            notifyChildrenChanged(MEDIA_ROOT_ID)
+//            notifyChildrenChanged(MEDIA_ROOT_ID)
         }
     }
 
     override fun onCreate() {
+        AndroidInjection.inject(this)
         super.onCreate()
+
+        audioInfoCheckList = databaseDao.getAllAudio()
+        audioInfoCheckList.observeForever(databaseObserver)
 
         val sessionActivityPendingIntent =
             packageManager.getLaunchIntentForPackage(packageName)

@@ -2,6 +2,7 @@ package com.example.ytaudio.playlist
 
 import android.os.Bundle
 import android.view.*
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -12,33 +13,30 @@ import com.example.ytaudio.R
 import com.example.ytaudio.databinding.PlaylistFragmentBinding
 import com.example.ytaudio.fragment.ActionModeFragment
 import com.example.ytaudio.main.MainActivityViewModel
-import com.example.ytaudio.utils.FactoryUtils
+import javax.inject.Inject
 
 
 class PlaylistFragment : ActionModeFragment() {
 
-    lateinit var playlistViewModel: PlaylistViewModel
-        private set
+    @Inject
+    lateinit var playlistViewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var mainActivityViewModelFactory: ViewModelProvider.Factory
+
+    val playlistViewModel: PlaylistViewModel by viewModels {
+        playlistViewModelFactory
+    }
+
+    private val mainActivityViewModel: MainActivityViewModel by viewModels {
+        mainActivityViewModelFactory
+    }
 
     private lateinit var binding: PlaylistFragmentBinding
-    private lateinit var mainActivityViewModel: MainActivityViewModel
 
     private val playlistAdapter = PlaylistAdapter(this) {
         mainActivityViewModel.audioItemClicked(it.id)
         findNavController().navigate(PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment())
-    }
-
-    override fun onCreateActionModeFragment(savedInstanceState: Bundle?) {
-        val application = requireNotNull(this.activity).application
-
-        playlistViewModel = ViewModelProvider(
-            this,
-            FactoryUtils.providePlaylistViewModel(application)
-        ).get(PlaylistViewModel::class.java)
-
-        mainActivityViewModel =
-            ViewModelProvider(this, FactoryUtils.provideMainActivityViewModel(application))
-                .get(MainActivityViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -90,4 +88,3 @@ class PlaylistFragment : ActionModeFragment() {
         }
     }
 }
-

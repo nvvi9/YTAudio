@@ -1,23 +1,25 @@
 package com.example.ytaudio.player
 
-import android.app.Application
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.text.format.DateUtils
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import com.example.ytaudio.R
 import com.example.ytaudio.service.EMPTY_PLAYBACK_STATE
 import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.service.NOTHING_PLAYING
 import com.example.ytaudio.service.extensions.*
+import javax.inject.Inject
 
-class PlayerViewModel(
-    mediaPlaybackServiceConnection: MediaPlaybackServiceConnection,
-    application: Application
-) : AndroidViewModel(application) {
+
+class PlayerViewModel @Inject constructor(
+    mediaPlaybackServiceConnection: MediaPlaybackServiceConnection
+) : ViewModel() {
 
     data class NowPlayingAudioInfo(
         val audioId: String,
@@ -86,20 +88,6 @@ class PlayerViewModel(
         mediaPlaybackServiceConnection.playbackState.removeObserver(playbackStateObserver)
         mediaPlaybackServiceConnection.nowPlaying.removeObserver(mediaMetadataObserver)
         updatePosition = false
-    }
-
-    class Factory(
-        private val mediaPlaybackServiceConnection: MediaPlaybackServiceConnection,
-        private val application: Application
-    ) : ViewModelProvider.Factory {
-
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return PlayerViewModel(
-                mediaPlaybackServiceConnection,
-                application
-            ) as T
-        }
     }
 }
 
