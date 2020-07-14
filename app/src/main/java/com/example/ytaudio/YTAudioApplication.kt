@@ -25,16 +25,7 @@ class YTAudioApplication : Application(), HasAndroidInjector {
 
     override fun onCreate() {
         super.onCreate()
-        appComponent = AppInjector.init(this)
-
-        val workerFactory = appComponent.factory()
-
-        WorkManager.initialize(
-            this,
-            Configuration.Builder()
-                .setWorkerFactory(workerFactory)
-                .build()
-        )
+        AppInjector.init(this)
         delayedInit()
     }
 

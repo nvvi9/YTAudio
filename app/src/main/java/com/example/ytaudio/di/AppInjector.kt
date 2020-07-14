@@ -6,6 +6,8 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import androidx.work.Configuration
+import androidx.work.WorkManager
 import com.example.ytaudio.YTAudioApplication
 import dagger.android.AndroidInjection
 import dagger.android.HasAndroidInjector
@@ -13,12 +15,19 @@ import dagger.android.support.AndroidSupportInjection
 
 object AppInjector {
 
-    fun init(ytAudioApplication: YTAudioApplication): AppComponent {
-        val appComponent = DaggerAppComponent.builder()
+    fun init(ytAudioApplication: YTAudioApplication) {
+        DaggerAppComponent.builder()
             .application(ytAudioApplication)
             .context(ytAudioApplication)
             .build()
-        appComponent.inject(ytAudioApplication)
+            .also {
+                WorkManager.initialize(
+                    ytAudioApplication,
+                    Configuration.Builder()
+                        .setWorkerFactory(it.workerFactory())
+                        .build()
+                )
+            }.inject(ytAudioApplication)
 
         ytAudioApplication.registerActivityLifecycleCallbacks(object :
             Application.ActivityLifecycleCallbacks {
@@ -34,8 +43,6 @@ object AppInjector {
             override fun onActivityStopped(activity: Activity) = Unit
             override fun onActivityResumed(activity: Activity) = Unit
         })
-
-        return appComponent
     }
 
     private fun handleActivity(activity: Activity) {

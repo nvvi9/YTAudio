@@ -40,5 +40,6 @@ interface AppComponent : AndroidInjector<YTAudioApplication> {
     }
 
     override fun inject(ytAudioApplication: YTAudioApplication)
-    fun factory(): YTAudioWorkerFactory
+
+    fun workerFactory(): YTAudioWorkerFactory
 }
