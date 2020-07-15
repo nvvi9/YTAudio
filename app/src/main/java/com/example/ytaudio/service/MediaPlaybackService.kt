@@ -14,13 +14,9 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.media.MediaBrowserServiceCompat
 import com.example.ytaudio.database.AudioDatabaseDao
-import com.example.ytaudio.database.entities.AudioInfo
 import com.example.ytaudio.service.extensions.flag
-import com.example.ytaudio.service.library.AudioSource
 import com.example.ytaudio.service.library.DatabaseAudioSource
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
@@ -30,10 +26,6 @@ import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import dagger.android.AndroidInjection
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -42,16 +34,14 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
     @Inject
     lateinit var databaseDao: AudioDatabaseDao
 
-    private val serviceJob = SupervisorJob()
-    private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
     private var isForegroundService = false
 
-    private var audioInfoList = listOf<AudioInfo>()
-    private lateinit var audioSource: AudioSource
+    private lateinit var audioSource: DatabaseAudioSource
     private lateinit var becomingNoisyReceiver: BecomingNoisyReceiver
     private lateinit var notificationManager: NotificationManager
     private lateinit var mediaSessionConnector: MediaSessionConnector
     private lateinit var mediaSession: MediaSessionCompat
+    private lateinit var playbackPreparer: PlaybackPreparer
 
     private val ytAudioAttributes =
         AudioAttributes.Builder()
@@ -66,41 +56,9 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
         }
     }
 
-    private lateinit var audioInfoCheckList: LiveData<List<AudioInfo>?>
-
-    private val databaseObserver = Observer<List<AudioInfo>?> {
-        if (it != audioInfoList) {
-            updateAudioSource(this)
-        }
-    }
-
-    private fun updateAudioSource(context: Context) {
-        serviceScope.launch {
-            audioSource.load()
-
-            audioInfoList = databaseDao.getAllAudioInfo()
-            mediaSessionConnector = MediaSessionConnector(mediaSession).also {
-                val dataSourceFactory =
-                    DefaultDataSourceFactory(
-                        context, Util.getUserAgent(context, YTAUDIO_USER_AGENT), null
-                    )
-
-                val playbackPreparer = PlaybackPreparer(audioSource, exoPlayer, dataSourceFactory)
-
-                it.setPlayer(exoPlayer)
-                it.setPlaybackPreparer(playbackPreparer)
-                it.setQueueNavigator(QueueNavigator(mediaSession))
-            }
-//            notifyChildrenChanged(MEDIA_ROOT_ID)
-        }
-    }
-
     override fun onCreate() {
         AndroidInjection.inject(this)
         super.onCreate()
-
-        audioInfoCheckList = databaseDao.getAllAudio()
-        audioInfoCheckList.observeForever(databaseObserver)
 
         val sessionActivityPendingIntent =
             packageManager.getLaunchIntentForPackage(packageName)
@@ -123,36 +81,48 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
 
         becomingNoisyReceiver = BecomingNoisyReceiver(this, mediaSession.sessionToken)
 
-        audioSource = DatabaseAudioSource(this, databaseDao)
-//        updateAudioSource(this)
+        audioSource = DatabaseAudioSource(databaseDao) {
+            notifyChildrenChanged(it)
+        }
+
+        mediaSessionConnector = MediaSessionConnector(mediaSession).also {
+            val dataSourceFactory =
+                DefaultDataSourceFactory(this, Util.getUserAgent(this, YTAUDIO_USER_AGENT), null)
+
+            playbackPreparer = PlaybackPreparer(audioSource, exoPlayer, dataSourceFactory)
+
+            it.setPlayer(exoPlayer)
+            it.setPlaybackPreparer(playbackPreparer)
+            it.setQueueNavigator(QueueNavigator(mediaSession))
+        }
     }
 
     override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?) =
         BrowserRoot(MEDIA_ROOT_ID, null)
 
+    @Synchronized
     override fun onLoadChildren(
         parentId: String,
         result: Result<MutableList<MediaItem>>
     ) {
-        try {
-//        result.detach()
-            val resultSent = audioSource.whenReady { initialized ->
-                if (initialized) {
-                    val children = audioSource.map {
-                        MediaItem(it.description, it.flag)
-                    }
-                    result.sendResult(children as MutableList<MediaItem>?)
-                } else {
-                    mediaSession.sendSessionEvent(NETWORK_FAILURE, null)
-                    result.sendResult(null)
+        val resultSent = audioSource.whenReady { initialized ->
+            if (initialized) {
+                val children = audioSource.map {
+                    MediaItem(it.description, it.flag)
                 }
+                try {
+                    result.sendResult(children as MutableList<MediaItem>?)
+                } catch (e: IllegalStateException) {
+                    Log.e(javaClass.simpleName, e.toString())
+                }
+            } else {
+                mediaSession.sendSessionEvent(NETWORK_FAILURE, null)
+                result.sendResult(null)
             }
+        }
 
-            if (!resultSent) {
-                result.detach()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        if (!resultSent) {
+            result.detach()
         }
     }
 
@@ -163,10 +133,9 @@ open class MediaPlaybackService : MediaBrowserServiceCompat() {
             release()
         }
 
-        audioInfoCheckList.removeObserver(databaseObserver)
-        serviceJob.cancel()
         exoPlayer.removeListener(playerListener)
         exoPlayer.release()
+        playbackPreparer.removeObservers()
     }
 
 
