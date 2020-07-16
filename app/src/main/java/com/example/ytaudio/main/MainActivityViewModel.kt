@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ytaudio.database.entities.AudioInfo
 import com.example.ytaudio.repositories.AudioRepository
-import com.example.ytaudio.service.MediaPlaybackServiceConnection
+import com.example.ytaudio.service.AudioServiceConnection
 import com.example.ytaudio.utils.extensions.id
 import com.example.ytaudio.utils.extensions.isPlayEnabled
 import com.example.ytaudio.utils.extensions.isPlaying
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 class MainActivityViewModel @Inject constructor(
     private val repository: AudioRepository,
-    private val mediaPlaybackServiceConnection: MediaPlaybackServiceConnection
+    private val audioServiceConnection: AudioServiceConnection
 ) : ViewModel() {
 
     private val needUpdateObserver = Observer<List<AudioInfo>?> { list ->
@@ -41,13 +41,13 @@ class MainActivityViewModel @Inject constructor(
     }
 
     private fun playAudio(audioId: String, pauseAllowed: Boolean) {
-        val nowPlaying = mediaPlaybackServiceConnection.nowPlaying.value
-        val transportControls = mediaPlaybackServiceConnection.transportControls
+        val nowPlaying = audioServiceConnection.nowPlaying.value
+        val transportControls = audioServiceConnection.transportControls
 
-        val isPrepared = mediaPlaybackServiceConnection.playbackState.value?.isPrepared ?: false
+        val isPrepared = audioServiceConnection.playbackState.value?.isPrepared ?: false
 
         if (isPrepared && audioId == nowPlaying?.id) {
-            mediaPlaybackServiceConnection.playbackState.value?.let {
+            audioServiceConnection.playbackState.value?.let {
                 when {
                     it.isPlaying -> if (pauseAllowed) transportControls.pause() else Unit
                     it.isPlayEnabled -> transportControls.play()
@@ -59,13 +59,13 @@ class MainActivityViewModel @Inject constructor(
     }
 
     fun playAudio(audioId: String) {
-        val nowPlaying = mediaPlaybackServiceConnection.nowPlaying.value
-        val transportControls = mediaPlaybackServiceConnection.transportControls
+        val nowPlaying = audioServiceConnection.nowPlaying.value
+        val transportControls = audioServiceConnection.transportControls
 
-        val isPrepared = mediaPlaybackServiceConnection.playbackState.value?.isPrepared ?: false
+        val isPrepared = audioServiceConnection.playbackState.value?.isPrepared ?: false
 
         if (isPrepared && audioId == nowPlaying?.id) {
-            mediaPlaybackServiceConnection.playbackState.value?.let {
+            audioServiceConnection.playbackState.value?.let {
                 when {
                     it.isPlaying -> transportControls.pause()
                     it.isPlayEnabled -> transportControls.play()

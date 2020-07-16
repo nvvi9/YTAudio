@@ -14,7 +14,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.ytaudio.utils.extensions.id
 
 
-class MediaPlaybackServiceConnection(context: Context, serviceComponent: ComponentName) {
+class AudioServiceConnection(context: Context, serviceComponent: ComponentName) {
     val isConnected = MutableLiveData<Boolean>().apply { postValue(false) }
     val networkFailure = MutableLiveData<Boolean>().apply { postValue(false) }
     val rootMediaId: String
@@ -111,11 +111,11 @@ class MediaPlaybackServiceConnection(context: Context, serviceComponent: Compone
 
     companion object {
         @Volatile
-        private var instance: MediaPlaybackServiceConnection? = null
+        private var instance: AudioServiceConnection? = null
 
         fun getInstance(context: Context, serviceComponent: ComponentName) =
             instance ?: synchronized(this) {
-                instance ?: MediaPlaybackServiceConnection(context, serviceComponent)
+                instance ?: AudioServiceConnection(context, serviceComponent)
                     .also { instance = it }
             }
     }

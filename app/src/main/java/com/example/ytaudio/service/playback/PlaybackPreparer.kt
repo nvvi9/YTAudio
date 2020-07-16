@@ -1,4 +1,4 @@
-package com.example.ytaudio.service
+package com.example.ytaudio.service.playback
 
 import android.net.Uri
 import android.os.Bundle
@@ -7,7 +7,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.lifecycle.Observer
-import com.example.ytaudio.repositories.PlaylistRepository
+import com.example.service.repository.PlaylistRepository
 import com.example.ytaudio.utils.extensions.id
 import com.example.ytaudio.utils.extensions.title
 import com.example.ytaudio.utils.extensions.toMediaSource

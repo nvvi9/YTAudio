@@ -1,4 +1,4 @@
-package com.example.ytaudio.service
+package com.example.ytaudio.service.playback
 
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaSessionCompat

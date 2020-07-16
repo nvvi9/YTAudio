@@ -1,10 +1,9 @@
-package com.example.ytaudio.repositories
+package com.example.service.repository
 
 import android.support.v4.media.MediaMetadataCompat
 import androidx.lifecycle.Transformations
 import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.utils.extensions.toMediaMetadataList
-import com.example.ytaudio.utils.extensions.toPlaylistItemList
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,7 +20,4 @@ class PlaylistRepository @Inject constructor(databaseDao: AudioDatabaseDao) {
 
     val mediaMetadataList =
         Transformations.map(availableAudioInfo) { it.toMediaMetadataList() }
-
-    val playlistItemList =
-        Transformations.map(availableAudioInfo) { it.toPlaylistItemList() }
 }
