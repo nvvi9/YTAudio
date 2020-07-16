@@ -6,10 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.ytaudio.database.entities.AudioInfo
 import com.example.ytaudio.repositories.AudioRepository
 import com.example.ytaudio.service.MediaPlaybackServiceConnection
-import com.example.ytaudio.service.extensions.id
-import com.example.ytaudio.service.extensions.isPlayEnabled
-import com.example.ytaudio.service.extensions.isPlaying
-import com.example.ytaudio.service.extensions.isPrepared
+import com.example.ytaudio.utils.extensions.id
+import com.example.ytaudio.utils.extensions.isPlayEnabled
+import com.example.ytaudio.utils.extensions.isPlaying
+import com.example.ytaudio.utils.extensions.isPrepared
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

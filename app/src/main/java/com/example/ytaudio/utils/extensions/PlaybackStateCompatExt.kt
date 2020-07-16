@@ -1,4 +1,4 @@
-package com.example.ytaudio.service.extensions
+package com.example.ytaudio.utils.extensions
 
 import android.os.SystemClock
 import android.support.v4.media.session.PlaybackStateCompat

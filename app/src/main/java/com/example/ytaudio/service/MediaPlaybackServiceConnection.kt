@@ -11,7 +11,7 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.MutableLiveData
-import com.example.ytaudio.service.extensions.id
+import com.example.ytaudio.utils.extensions.id
 
 
 class MediaPlaybackServiceConnection(context: Context, serviceComponent: ComponentName) {

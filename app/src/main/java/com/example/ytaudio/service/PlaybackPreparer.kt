@@ -7,11 +7,10 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.lifecycle.Observer
-import com.example.ytaudio.service.extensions.id
-import com.example.ytaudio.service.extensions.title
-import com.example.ytaudio.service.extensions.toMediaSource
-import com.example.ytaudio.service.library.DatabaseAudioSource
-import com.example.ytaudio.utils.Event
+import com.example.ytaudio.repositories.PlaylistRepository
+import com.example.ytaudio.utils.extensions.id
+import com.example.ytaudio.utils.extensions.title
+import com.example.ytaudio.utils.extensions.toMediaSource
 import com.google.android.exoplayer2.ControlDispatcher
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
@@ -21,39 +20,55 @@ import com.google.android.exoplayer2.upstream.DataSource
 
 
 class PlaybackPreparer(
-    private val audioSource: DatabaseAudioSource,
+    private val playlistRepository: PlaylistRepository,
     private val exoPlayer: ExoPlayer,
     private val dataSourceFactory: DataSource.Factory
 ) : MediaSessionConnector.PlaybackPreparer {
 
     private var mediaSource: ConcatenatingMediaSource? = null
-    private var metadataArray = emptyArray<MediaMetadataCompat>()
+    private var currentMetadata = emptyList<MediaMetadataCompat>()
+    private var nowPlaying: MediaMetadataCompat? = null
 
-    private val itemsUpdatedObserver = Observer<Event<List<MediaMetadataCompat>>> { event ->
-        event.getContentIfNotHandled()?.sortedBy { it.title }?.let { list ->
-            metadataArray = list.toTypedArray()
-            mediaSource = list.toMediaSource(dataSourceFactory)
-
-            if (mediaSource != null && exoPlayer.isPlaying) {
-                val currentPosition = exoPlayer.currentPosition
-                val currentWindow = exoPlayer.currentWindowIndex
-
-                exoPlayer.apply {
-                    exoPlayer.playWhenReady = false
-                    prepare(mediaSource!!)
-                    seekTo(currentWindow, currentPosition)
-                    playWhenReady = true
-                }
-            }
+    private val metadataObserver = Observer<List<MediaMetadataCompat>> {
+        if (it != currentMetadata) {
+            updateMetadata(it)
         }
     }
 
     init {
-        audioSource.itemsUpdatedEvent.observeForever(itemsUpdatedObserver)
+        playlistRepository.mediaMetadataList.observeForever(metadataObserver)
     }
 
-    fun removeObservers() {
-        audioSource.itemsUpdatedEvent.removeObserver(itemsUpdatedObserver)
+    private fun updateMetadata(newMetadata: List<MediaMetadataCompat>) {
+        currentMetadata = newMetadata
+        mediaSource = currentMetadata.toMediaSource(dataSourceFactory)
+
+        val isPlaying = exoPlayer.playbackState == Player.TIMELINE_CHANGE_REASON_PREPARED
+        var position = exoPlayer.currentPosition
+        val window = nowPlaying?.let { playing ->
+            if (playing.id in currentMetadata.map { it.id }) {
+                currentMetadata.indexOf(playing)
+            } else {
+                position = 0
+                currentMetadata.indexOfFirst {
+                    it.title!! > playing.title!!
+                }.takeIf { it != -1 } ?: currentMetadata.indexOfLast {
+                    it.title!! < playing.title!!
+                }.takeIf { it != -1 } ?: 0
+            }
+        } ?: 0
+
+        exoPlayer.apply {
+            playWhenReady = false
+            mediaSource?.let { prepare(it) }
+            seekTo(window, position)
+            nowPlaying = currentMetadata[position.toInt()]
+            playWhenReady = isPlaying && currentMetadata.isNotEmpty()
+        }
+    }
+
+    fun onCancel() {
+        playlistRepository.mediaMetadataList.removeObserver(metadataObserver)
     }
 
     override fun getSupportedPrepareActions() =
@@ -63,25 +78,16 @@ class PlaybackPreparer(
                 PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
 
 
-    override fun onPrepareFromMediaId(
-        mediaId: String,
-        playWhenReady: Boolean,
-        extras: Bundle?
-    ) {
-        audioSource.whenReady {
-            val itemToPlay = metadataArray.find { item ->
-                item.id == mediaId
-            }
+    override fun onPrepareFromMediaId(mediaId: String, playWhenReady: Boolean, extras: Bundle?) {
+        val itemToPlay = currentMetadata.find { it.id == mediaId }
 
-            itemToPlay?.let { item ->
-                val initialWindowIndex = metadataArray.indexOf(item)
-                mediaSource?.let { exoPlayer.prepare(it) }
-                exoPlayer.seekTo(initialWindowIndex, 0)
-                exoPlayer.playWhenReady = playWhenReady
-            } ?: Log.w(javaClass.name, "Content not found: id=$mediaId")
-        }
-
-        Log.e(javaClass.simpleName, "NOT READY $mediaId")
+        itemToPlay?.let {
+            val initialWindowIndex = currentMetadata.indexOf(it)
+            mediaSource?.let { exoPlayer.prepare(it) }
+            exoPlayer.seekTo(initialWindowIndex, 0)
+            exoPlayer.playWhenReady = playWhenReady
+            nowPlaying = it
+        } ?: Log.w(javaClass.name, "Content not found: id=$mediaId")
     }
 
     override fun onCommand(

@@ -1,4 +1,4 @@
-package com.example.ytaudio.service.extensions
+package com.example.ytaudio.utils.extensions
 
 import android.graphics.Bitmap
 import android.net.Uri

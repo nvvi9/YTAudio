@@ -11,8 +11,8 @@ import com.example.ytaudio.service.EMPTY_PLAYBACK_STATE
 import com.example.ytaudio.service.MEDIA_ROOT_ID
 import com.example.ytaudio.service.MediaPlaybackServiceConnection
 import com.example.ytaudio.service.NOTHING_PLAYING
-import com.example.ytaudio.service.extensions.id
-import com.example.ytaudio.service.extensions.isPlaying
+import com.example.ytaudio.utils.extensions.id
+import com.example.ytaudio.utils.extensions.isPlaying
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
