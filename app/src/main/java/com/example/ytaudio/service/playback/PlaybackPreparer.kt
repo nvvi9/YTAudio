@@ -7,8 +7,9 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.lifecycle.Observer
-import com.example.service.repository.PlaylistRepository
+import com.example.ytaudio.repositories.PlaylistRepository
 import com.example.ytaudio.utils.extensions.id
+import com.example.ytaudio.utils.extensions.metadataEquals
 import com.example.ytaudio.utils.extensions.title
 import com.example.ytaudio.utils.extensions.toMediaSource
 import com.google.android.exoplayer2.ControlDispatcher
@@ -30,7 +31,7 @@ class PlaybackPreparer(
     private var nowPlaying: MediaMetadataCompat? = null
 
     private val metadataObserver = Observer<List<MediaMetadataCompat>> {
-        if (it != currentMetadata) {
+        if (it.metadataEquals(currentMetadata)) {
             updateMetadata(it)
         }
     }
@@ -61,7 +62,7 @@ class PlaybackPreparer(
         exoPlayer.apply {
             playWhenReady = false
             mediaSource?.let { prepare(it) }
-            seekTo(window, position)
+//            seekTo(window, position)
             nowPlaying = currentMetadata[position.toInt()]
             playWhenReady = isPlaying && currentMetadata.isNotEmpty()
         }
@@ -81,12 +82,12 @@ class PlaybackPreparer(
     override fun onPrepareFromMediaId(mediaId: String, playWhenReady: Boolean, extras: Bundle?) {
         val itemToPlay = currentMetadata.find { it.id == mediaId }
 
-        itemToPlay?.let {
-            val initialWindowIndex = currentMetadata.indexOf(it)
+        itemToPlay?.let { item ->
+            val initialWindowIndex = currentMetadata.indexOf(item)
             mediaSource?.let { exoPlayer.prepare(it) }
             exoPlayer.seekTo(initialWindowIndex, 0)
             exoPlayer.playWhenReady = playWhenReady
-            nowPlaying = it
+            nowPlaying = item
         } ?: Log.w(javaClass.name, "Content not found: id=$mediaId")
     }
 

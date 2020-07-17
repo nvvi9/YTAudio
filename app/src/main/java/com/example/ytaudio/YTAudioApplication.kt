@@ -2,7 +2,6 @@ package com.example.ytaudio
 
 import android.app.Application
 import androidx.work.*
-import com.example.ytaudio.di.AppComponent
 import com.example.ytaudio.di.AppInjector
 import com.example.ytaudio.workers.RefreshDatabaseWorker
 import dagger.android.DispatchingAndroidInjector
@@ -18,8 +17,6 @@ class YTAudioApplication : Application(), HasAndroidInjector {
 
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
-
-    private lateinit var appComponent: AppComponent
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
@@ -43,7 +40,7 @@ class YTAudioApplication : Application(), HasAndroidInjector {
             .build()
 
         val periodicWorkRequest =
-            PeriodicWorkRequestBuilder<RefreshDatabaseWorker>(2, TimeUnit.HOURS)
+            PeriodicWorkRequestBuilder<RefreshDatabaseWorker>(1, TimeUnit.HOURS)
                 .setConstraints(constraints)
                 .build()
 

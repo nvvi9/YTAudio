@@ -215,6 +215,9 @@ fun MediaMetadataCompat.Builder.from(audioInfo: AudioInfo): MediaMetadataCompat.
     return this
 }
 
+fun List<MediaMetadataCompat>.metadataEquals(other: List<MediaMetadataCompat>) =
+    map { it.mediaUri.toString() } == other.map { it.mediaUri.toString() }
+
 
 const val METADATA_KEY_FLAGS = "com.example.ytaudio.service.METADATA_KEY_FLAGS"
 const val NO_GET = "No get"

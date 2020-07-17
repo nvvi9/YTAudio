@@ -9,7 +9,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.media.MediaBrowserServiceCompat
-import com.example.service.repository.PlaylistRepository
+import com.example.ytaudio.repositories.PlaylistRepository
 import com.example.ytaudio.service.notification.NotificationManager
 import com.example.ytaudio.service.playback.PlaybackPreparer
 import com.example.ytaudio.service.playback.QueueNavigator
