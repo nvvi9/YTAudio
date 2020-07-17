@@ -23,7 +23,7 @@ interface AudioDatabaseDao {
     suspend fun getAllAudioInfo(): List<AudioInfo>
 
     @Query("SELECT * FROM AudioInfo ORDER BY title")
-    fun getAllAudio(): LiveData<List<AudioInfo>?>
+    fun getAllAudio(): LiveData<List<AudioInfo>>
 
     @Delete
     suspend fun delete(audio: AudioInfo)

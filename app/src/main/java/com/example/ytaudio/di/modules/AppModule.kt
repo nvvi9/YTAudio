@@ -7,8 +7,8 @@ import com.example.ytaudio.database.AudioDatabase
 import com.example.ytaudio.network.autocomplete.AutoCompleteService
 import com.example.ytaudio.network.extractor.YTExtractor
 import com.example.ytaudio.network.youtube.YouTubeApiService
-import com.example.ytaudio.service.MediaPlaybackService
-import com.example.ytaudio.service.MediaPlaybackServiceConnection
+import com.example.ytaudio.service.AudioService
+import com.example.ytaudio.service.AudioServiceConnection
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -70,8 +70,8 @@ class AppModule {
     @Singleton
     @Provides
     fun provideMediaPlaybackServiceConnection(context: Context) =
-        MediaPlaybackServiceConnection.getInstance(
+        AudioServiceConnection.getInstance(
             context,
-            ComponentName(context, MediaPlaybackService::class.java)
+            ComponentName(context, AudioService::class.java)
         )
 }

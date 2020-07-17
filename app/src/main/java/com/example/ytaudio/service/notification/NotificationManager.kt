@@ -1,4 +1,4 @@
-package com.example.ytaudio.service
+package com.example.ytaudio.service.notification
 
 import android.app.PendingIntent
 import android.content.Context

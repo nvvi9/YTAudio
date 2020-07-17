@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.ActionMode
 import androidx.fragment.app.Fragment
 import com.example.ytaudio.di.Injectable
-import dagger.android.support.AndroidSupportInjection
 
 
 abstract class ActionModeFragment : Fragment(), Injectable {
@@ -14,7 +13,6 @@ abstract class ActionModeFragment : Fragment(), Injectable {
     final override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        AndroidSupportInjection.inject(this)
         onCreateActionModeFragment(savedInstanceState)
     }
 

@@ -1,11 +1,13 @@
-package com.example.ytaudio.service.extensions
+package com.example.ytaudio.utils.extensions
 
 import android.graphics.Bitmap
 import android.net.Uri
 import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.RatingCompat
 import androidx.core.net.toUri
+import com.example.ytaudio.database.entities.AudioInfo
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
@@ -190,13 +192,32 @@ fun MediaMetadataCompat.toMediaSource(dataSourceFactory: DataSource.Factory) =
         .createMediaSource(mediaUri)
 
 
-fun List<MediaMetadataCompat>.toMediaSource(dataSourceFactory: DataSource.Factory): ConcatenatingMediaSource {
+fun Iterable<MediaMetadataCompat>.toMediaSource(dataSourceFactory: DataSource.Factory): ConcatenatingMediaSource {
     val concatenatingMediaSource = ConcatenatingMediaSource()
     forEach {
         concatenatingMediaSource.addMediaSource(it.toMediaSource(dataSourceFactory))
     }
     return concatenatingMediaSource
 }
+
+
+fun MediaMetadataCompat.Builder.from(audioInfo: AudioInfo): MediaMetadataCompat.Builder {
+    id = audioInfo.youtubeId
+    title = audioInfo.audioDetails.title
+    artist = audioInfo.audioDetails.author
+    duration = audioInfo.audioDetails.durationSeconds.toLong()
+    mediaUri = audioInfo.audioStreams.maxBy { it.sampleRate }!!.uri
+    displayIconUri = audioInfo.thumbnails.maxBy { it.height }!!.uri
+    albumArtUri = audioInfo.thumbnails.maxBy { it.height }!!.uri
+    flag = MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
+    downloadStatus = MediaDescriptionCompat.STATUS_NOT_DOWNLOADED
+
+    return this
+}
+
+fun List<MediaMetadataCompat>.metadataEquals(other: List<MediaMetadataCompat>) =
+    map { it.mediaUri.toString() } == other.map { it.mediaUri.toString() }
+
 
 const val METADATA_KEY_FLAGS = "com.example.ytaudio.service.METADATA_KEY_FLAGS"
 const val NO_GET = "No get"
