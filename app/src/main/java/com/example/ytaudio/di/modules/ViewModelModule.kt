@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.ytaudio.di.factories.ViewModelFactory
 import com.example.ytaudio.di.keys.ViewModelKey
-import com.example.ytaudio.main.MainActivityViewModel
-import com.example.ytaudio.player.PlayerViewModel
-import com.example.ytaudio.playlist.PlaylistViewModel
-import com.example.ytaudio.search.SearchViewModel
+import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
+import com.example.ytaudio.ui.viewmodels.PlayerViewModel
+import com.example.ytaudio.ui.viewmodels.PlaylistViewModel
+import com.example.ytaudio.ui.viewmodels.SearchViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap

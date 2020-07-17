@@ -1,8 +1,8 @@
 package com.example.ytaudio.di.modules
 
-import com.example.ytaudio.player.PlayerFragment
-import com.example.ytaudio.playlist.PlaylistFragment
-import com.example.ytaudio.search.SearchFragment
+import com.example.ytaudio.ui.fragments.PlayerFragment
+import com.example.ytaudio.ui.fragments.PlaylistFragment
+import com.example.ytaudio.ui.fragments.SearchFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

@@ -1,4 +1,4 @@
-package com.example.ytaudio.player
+package com.example.ytaudio.ui.fragments
 
 import android.net.Uri
 import android.os.Bundle
@@ -14,7 +14,8 @@ import com.bumptech.glide.Glide
 import com.example.ytaudio.R
 import com.example.ytaudio.databinding.AudioPlayerFragmentBinding
 import com.example.ytaudio.di.Injectable
-import com.example.ytaudio.main.MainActivityViewModel
+import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
+import com.example.ytaudio.ui.viewmodels.PlayerViewModel
 import javax.inject.Inject
 
 class PlayerFragment : Fragment(), Injectable {

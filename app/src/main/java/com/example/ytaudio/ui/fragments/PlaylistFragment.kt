@@ -1,4 +1,4 @@
-package com.example.ytaudio.playlist
+package com.example.ytaudio.ui.fragments
 
 import android.os.Bundle
 import android.view.*
@@ -11,8 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
 import com.example.ytaudio.databinding.PlaylistFragmentBinding
-import com.example.ytaudio.fragment.ActionModeFragment
-import com.example.ytaudio.main.MainActivityViewModel
+import com.example.ytaudio.ui.adapters.PlaylistAdapter
+import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
+import com.example.ytaudio.ui.viewmodels.PlaylistViewModel
 import javax.inject.Inject
 
 
@@ -34,10 +35,11 @@ class PlaylistFragment : ActionModeFragment() {
 
     private lateinit var binding: PlaylistFragmentBinding
 
-    private val playlistAdapter = PlaylistAdapter(this) {
-        mainActivityViewModel.audioItemClicked(it.id)
-        findNavController().navigate(PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment())
-    }
+    private val playlistAdapter =
+        PlaylistAdapter(this) {
+            mainActivityViewModel.audioItemClicked(it.id)
+            findNavController().navigate(PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment())
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,

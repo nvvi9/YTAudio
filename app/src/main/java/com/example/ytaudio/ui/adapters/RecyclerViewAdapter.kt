@@ -1,4 +1,4 @@
-package com.example.ytaudio.adapters
+package com.example.ytaudio.ui.adapters
 
 import android.view.ActionMode
 import android.view.Menu
@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
-import com.example.ytaudio.fragment.ActionModeFragment
+import com.example.ytaudio.ui.fragments.ActionModeFragment
 
 
 abstract class RecyclerViewAdapter<T, B : ViewDataBinding>(

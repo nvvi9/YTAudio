@@ -7,7 +7,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.lifecycle.Observer
-import com.example.ytaudio.repositories.PlaylistRepository
+import com.example.ytaudio.repositories.AudioRepository
 import com.example.ytaudio.utils.extensions.id
 import com.example.ytaudio.utils.extensions.metadataEquals
 import com.example.ytaudio.utils.extensions.title
@@ -21,7 +21,7 @@ import com.google.android.exoplayer2.upstream.DataSource
 
 
 class PlaybackPreparer(
-    private val playlistRepository: PlaylistRepository,
+    private val audioRepository: AudioRepository,
     private val exoPlayer: ExoPlayer,
     private val dataSourceFactory: DataSource.Factory
 ) : MediaSessionConnector.PlaybackPreparer {
@@ -37,7 +37,7 @@ class PlaybackPreparer(
     }
 
     init {
-        playlistRepository.mediaMetadataList.observeForever(metadataObserver)
+        audioRepository.mediaMetadataList.observeForever(metadataObserver)
     }
 
     private fun updateMetadata(newMetadata: List<MediaMetadataCompat>) {
@@ -59,17 +59,21 @@ class PlaybackPreparer(
             }
         } ?: 0
 
-        exoPlayer.apply {
-            playWhenReady = false
-            mediaSource?.let { prepare(it) }
-//            seekTo(window, position)
-            nowPlaying = currentMetadata[position.toInt()]
-            playWhenReady = isPlaying && currentMetadata.isNotEmpty()
+        try {
+            exoPlayer.apply {
+                playWhenReady = false
+                mediaSource?.let { prepare(it) }
+                seekTo(window, position)
+                nowPlaying = currentMetadata[position.toInt()]
+                playWhenReady = isPlaying && currentMetadata.isNotEmpty()
+            }
+        } catch (t: Throwable) {
+            Log.e(javaClass.simpleName, t.toString())
         }
     }
 
     fun onCancel() {
-        playlistRepository.mediaMetadataList.removeObserver(metadataObserver)
+        audioRepository.mediaMetadataList.removeObserver(metadataObserver)
     }
 
     override fun getSupportedPrepareActions() =

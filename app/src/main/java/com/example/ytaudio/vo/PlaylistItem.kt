@@ -1,4 +1,4 @@
-package com.example.ytaudio.domain
+package com.example.ytaudio.vo
 
 import com.example.ytaudio.database.entities.AudioInfo
 

@@ -1,4 +1,4 @@
-package com.example.ytaudio.player
+package com.example.ytaudio.ui.viewmodels
 
 import android.net.Uri
 import android.os.Handler
@@ -66,13 +66,14 @@ class PlayerViewModel @Inject constructor(
         mediaMetadata: MediaMetadataCompat
     ) {
         if (mediaMetadata.duration != 0L && mediaMetadata.id != null) {
-            val nowPlayingAudioInfo = NowPlayingAudioInfo(
-                mediaMetadata.id!!,
-                mediaMetadata.albumArtUri,
-                mediaMetadata.title,
-                mediaMetadata.displaySubtitle,
-                DateUtils.formatElapsedTime(mediaMetadata.duration)
-            )
+            val nowPlayingAudioInfo =
+                NowPlayingAudioInfo(
+                    mediaMetadata.id!!,
+                    mediaMetadata.albumArtUri,
+                    mediaMetadata.title,
+                    mediaMetadata.displaySubtitle,
+                    DateUtils.formatElapsedTime(mediaMetadata.duration)
+                )
             currentAudioInfo.postValue(nowPlayingAudioInfo)
         }
 

@@ -7,7 +7,7 @@
 
         <variable
             name="searchItem"
-            type="com.example.ytaudio.domain.SearchItem" />
+            type="com.example.ytaudio.vo.SearchItem" />
 
     </data>
 

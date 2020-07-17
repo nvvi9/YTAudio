@@ -1,28 +1,28 @@
-package com.example.ytaudio.playlist
+package com.example.ytaudio.ui.viewmodels
 
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.*
 import com.example.ytaudio.R
-import com.example.ytaudio.domain.PlaylistItem
-import com.example.ytaudio.repositories.AudioRepository
+import com.example.ytaudio.domain.PlaylistUseCases
 import com.example.ytaudio.service.AudioServiceConnection
 import com.example.ytaudio.service.EMPTY_PLAYBACK_STATE
 import com.example.ytaudio.service.MEDIA_ROOT_ID
 import com.example.ytaudio.service.NOTHING_PLAYING
 import com.example.ytaudio.utils.extensions.id
 import com.example.ytaudio.utils.extensions.isPlaying
+import com.example.ytaudio.vo.PlaylistItem
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 class PlaylistViewModel @Inject constructor(
-    private val repository: AudioRepository,
+    private val playlistUseCases: PlaylistUseCases,
     audioServiceConnection: AudioServiceConnection
 ) : ViewModel() {
 
-    val playlistItems = repository.playlistItems
+    val playlistItems = playlistUseCases.playlistItems
 
     private val playbackStateObserver = Observer<PlaybackStateCompat> {
         val playbackState = it ?: EMPTY_PLAYBACK_STATE
@@ -46,9 +46,9 @@ class PlaylistViewModel @Inject constructor(
     private val _audioItemList = MutableLiveData<List<PlaylistItem>>()
     val audioItemList: LiveData<List<PlaylistItem>> = _audioItemList
 
-    fun deleteFromDatabase(idList: List<String>) {
+    fun deleteFromDatabase(items: List<PlaylistItem>) {
         viewModelScope.launch {
-            repository.deleteFromDatabase(idList)
+            playlistUseCases.deleteItems(items)
         }
     }
 

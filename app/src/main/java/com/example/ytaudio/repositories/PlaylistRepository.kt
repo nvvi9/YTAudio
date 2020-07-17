@@ -1,25 +1,12 @@
 package com.example.ytaudio.repositories
 
-import android.support.v4.media.MediaMetadataCompat
-import androidx.lifecycle.Transformations
-import com.example.ytaudio.database.AudioDatabaseDao
-import com.example.ytaudio.utils.extensions.toMediaMetadataList
-import javax.inject.Inject
-import javax.inject.Singleton
+import androidx.lifecycle.LiveData
+import com.example.ytaudio.database.entities.AudioInfo
 
 
-@Singleton
-class PlaylistRepository @Inject constructor(databaseDao: AudioDatabaseDao) {
+interface PlaylistRepository {
 
-    private val availableAudioInfo =
-        Transformations.distinctUntilChanged(
-            Transformations.map(databaseDao.getAllAudio()) { list ->
-                list.filterNot { it.needUpdate }
-            })
+    val audioInfoList: LiveData<List<AudioInfo>>
 
-    val metadataList: List<MediaMetadataCompat>
-        get() = mediaMetadataList.value ?: emptyList()
-
-    val mediaMetadataList =
-        Transformations.map(availableAudioInfo) { it.toMediaMetadataList() }
+    suspend fun deleteAudioInfo(audioId: List<String>)
 }

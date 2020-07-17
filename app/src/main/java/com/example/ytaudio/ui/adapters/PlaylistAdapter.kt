@@ -1,20 +1,18 @@
-package com.example.ytaudio.playlist
+package com.example.ytaudio.ui.adapters
 
 import android.view.*
 import androidx.recyclerview.widget.DiffUtil
 import com.example.ytaudio.R
-import com.example.ytaudio.adapters.RecyclerViewAdapter
 import com.example.ytaudio.databinding.ItemPlaylistBinding
-import com.example.ytaudio.domain.PlaylistItem
+import com.example.ytaudio.ui.fragments.PlaylistFragment
+import com.example.ytaudio.vo.PlaylistItem
 
 
 class PlaylistAdapter(
     private val fragment: PlaylistFragment,
     clickListener: (PlaylistItem) -> Unit
 ) : RecyclerViewAdapter<PlaylistItem, ItemPlaylistBinding>(
-    DiffCallback(),
-    fragment,
-    clickListener
+    PlaylistItemDiffCallback(), fragment, clickListener
 ) {
 
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean =
@@ -26,7 +24,7 @@ class PlaylistAdapter(
                 true
             }
             R.id.action_delete -> {
-                fragment.playlistViewModel.deleteFromDatabase(selectedItems.map { it.id })
+                fragment.playlistViewModel.deleteFromDatabase(selectedItems.toList())
                 stopActionMode()
                 true
             }
@@ -55,7 +53,7 @@ class PlaylistAdapter(
 }
 
 
-private class DiffCallback : DiffUtil.ItemCallback<PlaylistItem>() {
+private class PlaylistItemDiffCallback : DiffUtil.ItemCallback<PlaylistItem>() {
 
     override fun areItemsTheSame(oldItem: PlaylistItem, newItem: PlaylistItem) =
         oldItem.id == newItem.id

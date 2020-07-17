@@ -4,12 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.ytaudio.database.AudioDatabaseDao
 import com.example.ytaudio.database.entities.AudioInfo
-import com.example.ytaudio.domain.SearchItem
 import com.example.ytaudio.network.autocomplete.AutoCompleteService
 import com.example.ytaudio.network.extractor.YTExtractor
 import com.example.ytaudio.network.youtube.YouTubeApiService
 import com.example.ytaudio.utils.extensions.forEachParallel
 import com.example.ytaudio.utils.extensions.mapParallel
+import com.example.ytaudio.vo.SearchItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

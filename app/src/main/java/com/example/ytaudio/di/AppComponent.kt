@@ -4,10 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.example.ytaudio.YTAudioApplication
 import com.example.ytaudio.di.factories.YTAudioWorkerFactory
-import com.example.ytaudio.di.modules.AppModule
-import com.example.ytaudio.di.modules.AudioServiceModule
-import com.example.ytaudio.di.modules.MainActivityModule
-import com.example.ytaudio.di.modules.WorkerModule
+import com.example.ytaudio.di.modules.*
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -22,7 +19,9 @@ import javax.inject.Singleton
         AppModule::class,
         MainActivityModule::class,
         AudioServiceModule::class,
-        WorkerModule::class
+        WorkerModule::class,
+        RepositoryModule::class,
+        UseCasesModule::class
     ]
 )
 interface AppComponent : AndroidInjector<YTAudioApplication> {

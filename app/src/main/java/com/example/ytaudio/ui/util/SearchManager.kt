@@ -1,4 +1,4 @@
-package com.example.ytaudio.search
+package com.example.ytaudio.ui.util
 
 import android.app.SearchManager
 import android.content.Context
@@ -12,6 +12,7 @@ import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
 import com.example.ytaudio.R
 import com.example.ytaudio.utils.extensions.hideKeyboard
+
 
 class SearchManager(
     searchItem: MenuItem,

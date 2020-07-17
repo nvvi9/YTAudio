@@ -1,40 +1,18 @@
-package com.example.ytaudio.main
+package com.example.ytaudio.ui.viewmodels
 
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.ytaudio.database.entities.AudioInfo
-import com.example.ytaudio.repositories.AudioRepository
+import com.example.ytaudio.repositories.PlaylistRepositoryImpl
 import com.example.ytaudio.service.AudioServiceConnection
 import com.example.ytaudio.utils.extensions.id
 import com.example.ytaudio.utils.extensions.isPlayEnabled
 import com.example.ytaudio.utils.extensions.isPlaying
 import com.example.ytaudio.utils.extensions.isPrepared
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainActivityViewModel @Inject constructor(
-    private val repository: AudioRepository,
+    private val repositoryImpl: PlaylistRepositoryImpl,
     private val audioServiceConnection: AudioServiceConnection
 ) : ViewModel() {
-
-    private val needUpdateObserver = Observer<List<AudioInfo>?> { list ->
-        list?.filter { it.needUpdate }?.let {
-            if (it.isNotEmpty()) {
-                updateAudioInfo(it)
-            }
-        }
-    }
-
-    private fun updateAudioInfo(audioList: List<AudioInfo>) {
-        viewModelScope.launch {
-            repository.updateAudioInfoList(audioList)
-        }
-    }
-
-    private val databaseAudioInfo = repository.audioInfoList.apply {
-        observeForever(needUpdateObserver)
-    }
 
     fun audioItemClicked(audioId: String) {
         playAudio(audioId, false)
@@ -74,10 +52,5 @@ class MainActivityViewModel @Inject constructor(
         } else {
             transportControls.playFromMediaId(audioId, null)
         }
-    }
-
-    override fun onCleared() {
-        databaseAudioInfo.removeObserver(needUpdateObserver)
-        super.onCleared()
     }
 }
