@@ -29,4 +29,6 @@
     <string name="close">close drawer</string>
     <string name="delete">Delete</string>
     <string name="add">Add</string>
+    <string name="playlist">Playlist</string>
+    <string name="youtube">YouTube</string>
 </resources>

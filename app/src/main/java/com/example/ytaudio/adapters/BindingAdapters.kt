@@ -1,6 +1,7 @@
 package com.example.ytaudio.adapters
 
 import android.text.format.DateUtils
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
@@ -74,11 +75,15 @@ fun ImageView.setThumbnail(item: SearchItem?) {
     item?.let {
         Glide.with(context)
             .load(it.thumbnailUri)
-            .apply(
-                RequestOptions()
-                    .placeholder(R.drawable.photo_white)
-                    .error(R.drawable.photo_white)
-            )
             .into(this)
+    }
+}
+
+@BindingAdapter("layoutFullscreen")
+fun View.bindLayoutFullscreen(previousFullscreen: Boolean, fullscreen: Boolean) {
+    if (previousFullscreen != fullscreen && fullscreen) {
+        systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }
 }
