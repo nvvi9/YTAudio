@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.ytaudio.ui.viewmodels.SearchViewModel" />
+            type="com.example.ytaudio.ui.viewmodels.YouTubeViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:liftOnScroll="true"
-            app:liftOnScrollTargetViewId="@id/video_items_view">
+            app:liftOnScrollTargetViewId="@id/youtube_items_view">
 
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
@@ -31,31 +31,24 @@
                 app:layout_scrollFlags="scroll|enterAlways|snap"
                 app:navigationIcon="@drawable/ic_search_white">
 
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:hint="@string/search"
-                    android:imeOptions="actionSearch"
-                    android:inputType="textCapWords"
-                    android:lines="1"
-                    android:selectAllOnFocus="true"
-                    android:textAppearance="?attr/textAppearanceSubtitle1"
-                    android:textSize="16sp" />
-
             </androidx.appcompat.widget.Toolbar>
 
         </com.google.android.material.appbar.AppBarLayout>
 
+        <ProgressBar
+            android:id="@+id/progress_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/video_items_view"
+            android:id="@+id/youtube_items_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            app:searchItemList="@{viewModel.searchItemList}"
-            tools:listitem="@layout/search_item" />
+            tools:listitem="@layout/item_youtube" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

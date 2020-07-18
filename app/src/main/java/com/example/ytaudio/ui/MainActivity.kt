@@ -36,9 +36,9 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
             bottomNav.setupWithNavController(navController)
 
             lifecycleScope.launchWhenResumed {
-                navController.addOnDestinationChangedListener { controller, destination, arguments ->
+                navController.addOnDestinationChangedListener { _, destination, _ ->
                     when (destination.id) {
-                        R.id.playlistFragment, R.id.searchFragment -> bottomNav.visibility =
+                        R.id.playlistFragment, R.id.youTubeFragment -> bottomNav.visibility =
                             View.VISIBLE
                         else -> bottomNav.visibility = View.GONE
                     }

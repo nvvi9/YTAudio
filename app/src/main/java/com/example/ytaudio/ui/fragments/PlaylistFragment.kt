@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
-import com.example.ytaudio.databinding.PlaylistFragmentBinding
+import com.example.ytaudio.databinding.FragmentPlaylistBinding
 import com.example.ytaudio.ui.adapters.PlaylistAdapter
 import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
 import com.example.ytaudio.ui.viewmodels.PlaylistViewModel
@@ -33,7 +33,7 @@ class PlaylistFragment : ActionModeFragment() {
         mainActivityViewModelFactory
     }
 
-    private lateinit var binding: PlaylistFragmentBinding
+    private lateinit var binding: FragmentPlaylistBinding
 
     private val playlistAdapter =
         PlaylistAdapter(this) {
@@ -46,14 +46,14 @@ class PlaylistFragment : ActionModeFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = PlaylistFragmentBinding.inflate(inflater)
+        binding = FragmentPlaylistBinding.inflate(inflater)
         val application = requireNotNull(this.activity).application
 
         playlistViewModel.networkFailure.observe(viewLifecycleOwner, Observer {
             binding.networkFailure.visibility = if (it) View.VISIBLE else View.GONE
         })
 
-        binding.viewModel = this.playlistViewModel
+        binding.viewModel = playlistViewModel
 
         binding.apply {
 

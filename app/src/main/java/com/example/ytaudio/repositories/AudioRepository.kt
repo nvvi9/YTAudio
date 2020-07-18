@@ -2,7 +2,7 @@ package com.example.ytaudio.repositories
 
 import android.support.v4.media.MediaMetadataCompat
 import androidx.lifecycle.Transformations
-import com.example.ytaudio.database.AudioDatabaseDao
+import com.example.ytaudio.db.AudioDatabaseDao
 import com.example.ytaudio.utils.extensions.toMediaMetadataList
 import javax.inject.Inject
 import javax.inject.Singleton

@@ -1,4 +1,4 @@
-package com.example.ytaudio.database.entities
+package com.example.ytaudio.data.audioinfo
 
 import com.github.kotvertolet.youtubejextractor.models.youtube.videoData.ThumbnailsItem
 

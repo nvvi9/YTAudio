@@ -13,7 +13,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.ytaudio.R
 import com.example.ytaudio.vo.PlaylistItem
-import com.example.ytaudio.vo.SearchItem
+import com.example.ytaudio.vo.YouTubeItem
 
 
 @BindingAdapter("audioTitle")
@@ -56,23 +56,23 @@ fun RecyclerView.setPlaylist(playlist: List<PlaylistItem>?) {
     (adapter as PlaylistAdapter).submitList(playlist?.sortedBy { it.title })
 }
 
-@BindingAdapter("searchItemList")
-fun RecyclerView.setSearchItemList(searchItemList: List<SearchItem>?) {
-    (adapter as SearchAdapter).submitList(searchItemList)
-}
+//@BindingAdapter("searchItemList")
+//fun RecyclerView.setSearchItemList(youTubeItemList: List<YouTubeItem>?) {
+//    (adapter as SearchAdapter).submitList(youTubeItemList)
+//}
 
 @BindingAdapter("videoTitle")
-fun TextView.setVideoTitle(item: SearchItem?) {
+fun TextView.setVideoTitle(item: YouTubeItem?) {
     text = item?.title
 }
 
 @BindingAdapter("channelTitle")
-fun TextView.setChannelTitle(item: SearchItem?) {
+fun TextView.setChannelTitle(item: YouTubeItem?) {
     text = item?.channelTitle
 }
 
 @BindingAdapter("videoThumbnail")
-fun ImageView.setThumbnail(item: SearchItem?) {
+fun ImageView.setThumbnail(item: YouTubeItem?) {
     item?.let {
         Glide.with(context)
             .load(it.thumbnailUri)

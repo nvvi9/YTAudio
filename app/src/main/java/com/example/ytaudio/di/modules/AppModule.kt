@@ -3,10 +3,10 @@ package com.example.ytaudio.di.modules
 import android.content.ComponentName
 import android.content.Context
 import androidx.room.Room
-import com.example.ytaudio.database.AudioDatabase
-import com.example.ytaudio.network.autocomplete.AutoCompleteService
-import com.example.ytaudio.network.extractor.YTExtractor
-import com.example.ytaudio.network.youtube.YouTubeApiService
+import com.example.ytaudio.db.AudioDatabase
+import com.example.ytaudio.network.AutoCompleteService
+import com.example.ytaudio.network.YTExtractor
+import com.example.ytaudio.network.YouTubeApiService
 import com.example.ytaudio.service.AudioService
 import com.example.ytaudio.service.AudioServiceConnection
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
@@ -79,4 +79,7 @@ class AppModule {
 
     @Provides
     fun provideCoroutineScopeIO() = CoroutineScope(Dispatchers.IO)
+
+    @Provides
+    fun provideDispatcherIO() = Dispatchers.IO
 }

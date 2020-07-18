@@ -12,7 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.ytaudio.R
-import com.example.ytaudio.databinding.AudioPlayerFragmentBinding
+import com.example.ytaudio.databinding.FragmentPlayerBinding
 import com.example.ytaudio.di.Injectable
 import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
 import com.example.ytaudio.ui.viewmodels.PlayerViewModel
@@ -26,7 +26,7 @@ class PlayerFragment : Fragment(), Injectable {
     @Inject
     lateinit var playerViewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var binding: AudioPlayerFragmentBinding
+    private lateinit var binding: FragmentPlayerBinding
 
     private val mainActivityViewModel: MainActivityViewModel by viewModels {
         mainActivityViewModelFactory
@@ -41,7 +41,7 @@ class PlayerFragment : Fragment(), Injectable {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = AudioPlayerFragmentBinding.inflate(inflater)
+        binding = FragmentPlayerBinding.inflate(inflater)
 
         playerViewModel.apply {
             currentAudioInfo.observe(viewLifecycleOwner, Observer { updateUI(it) })

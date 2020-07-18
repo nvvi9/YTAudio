@@ -1,21 +1,7 @@
 package com.example.ytaudio.ui.fragments
 
-import android.os.Bundle
-import android.view.*
-import android.widget.Toast
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
-import com.example.ytaudio.R
-import com.example.ytaudio.databinding.SearchFragmentBinding
-import com.example.ytaudio.ui.adapters.SearchAdapter
-import com.example.ytaudio.ui.util.SearchManager
-import com.example.ytaudio.ui.viewmodels.SearchViewModel
-import com.example.ytaudio.utils.extensions.hideKeyboard
-import javax.inject.Inject
 
-
+/*
 class SearchFragment : ActionModeFragment() {
 
     @Inject
@@ -85,3 +71,4 @@ class SearchFragment : ActionModeFragment() {
         super.onPause()
     }
 }
+ */

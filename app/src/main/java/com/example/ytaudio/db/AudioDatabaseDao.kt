@@ -1,8 +1,8 @@
-package com.example.ytaudio.database
+package com.example.ytaudio.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.example.ytaudio.database.entities.AudioInfo
+import com.example.ytaudio.data.audioinfo.AudioInfo
 
 @Dao
 interface AudioDatabaseDao {

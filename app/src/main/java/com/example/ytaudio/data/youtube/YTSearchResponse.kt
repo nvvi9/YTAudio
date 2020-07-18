@@ -1,12 +1,12 @@
-package com.example.ytaudio.network.youtube
+package com.example.ytaudio.data.youtube
 
-data class YTResponse(
+data class YTSearchResponse(
     val kind: String,
     val etag: String,
     val nextPageToken: String,
     val regionCode: String,
     val pageInfo: PageInfo,
-    val items: List<VideoItem>
+    val items: List<YTSearchItem>
 )
 
 data class PageInfo(
@@ -14,11 +14,11 @@ data class PageInfo(
     val resultsPerPage: Int
 )
 
-data class VideoItem(
+data class YTSearchItem(
     val kind: String,
     val etag: String,
     val id: Id,
-    val snippet: Snippet
+    val snippet: YTSearchSnippet
 )
 
 data class Id(
@@ -26,24 +26,24 @@ data class Id(
     val videoId: String
 )
 
-data class Snippet(
+data class YTSearchSnippet(
     val publishedAt: String,
     val channelId: String,
     val title: String,
     val description: String,
-    val thumbnails: Thumbnails,
+    val thumbnails: YTSearchThumbnails,
     val channelTitle: String,
     val liveBroadcastContent: String,
     val publishTime: String
 )
 
-data class Thumbnails(
-    val default: Thumbnail,
-    val medium: Thumbnail,
-    val high: Thumbnail
+data class YTSearchThumbnails(
+    val default: YTSearchThumbnail,
+    val medium: YTSearchThumbnail,
+    val high: YTSearchThumbnail
 )
 
-data class Thumbnail(
+data class YTSearchThumbnail(
     val url: String,
     val width: Int,
     val height: Int

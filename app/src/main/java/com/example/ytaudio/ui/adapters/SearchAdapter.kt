@@ -1,17 +1,10 @@
 package com.example.ytaudio.ui.adapters
 
-import android.view.*
-import androidx.recyclerview.widget.DiffUtil
-import com.example.ytaudio.R
-import com.example.ytaudio.databinding.SearchItemBinding
-import com.example.ytaudio.ui.fragments.SearchFragment
-import com.example.ytaudio.vo.SearchItem
-
-
+/*
 class SearchAdapter(
     private val fragment: SearchFragment,
-    clickListener: (SearchItem) -> Unit
-) : RecyclerViewAdapter<SearchItem, SearchItemBinding>(SearchItemDiffCallback(), fragment, clickListener) {
+    clickListener: (YouTubeItem) -> Unit
+) : RecyclerViewAdapter<YouTubeItem, SearchItemBinding>(SearchItemDiffCallback(), fragment, clickListener) {
 
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean =
         when (item?.itemId) {
@@ -45,11 +38,13 @@ class SearchAdapter(
 }
 
 
-private class SearchItemDiffCallback : DiffUtil.ItemCallback<SearchItem>() {
+private class SearchItemDiffCallback : DiffUtil.ItemCallback<YouTubeItem>() {
 
-    override fun areItemsTheSame(oldItem: SearchItem, newItem: SearchItem) =
+    override fun areItemsTheSame(oldItem: YouTubeItem, newItem: YouTubeItem) =
         oldItem.videoId == newItem.videoId
 
-    override fun areContentsTheSame(oldItem: SearchItem, newItem: SearchItem) =
+    override fun areContentsTheSame(oldItem: YouTubeItem, newItem: YouTubeItem) =
         oldItem == newItem
 }
+
+ */

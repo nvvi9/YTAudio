@@ -1,6 +1,6 @@
 package com.example.ytaudio.vo
 
-import com.example.ytaudio.database.entities.AudioInfo
+import com.example.ytaudio.data.audioinfo.AudioInfo
 
 
 data class PlaylistItem @JvmOverloads constructor(

@@ -6,9 +6,8 @@
     <data>
 
         <variable
-            name="searchItem"
-            type="com.example.ytaudio.vo.SearchItem" />
-
+            name="youTubeItem"
+            type="com.example.ytaudio.vo.YouTubeItem" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -33,7 +32,7 @@
             app:layout_constraintStart_toEndOf="@+id/video_thumbnail"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="spread_inside"
-            app:videoTitle="@{searchItem}"
+            app:videoTitle="@{youTubeItem}"
             tools:text="title" />
 
         <ImageView
@@ -47,7 +46,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:videoThumbnail="@{searchItem}"
+            app:videoThumbnail="@{youTubeItem}"
             tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
         <TextView
@@ -57,7 +56,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
             android:textSize="12sp"
-            app:channelTitle="@{searchItem}"
+            app:channelTitle="@{youTubeItem}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

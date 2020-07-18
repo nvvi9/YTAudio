@@ -1,8 +1,8 @@
-package com.example.ytaudio.database
+package com.example.ytaudio.db
 
 import androidx.room.TypeConverter
-import com.example.ytaudio.database.entities.AudioStream
-import com.example.ytaudio.database.entities.Thumbnail
+import com.example.ytaudio.data.audioinfo.AudioStream
+import com.example.ytaudio.data.audioinfo.Thumbnail
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

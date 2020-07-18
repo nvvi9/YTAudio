@@ -1,6 +1,6 @@
-package com.example.ytaudio.network.extractor
+package com.example.ytaudio.network
 
-import com.example.ytaudio.database.entities.AudioInfo
+import com.example.ytaudio.data.audioinfo.AudioInfo
 import com.github.kotvertolet.youtubejextractor.YoutubeJExtractor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

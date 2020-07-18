@@ -1,8 +1,9 @@
 package com.example.ytaudio.repositories
 
 import androidx.lifecycle.LiveData
-import com.example.ytaudio.database.AudioDatabaseDao
-import com.example.ytaudio.database.entities.AudioInfo
+import com.example.ytaudio.data.audioinfo.AudioInfo
+import com.example.ytaudio.db.AudioDatabaseDao
+import com.example.ytaudio.repositories.base.PlaylistRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

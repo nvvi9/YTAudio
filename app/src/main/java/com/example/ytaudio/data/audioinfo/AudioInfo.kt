@@ -1,4 +1,4 @@
-package com.example.ytaudio.database.entities
+package com.example.ytaudio.data.audioinfo
 
 import androidx.room.*
 import com.example.ytaudio.utils.LiveContentException
@@ -29,11 +29,22 @@ data class AudioInfo(
                 if (streamingData.expiresInSeconds == null) {
                     throw UriAliveTimeMissException("expires in seconds is null")
                 }
-                val audioDetails = AudioDetails.from(videoDetails)
+                val audioDetails =
+                    AudioDetails.from(
+                        videoDetails
+                    )
                 val thumbnails =
-                    videoDetails.thumbnail.thumbnails.map { Thumbnail.from(it) }
+                    videoDetails.thumbnail.thumbnails.map {
+                        Thumbnail.from(
+                            it
+                        )
+                    }
                 val audioStreams =
-                    streamingData.adaptiveAudioStreams.map { AudioStream.from(it) }
+                    streamingData.adaptiveAudioStreams.map {
+                        AudioStream.from(
+                            it
+                        )
+                    }
 
                 AudioInfo(
                     videoDetails.videoId, audioDetails, thumbnails, audioStreams,

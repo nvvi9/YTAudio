@@ -1,5 +1,6 @@
-package com.example.ytaudio.network.autocomplete
+package com.example.ytaudio.network
 
+import com.example.ytaudio.data.autocomplete.AutoComplete
 import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Query
