@@ -4,6 +4,6 @@
         android:id="@+id/playlistFragment"
         android:title="@string/playlist" />
     <item
-        android:id="@+id/searchFragment"
+        android:id="@+id/youTubeFragment"
         android:title="@string/search" />
 </menu>

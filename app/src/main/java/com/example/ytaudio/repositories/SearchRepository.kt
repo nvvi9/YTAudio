@@ -2,14 +2,14 @@ package com.example.ytaudio.repositories
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.ytaudio.database.AudioDatabaseDao
-import com.example.ytaudio.database.entities.AudioInfo
-import com.example.ytaudio.domain.SearchItem
-import com.example.ytaudio.network.autocomplete.AutoCompleteService
-import com.example.ytaudio.network.extractor.YTExtractor
-import com.example.ytaudio.network.youtube.YouTubeApiService
+import com.example.ytaudio.data.audioinfo.AudioInfo
+import com.example.ytaudio.db.AudioDatabaseDao
+import com.example.ytaudio.network.AutoCompleteService
+import com.example.ytaudio.network.YTExtractor
+import com.example.ytaudio.network.YouTubeApiService
 import com.example.ytaudio.utils.extensions.forEachParallel
 import com.example.ytaudio.utils.extensions.mapParallel
+import com.example.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -24,8 +24,8 @@ class SearchRepository @Inject constructor(
     ytExtractor: YTExtractor
 ) : BaseRepository(ytExtractor) {
 
-    private val _searchItemList = MutableLiveData<List<SearchItem>>()
-    val searchItemList: LiveData<List<SearchItem>>
+    private val _searchItemList = MutableLiveData<List<YouTubeItem>>()
+    val youTubeItemList: LiveData<List<YouTubeItem>>
         get() = _searchItemList
 
     private val _autoCompleteList = MutableLiveData<List<String>>()
@@ -34,10 +34,10 @@ class SearchRepository @Inject constructor(
 
     private val audioInfoList = mutableSetOf<AudioInfo>()
 
-    suspend fun setItemsFromResponse(query: String, maxResults: Int = 50) {
+    suspend fun setItemsFromResponse(query: String) {
         withContext(Dispatchers.IO) {
-            val list = ytService.getYTResponseAsync(query, maxResults).await()
-                .items.map { SearchItem.from(it) }
+            val list = ytService.getYTSearchResponseAsync(query).await()
+                .items.map { YouTubeItem.from(it) }
             _searchItemList.postValue(list)
 
             list.forEachParallel(Dispatchers.IO) { searchItem ->
@@ -58,7 +58,7 @@ class SearchRepository @Inject constructor(
         }
     }
 
-    suspend fun addDatabase(items: List<SearchItem>) {
+    suspend fun addDatabase(items: List<YouTubeItem>) {
         withContext(Dispatchers.IO) {
             val list = items.mapParallel(Dispatchers.IO) { searchItem ->
                 audioInfoList.find { audioInfo ->

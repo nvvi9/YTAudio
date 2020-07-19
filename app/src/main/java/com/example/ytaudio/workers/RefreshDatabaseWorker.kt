@@ -4,12 +4,11 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
-import com.example.ytaudio.repositories.AudioRepository
 import javax.inject.Inject
 
 
 class RefreshDatabaseWorker(
-    private val audioRepository: AudioRepository,
+    private val databaseUpdateManager: DatabaseUpdateManager,
     context: Context,
     params: WorkerParameters
 ) : CoroutineWorker(context, params) {
@@ -20,7 +19,7 @@ class RefreshDatabaseWorker(
 
     override suspend fun doWork(): Result {
         return try {
-            audioRepository.updateAllAudioInfo()
+            databaseUpdateManager.fullRefresh()
             Result.success()
         } catch (t: Throwable) {
             Result.retry()
@@ -29,10 +28,11 @@ class RefreshDatabaseWorker(
 
 
     class Factory @Inject constructor(
-        private val audioRepository: AudioRepository
+        private val databaseUpdateManager: DatabaseUpdateManager
     ) : ChildWorkerFactory {
+
         override fun create(context: Context, params: WorkerParameters): ListenableWorker {
-            return RefreshDatabaseWorker(audioRepository, context, params)
+            return RefreshDatabaseWorker(databaseUpdateManager, context, params)
         }
     }
 }

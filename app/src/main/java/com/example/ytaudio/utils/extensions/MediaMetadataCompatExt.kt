@@ -7,7 +7,7 @@ import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.RatingCompat
 import androidx.core.net.toUri
-import com.example.ytaudio.database.entities.AudioInfo
+import com.example.ytaudio.data.audioinfo.AudioInfo
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource

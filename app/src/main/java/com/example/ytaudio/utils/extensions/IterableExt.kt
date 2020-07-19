@@ -3,17 +3,19 @@ package com.example.ytaudio.utils.extensions
 import kotlinx.coroutines.*
 
 
-suspend fun <T> Iterable<T>.forEachParallel(f: suspend (T) -> Unit) =
-    withContext(Dispatchers.IO) { map { async { f(it) } }.awaitAll() }
+suspend fun <T> Iterable<T>.forEachParallel(block: suspend (T) -> Unit) =
+    withContext(Dispatchers.IO) { map { async { block(it) } }.awaitAll() }
 
 suspend fun <T> Iterable<T>.forEachParallel(
     dispatcher: CoroutineDispatcher,
-    f: suspend (T) -> Unit
+    block: suspend (T) -> Unit
+) = withContext(dispatcher) { map { async { block(it) } }.awaitAll() }
+
+suspend fun <T, V> Iterable<T>.mapParallel(block: suspend (T) -> V) =
+    withContext(Dispatchers.IO) { map { async { block(it) } }.awaitAll() }
+
+suspend fun <T, V> Iterable<T>.mapParallel(
+    dispatcher: CoroutineDispatcher,
+    block: suspend (T) -> V
 ) =
-    withContext(dispatcher) { map { async { f(it) } }.awaitAll() }
-
-suspend fun <T, V> Iterable<T>.mapParallel(f: suspend (T) -> V) =
-    withContext(Dispatchers.IO) { map { async { f(it) } }.awaitAll() }
-
-suspend fun <T, V> Iterable<T>.mapParallel(dispatcher: CoroutineDispatcher, f: suspend (T) -> V) =
-    withContext(dispatcher) { map { async { f(it) } }.awaitAll() }
+    withContext(dispatcher) { map { async { block(it) } }.awaitAll() }
