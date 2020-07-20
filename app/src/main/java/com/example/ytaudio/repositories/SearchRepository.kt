@@ -3,7 +3,7 @@ package com.example.ytaudio.repositories
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.ytaudio.data.audioinfo.AudioInfo
-import com.example.ytaudio.db.AudioDatabaseDao
+import com.example.ytaudio.db.PlaylistDao
 import com.example.ytaudio.network.AutoCompleteService
 import com.example.ytaudio.network.YTExtractor
 import com.example.ytaudio.network.YouTubeApiService
@@ -18,7 +18,7 @@ import javax.inject.Singleton
 
 @Singleton
 class SearchRepository @Inject constructor(
-    private val databaseDao: AudioDatabaseDao,
+    private val databaseDao: PlaylistDao,
     private val ytService: YouTubeApiService,
     private val autoCompleteService: AutoCompleteService,
     ytExtractor: YTExtractor
@@ -36,7 +36,7 @@ class SearchRepository @Inject constructor(
 
     suspend fun setItemsFromResponse(query: String) {
         withContext(Dispatchers.IO) {
-            val list = ytService.getYTSearchResponseAsync(query).await()
+            val list = ytService.getYTSearchResponseAsync(query)
                 .items.map { YouTubeItem.from(it) }
             _searchItemList.postValue(list)
 

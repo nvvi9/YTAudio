@@ -1,9 +1,11 @@
 package com.example.ytaudio.data.youtube
 
+
 data class YTSearchResponse(
     val kind: String,
     val etag: String,
-    val nextPageToken: String,
+    val nextPageToken: String? = null,
+    val prevPageToken: String? = null,
     val regionCode: String,
     val pageInfo: PageInfo,
     val items: List<YTSearchItem>

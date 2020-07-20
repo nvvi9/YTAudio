@@ -66,8 +66,18 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideDao(audioDatabase: AudioDatabase) =
-        audioDatabase.audioDatabaseDao
+    fun providePlaylistDao(audioDatabase: AudioDatabase) =
+        audioDatabase.playlistDao
+
+    @Singleton
+    @Provides
+    fun provideYTRemoteKeysDao(audioDatabase: AudioDatabase) =
+        audioDatabase.ytRemoteKeysDao
+
+    @Singleton
+    @Provides
+    fun provideYTVideosResponseDao(audioDatabase: AudioDatabase) =
+        audioDatabase.ytVideosResponseDao
 
     @Singleton
     @Provides

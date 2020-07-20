@@ -1,12 +1,18 @@
 package com.example.ytaudio.data.youtube
 
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
+
+@Entity
 data class YTVideosResponse(
+    @PrimaryKey val etag: String,
     val kind: String,
-    val etag: String,
     val items: List<YTVideosItem>,
-    val nextPageToken: String,
-    val pageInfo: YTVideosPageInfo
+    val nextPageToken: String? = null,
+    val prevPageToken: String? = null,
+    @Embedded val pageInfo: YTVideosPageInfo
 )
 
 data class YTVideosPageInfo(
@@ -15,9 +21,9 @@ data class YTVideosPageInfo(
 )
 
 data class YTVideosItem(
+    val id: String,
     val kind: String,
     val etag: String,
-    val id: String,
     val snippet: YTVideosSnippet
 )
 
@@ -50,5 +56,6 @@ data class YTVideosThumbnail(
 
 data class Localized(
     val title: String,
-    val description: String
+    val description: String,
+    val defaultAudioLanguage: String? = null
 )

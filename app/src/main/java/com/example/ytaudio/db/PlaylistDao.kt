@@ -5,7 +5,7 @@ import androidx.room.*
 import com.example.ytaudio.data.audioinfo.AudioInfo
 
 @Dao
-interface AudioDatabaseDao {
+interface PlaylistDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(audio: AudioInfo)

@@ -1,6 +1,6 @@
 package com.example.ytaudio.workers
 
-import com.example.ytaudio.db.AudioDatabaseDao
+import com.example.ytaudio.db.PlaylistDao
 import com.example.ytaudio.network.YTExtractor
 import com.example.ytaudio.utils.extensions.mapParallel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class DatabaseUpdateManager @Inject constructor(
     private val ytExtractor: YTExtractor,
-    private val databaseDao: AudioDatabaseDao,
+    private val databaseDao: PlaylistDao,
     private val dispatcher: CoroutineDispatcher
 ) {
 

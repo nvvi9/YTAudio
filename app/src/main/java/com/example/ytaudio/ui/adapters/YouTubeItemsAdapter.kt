@@ -2,40 +2,23 @@ package com.example.ytaudio.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.databinding.ItemYoutubeBinding
 import com.example.ytaudio.vo.YouTubeItem
 
+
 class YouTubeItemsAdapter(private val onClick: (YouTubeItem) -> Unit) :
-    ListAdapter<YouTubeItem, YouTubeItemsAdapter.ViewHolder>(YouTubeItemDiffCallback()) {
+    PagingDataAdapter<YouTubeItem, RecyclerView.ViewHolder>(YouTubeItemDiffCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        (holder as YouTubeItemViewHolder).bind(getItem(position))
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding = ItemYoutubeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder.from(binding)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position), onClick)
-    }
-
-
-    class ViewHolder private constructor(private val binding: ItemYoutubeBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(item: YouTubeItem, onClick: (YouTubeItem) -> Unit) {
-            binding.youTubeItem = item
-            binding.root.setOnClickListener { onClick(item) }
-            binding.executePendingBindings()
-        }
-
-
-        companion object {
-
-            fun from(binding: ItemYoutubeBinding) =
-                ViewHolder(binding)
-        }
+        return YouTubeItemViewHolder.create(binding, onClick)
     }
 }
 

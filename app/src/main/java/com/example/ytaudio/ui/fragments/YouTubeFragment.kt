@@ -50,7 +50,7 @@ class YouTubeFragment : Fragment(), Injectable {
                 is Error -> Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
                 is Result.Success -> {
                     binding.progressView.visibility = View.GONE
-                    youTubeItemsAdapter.submitList(it.data)
+//                    youTubeItemsAdapter.submitList(it.data)
                 }
             }
         })

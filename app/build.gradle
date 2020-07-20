@@ -65,6 +65,9 @@ dependencies {
     // Material
     implementation "com.google.android.material:material:$material_version"
 
+    // Paging
+    implementation "androidx.paging:paging-runtime:$paging_version"
+
     // Glide
     implementation "com.github.bumptech.glide:glide:$glide_version"
 

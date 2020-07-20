@@ -1,4 +1,4 @@
-package com.example.ytaudio.service
+package com.example.ytaudio.service.playback
 
 import android.content.BroadcastReceiver
 import android.content.Context

@@ -19,7 +19,7 @@ class YouTubeRepositoryImpl @Inject constructor(
     override suspend fun getVideosResponse(): Result<YTVideosResponse> =
         withContext(Dispatchers.IO) {
             try {
-                val response = ytApiService.getYTVideosResponseAsync().await()
+                val response = ytApiService.getYTVideosResponseAsync()
                 Result.Success(response)
             } catch (t: Throwable) {
                 Result.Error<YTVideosResponse>(t)
@@ -29,7 +29,7 @@ class YouTubeRepositoryImpl @Inject constructor(
     override suspend fun getSearchResponse(query: String): Result<YTSearchResponse> =
         withContext(Dispatchers.IO) {
             try {
-                val response = ytApiService.getYTSearchResponseAsync(query).await()
+                val response = ytApiService.getYTSearchResponseAsync(query)
                 Result.Success(response)
             } catch (t: Throwable) {
                 Result.Error<YTSearchResponse>(t)

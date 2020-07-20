@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.media.MediaBrowserServiceCompat
 import com.example.ytaudio.repositories.AudioRepository
 import com.example.ytaudio.service.notification.NotificationManager
+import com.example.ytaudio.service.playback.BecomingNoisyReceiver
 import com.example.ytaudio.service.playback.PlaybackPreparer
 import com.example.ytaudio.service.playback.QueueNavigator
 import com.example.ytaudio.utils.extensions.flag
@@ -29,11 +30,11 @@ open class AudioService : MediaBrowserServiceCompat() {
     @Inject
     lateinit var audioRepository: AudioRepository
 
+    private lateinit var playbackPreparer: PlaybackPreparer
     private lateinit var becomingNoisyReceiver: BecomingNoisyReceiver
     private lateinit var notificationManager: NotificationManager
     private lateinit var mediaSessionConnector: MediaSessionConnector
     private lateinit var mediaSession: MediaSessionCompat
-    private lateinit var playbackPreparer: PlaybackPreparer
 
     private var isForegroundService = false
 
@@ -71,7 +72,11 @@ open class AudioService : MediaBrowserServiceCompat() {
             PlayerNotificationListener()
         )
 
-        becomingNoisyReceiver = BecomingNoisyReceiver(this, mediaSession.sessionToken)
+        becomingNoisyReceiver =
+            BecomingNoisyReceiver(
+                this,
+                mediaSession.sessionToken
+            )
 
         mediaSessionConnector = MediaSessionConnector(mediaSession).also {
             val dataSourceFactory =
