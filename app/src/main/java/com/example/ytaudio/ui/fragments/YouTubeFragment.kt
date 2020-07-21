@@ -9,14 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.databinding.FragmentYoutubeBinding
 import com.example.ytaudio.di.Injectable
+import com.example.ytaudio.ui.adapters.YTLoadStateAdapter
 import com.example.ytaudio.ui.adapters.YouTubeItemsAdapter
 import com.example.ytaudio.ui.viewmodels.YouTubeViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,8 +27,6 @@ class YouTubeFragment : Fragment(), Injectable {
     lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
 
     private lateinit var binding: FragmentYoutubeBinding
-
-    private var job: Job? = null
 
     private val youTubeViewModel: YouTubeViewModel by viewModels {
         youTubeViewModelFactory
@@ -45,28 +42,34 @@ class YouTubeFragment : Fragment(), Injectable {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentYoutubeBinding.inflate(inflater)
-        val application = requireNotNull(activity).application
 
         binding.apply {
             viewModel = youTubeViewModel
-            youtubeItemsView.adapter = youTubeItemsAdapter
+            youtubeItemsView.adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
             youtubeItemsView
                 .addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
-
-            youtubeItemsView.layoutManager =
-                LinearLayoutManager(application, RecyclerView.VERTICAL, false)
-
+            swipeRefresh.setOnRefreshListener {
+                youTubeItemsAdapter.refresh()
+            }
             lifecycleOwner = this@YouTubeFragment
         }
 
+        setLoadState()
         setRecommended()
 
         return binding.root
     }
 
+    private fun setLoadState() {
+        lifecycleScope.launch {
+            youTubeItemsAdapter.loadStateFlow.collectLatest {
+                binding.swipeRefresh.isRefreshing = it.refresh is LoadState.Loading
+            }
+        }
+    }
+
     private fun setRecommended() {
-        job?.cancel()
-        job = lifecycleScope.launch {
+        lifecycleScope.launch {
             youTubeViewModel.getRecommended().collectLatest {
                 youTubeItemsAdapter.submitData(it)
             }

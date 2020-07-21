@@ -30,4 +30,5 @@
     <string name="add">Add</string>
     <string name="playlist">Playlist</string>
     <string name="youtube">YouTube</string>
+    <string name="network_failure_msg">Check your network connection and update</string>
 </resources>

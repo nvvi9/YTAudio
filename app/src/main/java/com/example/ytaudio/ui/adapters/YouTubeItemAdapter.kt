@@ -20,6 +20,28 @@ class YouTubeItemsAdapter(private val onClick: (YouTubeItem) -> Unit) :
         val binding = ItemYoutubeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return YouTubeItemViewHolder.create(binding, onClick)
     }
+
+
+    class YouTubeItemViewHolder private constructor(
+        private val binding: ItemYoutubeBinding,
+        private val onClick: (item: YouTubeItem) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(item: YouTubeItem?) {
+            item?.let {
+                binding.youTubeItem = item
+                binding.root.setOnClickListener {
+                    onClick(item)
+                }
+            }
+        }
+
+        companion object {
+
+            fun create(binding: ItemYoutubeBinding, onClick: (item: YouTubeItem) -> Unit) =
+                YouTubeItemViewHolder(binding, onClick)
+        }
+    }
 }
 
 

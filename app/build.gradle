@@ -62,6 +62,9 @@ dependencies {
     // LiveData, ViewModel
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_extensions_version"
 
+    // SwipeRefreshLayout
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swipe_refresh_layout_version"
+
     // Material
     implementation "com.google.android.material:material:$material_version"
 
