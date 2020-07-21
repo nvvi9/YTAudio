@@ -19,7 +19,7 @@ class PlaylistRepositoryImpl @Inject constructor(private val databaseDao: Playli
 
     override suspend fun deleteAudioInfo(audioId: List<String>) {
         withContext(Dispatchers.IO) {
-            databaseDao.delete(audioId)
+            databaseDao.deleteById(audioId)
         }
     }
 }

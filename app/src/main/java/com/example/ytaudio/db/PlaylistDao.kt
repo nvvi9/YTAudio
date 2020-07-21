@@ -13,8 +13,12 @@ interface PlaylistDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(audioList: List<AudioInfo>)
 
-    @Update
-    suspend fun update(audio: AudioInfo)
+    @Transaction
+    suspend fun updatePlaylist(items: List<AudioInfo>) {
+        val oldData = getAllAudioInfo()
+        update(items)
+        delete(oldData - items)
+    }
 
     @Update
     suspend fun update(audioList: List<AudioInfo>)
@@ -26,11 +30,8 @@ interface PlaylistDao {
     fun getAllAudio(): LiveData<List<AudioInfo>>
 
     @Delete
-    suspend fun delete(audio: AudioInfo)
+    suspend fun delete(items: List<AudioInfo>)
 
     @Query("DELETE FROM AudioInfo WHERE youtubeId IN (:idList)")
-    suspend fun delete(idList: List<String>)
-
-    @Query("DELETE FROM AudioInfo")
-    suspend fun clear()
+    suspend fun deleteById(idList: List<String>)
 }

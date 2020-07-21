@@ -14,6 +14,7 @@ import com.example.ytaudio.service.notification.NotificationManager
 import com.example.ytaudio.service.playback.BecomingNoisyReceiver
 import com.example.ytaudio.service.playback.PlaybackPreparer
 import com.example.ytaudio.service.playback.QueueNavigator
+import com.example.ytaudio.utils.Constants.MEDIA_ROOT_ID
 import com.example.ytaudio.utils.extensions.flag
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
@@ -170,4 +171,3 @@ open class AudioService : MediaBrowserServiceCompat() {
 
 const val NETWORK_FAILURE = "service network failure"
 private const val YTAUDIO_USER_AGENT = "ytaudio.next"
-const val MEDIA_ROOT_ID = "media_root_id"

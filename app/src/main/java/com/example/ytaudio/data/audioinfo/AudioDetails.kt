@@ -7,7 +7,7 @@ data class AudioDetails(
     val author: String,
     val channelId: String,
     val description: String,
-    val keywords: List<String>,
+    val keywords: List<String>? = null,
     val durationSeconds: Int,
     var averageRating: Double,
     var viewCount: String

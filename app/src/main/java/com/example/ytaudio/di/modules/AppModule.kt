@@ -16,8 +16,6 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory
@@ -94,10 +92,4 @@ class AppModule {
     @Provides
     fun provideYouTubeRemoteMediator(db: AudioDatabase, apiService: YouTubeApiService) =
         YouTubeRemoteMediator(apiService, db, db.ytRemoteKeysDao, db.ytVideosItemDao)
-
-    @Provides
-    fun provideCoroutineScopeIO() = CoroutineScope(Dispatchers.IO)
-
-    @Provides
-    fun provideDispatcherIO() = Dispatchers.IO
 }

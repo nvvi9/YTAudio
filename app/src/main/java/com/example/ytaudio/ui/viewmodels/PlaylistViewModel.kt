@@ -8,8 +8,8 @@ import com.example.ytaudio.R
 import com.example.ytaudio.domain.PlaylistUseCases
 import com.example.ytaudio.service.AudioServiceConnection
 import com.example.ytaudio.service.EMPTY_PLAYBACK_STATE
-import com.example.ytaudio.service.MEDIA_ROOT_ID
 import com.example.ytaudio.service.NOTHING_PLAYING
+import com.example.ytaudio.utils.Constants.MEDIA_ROOT_ID
 import com.example.ytaudio.utils.extensions.id
 import com.example.ytaudio.utils.extensions.isPlaying
 import com.example.ytaudio.vo.PlaylistItem

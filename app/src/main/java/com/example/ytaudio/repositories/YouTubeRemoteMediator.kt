@@ -29,7 +29,7 @@ class YouTubeRemoteMediator @Inject constructor(
         loadType: LoadType,
         state: PagingState<Int, YTVideosItem>
     ): MediatorResult {
-        val token = when (loadType) {
+        val pageToken = when (loadType) {
             LoadType.APPEND -> {
                 val remoteKeys = state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
                     ?.let { ytRemoteKeysDao.remoteKeysById(it.id) }
@@ -60,7 +60,7 @@ class YouTubeRemoteMediator @Inject constructor(
         }
 
         return try {
-            val ytVideosResponse = ytApiService.getYTVideosResponse(state.config.pageSize, token)
+            val ytVideosResponse = ytApiService.getYTVideosResponse(state.config.pageSize, pageToken)
             val items = ytVideosResponse.items
             val endOfPagination = items.isEmpty()
 

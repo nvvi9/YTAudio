@@ -2,6 +2,7 @@ package com.example.ytaudio.network
 
 import com.example.ytaudio.BuildConfig
 import com.example.ytaudio.data.youtube.YTSearchResponse
+import com.example.ytaudio.data.youtube.YTVideosPartId
 import com.example.ytaudio.data.youtube.YTVideosResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -19,4 +20,10 @@ interface YouTubeApiService {
         @Query("maxResults") maxResults: Int,
         @Query("pageToken") pageToken: String? = null
     ): YTVideosResponse
+
+    @GET("videos?key=${BuildConfig.YOUTUBE_API_KEY}&part=id&chart=mostPopular&videoCategoryId=10")
+    suspend fun getYTVideosIdResponse(
+        @Query("maxResults") maxResults: Int,
+        @Query("pageToken") pageToken: String? = null
+    ): YTVideosPartId
 }

@@ -7,11 +7,11 @@ data class YTSearchResponse(
     val nextPageToken: String? = null,
     val prevPageToken: String? = null,
     val regionCode: String,
-    val pageInfo: PageInfo,
+    val pageInfo: YTSearchPageInfo,
     val items: List<YTSearchItem>
 )
 
-data class PageInfo(
+data class YTSearchPageInfo(
     val totalResults: Int,
     val resultsPerPage: Int
 )

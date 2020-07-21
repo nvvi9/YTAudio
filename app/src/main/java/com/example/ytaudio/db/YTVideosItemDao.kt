@@ -14,8 +14,8 @@ interface YTVideosItemDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(items: List<YTVideosItem>)
 
-    @Query("SELECT * FROM YTVideosItem WHERE categoryId = :id")
-    fun itemsByCategoryId(id: String): PagingSource<Int, YTVideosItem>
+    @Query("SELECT * FROM YTVideosItem")
+    fun allItems(): PagingSource<Int, YTVideosItem>
 
     @Query("DELETE FROM YTVideosItem")
     suspend fun clear()

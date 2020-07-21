@@ -11,10 +11,4 @@ interface YouTubeRepository {
 
     fun getVideosResponse(): Flow<PagingData<YTVideosItem>>
     suspend fun getSearchResponse(query: String): Result<YTSearchResponse>
-
-    companion object {
-
-        val MUSIC_CATEGORY_ID = "10"
-        val PAGE_SIZE = 25
-    }
 }

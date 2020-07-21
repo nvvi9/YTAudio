@@ -9,6 +9,7 @@ import com.example.ytaudio.data.youtube.YTVideosItem
 import com.example.ytaudio.db.YTVideosItemDao
 import com.example.ytaudio.network.YouTubeApiService
 import com.example.ytaudio.repositories.base.YouTubeRepository
+import com.example.ytaudio.utils.Constants.PAGE_SIZE
 import com.example.ytaudio.vo.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -28,10 +29,10 @@ class YouTubeRepositoryImpl
 
     override fun getVideosResponse(): Flow<PagingData<YTVideosItem>> {
         val pagingSourceFactory =
-            { ytVideosItemDao.itemsByCategoryId(YouTubeRepository.MUSIC_CATEGORY_ID) }
+            { ytVideosItemDao.allItems() }
 
         return Pager(
-            config = PagingConfig(pageSize = YouTubeRepository.PAGE_SIZE),
+            config = PagingConfig(pageSize = PAGE_SIZE),
             remoteMediator = ytRemoteMediator,
             pagingSourceFactory = pagingSourceFactory
         ).flow
