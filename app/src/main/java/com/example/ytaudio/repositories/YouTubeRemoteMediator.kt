@@ -35,7 +35,7 @@ class YouTubeRemoteMediator @Inject constructor(
                     ?.let { ytRemoteKeysDao.remoteKeysById(it.id) }
 
                 if (remoteKeys?.nextPageToken == null) {
-                    throw InvalidObjectException("remote key should not be null for $loadType")
+                    return MediatorResult.Success(true)
                 }
 
                 remoteKeys.nextPageToken
