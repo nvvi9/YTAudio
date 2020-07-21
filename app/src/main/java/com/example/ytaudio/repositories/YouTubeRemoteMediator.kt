@@ -15,9 +15,11 @@ import retrofit2.HttpException
 import java.io.IOException
 import java.io.InvalidObjectException
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
 @ExperimentalPagingApi
+@Singleton
 class YouTubeRemoteMediator @Inject constructor(
     private val ytApiService: YouTubeApiService,
     private val database: AudioDatabase,
@@ -60,7 +62,8 @@ class YouTubeRemoteMediator @Inject constructor(
         }
 
         return try {
-            val ytVideosResponse = ytApiService.getYTVideosResponse(state.config.pageSize, pageToken)
+            val ytVideosResponse =
+                ytApiService.getYTVideosResponse(state.config.pageSize, pageToken)
             val items = ytVideosResponse.items
             val endOfPagination = items.isEmpty()
 

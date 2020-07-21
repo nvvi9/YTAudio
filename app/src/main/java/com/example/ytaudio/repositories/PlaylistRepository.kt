@@ -3,11 +3,18 @@ package com.example.ytaudio.repositories
 import androidx.lifecycle.LiveData
 import com.example.ytaudio.data.audioinfo.AudioInfo
 import com.example.ytaudio.db.PlaylistDao
-import com.example.ytaudio.repositories.base.PlaylistRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+
+
+interface PlaylistRepository {
+
+    val audioInfoList: LiveData<List<AudioInfo>>
+
+    suspend fun deleteAudioInfo(audioId: List<String>)
+}
 
 
 @Singleton
