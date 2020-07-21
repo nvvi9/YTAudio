@@ -11,11 +11,14 @@ import com.example.ytaudio.data.youtube.YTRemoteKeys
 interface YTRemoteKeysDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(keys: YTRemoteKeys)
+    suspend fun insert(keys: List<YTRemoteKeys>)
 
-    @Query("SELECT * FROM YTRemoteKeys WHERE etag = :tag")
-    suspend fun remoteKeyByTag(tag: String): YTRemoteKeys
+    @Query("SELECT * FROM YTRemoteKeys WHERE id = :id")
+    suspend fun remoteKeysById(id: String): YTRemoteKeys?
 
-    @Query("DELETE FROM YTRemoteKeys WHERE etag = :tag")
-    suspend fun deleteByTag(tag: String)
+    @Query("DELETE FROM YTRemoteKeys WHERE id = :id")
+    suspend fun deleteById(id: String)
+
+    @Query("DELETE FROM YTRemoteKeys")
+    suspend fun clear()
 }

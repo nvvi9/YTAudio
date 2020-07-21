@@ -5,14 +5,13 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 
-@Entity
 data class YTVideosResponse(
-    @PrimaryKey val etag: String,
+    val etag: String,
     val kind: String,
     val items: List<YTVideosItem>,
     val nextPageToken: String? = null,
     val prevPageToken: String? = null,
-    @Embedded val pageInfo: YTVideosPageInfo
+    val pageInfo: YTVideosPageInfo
 )
 
 data class YTVideosPageInfo(
@@ -20,11 +19,12 @@ data class YTVideosPageInfo(
     val resultsPerPage: Int
 )
 
+@Entity
 data class YTVideosItem(
-    val id: String,
+    @PrimaryKey val id: String,
     val kind: String,
     val etag: String,
-    val snippet: YTVideosSnippet
+    @Embedded val snippet: YTVideosSnippet
 )
 
 data class YTVideosSnippet(
@@ -44,7 +44,7 @@ data class YTVideosThumbnails(
     val default: YTVideosThumbnail,
     val medium: YTVideosThumbnail,
     val high: YTVideosThumbnail,
-    val standard: YTVideosThumbnail? = null,
+    val standard: YTVideosThumbnail?,
     val maxres: YTVideosThumbnail? = null
 )
 

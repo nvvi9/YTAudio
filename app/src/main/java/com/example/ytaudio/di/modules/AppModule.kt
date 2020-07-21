@@ -2,11 +2,13 @@ package com.example.ytaudio.di.modules
 
 import android.content.ComponentName
 import android.content.Context
+import androidx.paging.ExperimentalPagingApi
 import androidx.room.Room
 import com.example.ytaudio.db.AudioDatabase
 import com.example.ytaudio.network.AutoCompleteService
 import com.example.ytaudio.network.YTExtractor
 import com.example.ytaudio.network.YouTubeApiService
+import com.example.ytaudio.repositories.YouTubeRemoteMediator
 import com.example.ytaudio.service.AudioService
 import com.example.ytaudio.service.AudioServiceConnection
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
@@ -27,14 +29,14 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideMoshi() =
+    fun provideMoshi(): Moshi =
         Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .build()
 
     @Singleton
     @Provides
-    fun provideYTService(moshi: Moshi) =
+    fun provideYTService(moshi: Moshi): YouTubeApiService =
         Retrofit.Builder()
             .baseUrl("https://www.googleapis.com/youtube/v3/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
@@ -49,7 +51,7 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun provideAutoCompleteService() =
+    fun provideAutoCompleteService(): AutoCompleteService =
         Retrofit.Builder()
             .baseUrl("https://suggestqueries.google.com/complete/")
             .addConverterFactory(SimpleXmlConverterFactory.create())
@@ -66,18 +68,18 @@ class AppModule {
 
     @Singleton
     @Provides
-    fun providePlaylistDao(audioDatabase: AudioDatabase) =
-        audioDatabase.playlistDao
+    fun providePlaylistDao(database: AudioDatabase) =
+        database.playlistDao
 
     @Singleton
     @Provides
-    fun provideYTRemoteKeysDao(audioDatabase: AudioDatabase) =
-        audioDatabase.ytRemoteKeysDao
+    fun provideYTRemoteKeysDao(database: AudioDatabase) =
+        database.ytRemoteKeysDao
 
     @Singleton
     @Provides
-    fun provideYTVideosResponseDao(audioDatabase: AudioDatabase) =
-        audioDatabase.ytVideosResponseDao
+    fun provideYTVideosItemDao(database: AudioDatabase) =
+        database.ytVideosItemDao
 
     @Singleton
     @Provides
@@ -86,6 +88,12 @@ class AppModule {
             context,
             ComponentName(context, AudioService::class.java)
         )
+
+    @ExperimentalPagingApi
+    @Singleton
+    @Provides
+    fun provideYouTubeRemoteMediator(db: AudioDatabase, apiService: YouTubeApiService) =
+        YouTubeRemoteMediator(apiService, db, db.ytRemoteKeysDao, db.ytVideosItemDao)
 
     @Provides
     fun provideCoroutineScopeIO() = CoroutineScope(Dispatchers.IO)

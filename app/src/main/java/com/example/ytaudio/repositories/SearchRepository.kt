@@ -36,7 +36,7 @@ class SearchRepository @Inject constructor(
 
     suspend fun setItemsFromResponse(query: String) {
         withContext(Dispatchers.IO) {
-            val list = ytService.getYTSearchResponseAsync(query)
+            val list = ytService.getYTSearchResponse(query)
                 .items.map { YouTubeItem.from(it) }
             _searchItemList.postValue(list)
 

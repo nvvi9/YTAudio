@@ -6,69 +6,86 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.example.ytaudio.data.youtube.YTRemoteKeys
-import com.example.ytaudio.data.youtube.YTVideosResponse
+import com.example.ytaudio.data.youtube.YTVideosItem
 import com.example.ytaudio.db.AudioDatabase
 import com.example.ytaudio.db.YTRemoteKeysDao
-import com.example.ytaudio.db.YTVideosResponseDao
+import com.example.ytaudio.db.YTVideosItemDao
 import com.example.ytaudio.network.YouTubeApiService
 import retrofit2.HttpException
 import java.io.IOException
+import java.io.InvalidObjectException
 import javax.inject.Inject
 
 
 @ExperimentalPagingApi
-class YouTubeRemoteMediator(private val etag: String) : RemoteMediator<String, YTVideosResponse>() {
-
-    @Inject
-    lateinit var ytApiService: YouTubeApiService
-
-    @Inject
-    lateinit var database: AudioDatabase
-
-    @Inject
-    lateinit var ytRemoteKeysDao: YTRemoteKeysDao
-
-    @Inject
-    lateinit var ytVideosResponseDao: YTVideosResponseDao
-
+class YouTubeRemoteMediator @Inject constructor(
+    private val ytApiService: YouTubeApiService,
+    private val database: AudioDatabase,
+    private val ytRemoteKeysDao: YTRemoteKeysDao,
+    private val ytVideosItemDao: YTVideosItemDao
+) : RemoteMediator<Int, YTVideosItem>() {
 
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<String, YTVideosResponse>
+        state: PagingState<Int, YTVideosItem>
     ): MediatorResult {
-        try {
-            val loadKey = when (loadType) {
-                LoadType.REFRESH -> null
-                LoadType.PREPEND -> return MediatorResult.Success(true)
-                LoadType.APPEND -> {
-                    val remoteKey = database.withTransaction {
-                        ytRemoteKeysDao.remoteKeyByTag(etag)
-                    }
+        val token = when (loadType) {
+            LoadType.APPEND -> {
+                val remoteKeys = state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
+                    ?.let { ytRemoteKeysDao.remoteKeysById(it.id) }
 
-                    if (remoteKey.nextPageToken == null) {
-                        return MediatorResult.Success(true)
-                    }
-
-                    remoteKey.nextPageToken
+                if (remoteKeys?.nextPageToken == null) {
+                    throw InvalidObjectException("remote key should not be null for $loadType")
                 }
-            }
 
-            val response = ytApiService.getYTVideosResponseAsync(loadKey)
+                remoteKeys.nextPageToken
+            }
+            LoadType.PREPEND -> {
+                val remoteKeys =
+                    state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
+                        ?.let { ytRemoteKeysDao.remoteKeysById(it.id) }
+                        ?: throw InvalidObjectException("remote key and prevPageToken should not be null")
+
+                remoteKeys.prevPageToken ?: return MediatorResult.Success(true)
+            }
+            LoadType.REFRESH -> {
+                val remoteKeys = state.anchorPosition?.let {
+                    state.closestItemToPosition(it)?.id?.let { id ->
+                        ytRemoteKeysDao.remoteKeysById(id)
+                    }
+                }
+
+                remoteKeys?.nextPageToken
+            }
+        }
+
+        return try {
+            val ytVideosResponse = ytApiService.getYTVideosResponse(state.config.pageSize, token)
+            val items = ytVideosResponse.items
+            val endOfPagination = items.isEmpty()
 
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    ytVideosResponseDao.deleteByTag(etag)
-                    ytRemoteKeysDao.deleteByTag(etag)
+                    ytRemoteKeysDao.clear()
+                    ytVideosItemDao.clear()
                 }
 
-                ytRemoteKeysDao.insert(YTRemoteKeys(etag, response.nextPageToken))
-                ytVideosResponseDao.insert(response)
+                val keys = items.map {
+                    YTRemoteKeys(
+                        it.id, ytVideosResponse.prevPageToken,
+                        ytVideosResponse.nextPageToken
+                    )
+                }
+
+                ytRemoteKeysDao.insert(keys)
+                ytVideosItemDao.insert(items)
             }
-            return MediatorResult.Success(response.items.isEmpty())
+
+            MediatorResult.Success(endOfPagination)
         } catch (e: IOException) {
-            return MediatorResult.Error(e)
+            MediatorResult.Error(e)
         } catch (e: HttpException) {
-            return MediatorResult.Error(e)
+            MediatorResult.Error(e)
         }
     }
 }

@@ -9,14 +9,14 @@ import retrofit2.http.Query
 interface YouTubeApiService {
 
     @GET("search?key=${BuildConfig.YOUTUBE_API_KEY}&part=snippet&type=video")
-    suspend fun getYTSearchResponseAsync(
+    suspend fun getYTSearchResponse(
         @Query("q") q: String,
         @Query("maxResults") maxResults: Int = 25
     ): YTSearchResponse
 
     @GET("videos?key=${BuildConfig.YOUTUBE_API_KEY}&part=snippet&chart=mostPopular&videoCategoryId=10")
-    suspend fun getYTVideosResponseAsync(
-        @Query("nextPage") nextPageToken: String? = null,
-        @Query("maxResults") maxResults: Int = 25
+    suspend fun getYTVideosResponse(
+        @Query("maxResults") maxResults: Int,
+        @Query("pageToken") pageToken: String? = null
     ): YTVideosResponse
 }
