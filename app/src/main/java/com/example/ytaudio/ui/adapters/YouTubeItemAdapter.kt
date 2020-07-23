@@ -16,10 +16,8 @@ class YouTubeItemsAdapter(private val onClick: (YouTubeItem) -> Unit) :
         (holder as YouTubeItemViewHolder).bind(getItem(position))
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val binding = ItemYoutubeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return YouTubeItemViewHolder.create(binding, onClick)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+        YouTubeItemViewHolder.create(parent, onClick)
 
 
     class YouTubeItemViewHolder private constructor(
@@ -37,9 +35,15 @@ class YouTubeItemsAdapter(private val onClick: (YouTubeItem) -> Unit) :
         }
 
         companion object {
+            fun create(
+                parent: ViewGroup,
+                onClick: (item: YouTubeItem) -> Unit
+            ): YouTubeItemViewHolder {
+                val binding =
+                    ItemYoutubeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
-            fun create(binding: ItemYoutubeBinding, onClick: (item: YouTubeItem) -> Unit) =
-                YouTubeItemViewHolder(binding, onClick)
+                return YouTubeItemViewHolder(binding, onClick)
+            }
         }
     }
 }

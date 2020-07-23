@@ -25,7 +25,7 @@ class RefreshDatabaseWorker(
     override suspend fun doWork(): Result {
         return try {
             playlistDao.getAllAudioInfo()
-                .mapParallel(Dispatchers.IO) { ytExtractor.extractInfo(it.youtubeId) }
+                .mapParallel(Dispatchers.IO) { ytExtractor.extractAudioInfo(it.youtubeId) }
                 .filterNotNull().let { playlistDao.updatePlaylist(it) }
             Result.success()
         } catch (t: Throwable) {

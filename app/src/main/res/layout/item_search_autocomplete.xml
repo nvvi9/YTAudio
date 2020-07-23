@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="data"
+            type="String" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/icon_search"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="8dp"
+            android:layout_marginStart="44dp"
+            android:contentDescription="@string/search"
+            app:layout_constraintBottom_toBottomOf="@+id/autocomplete_text_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/autocomplete_text_view"
+            app:srcCompat="@drawable/ic_search_white" />
+
+        <TextView
+            android:id="@+id/autocomplete_text_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:gravity="clip_vertical|center_vertical|fill_vertical"
+            android:text="@{data}"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/fill_search_view_button"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/icon_search"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="autocomplete" />
+
+        <ImageButton
+            android:id="@+id/fill_search_view_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/autocomplete_arrow_description"
+            android:scaleType="center"
+            android:src="@drawable/north_west_white"
+            app:layout_constraintBottom_toBottomOf="@+id/autocomplete_text_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/autocomplete_text_view" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

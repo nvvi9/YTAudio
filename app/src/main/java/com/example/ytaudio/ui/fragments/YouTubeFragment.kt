@@ -41,9 +41,7 @@ class YouTubeFragment : Fragment(), Injectable {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentYoutubeBinding.inflate(inflater)
-
-        binding.apply {
+        binding = FragmentYoutubeBinding.inflate(inflater).apply {
             viewModel = youTubeViewModel
             youtubeItemsView.adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
             youtubeItemsView

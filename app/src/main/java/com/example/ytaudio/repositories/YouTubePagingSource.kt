@@ -22,7 +22,7 @@ class YouTubePagingSource @Inject constructor(
         return try {
             val ytVideosPartId = ytApiService.getYTVideosIdResponse(params.loadSize, params.key)
             val items = ytVideosPartId.items
-                .mapParallel(Dispatchers.IO) { ytExtractor.extractInfo(it.id) }.filterNotNull()
+                .mapParallel(Dispatchers.IO) { ytExtractor.extractAudioInfo(it.id) }.filterNotNull()
             LoadResult.Page(
                 data = items,
                 prevKey = ytVideosPartId.prevPageToken,

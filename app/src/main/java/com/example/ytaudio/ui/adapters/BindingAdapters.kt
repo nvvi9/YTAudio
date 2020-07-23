@@ -56,6 +56,11 @@ fun RecyclerView.setPlaylist(playlist: List<PlaylistItem>?) {
     (adapter as PlaylistAdapter).submitList(playlist?.sortedBy { it.title })
 }
 
+@BindingAdapter("stringList")
+fun RecyclerView.setStringList(items: List<String>?) {
+    (adapter as SearchAutocompleteAdapter).submitList(items)
+}
+
 //@BindingAdapter("searchItemList")
 //fun RecyclerView.setSearchItemList(youTubeItemList: List<YouTubeItem>?) {
 //    (adapter as SearchAdapter).submitList(youTubeItemList)

@@ -4,10 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.ytaudio.di.factories.ViewModelFactory
 import com.example.ytaudio.di.keys.ViewModelKey
-import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
-import com.example.ytaudio.ui.viewmodels.PlayerViewModel
-import com.example.ytaudio.ui.viewmodels.PlaylistViewModel
-import com.example.ytaudio.ui.viewmodels.YouTubeViewModel
+import com.example.ytaudio.ui.viewmodels.*
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -35,6 +32,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(YouTubeViewModel::class)
     abstract fun bindYouTubeViewModel(youTubeViewModel: YouTubeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SearchViewModel::class)
+    abstract fun bindSearchViewModel(searchViewModel: SearchViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
