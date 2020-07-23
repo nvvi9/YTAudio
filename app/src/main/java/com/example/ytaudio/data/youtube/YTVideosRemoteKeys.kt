@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 
 @Entity
-data class YTRemoteKeys(
+data class YTVideosRemoteKeys(
     @PrimaryKey val id: String,
     val prevPageToken: String?,
     val nextPageToken: String?

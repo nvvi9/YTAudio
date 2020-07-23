@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.ytaudio.databinding.FragmentYoutubeBinding
@@ -41,7 +42,12 @@ class YouTubeFragment : Fragment(), Injectable {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentYoutubeBinding.inflate(inflater).apply {
+        binding = FragmentYoutubeBinding.inflate(inflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.apply {
             viewModel = youTubeViewModel
             youtubeItemsView.adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
             youtubeItemsView
@@ -49,13 +55,14 @@ class YouTubeFragment : Fragment(), Injectable {
             swipeRefresh.setOnRefreshListener {
                 youTubeItemsAdapter.refresh()
             }
+            binding.toolbar.setNavigationOnClickListener {
+                findNavController().navigate(YouTubeFragmentDirections.actionYouTubeFragmentToSearchFragment())
+            }
             lifecycleOwner = this@YouTubeFragment
         }
 
         setLoadState()
         setRecommended()
-
-        return binding.root
     }
 
     private fun setLoadState() {

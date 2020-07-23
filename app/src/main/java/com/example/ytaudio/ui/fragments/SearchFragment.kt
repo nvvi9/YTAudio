@@ -30,7 +30,7 @@ class SearchFragment : Fragment(), Injectable {
 
     private val adapter = SearchAutocompleteAdapter(AutocompleteAdapterClickListener(
         { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() },
-        { binding.searchText.setText(it) }
+        { binding.searchToolbar.searchText.setText(it) }
     ))
 
     override fun onCreateView(
@@ -42,7 +42,7 @@ class SearchFragment : Fragment(), Injectable {
             viewModel = searchViewModel
             recyclerView.adapter = adapter
             lifecycleOwner = this@SearchFragment
-            searchText.addTextChangedListener {
+            searchToolbar.searchText.addTextChangedListener {
                 searchViewModel.setAutocomplete(it.toString())
             }
         }

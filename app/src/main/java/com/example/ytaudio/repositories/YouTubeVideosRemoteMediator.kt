@@ -5,11 +5,11 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.example.ytaudio.data.youtube.YTRemoteKeys
 import com.example.ytaudio.data.youtube.YTVideosItem
+import com.example.ytaudio.data.youtube.YTVideosRemoteKeys
 import com.example.ytaudio.db.AudioDatabase
-import com.example.ytaudio.db.YTRemoteKeysDao
 import com.example.ytaudio.db.YTVideosItemDao
+import com.example.ytaudio.db.YTVideosRemoteKeysDao
 import com.example.ytaudio.network.YouTubeApiService
 import retrofit2.HttpException
 import java.io.IOException
@@ -20,10 +20,10 @@ import javax.inject.Singleton
 
 @ExperimentalPagingApi
 @Singleton
-class YouTubeRemoteMediator @Inject constructor(
+class YouTubeVideosRemoteMediator @Inject constructor(
     private val ytApiService: YouTubeApiService,
     private val database: AudioDatabase,
-    private val ytRemoteKeysDao: YTRemoteKeysDao,
+    private val ytVideosRemoteKeysDao: YTVideosRemoteKeysDao,
     private val ytVideosItemDao: YTVideosItemDao
 ) : RemoteMediator<Int, YTVideosItem>() {
 
@@ -34,7 +34,7 @@ class YouTubeRemoteMediator @Inject constructor(
         val pageToken = when (loadType) {
             LoadType.APPEND -> {
                 val remoteKeys = state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
-                    ?.let { ytRemoteKeysDao.remoteKeysById(it.id) }
+                    ?.let { ytVideosRemoteKeysDao.remoteKeysById(it.id) }
 
                 if (remoteKeys?.nextPageToken == null) {
                     return MediatorResult.Success(true)
@@ -45,7 +45,7 @@ class YouTubeRemoteMediator @Inject constructor(
             LoadType.PREPEND -> {
                 val remoteKeys =
                     state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
-                        ?.let { ytRemoteKeysDao.remoteKeysById(it.id) }
+                        ?.let { ytVideosRemoteKeysDao.remoteKeysById(it.id) }
                         ?: throw InvalidObjectException("remote key and prevPageToken should not be null")
 
                 remoteKeys.prevPageToken ?: return MediatorResult.Success(true)
@@ -53,7 +53,7 @@ class YouTubeRemoteMediator @Inject constructor(
             LoadType.REFRESH -> {
                 val remoteKeys = state.anchorPosition?.let {
                     state.closestItemToPosition(it)?.id?.let { id ->
-                        ytRemoteKeysDao.remoteKeysById(id)
+                        ytVideosRemoteKeysDao.remoteKeysById(id)
                     }
                 }
 
@@ -69,18 +69,18 @@ class YouTubeRemoteMediator @Inject constructor(
 
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    ytRemoteKeysDao.clear()
+                    ytVideosRemoteKeysDao.clear()
                     ytVideosItemDao.clear()
                 }
 
                 val keys = items.map {
-                    YTRemoteKeys(
+                    YTVideosRemoteKeys(
                         it.id, ytVideosResponse.prevPageToken,
                         ytVideosResponse.nextPageToken
                     )
                 }
 
-                ytRemoteKeysDao.insert(keys)
+                ytVideosRemoteKeysDao.insert(keys)
                 ytVideosItemDao.insert(items)
             }
 

@@ -5,13 +5,7 @@ import androidx.room.*
 import com.example.ytaudio.data.audioinfo.AudioInfo
 
 @Dao
-interface PlaylistDao {
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(audio: AudioInfo)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(audioList: List<AudioInfo>)
+interface PlaylistDao : BaseDao<AudioInfo> {
 
     @Transaction
     suspend fun updatePlaylist(items: List<AudioInfo>) {

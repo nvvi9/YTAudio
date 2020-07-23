@@ -15,30 +15,9 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clipChildren="false"
-            android:minHeight="?attr/actionBarSize"
-            app:contentInsetStartWithNavigation="0dp"
-            app:navigationIcon="@drawable/arrow_back_white">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/search_text_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/search"
-                app:boxBackgroundMode="filled"
-                app:endIconMode="clear_text"
-                app:shapeAppearance="?attr/shapeAppearanceOverlay">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/search_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text|textAutoComplete" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </androidx.appcompat.widget.Toolbar>
+        <include
+            android:id="@+id/search_toolbar"
+            layout="@layout/toolbar_search" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"

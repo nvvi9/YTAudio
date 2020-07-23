@@ -8,7 +8,7 @@ import com.example.ytaudio.db.AudioDatabase
 import com.example.ytaudio.network.AutoCompleteService
 import com.example.ytaudio.network.YTExtractor
 import com.example.ytaudio.network.YouTubeApiService
-import com.example.ytaudio.repositories.YouTubeRemoteMediator
+import com.example.ytaudio.repositories.YouTubeVideosRemoteMediator
 import com.example.ytaudio.service.AudioService
 import com.example.ytaudio.service.AudioServiceConnection
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
@@ -72,7 +72,7 @@ class AppModule {
     @Singleton
     @Provides
     fun provideYTRemoteKeysDao(database: AudioDatabase) =
-        database.ytRemoteKeysDao
+        database.ytVideosRemoteKeysDao
 
     @Singleton
     @Provides
@@ -91,5 +91,5 @@ class AppModule {
     @Singleton
     @Provides
     fun provideYouTubeRemoteMediator(db: AudioDatabase, apiService: YouTubeApiService) =
-        YouTubeRemoteMediator(apiService, db, db.ytRemoteKeysDao, db.ytVideosItemDao)
+        YouTubeVideosRemoteMediator(apiService, db, db.ytVideosRemoteKeysDao, db.ytVideosItemDao)
 }
