@@ -26,6 +26,6 @@ interface PlaylistDao : BaseDao<AudioInfo> {
     @Delete
     suspend fun delete(items: List<AudioInfo>)
 
-    @Query("DELETE FROM AudioInfo WHERE youtubeId IN (:idList)")
+    @Query("DELETE FROM AudioInfo WHERE id IN (:idList)")
     suspend fun deleteById(idList: List<String>)
 }

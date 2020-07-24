@@ -4,9 +4,8 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.example.ytaudio.data.audioinfo.AudioInfo
-import com.example.ytaudio.data.youtube.YTVideosItem
-import com.example.ytaudio.db.YTVideosItemDao
+import com.example.ytaudio.data.videodata.VideoData
+import com.example.ytaudio.db.VideoDataDao
 import com.example.ytaudio.network.YTExtractor
 import com.example.ytaudio.network.YouTubeApiService
 import com.example.ytaudio.utils.Constants.PAGE_SIZE
@@ -17,8 +16,8 @@ import javax.inject.Singleton
 
 interface YouTubeRepository {
 
-    fun getVideosResponse(): Flow<PagingData<YTVideosItem>>
-    fun getSearchResponse(query: String): Flow<PagingData<AudioInfo>>
+    fun getVideosResponse(): Flow<PagingData<VideoData>>
+    fun getSearchResponse(query: String): Flow<PagingData<VideoData>>
 }
 
 
@@ -27,17 +26,17 @@ interface YouTubeRepository {
 class YouTubeRepositoryImpl @Inject constructor(
     private val ytApiService: YouTubeApiService,
     private val ytExtractor: YTExtractor,
-    private val ytVideosItemDao: YTVideosItemDao,
-    private val ytVideosRemoteMediator: YouTubeVideosRemoteMediator
+    private val videoDataDao: VideoDataDao,
+    private val ytVideoDataRemoteMediator: YTVideoDataRemoteMediator
 ) : YouTubeRepository {
 
-    override fun getVideosResponse(): Flow<PagingData<YTVideosItem>> = Pager(
+    override fun getVideosResponse(): Flow<PagingData<VideoData>> = Pager(
         config = PagingConfig(PAGE_SIZE),
-        remoteMediator = ytVideosRemoteMediator,
-        pagingSourceFactory = { ytVideosItemDao.allItems() }
+        remoteMediator = ytVideoDataRemoteMediator,
+        pagingSourceFactory = { videoDataDao.allItems() }
     ).flow
 
-    override fun getSearchResponse(query: String): Flow<PagingData<AudioInfo>> =
+    override fun getSearchResponse(query: String): Flow<PagingData<VideoData>> =
         Pager(PagingConfig(PAGE_SIZE)) { YTSearchPagingSource(query, ytApiService, ytExtractor) }
             .flow
 }

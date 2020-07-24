@@ -1,7 +1,7 @@
 package com.example.ytaudio.repositories
 
 import androidx.paging.PagingSource
-import com.example.ytaudio.data.audioinfo.AudioInfo
+import com.example.ytaudio.data.videodata.VideoData
 import com.example.ytaudio.network.YTExtractor
 import com.example.ytaudio.network.YouTubeApiService
 import kotlinx.coroutines.Dispatchers
@@ -15,16 +15,16 @@ class YTSearchPagingSource(
     private val query: String,
     private val ytApiService: YouTubeApiService,
     private val ytExtractor: YTExtractor
-) : PagingSource<String, AudioInfo>() {
+) : PagingSource<String, VideoData>() {
 
 
     @FlowPreview
-    override suspend fun load(params: LoadParams<String>): LoadResult<String, AudioInfo> =
+    override suspend fun load(params: LoadParams<String>): LoadResult<String, VideoData> =
         try {
             val ytSearchPartId = ytApiService.getYTSearchPartId(query, params.loadSize, params.key)
 
             val items = ytSearchPartId.items.asFlow()
-                .flatMapMerge { ytExtractor.extractAudioInfoFlow(it.id.videoId) }
+                .flatMapMerge { ytExtractor.extractVideoDataFlow(it.id.videoId) }
                 .flowOn(Dispatchers.IO)
                 .filterNotNull()
                 .toList()

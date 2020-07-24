@@ -65,7 +65,6 @@ class YouTubeVideosRemoteMediator @Inject constructor(
             val ytVideosResponse =
                 ytApiService.getYTVideosResponse(state.config.pageSize, pageToken)
             val items = ytVideosResponse.items
-            val endOfPagination = items.isEmpty()
 
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
@@ -84,7 +83,7 @@ class YouTubeVideosRemoteMediator @Inject constructor(
                 ytVideosItemDao.insert(items)
             }
 
-            MediatorResult.Success(endOfPagination)
+            MediatorResult.Success(items.isEmpty())
         } catch (e: IOException) {
             MediatorResult.Error(e)
         } catch (e: HttpException) {

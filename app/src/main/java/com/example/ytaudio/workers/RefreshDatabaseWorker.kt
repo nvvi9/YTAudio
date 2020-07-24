@@ -7,6 +7,7 @@ import androidx.work.WorkerParameters
 import com.example.ytaudio.db.PlaylistDao
 import com.example.ytaudio.network.YTExtractor
 import com.example.ytaudio.utils.extensions.mapParallel
+import com.example.ytaudio.utils.extensions.toAudioInfo
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
@@ -25,7 +26,7 @@ class RefreshDatabaseWorker(
     override suspend fun doWork(): Result {
         return try {
             playlistDao.getAllAudioInfo()
-                .mapParallel(Dispatchers.IO) { ytExtractor.extractAudioInfo(it.youtubeId) }
+                .mapParallel(Dispatchers.IO) { ytExtractor.extractVideoData(it.id)?.toAudioInfo() }
                 .filterNotNull().let { playlistDao.updatePlaylist(it) }
             Result.success()
         } catch (t: Throwable) {

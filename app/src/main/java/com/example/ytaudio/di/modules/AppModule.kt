@@ -8,6 +8,7 @@ import com.example.ytaudio.db.AudioDatabase
 import com.example.ytaudio.network.AutoCompleteService
 import com.example.ytaudio.network.YTExtractor
 import com.example.ytaudio.network.YouTubeApiService
+import com.example.ytaudio.repositories.YTVideoDataRemoteMediator
 import com.example.ytaudio.repositories.YouTubeVideosRemoteMediator
 import com.example.ytaudio.service.AudioService
 import com.example.ytaudio.service.AudioServiceConnection
@@ -25,15 +26,15 @@ import javax.inject.Singleton
 @Module(includes = [ViewModelModule::class])
 class AppModule {
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideMoshi(): Moshi =
         Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .build()
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideYTService(moshi: Moshi): YouTubeApiService =
         Retrofit.Builder()
             .baseUrl("https://www.googleapis.com/youtube/v3/")
@@ -42,13 +43,13 @@ class AppModule {
             .build()
             .create(YouTubeApiService::class.java)
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideYTExtractor() =
         YTExtractor()
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideAutoCompleteService(): AutoCompleteService =
         Retrofit.Builder()
             .baseUrl("https://suggestqueries.google.com/complete/")
@@ -57,39 +58,62 @@ class AppModule {
             .build()
             .create(AutoCompleteService::class.java)
 
-    @Singleton
     @Provides
+    @Singleton
     fun provideDb(context: Context) =
         Room.databaseBuilder(context, AudioDatabase::class.java, "YTAudio.db")
             .fallbackToDestructiveMigration()
             .build()
 
-    @Singleton
     @Provides
+    @Singleton
     fun providePlaylistDao(database: AudioDatabase) =
         database.playlistDao
 
-    @Singleton
     @Provides
-    fun provideYTRemoteKeysDao(database: AudioDatabase) =
-        database.ytVideosRemoteKeysDao
-
     @Singleton
-    @Provides
     fun provideYTVideosItemDao(database: AudioDatabase) =
         database.ytVideosItemDao
 
-    @Singleton
     @Provides
+    @Singleton
+    fun provideVideoDataDao(database: AudioDatabase) =
+        database.videoDataDao
+
+    @Provides
+    @Singleton
+    fun provideVideoDataRemoteKeys(database: AudioDatabase) =
+        database.videoDataRemoteKeysDao
+
+    @Provides
+    @Singleton
+    fun provideYTRemoteKeysDao(database: AudioDatabase) =
+        database.ytVideosRemoteKeysDao
+
+    @Provides
+    @Singleton
     fun provideMediaPlaybackServiceConnection(context: Context) =
         AudioServiceConnection.getInstance(
-            context,
-            ComponentName(context, AudioService::class.java)
+            context, ComponentName(context, AudioService::class.java)
         )
 
     @ExperimentalPagingApi
-    @Singleton
     @Provides
+    @Singleton
+    fun provideYTVideoDataRemoteMediator(
+        db: AudioDatabase,
+        apiService: YouTubeApiService,
+        ytExtractor: YTExtractor
+    ) =
+        YTVideoDataRemoteMediator(
+            apiService, ytExtractor, db,
+            db.videoDataRemoteKeysDao,
+            db.videoDataDao
+        )
+
+    @ExperimentalPagingApi
+    @Provides
+    @Singleton
     fun provideYouTubeRemoteMediator(db: AudioDatabase, apiService: YouTubeApiService) =
         YouTubeVideosRemoteMediator(apiService, db, db.ytVideosRemoteKeysDao, db.ytVideosItemDao)
 }

@@ -1,6 +1,6 @@
 package com.example.ytaudio.network
 
-import com.example.ytaudio.data.audioinfo.AudioInfo
+import com.example.ytaudio.utils.extensions.toVideoData
 import com.github.kotvertolet.youtubejextractor.YoutubeJExtractor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -11,31 +11,31 @@ import kotlinx.coroutines.withContext
 
 class YTExtractor : YoutubeJExtractor() {
 
-    suspend fun extractAudioInfoIO(id: String) =
+    suspend fun extractVideoDataIO(id: String) =
         withContext(Dispatchers.IO) {
-            getAudioInfo(id)
+            getVideoData(id)
         }
 
-    suspend fun extractAudioInfoAsync(id: String) =
+    suspend fun extractVideoDataAsync(id: String) =
         coroutineScope {
             async {
-                getAudioInfo(id)
+                getVideoData(id)
             }
         }
 
-    suspend fun extractAudioInfo(id: String) =
+    suspend fun extractVideoData(id: String) =
         coroutineScope {
-            getAudioInfo(id)
+            getVideoData(id)
         }
 
-    fun extractAudioInfoFlow(id: String) = flow {
-        emit(getAudioInfo(id))
+    fun extractVideoDataFlow(id: String) = flow {
+        emit(getVideoData(id)?.toVideoData())
     }
 
-    private fun getAudioInfo(id: String) =
+    private fun getVideoData(id: String) =
         try {
             super.extract(id)
         } catch (t: Throwable) {
             null
-        }?.let { AudioInfo.from(it) }
+        }
 }

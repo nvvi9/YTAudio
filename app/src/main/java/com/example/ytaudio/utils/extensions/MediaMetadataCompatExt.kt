@@ -202,10 +202,10 @@ fun Iterable<MediaMetadataCompat>.toMediaSource(dataSourceFactory: DataSource.Fa
 
 
 fun MediaMetadataCompat.Builder.from(audioInfo: AudioInfo): MediaMetadataCompat.Builder {
-    id = audioInfo.youtubeId
-    title = audioInfo.audioDetails.title
-    artist = audioInfo.audioDetails.author
-    duration = audioInfo.audioDetails.durationSeconds.toLong()
+    id = audioInfo.id
+    title = audioInfo.details.title
+    artist = audioInfo.details.channel
+    duration = audioInfo.details.durationSeconds.toLong()
     mediaUri = audioInfo.audioStreams.maxBy { it.sampleRate }!!.uri
     displayIconUri = audioInfo.thumbnails.maxBy { it.height }!!.uri
     albumArtUri = audioInfo.thumbnails.maxBy { it.height }!!.uri

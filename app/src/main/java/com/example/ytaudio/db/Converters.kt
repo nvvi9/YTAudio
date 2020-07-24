@@ -1,8 +1,9 @@
 package com.example.ytaudio.db
 
 import androidx.room.TypeConverter
-import com.example.ytaudio.data.audioinfo.AudioStream
-import com.example.ytaudio.data.audioinfo.Thumbnail
+import com.example.ytaudio.data.videodata.AudioStream
+import com.example.ytaudio.data.videodata.Thumbnail
+import com.example.ytaudio.data.videodata.VideoStream
 import com.example.ytaudio.data.youtube.Localized
 import com.example.ytaudio.data.youtube.YTVideosThumbnails
 import com.google.gson.Gson
@@ -19,6 +20,16 @@ class Converters {
 
     @TypeConverter
     fun fromAudioStreamList(list: List<AudioStream>): String =
+        Gson().toJson(list)
+
+    @TypeConverter
+    fun toVideoStreamList(value: String): List<VideoStream> {
+        val type = object : TypeToken<List<VideoStream>>() {}.type
+        return Gson().fromJson(value, type)
+    }
+
+    @TypeConverter
+    fun fromVideoStreamList(list: List<VideoStream>): String =
         Gson().toJson(list)
 
     @TypeConverter

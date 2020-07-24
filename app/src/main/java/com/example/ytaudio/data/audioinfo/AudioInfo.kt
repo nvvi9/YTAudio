@@ -1,40 +1,29 @@
 package com.example.ytaudio.data.audioinfo
 
 import androidx.room.*
-import com.github.kotvertolet.youtubejextractor.models.youtube.videoData.YoutubeVideoData
+import com.example.ytaudio.data.videodata.*
 
 
-@Entity(indices = [Index(value = ["youtubeId"], unique = true)])
+@Entity(indices = [Index(value = ["id"], unique = true)])
 data class AudioInfo(
-    @PrimaryKey val youtubeId: String,
-    @Embedded val audioDetails: AudioDetails,
-    val thumbnails: List<Thumbnail>,
-    val audioStreams: List<AudioStream>,
-    val nextUpdateTimeMillis: Long
-) {
+    @PrimaryKey override val id: String,
+    @Embedded override val details: Details,
+    override val thumbnails: List<Thumbnail>,
+    override val audioStreams: List<AudioStream>,
+    override val aliveTimeMillis: Long,
+    override val lastUpdateTimeMillis: Long
+) : YTData {
 
     val needUpdate: Boolean
         get() =
-            System.currentTimeMillis() >= nextUpdateTimeMillis - 10
+            System.currentTimeMillis() >= lastUpdateTimeMillis + aliveTimeMillis - UPDATE_TIME_GAP
 
 
     companion object {
         @Ignore
-        fun from(data: YoutubeVideoData): AudioInfo =
-            data.run {
-                val audioDetails =
-                    AudioDetails.from(videoDetails)
-                val thumbnails =
-                    videoDetails.thumbnail.thumbnails
-                        .map { Thumbnail.from(it) }
-                val audioStreams =
-                    streamingData.adaptiveAudioStreams
-                        .map { AudioStream.from(it) }
-
-                AudioInfo(
-                    videoDetails.videoId, audioDetails, thumbnails, audioStreams,
-                    System.currentTimeMillis() + streamingData.expiresInSeconds.toLong().times(1000)
-                )
-            }
+        private const val UPDATE_TIME_GAP = 10
     }
 }
+
+fun VideoData.toAudioInfo() =
+    AudioInfo(id, details, thumbnails, audioStreams, aliveTimeMillis, lastUpdateTimeMillis)
