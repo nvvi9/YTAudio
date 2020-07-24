@@ -15,8 +15,3 @@ data class YTPartIdItem(
     val etag: String,
     val id: String
 )
-
-data class PageInfo(
-    val totalResults: Int,
-    val resultsPerPage: Int
-)

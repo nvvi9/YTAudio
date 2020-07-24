@@ -8,8 +8,10 @@ import com.example.ytaudio.utils.extensions.isPlayEnabled
 import com.example.ytaudio.utils.extensions.isPlaying
 import com.example.ytaudio.utils.extensions.isPrepared
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
+@Singleton
 class MainActivityViewModel @Inject constructor(
     private val repositoryImpl: PlaylistRepositoryImpl,
     private val audioServiceConnection: AudioServiceConnection

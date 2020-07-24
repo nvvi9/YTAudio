@@ -4,10 +4,11 @@ import androidx.paging.PagingSource
 import com.example.ytaudio.data.audioinfo.AudioInfo
 import com.example.ytaudio.network.YTExtractor
 import com.example.ytaudio.network.YouTubeApiService
-import com.example.ytaudio.utils.extensions.mapParallel
 import com.github.kotvertolet.youtubejextractor.exception.ExtractionException
 import com.github.kotvertolet.youtubejextractor.exception.YoutubeRequestException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -18,11 +19,17 @@ class YouTubePagingSource @Inject constructor(
     private val ytExtractor: YTExtractor
 ) : PagingSource<String, AudioInfo>() {
 
+    @FlowPreview
     override suspend fun load(params: LoadParams<String>): LoadResult<String, AudioInfo> {
         return try {
             val ytVideosPartId = ytApiService.getYTVideosIdResponse(params.loadSize, params.key)
-            val items = ytVideosPartId.items
-                .mapParallel(Dispatchers.IO) { ytExtractor.extractAudioInfo(it.id) }.filterNotNull()
+
+            val items = ytVideosPartId.items.asFlow()
+                .flatMapMerge(ytVideosPartId.items.size) { ytExtractor.extractAudioInfoFlow(it.id) }
+                .flowOn(Dispatchers.IO)
+                .filterNotNull()
+                .toList()
+
             LoadResult.Page(
                 data = items,
                 prevKey = ytVideosPartId.prevPageToken,

@@ -15,8 +15,10 @@ import com.example.ytaudio.service.EMPTY_PLAYBACK_STATE
 import com.example.ytaudio.service.NOTHING_PLAYING
 import com.example.ytaudio.utils.extensions.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
+@Singleton
 class PlayerViewModel @Inject constructor(
     audioServiceConnection: AudioServiceConnection
 ) : ViewModel() {

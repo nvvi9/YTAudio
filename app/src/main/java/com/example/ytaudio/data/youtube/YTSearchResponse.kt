@@ -7,13 +7,8 @@ data class YTSearchResponse(
     val nextPageToken: String? = null,
     val prevPageToken: String? = null,
     val regionCode: String,
-    val pageInfo: YTSearchPageInfo,
+    val pageInfo: PageInfo,
     val items: List<YTSearchItem>
-)
-
-data class YTSearchPageInfo(
-    val totalResults: Int,
-    val resultsPerPage: Int
 )
 
 data class YTSearchItem(
@@ -21,11 +16,6 @@ data class YTSearchItem(
     val etag: String,
     val id: Id,
     val snippet: YTSearchSnippet
-)
-
-data class Id(
-    val kind: String,
-    val videoId: String
 )
 
 data class YTSearchSnippet(

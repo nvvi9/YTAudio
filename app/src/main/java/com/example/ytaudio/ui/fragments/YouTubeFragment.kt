@@ -17,6 +17,7 @@ import com.example.ytaudio.di.Injectable
 import com.example.ytaudio.ui.adapters.YTLoadStateAdapter
 import com.example.ytaudio.ui.adapters.YouTubeItemsAdapter
 import com.example.ytaudio.ui.viewmodels.YouTubeViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,15 +28,17 @@ class YouTubeFragment : Fragment(), Injectable {
     @Inject
     lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var binding: FragmentYoutubeBinding
-
     private val youTubeViewModel: YouTubeViewModel by viewModels {
         youTubeViewModelFactory
     }
 
+    private lateinit var binding: FragmentYoutubeBinding
+
     private val youTubeItemsAdapter = YouTubeItemsAdapter {
         Toast.makeText(context, it.videoId, Toast.LENGTH_SHORT).show()
     }
+
+    private var job: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,7 +58,7 @@ class YouTubeFragment : Fragment(), Injectable {
             swipeRefresh.setOnRefreshListener {
                 youTubeItemsAdapter.refresh()
             }
-            binding.toolbar.setNavigationOnClickListener {
+            toolbar.setNavigationOnClickListener {
                 findNavController().navigate(YouTubeFragmentDirections.actionYouTubeFragmentToSearchFragment())
             }
             lifecycleOwner = this@YouTubeFragment
@@ -74,7 +77,8 @@ class YouTubeFragment : Fragment(), Injectable {
     }
 
     private fun setRecommended() {
-        lifecycleScope.launch {
+        job?.cancel()
+        job = lifecycleScope.launch {
             youTubeViewModel.getRecommended().collectLatest {
                 youTubeItemsAdapter.submitData(it)
             }

@@ -15,8 +15,10 @@ import com.example.ytaudio.utils.extensions.isPlaying
 import com.example.ytaudio.vo.PlaylistItem
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
+@Singleton
 class PlaylistViewModel @Inject constructor(
     private val playlistUseCases: PlaylistUseCases,
     audioServiceConnection: AudioServiceConnection

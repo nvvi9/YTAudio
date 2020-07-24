@@ -4,15 +4,13 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.example.ytaudio.data.youtube.YTSearchResponse
+import com.example.ytaudio.data.audioinfo.AudioInfo
 import com.example.ytaudio.data.youtube.YTVideosItem
 import com.example.ytaudio.db.YTVideosItemDao
+import com.example.ytaudio.network.YTExtractor
 import com.example.ytaudio.network.YouTubeApiService
 import com.example.ytaudio.utils.Constants.PAGE_SIZE
-import com.example.ytaudio.vo.Result
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,38 +18,26 @@ import javax.inject.Singleton
 interface YouTubeRepository {
 
     fun getVideosResponse(): Flow<PagingData<YTVideosItem>>
-    suspend fun getSearchResponse(query: String): Result<YTSearchResponse>
+    fun getSearchResponse(query: String): Flow<PagingData<AudioInfo>>
 }
 
 
 @ExperimentalPagingApi
 @Singleton
-class YouTubeRepositoryImpl
-@Inject constructor(
-    private val ytVideosItemDao: YTVideosItemDao,
+class YouTubeRepositoryImpl @Inject constructor(
     private val ytApiService: YouTubeApiService,
+    private val ytExtractor: YTExtractor,
+    private val ytVideosItemDao: YTVideosItemDao,
     private val ytVideosRemoteMediator: YouTubeVideosRemoteMediator
 ) : YouTubeRepository {
 
-    override fun getVideosResponse(): Flow<PagingData<YTVideosItem>> {
-        val pagingSourceFactory =
-            { ytVideosItemDao.allItems() }
+    override fun getVideosResponse(): Flow<PagingData<YTVideosItem>> = Pager(
+        config = PagingConfig(PAGE_SIZE),
+        remoteMediator = ytVideosRemoteMediator,
+        pagingSourceFactory = { ytVideosItemDao.allItems() }
+    ).flow
 
-        return Pager(
-            config = PagingConfig(pageSize = PAGE_SIZE),
-            remoteMediator = ytVideosRemoteMediator,
-            pagingSourceFactory = pagingSourceFactory
-        ).flow
-    }
-
-    override suspend fun getSearchResponse(query: String): Result<YTSearchResponse> =
-        withContext(Dispatchers.IO) {
-            try {
-                val response = ytApiService.getYTSearchResponse(query)
-                Result.Success(response)
-            } catch (t: Throwable) {
-                Result.Error<YTSearchResponse>(t)
-            }
-        }
+    override fun getSearchResponse(query: String): Flow<PagingData<AudioInfo>> =
+        Pager(PagingConfig(PAGE_SIZE)) { YTSearchPagingSource(query, ytApiService, ytExtractor) }
+            .flow
 }
-

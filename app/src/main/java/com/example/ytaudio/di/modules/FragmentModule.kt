@@ -1,9 +1,6 @@
 package com.example.ytaudio.di.modules
 
-import com.example.ytaudio.ui.fragments.PlayerFragment
-import com.example.ytaudio.ui.fragments.PlaylistFragment
-import com.example.ytaudio.ui.fragments.SearchFragment
-import com.example.ytaudio.ui.fragments.YouTubeFragment
+import com.example.ytaudio.ui.fragments.*
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -21,4 +18,7 @@ abstract class FragmentModule {
 
     @ContributesAndroidInjector
     abstract fun contributeYouTubeFragment(): YouTubeFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributeSearchResultsFragment(): SearchResultsFragment
 }

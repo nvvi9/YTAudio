@@ -39,5 +39,10 @@ abstract class ViewModelModule {
     abstract fun bindSearchViewModel(searchViewModel: SearchViewModel): ViewModel
 
     @Binds
+    @IntoMap
+    @ViewModelKey(SearchResultsViewModel::class)
+    abstract fun bindSearchResultsViewModel(searchResultsViewModel: SearchResultsViewModel): ViewModel
+
+    @Binds
     abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
 }

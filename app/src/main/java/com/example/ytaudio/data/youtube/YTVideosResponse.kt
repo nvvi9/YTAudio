@@ -11,12 +11,7 @@ data class YTVideosResponse(
     val items: List<YTVideosItem>,
     val nextPageToken: String? = null,
     val prevPageToken: String? = null,
-    val pageInfo: YTVideosPageInfo
-)
-
-data class YTVideosPageInfo(
-    val totalResults: Int,
-    val resultsPerPage: Int
+    val pageInfo: PageInfo
 )
 
 @Entity
