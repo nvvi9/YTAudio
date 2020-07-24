@@ -21,7 +21,8 @@ import javax.inject.Singleton
         AudioServiceModule::class,
         WorkerModule::class,
         RepositoryModule::class,
-        UseCasesModule::class
+        UseCasesModule::class,
+        RemoteMediatorModule::class
     ]
 )
 interface AppComponent : AndroidInjector<YTAudioApplication> {
