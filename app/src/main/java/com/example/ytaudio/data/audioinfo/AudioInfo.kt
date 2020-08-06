@@ -1,7 +1,11 @@
 package com.example.ytaudio.data.audioinfo
 
 import androidx.room.*
-import com.example.ytaudio.data.videodata.*
+import com.example.ytaudio.data.streamyt.Thumbnail
+import com.example.ytaudio.data.videodata.AudioStream
+import com.example.ytaudio.data.videodata.Details
+import com.example.ytaudio.data.videodata.VideoData
+import com.example.ytaudio.data.videodata.YTData
 
 
 @Entity(indices = [Index(value = ["id"], unique = true)])

@@ -1,12 +1,10 @@
 package com.example.ytaudio.repositories
 
 import androidx.paging.PagingSource
-import com.example.ytaudio.data.videodata.VideoData
-import com.example.ytaudio.network.YTExtractor
+import com.example.ytaudio.data.streamyt.VideoDetails
+import com.example.ytaudio.network.YTStreamApiService
 import com.example.ytaudio.network.YouTubeApiService
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -14,20 +12,23 @@ import java.io.IOException
 class YTSearchPagingSource(
     private val query: String,
     private val ytApiService: YouTubeApiService,
-    private val ytExtractor: YTExtractor
-) : PagingSource<String, VideoData>() {
+    private val ytStreamApiService: YTStreamApiService
+) : PagingSource<String, VideoDetails>() {
 
 
     @FlowPreview
-    override suspend fun load(params: LoadParams<String>): LoadResult<String, VideoData> =
+    override suspend fun load(params: LoadParams<String>): LoadResult<String, VideoDetails> =
         try {
             val ytSearchPartId = ytApiService.getYTSearchPartId(query, params.loadSize, params.key)
 
-            val items = ytSearchPartId.items.asFlow()
-                .flatMapMerge { ytExtractor.extractVideoDataFlow(it.id.videoId) }
-                .flowOn(Dispatchers.IO)
-                .filterNotNull()
-                .toList()
+//            val items = ytSearchPartId.items.asFlow()
+//                .flatMapMerge { ytExtractor.extractVideoDataFlow(it.id.videoId) }
+//                .flowOn(Dispatchers.IO)
+//                .filterNotNull()
+//                .toList()
+
+            val items =
+                ytStreamApiService.getVideoDetails(ytSearchPartId.items.joinToString("+") { it.id.videoId })
 
             LoadResult.Page(
                 data = items,

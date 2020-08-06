@@ -24,8 +24,10 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import dagger.android.AndroidInjection
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
+@Singleton
 open class AudioService : MediaBrowserServiceCompat() {
 
     @Inject

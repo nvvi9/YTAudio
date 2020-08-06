@@ -7,7 +7,7 @@ import com.example.ytaudio.data.youtube.YTVideosItem
 fun AudioInfo.toYouTubeItem() =
     YouTubeItem(
         id, details.title,
-        thumbnails.maxBy { it.height }?.uri,
+        thumbnails.maxBy { it.height }?.url,
         details.channel
     )
 

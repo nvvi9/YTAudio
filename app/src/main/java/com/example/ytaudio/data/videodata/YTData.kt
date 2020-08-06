@@ -1,5 +1,7 @@
 package com.example.ytaudio.data.videodata
 
+import com.example.ytaudio.data.streamyt.Thumbnail
+
 
 interface YTData {
     val id: String

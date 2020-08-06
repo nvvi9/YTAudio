@@ -6,7 +6,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.room.Room
 import com.example.ytaudio.db.AudioDatabase
 import com.example.ytaudio.network.AutoCompleteService
-import com.example.ytaudio.network.YTExtractor
+import com.example.ytaudio.network.YTStreamApiService
 import com.example.ytaudio.network.YouTubeApiService
 import com.example.ytaudio.repositories.YTVideoDataRemoteMediator
 import com.example.ytaudio.service.AudioService
@@ -44,8 +44,13 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideYTExtractor() =
-        YTExtractor()
+    fun provideYTStreamApiService(moshi: Moshi): YTStreamApiService =
+        Retrofit.Builder()
+            .baseUrl("https://stream-yt.herokuapp.com/api/v1/")
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .build()
+            .create(YTStreamApiService::class.java)
 
     @Provides
     @Singleton
@@ -76,6 +81,16 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun provideVideoDetailsDao(database: AudioDatabase) =
+        database.videoDetailsDao
+
+    @Provides
+    @Singleton
+    fun provideVideoDetailsRemoteKeysDao(database: AudioDatabase) =
+        database.videoDetailsRemoteKeysDao
+
+    @Provides
+    @Singleton
     fun provideVideoDataRemoteKeys(database: AudioDatabase) =
         database.videoDataRemoteKeysDao
 
@@ -91,12 +106,11 @@ class AppModule {
     @Singleton
     fun provideYTVideoDataRemoteMediator(
         db: AudioDatabase,
-        apiService: YouTubeApiService,
-        ytExtractor: YTExtractor
+        ytApiService: YouTubeApiService,
+        ytStreamApiService: YTStreamApiService
     ) =
         YTVideoDataRemoteMediator(
-            apiService, ytExtractor, db,
-            db.videoDataRemoteKeysDao,
-            db.videoDataDao
+            ytApiService, ytStreamApiService, db,
+            db.videoDetailsDao, db.videoDetailsRemoteKeysDao
         )
 }

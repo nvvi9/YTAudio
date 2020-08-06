@@ -207,8 +207,8 @@ fun MediaMetadataCompat.Builder.from(audioInfo: AudioInfo): MediaMetadataCompat.
     artist = audioInfo.details.channel
     duration = audioInfo.details.durationSeconds.toLong()
     mediaUri = audioInfo.audioStreams.maxBy { it.sampleRate }!!.uri
-    displayIconUri = audioInfo.thumbnails.maxBy { it.height }!!.uri
-    albumArtUri = audioInfo.thumbnails.maxBy { it.height }!!.uri
+    displayIconUri = audioInfo.thumbnails.maxBy { it.height }!!.url
+    albumArtUri = audioInfo.thumbnails.maxBy { it.height }!!.url
     flag = MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
     downloadStatus = MediaDescriptionCompat.STATUS_NOT_DOWNLOADED
 

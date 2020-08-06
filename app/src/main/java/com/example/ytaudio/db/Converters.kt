@@ -1,8 +1,8 @@
 package com.example.ytaudio.db
 
 import androidx.room.TypeConverter
+import com.example.ytaudio.data.streamyt.Thumbnail
 import com.example.ytaudio.data.videodata.AudioStream
-import com.example.ytaudio.data.videodata.Thumbnail
 import com.example.ytaudio.data.videodata.VideoStream
 import com.example.ytaudio.data.youtube.Localized
 import com.example.ytaudio.data.youtube.YTVideosThumbnails
@@ -31,6 +31,14 @@ class Converters {
     @TypeConverter
     fun fromVideoStreamList(list: List<VideoStream>): String =
         Gson().toJson(list)
+
+    @TypeConverter
+    fun toThumbnail(value: String): Thumbnail =
+        Gson().fromJson(value, Thumbnail::class.java)
+
+    @TypeConverter
+    fun fromThumbnail(thumbnail: Thumbnail): String =
+        Gson().toJson(thumbnail)
 
     @TypeConverter
     fun toThumbnailList(value: String): List<Thumbnail> {
