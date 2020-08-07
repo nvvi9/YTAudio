@@ -2,7 +2,7 @@ package com.example.ytaudio.repositories
 
 import androidx.lifecycle.LiveData
 import com.example.ytaudio.data.audioinfo.AudioInfo
-import com.example.ytaudio.db.PlaylistDao
+import com.example.ytaudio.db.AudioInfoDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -18,7 +18,7 @@ interface PlaylistRepository {
 
 
 @Singleton
-class PlaylistRepositoryImpl @Inject constructor(private val databaseDao: PlaylistDao) :
+class PlaylistRepositoryImpl @Inject constructor(private val databaseDao: AudioInfoDao) :
     PlaylistRepository {
 
     override val audioInfoList: LiveData<List<AudioInfo>>

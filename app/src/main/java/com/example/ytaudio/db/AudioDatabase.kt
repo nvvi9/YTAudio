@@ -19,7 +19,7 @@ import com.example.ytaudio.data.streamyt.VideoDetailsRemoteKeys
 @TypeConverters(Converters::class)
 abstract class AudioDatabase : RoomDatabase() {
 
-    abstract val playlistDao: PlaylistDao
+    abstract val audioInfoDao: AudioInfoDao
     abstract val videoDetailsDao: VideoDetailsDao
     abstract val videoDetailsRemoteKeysDao: VideoDetailsRemoteKeysDao
 }

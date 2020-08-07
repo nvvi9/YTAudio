@@ -28,7 +28,7 @@ class AppModule {
     @Provides
     @Singleton
     fun providePlaylistDao(database: AudioDatabase) =
-        database.playlistDao
+        database.audioInfoDao
 
     @Provides
     @Singleton

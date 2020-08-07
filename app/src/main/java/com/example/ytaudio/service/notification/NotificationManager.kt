@@ -81,7 +81,7 @@ class NotificationManager(
                 currentIconUri = iconUri
                 serviceScope.launch {
                     bitmap = iconUri?.let {
-                        resolveUriAsBitmap(it)
+                        resolveUriAsBitmapAsync(it).await()
                     }
                     bitmap?.let { callback.onBitmap(it) }
                 }
@@ -91,20 +91,22 @@ class NotificationManager(
             }
         }
 
-        private suspend fun resolveUriAsBitmap(uri: Uri): Bitmap? =
-            withContext(Dispatchers.IO) {
-                try {
-                    Glide.with(context).asBitmap()
-                        .load(uri).apply(
-                            RequestOptions()
-                                .placeholder(R.drawable.ic_notification)
-                                .error(R.drawable.ic_notification)
-                        )
-                        .submit()
-                        .get()
-                } catch (e: Exception) {
-                    Log.e(javaClass.simpleName, e.toString())
-                    null
+        private suspend fun resolveUriAsBitmapAsync(uri: Uri): Deferred<Bitmap?> =
+            coroutineScope {
+                async(Dispatchers.IO) {
+                    try {
+                        Glide.with(context).asBitmap()
+                            .load(uri).apply(
+                                RequestOptions()
+                                    .placeholder(R.drawable.ic_notification)
+                                    .error(R.drawable.ic_notification)
+                            )
+                            .submit()
+                            .get()
+                    } catch (e: Exception) {
+                        Log.e(javaClass.simpleName, e.toString())
+                        null
+                    }
                 }
             }
     }

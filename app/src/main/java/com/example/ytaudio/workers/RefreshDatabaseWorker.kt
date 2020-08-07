@@ -4,12 +4,12 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
-import com.example.ytaudio.db.PlaylistDao
+import com.example.ytaudio.db.AudioInfoDao
 import javax.inject.Inject
 
 
 class RefreshDatabaseWorker(
-    private val playlistDao: PlaylistDao,
+    private val audioInfoDao: AudioInfoDao,
     context: Context,
     params: WorkerParameters
 ) : CoroutineWorker(context, params) {
@@ -31,11 +31,11 @@ class RefreshDatabaseWorker(
 
 
     class Factory @Inject constructor(
-        private val playlistDao: PlaylistDao
+        private val audioInfoDao: AudioInfoDao
     ) : ChildWorkerFactory {
 
         override fun create(context: Context, params: WorkerParameters): ListenableWorker {
-            return RefreshDatabaseWorker(playlistDao, context, params)
+            return RefreshDatabaseWorker(audioInfoDao, context, params)
         }
     }
 }
