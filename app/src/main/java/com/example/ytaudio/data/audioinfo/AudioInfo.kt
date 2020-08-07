@@ -2,21 +2,17 @@ package com.example.ytaudio.data.audioinfo
 
 import androidx.room.*
 import com.example.ytaudio.data.streamyt.Thumbnail
-import com.example.ytaudio.data.videodata.AudioStream
-import com.example.ytaudio.data.videodata.Details
-import com.example.ytaudio.data.videodata.VideoData
-import com.example.ytaudio.data.videodata.YTData
 
 
 @Entity(indices = [Index(value = ["id"], unique = true)])
 data class AudioInfo(
-    @PrimaryKey override val id: String,
-    @Embedded override val details: Details,
-    override val thumbnails: List<Thumbnail>,
-    override val audioStreams: List<AudioStream>,
-    override val aliveTimeMillis: Long,
-    override val lastUpdateTimeMillis: Long
-) : YTData {
+    @PrimaryKey val id: String,
+    @Embedded val details: AudioDetails,
+    val thumbnails: List<Thumbnail>,
+    val audioStreams: List<AudioStream>,
+    val aliveTimeMillis: Long,
+    val lastUpdateTimeMillis: Long
+) {
 
     val needUpdate: Boolean
         get() =
@@ -28,6 +24,3 @@ data class AudioInfo(
         private const val UPDATE_TIME_GAP = 10
     }
 }
-
-fun VideoData.toAudioInfo() =
-    AudioInfo(id, details, thumbnails, audioStreams, aliveTimeMillis, lastUpdateTimeMillis)

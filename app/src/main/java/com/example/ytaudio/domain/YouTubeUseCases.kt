@@ -23,7 +23,6 @@ class YouTubeUseCasesImpl @Inject constructor(
 ) : YouTubeUseCases {
 
     override fun getRecommendedYouTubeItems(): Flow<PagingData<YouTubeItem>> =
-//        repository.getVideosResponse().map { data -> data.map { it.toYouTubeItem() } }
         repository.getVideosResponse().map { data ->
             data.map { it.toYouTubeItem() }
         }

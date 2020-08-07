@@ -6,15 +6,11 @@ import androidx.room.TypeConverters
 import com.example.ytaudio.data.audioinfo.AudioInfo
 import com.example.ytaudio.data.streamyt.VideoDetails
 import com.example.ytaudio.data.streamyt.VideoDetailsRemoteKeys
-import com.example.ytaudio.data.videodata.VideoData
-import com.example.ytaudio.data.videodata.VideoDataRemoteKeys
 
 
 @Database(
     entities = [
         AudioInfo::class,
-        VideoData::class,
-        VideoDataRemoteKeys::class,
         VideoDetails::class,
         VideoDetailsRemoteKeys::class],
     version = 1,
@@ -24,8 +20,6 @@ import com.example.ytaudio.data.videodata.VideoDataRemoteKeys
 abstract class AudioDatabase : RoomDatabase() {
 
     abstract val playlistDao: PlaylistDao
-    abstract val videoDataRemoteKeysDao: VideoDataRemoteKeysDao
-    abstract val videoDataDao: VideoDataDao
     abstract val videoDetailsDao: VideoDetailsDao
     abstract val videoDetailsRemoteKeysDao: VideoDetailsRemoteKeysDao
 }

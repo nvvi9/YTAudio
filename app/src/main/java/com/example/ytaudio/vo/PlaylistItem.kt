@@ -8,7 +8,7 @@ data class PlaylistItem @JvmOverloads constructor(
     val title: String,
     val author: String,
     val thumbnailUri: String?,
-    val duration: Int,
+    val duration: Long,
     val playbackState: Int = 0
 ) {
 
@@ -17,9 +17,9 @@ data class PlaylistItem @JvmOverloads constructor(
         fun from(audioInfo: AudioInfo) =
             audioInfo.run {
                 PlaylistItem(
-                    id, details.title, details.channel,
+                    id, details.title, details.author,
                     thumbnails.maxBy { it.height }?.url,
-                    details.durationSeconds.toIntOrNull() ?: 0
+                    details.duration
                 )
             }
     }

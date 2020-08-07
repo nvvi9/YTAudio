@@ -21,12 +21,6 @@ class YTSearchPagingSource(
         try {
             val ytSearchPartId = ytApiService.getYTSearchPartId(query, params.loadSize, params.key)
 
-//            val items = ytSearchPartId.items.asFlow()
-//                .flatMapMerge { ytExtractor.extractVideoDataFlow(it.id.videoId) }
-//                .flowOn(Dispatchers.IO)
-//                .filterNotNull()
-//                .toList()
-
             val items =
                 ytStreamApiService.getVideoDetails(ytSearchPartId.items.joinToString("+") { it.id.videoId })
 

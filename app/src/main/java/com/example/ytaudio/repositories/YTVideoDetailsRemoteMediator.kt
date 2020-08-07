@@ -21,7 +21,7 @@ import javax.inject.Singleton
 
 @ExperimentalPagingApi
 @Singleton
-class YTVideoDataRemoteMediator @Inject constructor(
+class YTVideoDetailsRemoteMediator @Inject constructor(
     private val ytApiService: YouTubeApiService,
     private val ytStreamApiService: YTStreamApiService,
     private val database: AudioDatabase,

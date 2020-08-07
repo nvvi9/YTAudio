@@ -27,12 +27,12 @@ class YouTubeRepositoryImpl @Inject constructor(
     private val ytApiService: YouTubeApiService,
     private val ytStreamApiService: YTStreamApiService,
     private val videoDetailsDao: VideoDetailsDao,
-    private val ytVideoDataRemoteMediator: YTVideoDataRemoteMediator
+    private val ytVideoDetailsRemoteMediator: YTVideoDetailsRemoteMediator
 ) : YouTubeRepository {
 
     override fun getVideosResponse(): Flow<PagingData<VideoDetails>> = Pager(
-        config = PagingConfig(PAGE_SIZE),
-        remoteMediator = ytVideoDataRemoteMediator,
+        config = PagingConfig(5),
+        remoteMediator = ytVideoDetailsRemoteMediator,
         pagingSourceFactory = { videoDetailsDao.allItems() }
     ).flow
 
