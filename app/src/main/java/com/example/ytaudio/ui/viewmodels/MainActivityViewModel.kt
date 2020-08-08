@@ -1,7 +1,7 @@
 package com.example.ytaudio.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.example.ytaudio.repositories.PlaylistRepositoryImpl
+import com.example.ytaudio.domain.PlaylistUseCases
 import com.example.ytaudio.service.AudioServiceConnection
 import com.example.ytaudio.utils.extensions.id
 import com.example.ytaudio.utils.extensions.isPlayEnabled
@@ -13,7 +13,7 @@ import javax.inject.Singleton
 
 @Singleton
 class MainActivityViewModel @Inject constructor(
-    private val repositoryImpl: PlaylistRepositoryImpl,
+    private val playlistUseCases: PlaylistUseCases,
     private val audioServiceConnection: AudioServiceConnection
 ) : ViewModel() {
 

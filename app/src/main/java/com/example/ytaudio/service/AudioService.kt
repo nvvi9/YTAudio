@@ -9,7 +9,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.media.MediaBrowserServiceCompat
-import com.example.ytaudio.repositories.AudioRepository
+import com.example.ytaudio.domain.PlaylistUseCases
 import com.example.ytaudio.service.notification.NotificationManager
 import com.example.ytaudio.service.playback.BecomingNoisyReceiver
 import com.example.ytaudio.service.playback.PlaybackPreparer
@@ -31,7 +31,7 @@ import javax.inject.Singleton
 open class AudioService : MediaBrowserServiceCompat() {
 
     @Inject
-    lateinit var audioRepository: AudioRepository
+    lateinit var playlistUseCases: PlaylistUseCases
 
     private lateinit var playbackPreparer: PlaybackPreparer
     private lateinit var becomingNoisyReceiver: BecomingNoisyReceiver
@@ -85,7 +85,7 @@ open class AudioService : MediaBrowserServiceCompat() {
             val dataSourceFactory =
                 DefaultDataSourceFactory(this, Util.getUserAgent(this, YTAUDIO_USER_AGENT), null)
 
-            playbackPreparer = PlaybackPreparer(audioRepository, exoPlayer, dataSourceFactory)
+            playbackPreparer = PlaybackPreparer(playlistUseCases, exoPlayer, dataSourceFactory)
 
             it.setPlayer(exoPlayer)
             it.setPlaybackPreparer(playbackPreparer)
@@ -98,7 +98,7 @@ open class AudioService : MediaBrowserServiceCompat() {
 
     @Synchronized
     override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaItem>>) {
-        val children = audioRepository.metadataList.map {
+        val children = playlistUseCases.getMetadata().map {
             MediaItem(it.description, it.flag)
         }
 

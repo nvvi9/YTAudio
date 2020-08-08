@@ -12,14 +12,18 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindPlaylistRepository(playlistRepositoryImpl: PlaylistRepositoryImpl): PlaylistRepository
+    abstract fun bindPlaylistRepository(playlistRepository: PlaylistRepository): Repository
 
     @ExperimentalPagingApi
     @Binds
     @Singleton
-    abstract fun bindYouTubeRepository(youTubeRepositoryImpl: YouTubeRepositoryImpl): YouTubeRepository
+    abstract fun bindYouTubeRepository(youTubeRepository: YouTubeRepository): Repository
 
     @Binds
     @Singleton
-    abstract fun bindSearchRepository(searchRepositoryImpl: SearchRepositoryImpl): SearchRepository
+    abstract fun bindSearchRepository(searchRepository: SearchRepository): Repository
+
+    @Binds
+    @Singleton
+    abstract fun bindAudioInfoRepository(audioInfoRepository: AudioInfoRepository): Repository
 }

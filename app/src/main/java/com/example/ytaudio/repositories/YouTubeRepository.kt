@@ -14,29 +14,22 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 
-interface YouTubeRepository {
-
-    fun getVideosResponse(): Flow<PagingData<VideoDetails>>
-    fun getSearchResponse(query: String): Flow<PagingData<VideoDetails>>
-}
-
-
 @ExperimentalPagingApi
 @Singleton
-class YouTubeRepositoryImpl @Inject constructor(
+class YouTubeRepository @Inject constructor(
     private val ytApiService: YouTubeApiService,
     private val ytStreamApiService: YTStreamApiService,
     private val videoDetailsDao: VideoDetailsDao,
     private val ytVideoDetailsRemoteMediator: YTVideoDetailsRemoteMediator
-) : YouTubeRepository {
+) : Repository {
 
-    override fun getVideosResponse(): Flow<PagingData<VideoDetails>> = Pager(
+    fun getVideosResponse(): Flow<PagingData<VideoDetails>> = Pager(
         config = PagingConfig(5),
         remoteMediator = ytVideoDetailsRemoteMediator,
         pagingSourceFactory = { videoDetailsDao.allItems() }
     ).flow
 
-    override fun getSearchResponse(query: String): Flow<PagingData<VideoDetails>> =
+    fun getSearchResponse(query: String): Flow<PagingData<VideoDetails>> =
         Pager(PagingConfig(PAGE_SIZE)) {
             YTSearchPagingSource(query, ytApiService, ytStreamApiService)
         }.flow

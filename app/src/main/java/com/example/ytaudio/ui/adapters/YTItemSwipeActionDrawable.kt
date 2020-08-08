@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.Drawable
+import androidx.annotation.ColorInt
 import androidx.appcompat.content.res.AppCompatResources
 import com.example.ytaudio.R
 import com.example.ytaudio.utils.extensions.themeColor
@@ -33,7 +34,9 @@ class YTItemSwipeActionDrawable(context: Context) : Drawable() {
     private val iconIntrinsicWidth = icon?.intrinsicWidth ?: 0
     private val iconIntrinsicHeight = icon?.intrinsicHeight ?: 0
 
+    @ColorInt
     private val iconTint = context.themeColor(R.attr.colorOnBackground)
+    @ColorInt
     private val iconTintActive = context.themeColor(R.attr.colorOnSecondary)
 
     private val iconMaxScaleAddition = 0.5f

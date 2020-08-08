@@ -7,7 +7,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.lifecycle.Observer
-import com.example.ytaudio.repositories.AudioRepository
+import com.example.ytaudio.domain.PlaylistUseCases
 import com.example.ytaudio.utils.extensions.id
 import com.example.ytaudio.utils.extensions.metadataEquals
 import com.example.ytaudio.utils.extensions.title
@@ -21,7 +21,7 @@ import com.google.android.exoplayer2.upstream.DataSource
 
 
 class PlaybackPreparer(
-    private val audioRepository: AudioRepository,
+    private val playlistUseCases: PlaylistUseCases,
     private val exoPlayer: ExoPlayer,
     private val dataSourceFactory: DataSource.Factory
 ) : MediaSessionConnector.PlaybackPreparer {
@@ -37,7 +37,7 @@ class PlaybackPreparer(
     }
 
     init {
-        audioRepository.mediaMetadataList.observeForever(metadataObserver)
+        playlistUseCases.getMediaMetadata().observeForever(metadataObserver)
     }
 
     private fun updateMetadata(newMetadata: List<MediaMetadataCompat>) {
@@ -73,7 +73,7 @@ class PlaybackPreparer(
     }
 
     fun onCancel() {
-        audioRepository.mediaMetadataList.removeObserver(metadataObserver)
+        playlistUseCases.getMediaMetadata().removeObserver(metadataObserver)
     }
 
     override fun getSupportedPrepareActions() =

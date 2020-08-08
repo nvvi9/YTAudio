@@ -2,6 +2,7 @@ package com.example.ytaudio.di.modules
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.ExperimentalPagingApi
 import com.example.ytaudio.di.factories.ViewModelFactory
 import com.example.ytaudio.di.keys.ViewModelKey
 import com.example.ytaudio.ui.viewmodels.*
@@ -30,6 +31,7 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
+    @ExperimentalPagingApi
     @ViewModelKey(YouTubeViewModel::class)
     abstract fun bindYouTubeViewModel(youTubeViewModel: YouTubeViewModel): ViewModel
 
@@ -40,6 +42,7 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
+    @ExperimentalPagingApi
     @ViewModelKey(SearchResultsViewModel::class)
     abstract fun bindSearchResultsViewModel(searchResultsViewModel: SearchResultsViewModel): ViewModel
 

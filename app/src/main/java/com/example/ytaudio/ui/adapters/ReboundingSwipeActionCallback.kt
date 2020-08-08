@@ -16,6 +16,7 @@ class ReboundingSwipeActionCallback : ItemTouchHelper.SimpleCallback(0, ItemTouc
     interface ReboundableViewHolder {
 
         val reboundableView: View?
+
         fun onReboundOffsetChanged(
             currentSwipePercentage: Float,
             swipeThreshold: Float,

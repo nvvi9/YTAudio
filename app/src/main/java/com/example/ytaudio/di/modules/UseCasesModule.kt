@@ -1,6 +1,10 @@
 package com.example.ytaudio.di.modules
 
-import com.example.ytaudio.domain.*
+import androidx.paging.ExperimentalPagingApi
+import com.example.ytaudio.domain.PlaylistUseCases
+import com.example.ytaudio.domain.SearchUseCases
+import com.example.ytaudio.domain.UseCases
+import com.example.ytaudio.domain.YouTubeUseCases
 import dagger.Binds
 import dagger.Module
 import javax.inject.Singleton
@@ -11,13 +15,14 @@ abstract class UseCasesModule {
 
     @Binds
     @Singleton
-    abstract fun bindPlaylistUseCases(playlistUseCasesImpl: PlaylistUseCasesImpl): PlaylistUseCases
+    abstract fun bindPlaylistUseCases(playlistUseCases: PlaylistUseCases): UseCases
 
     @Binds
     @Singleton
-    abstract fun bindYouTubesUseCases(youTubeUseCasesImpl: YouTubeUseCasesImpl): YouTubeUseCases
+    @ExperimentalPagingApi
+    abstract fun bindYouTubesUseCases(youTubeUseCases: YouTubeUseCases): UseCases
 
     @Binds
     @Singleton
-    abstract fun bindSearchUseCases(searchUseCasesImpl: SearchUseCasesImpl): SearchUseCases
+    abstract fun bindSearchUseCases(searchUseCases: SearchUseCases): UseCases
 }

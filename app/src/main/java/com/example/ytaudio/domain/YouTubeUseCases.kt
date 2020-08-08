@@ -1,5 +1,6 @@
 package com.example.ytaudio.domain
 
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
 import com.example.ytaudio.repositories.YouTubeRepository
 import com.example.ytaudio.vo.YouTubeItem
@@ -10,23 +11,17 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 
-interface YouTubeUseCases {
-
-    fun getRecommendedYouTubeItems(): Flow<PagingData<YouTubeItem>>
-    fun getYouTubeItemsFromQuery(query: String): Flow<PagingData<YouTubeItem>>
-}
-
-
 @Singleton
-class YouTubeUseCasesImpl @Inject constructor(
+@ExperimentalPagingApi
+class YouTubeUseCases @Inject constructor(
     private val repository: YouTubeRepository
-) : YouTubeUseCases {
+) : UseCases {
 
-    override fun getRecommendedYouTubeItems(): Flow<PagingData<YouTubeItem>> =
+    fun getRecommendedYouTubeItems(): Flow<PagingData<YouTubeItem>> =
         repository.getVideosResponse().map { data ->
             data.map { it.toYouTubeItem() }
         }
 
-    override fun getYouTubeItemsFromQuery(query: String): Flow<PagingData<YouTubeItem>> =
+    fun getYouTubeItemsFromQuery(query: String): Flow<PagingData<YouTubeItem>> =
         repository.getSearchResponse(query).map { data -> data.map { it.toYouTubeItem() } }
 }

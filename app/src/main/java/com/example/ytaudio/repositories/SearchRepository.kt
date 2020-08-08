@@ -6,17 +6,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-
-interface SearchRepository {
-    suspend fun getAutoComplete(query: String): AutoComplete?
-}
-
-
-class SearchRepositoryImpl @Inject constructor(
+class SearchRepository @Inject constructor(
     private val autoCompleteService: AutoCompleteService
-) : SearchRepository {
+) : Repository {
 
-    override suspend fun getAutoComplete(query: String): AutoComplete? =
+    suspend fun getAutoComplete(query: String): AutoComplete? =
         withContext(Dispatchers.IO) {
             try {
                 autoCompleteService.getAutoComplete(query)

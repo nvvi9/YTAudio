@@ -6,6 +6,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.*
 import com.example.ytaudio.R
 import com.example.ytaudio.domain.PlaylistUseCases
+import com.example.ytaudio.repositories.AudioInfoRepository
 import com.example.ytaudio.service.AudioServiceConnection
 import com.example.ytaudio.service.EMPTY_PLAYBACK_STATE
 import com.example.ytaudio.service.NOTHING_PLAYING
@@ -21,10 +22,11 @@ import javax.inject.Singleton
 @Singleton
 class PlaylistViewModel @Inject constructor(
     private val playlistUseCases: PlaylistUseCases,
+    private val audioInfoRepository: AudioInfoRepository,
     audioServiceConnection: AudioServiceConnection
 ) : ViewModel() {
 
-    val playlistItems = playlistUseCases.playlistItems
+    val playlistItems = playlistUseCases.getPlaylistItems()
 
     private val playbackStateObserver = Observer<PlaybackStateCompat> {
         val playbackState = it ?: EMPTY_PLAYBACK_STATE
@@ -50,7 +52,7 @@ class PlaylistViewModel @Inject constructor(
 
     fun deleteFromDatabase(items: List<PlaylistItem>) {
         viewModelScope.launch {
-            playlistUseCases.deleteItems(items)
+            audioInfoRepository.deleteById(*items.map { it.id }.toTypedArray())
         }
     }
 

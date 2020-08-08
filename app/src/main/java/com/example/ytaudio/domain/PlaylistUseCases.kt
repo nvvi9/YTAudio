@@ -1,32 +1,28 @@
 package com.example.ytaudio.domain
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.example.ytaudio.repositories.PlaylistRepository
+import com.example.ytaudio.utils.extensions.toMediaMetadataList
 import com.example.ytaudio.vo.PlaylistItem
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
-interface PlaylistUseCases {
-
-    val playlistItems: LiveData<List<PlaylistItem>>
-
-    suspend fun deleteItems(items: List<PlaylistItem>)
-}
-
-
 @Singleton
-class PlaylistUseCasesImpl @Inject constructor(private val playlistRepository: PlaylistRepository) :
-    PlaylistUseCases {
+class PlaylistUseCases @Inject constructor(
+    private val playlistRepository: PlaylistRepository
+) : UseCases {
 
-    override val playlistItems: LiveData<List<PlaylistItem>>
-        get() = Transformations.distinctUntilChanged(
-            Transformations.map(playlistRepository.audioInfoList) { list ->
-                list.filterNot { it.needUpdate }.map { PlaylistItem.from(it) }
+    fun getPlaylistItems() =
+        Transformations.distinctUntilChanged(
+            Transformations.map(playlistRepository.getAudioInfo()) { list ->
+                list.filter { it.needUpdate == false }.map { PlaylistItem.from(it) }
             })
 
-    override suspend fun deleteItems(items: List<PlaylistItem>) {
-        playlistRepository.deleteAudioInfo(items.map { it.id })
-    }
+    fun getMediaMetadata() = Transformations.distinctUntilChanged(
+        Transformations.map(playlistRepository.getAudioInfo()) {
+            it.toMediaMetadataList()
+        }
+    )
+
+    fun getMetadata() = getMediaMetadata().value ?: emptyList()
 }

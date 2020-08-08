@@ -8,9 +8,11 @@ import android.widget.Toast
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -28,6 +30,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
+@ExperimentalPagingApi
 class YouTubeFragment : Fragment(), YTItemAdapterListener, Injectable {
 
     @Inject
@@ -49,6 +52,13 @@ class YouTubeFragment : Fragment(), YTItemAdapterListener, Injectable {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentYoutubeBinding.inflate(inflater)
+
+        youTubeViewModel.errorEvent.observe(viewLifecycleOwner, Observer { event ->
+            event.getContentIfNotHandled()?.let {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            }
+        })
+
         return binding.root
     }
 
@@ -83,7 +93,14 @@ class YouTubeFragment : Fragment(), YTItemAdapterListener, Injectable {
     }
 
     override fun onItemIconChanged(item: YouTubeItem, newValue: Boolean) {
-        Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
+        newValue.let {
+            item.isAdded = it
+            if (newValue) {
+                youTubeViewModel.addToPlaylist(item.videoId)
+            } else {
+                youTubeViewModel.deleteFromPlaylist(item.videoId)
+            }
+        }
     }
 
     private fun setLoadState() {

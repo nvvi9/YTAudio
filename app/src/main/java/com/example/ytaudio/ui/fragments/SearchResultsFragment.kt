@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.ytaudio.databinding.FragmentSearchResultsBinding
 import com.example.ytaudio.di.Injectable
@@ -24,7 +25,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
+@ExperimentalPagingApi
 class SearchResultsFragment : Fragment(), YTItemAdapterListener, Injectable {
 
     @Inject
