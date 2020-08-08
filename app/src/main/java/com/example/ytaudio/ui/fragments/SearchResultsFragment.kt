@@ -14,16 +14,18 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.ytaudio.databinding.FragmentSearchResultsBinding
 import com.example.ytaudio.di.Injectable
+import com.example.ytaudio.ui.adapters.YTItemAdapterListener
 import com.example.ytaudio.ui.adapters.YTLoadStateAdapter
 import com.example.ytaudio.ui.adapters.YouTubeItemsAdapter
 import com.example.ytaudio.ui.viewmodels.SearchResultsViewModel
+import com.example.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class SearchResultsFragment : Fragment(), Injectable {
+class SearchResultsFragment : Fragment(), YTItemAdapterListener, Injectable {
 
     @Inject
     lateinit var searchResultsViewModelFactory: ViewModelProvider.Factory
@@ -34,13 +36,11 @@ class SearchResultsFragment : Fragment(), Injectable {
 
     private lateinit var binding: FragmentSearchResultsBinding
 
-    private val youtubeItemsAdapter = YouTubeItemsAdapter {
-        Toast.makeText(context, it.videoId, Toast.LENGTH_SHORT).show()
-    }
-
     private var job: Job? = null
 
     private val navArgs: SearchResultsFragmentArgs by navArgs()
+
+    private val youtubeItemsAdapter = YouTubeItemsAdapter(this)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,6 +63,14 @@ class SearchResultsFragment : Fragment(), Injectable {
             lifecycleOwner = this@SearchResultsFragment
         }
         setFromQuery()
+    }
+
+    override fun onItemClicked(cardView: View, items: YouTubeItem) {
+        Toast.makeText(context, items.videoId, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onItemIconChanged(item: YouTubeItem, newValue: Boolean) {
+        Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
     }
 
     private fun setFromQuery() {

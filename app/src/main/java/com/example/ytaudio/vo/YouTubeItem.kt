@@ -7,7 +7,8 @@ data class YouTubeItem(
     val videoId: String,
     val title: String,
     val thumbnailUri: String?,
-    val channelTitle: String
+    val channelTitle: String,
+    val isAdded: Boolean = false
 )
 
 fun VideoDetails.toYouTubeItem() =

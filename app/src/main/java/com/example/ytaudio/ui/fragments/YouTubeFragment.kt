@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -12,18 +13,22 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.example.ytaudio.databinding.FragmentYoutubeBinding
 import com.example.ytaudio.di.Injectable
+import com.example.ytaudio.ui.adapters.ReboundingSwipeActionCallback
+import com.example.ytaudio.ui.adapters.YTItemAdapterListener
 import com.example.ytaudio.ui.adapters.YTLoadStateAdapter
 import com.example.ytaudio.ui.adapters.YouTubeItemsAdapter
 import com.example.ytaudio.ui.viewmodels.YouTubeViewModel
+import com.example.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-class YouTubeFragment : Fragment(), Injectable {
+class YouTubeFragment : Fragment(), YTItemAdapterListener, Injectable {
 
     @Inject
     lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
@@ -34,11 +39,9 @@ class YouTubeFragment : Fragment(), Injectable {
 
     private lateinit var binding: FragmentYoutubeBinding
 
-    private val youTubeItemsAdapter = YouTubeItemsAdapter {
-        Toast.makeText(context, it.videoId, Toast.LENGTH_SHORT).show()
-    }
-
     private var job: Job? = null
+
+    private val youTubeItemsAdapter = YouTubeItemsAdapter(this)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,8 +53,15 @@ class YouTubeFragment : Fragment(), Injectable {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        postponeEnterTransition()
+        view.doOnPreDraw { startPostponedEnterTransition() }
         binding.apply {
             viewModel = youTubeViewModel
+            youtubeItemsView.apply {
+                ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
+                adapter = youTubeItemsAdapter
+            }
             youtubeItemsView.adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
             youtubeItemsView
                 .addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
@@ -66,6 +76,14 @@ class YouTubeFragment : Fragment(), Injectable {
 
         setLoadState()
         setRecommended()
+    }
+
+    override fun onItemClicked(cardView: View, items: YouTubeItem) {
+        Toast.makeText(context, items.videoId, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onItemIconChanged(item: YouTubeItem, newValue: Boolean) {
+        Toast.makeText(context, item.title, Toast.LENGTH_SHORT).show()
     }
 
     private fun setLoadState() {

@@ -10,6 +10,7 @@ fun interpolateLinearly(
     @FloatRange(from = 0.0, fromInclusive = true, to = 1.0, toInclusive = true) fraction: Float
 ) = start + fraction * (end - start)
 
+@ColorInt
 fun interpolateLinearlyArgb(
     @ColorInt start: Int,
     @ColorInt end: Int,
