@@ -180,13 +180,13 @@ inline var MediaMetadataCompat.Builder.flag: Int
     }
 
 
-inline val MediaMetadataCompat.fullDescription
+inline val MediaMetadataCompat.fullDescription: MediaDescriptionCompat
     get() = description.also {
         it.extras?.putAll(bundle)
     }
 
 
-fun MediaMetadataCompat.toMediaSource(dataSourceFactory: DataSource.Factory) =
+fun MediaMetadataCompat.toMediaSource(dataSourceFactory: DataSource.Factory): ProgressiveMediaSource =
     ProgressiveMediaSource.Factory(dataSourceFactory)
         .setTag(fullDescription)
         .createMediaSource(mediaUri)
@@ -206,8 +206,7 @@ fun MediaMetadataCompat.Builder.from(audioInfo: AudioInfo): MediaMetadataCompat.
     title = audioInfo.details.title
     artist = audioInfo.details.author
     duration = audioInfo.details.duration
-    mediaUri = audioInfo.audioStreams.filter { it.bitrate != null }
-        .maxBy { it.bitrate!! }!!.url
+    mediaUri = audioInfo.audioStreams.maxBy { it.bitrate }!!.url
     displayIconUri = audioInfo.thumbnails[1].url
     albumArtUri = audioInfo.thumbnails.maxBy { it.height }!!.url
     flag = MediaBrowserCompat.MediaItem.FLAG_PLAYABLE

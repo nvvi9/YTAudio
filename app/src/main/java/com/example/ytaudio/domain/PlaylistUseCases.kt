@@ -7,22 +7,19 @@ import com.example.ytaudio.vo.PlaylistItem
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
 @Singleton
 class PlaylistUseCases @Inject constructor(
     private val playlistRepository: PlaylistRepository
 ) : UseCases {
 
-    fun getPlaylistItems() =
-        Transformations.distinctUntilChanged(
-            Transformations.map(playlistRepository.getAudioInfo()) { list ->
-                list.filter { it.needUpdate == false }.map { PlaylistItem.from(it) }
-            })
+    fun getPlaylistItems() = Transformations.map(playlistRepository.getAudioInfo()) { list ->
+        list.filter { it.needUpdate == false }.map { PlaylistItem.from(it) }
+    }
 
-    fun getMediaMetadata() = Transformations.distinctUntilChanged(
-        Transformations.map(playlistRepository.getAudioInfo()) {
-            it.toMediaMetadataList()
-        }
-    )
+    fun getMediaMetadata() = Transformations.map(playlistRepository.getAudioInfo()) {
+        it.toMediaMetadataList()
+    }
 
     fun getMetadata() = getMediaMetadata().value ?: emptyList()
 }
