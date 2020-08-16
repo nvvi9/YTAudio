@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        app:constraintSetEnd="@id/expanded"
+        app:constraintSetStart="@id/collapsed"
+        app:duration="300"
+        app:motionInterpolator="easeInOut">
+
+        <OnSwipe
+            app:dragDirection="dragUp"
+            app:maxAcceleration="200"
+            app:touchAnchorId="@id/audio_view_container"
+            app:touchAnchorSide="top" />
+
+        <KeyFrameSet>
+            <KeyAttribute
+                app:framePosition="0"
+                app:motionTarget="@id/audio_view">
+                <CustomAttribute
+                    app:attributeName="EndPadding"
+                    app:customDimension="250dp" />
+            </KeyAttribute>
+
+            <KeyAttribute
+                app:framePosition="20"
+                app:motionTarget="@id/audio_view">
+                <CustomAttribute
+                    app:attributeName="EndPadding"
+                    app:customDimension="0dp" />
+            </KeyAttribute>
+
+            <KeyAttribute
+                android:alpha="0"
+                app:framePosition="0"
+                app:motionTarget="@id/recycler_view" />
+
+            <KeyAttribute
+                android:alpha="1"
+                app:framePosition="100"
+                app:motionTarget="@id/recycler_view" />
+
+            <KeyAttribute
+                app:framePosition="0"
+                app:motionTarget="@id/audio_view_container">
+                <CustomAttribute
+                    app:attributeName="cardElevation"
+                    app:customDimension="5dp" />
+            </KeyAttribute>
+
+            <KeyAttribute
+                app:framePosition="3"
+                app:motionTarget="@id/audio_view_container">
+                <CustomAttribute
+                    app:attributeName="cardElevation"
+                    app:customDimension="0dp" />
+            </KeyAttribute>
+        </KeyFrameSet>
+
+    </Transition>
+
+    <ConstraintSet android:id="@+id/expanded">
+
+        <Constraint
+            android:id="@id/audio_view_container"
+            android:layout_height="250dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Constraint
+            android:id="@id/content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/audio_view_container" />
+
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/collapsed">
+        <Constraint
+            android:id="@id/audio_view_container"
+            android:layout_height="55dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="65dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Constraint
+            android:id="@id/content"
+            android:layout_width="match_parent"
+            android:layout_height="-1dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="66dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/audio_view_container" />
+    </ConstraintSet>
+</MotionScene>
