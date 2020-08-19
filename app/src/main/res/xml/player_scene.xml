@@ -1,111 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
 <MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
 
     <Transition
-        app:constraintSetEnd="@id/expanded"
-        app:constraintSetStart="@id/collapsed"
-        app:duration="300"
-        app:motionInterpolator="easeInOut">
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@+id/start"
+        motion:duration="1000"
+        motion:motionInterpolator="linear">
 
         <OnSwipe
-            app:dragDirection="dragUp"
-            app:maxAcceleration="200"
-            app:touchAnchorId="@id/audio_view_container"
-            app:touchAnchorSide="top" />
+            motion:dragDirection="dragUp"
+            motion:touchAnchorId="@+id/top_image_container"
+            motion:touchAnchorSide="bottom" />
 
         <KeyFrameSet>
-            <KeyAttribute
-                app:framePosition="0"
-                app:motionTarget="@id/audio_view">
-                <CustomAttribute
-                    app:attributeName="EndPadding"
-                    app:customDimension="250dp" />
-            </KeyAttribute>
+            <KeyPosition
+                motion:curveFit="linear"
+                motion:framePosition="90"
+                motion:motionTarget="@id/top_image"
+                motion:percentWidth="0"
+                motion:percentX="0" />
 
-            <KeyAttribute
-                app:framePosition="20"
-                app:motionTarget="@id/audio_view">
-                <CustomAttribute
-                    app:attributeName="EndPadding"
-                    app:customDimension="0dp" />
-            </KeyAttribute>
+            <KeyPosition
+                motion:curveFit="linear"
+                motion:framePosition="90"
+                motion:motionTarget="@id/top_image_container"
+                motion:percentWidth="0" />
+
+            <KeyPosition
+                motion:curveFit="linear"
+                motion:framePosition="90"
+                motion:motionTarget="@id/controller_container"
+                motion:percentWidth="0" />
 
             <KeyAttribute
                 android:alpha="0"
-                app:framePosition="0"
-                app:motionTarget="@id/recycler_view" />
+                motion:framePosition="75"
+                motion:motionTarget="@id/current_progress" />
 
             <KeyAttribute
-                android:alpha="1"
-                app:framePosition="100"
-                app:motionTarget="@id/recycler_view" />
+                android:alpha="0"
+                motion:framePosition="75"
+                motion:motionTarget="@id/play_pause_button" />
 
             <KeyAttribute
-                app:framePosition="0"
-                app:motionTarget="@id/audio_view_container">
-                <CustomAttribute
-                    app:attributeName="cardElevation"
-                    app:customDimension="5dp" />
-            </KeyAttribute>
+                android:alpha="0"
+                motion:framePosition="75"
+                motion:motionTarget="@id/duration" />
 
             <KeyAttribute
-                app:framePosition="3"
-                app:motionTarget="@id/audio_view_container">
-                <CustomAttribute
-                    app:attributeName="cardElevation"
-                    app:customDimension="0dp" />
-            </KeyAttribute>
+                android:alpha="0"
+                motion:framePosition="75"
+                motion:motionTarget="@id/progress_slider" />
+
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="75"
+                motion:motionTarget="@id/prev_audio_button" />
+
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="75"
+                motion:motionTarget="@id/next_audio_button" />
         </KeyFrameSet>
-
     </Transition>
 
-    <ConstraintSet android:id="@+id/expanded">
+    <ConstraintSet android:id="@id/start">
+        <Constraint
+            android:id="@id/top_image_container"
+            android:layout_width="0dp"
+            android:layout_height="320dp"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toTopOf="parent">
+            <CustomAttribute
+                motion:attributeName="backgroundColor"
+                motion:customColorValue="?attr/colorSecondary" />
+        </Constraint>
 
         <Constraint
-            android:id="@id/audio_view_container"
-            android:layout_height="250dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Constraint
-            android:id="@id/content"
-            android:layout_width="match_parent"
+            android:id="@id/top_image"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/audio_view_container" />
+            motion:layout_constraintBottom_toBottomOf="@id/top_image_container"
+            motion:layout_constraintEnd_toEndOf="@id/top_image_container"
+            motion:layout_constraintStart_toStartOf="@id/top_image_container"
+            motion:layout_constraintTop_toTopOf="@id/top_image_container" />
 
+        <Constraint
+            android:id="@id/controller_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@id/top_image_container" />
+
+        <Constraint android:id="@id/play_pause_button">
+            <PropertySet motion:alpha="1" />
+        </Constraint>
+
+        <Constraint android:id="@id/current_progress">
+            <PropertySet android:alpha="1" />
+        </Constraint>
+
+        <Constraint android:id="@id/duration">
+            <PropertySet android:alpha="1" />
+        </Constraint>
+
+        <Constraint android:id="@id/progress_slider">
+            <PropertySet android:alpha="1" />
+        </Constraint>
+
+        <Constraint android:id="@id/prev_audio_button">
+            <PropertySet android:alpha="1" />
+        </Constraint>
+
+        <Constraint android:id="@id/next_audio_button">
+            <PropertySet android:alpha="1" />
+        </Constraint>
     </ConstraintSet>
 
-    <ConstraintSet android:id="@+id/collapsed">
+    <ConstraintSet android:id="@id/end">
         <Constraint
-            android:id="@id/audio_view_container"
-            android:layout_height="55dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="65dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:id="@id/top_image_container"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent" />
 
         <Constraint
-            android:id="@id/content"
-            android:layout_width="match_parent"
-            android:layout_height="-1dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="66dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/audio_view_container" />
+            android:id="@id/top_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            motion:layout_constraintBottom_toBottomOf="@id/top_image_container"
+            motion:layout_constraintDimensionRatio="H,1:2.5"
+            motion:layout_constraintStart_toStartOf="@id/top_image_container"
+            motion:layout_constraintTop_toTopOf="@id/top_image_container" />
+
+        <Constraint
+            android:id="@id/controller_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@id/top_image_container" />
+
+        <Constraint
+            android:id="@id/play_pause_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="2dp"
+            motion:layout_constraintBottom_toBottomOf="@id/top_image_container"
+            motion:layout_constraintEnd_toEndOf="@id/top_image_container"
+            motion:layout_constraintTop_toTopOf="@id/top_image_container" />
+
+        <Constraint android:id="@id/progress_slider">
+            <PropertySet android:alpha="0" />
+        </Constraint>
+
+        <Constraint android:id="@id/current_progress">
+            <PropertySet android:alpha="0" />
+        </Constraint>
+
+        <Constraint android:id="@id/duration">
+            <PropertySet android:alpha="0" />
+        </Constraint>
+
+        <Constraint android:id="@id/prev_audio_button">
+            <PropertySet android:alpha="0" />
+        </Constraint>
+
+        <Constraint android:id="@id/next_audio_button">
+            <PropertySet android:alpha="0" />
+        </Constraint>
     </ConstraintSet>
 </MotionScene>

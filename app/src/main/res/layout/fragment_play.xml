@@ -1,61 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.example.ytaudio.ui.view.SingleViewTouchableMotionLayout
-        android:id="@+id/audio_motion_layout"
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:id="@+id/motion_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        app:layoutDescription="@xml/player_scene"
-        app:layout_collapseMode="parallax">
+        android:background="#444"
+        app:layoutDescription="@xml/player_scene">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/audio_view_container"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/top_image_container"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            app:cardCornerRadius="0dp"
-            app:cardElevation="5dp"
+            android:layout_height="320dp"
+            android:background="?android:attr/windowBackground"
+            app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.example.ytaudio.ui.view.AudioView
-            android:id="@+id/audio_view"
+        <ImageView
+            android:id="@+id/top_image"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:elevation="10dp"
-            android:paddingEnd="250dp"
             android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="@+id/audio_view_container"
-            app:layout_constraintEnd_toEndOf="@+id/audio_view_container"
-            app:layout_constraintStart_toStartOf="@+id/audio_view_container"
-            app:layout_constraintTop_toTopOf="@+id/audio_view_container" />
+            app:layout_constraintBottom_toBottomOf="@id/top_image_container"
+            app:layout_constraintEnd_toEndOf="@id/top_image_container"
+            app:layout_constraintStart_toStartOf="@id/top_image_container"
+            app:layout_constraintTop_toTopOf="@id/top_image_container"
+            tools:src="@tools:sample/backgrounds/scenic" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/content"
-            android:layout_width="match_parent"
+        <FrameLayout
+            android:id="@+id/controller_container"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:clickable="true"
-            android:elevation="10dp"
-            android:focusable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/audio_view_container">
+            app:layout_constraintTop_toBottomOf="@id/top_image_container"
+            app:layout_constraintVertical_bias="0.0" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:nestedScrollingEnabled="false"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <ImageButton
+            android:id="@+id/play_pause_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/roundSelector"
+            android:padding="16dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toStartOf="@id/next_audio_button"
+            app:layout_constraintStart_toEndOf="@id/prev_audio_button"
+            app:layout_constraintTop_toBottomOf="@id/progress_slider"
+            app:srcCompat="@drawable/exo_icon_play" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/current_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:gravity="center"
+            android:minWidth="40dp"
+            android:singleLine="true"
+            android:textColor="?android:attr/textColorSecondary"
+            app:layout_constraintBottom_toBottomOf="@id/progress_slider"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/progress_slider"
+            tools:text="00:30" />
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            android:minWidth="40dp"
+            android:singleLine="true"
+            android:textColor="?android:attr/textColorSecondary"
+            app:layout_constraintBottom_toBottomOf="@id/progress_slider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/progress_slider"
+            tools:text="00:30" />
 
-    </com.example.ytaudio.ui.view.SingleViewTouchableMotionLayout>
+        <com.google.android.material.slider.Slider
+            android:id="@+id/progress_slider"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:haloRadius="0dp"
+            app:layout_constraintEnd_toStartOf="@id/duration"
+            app:layout_constraintStart_toEndOf="@id/current_progress"
+            app:layout_constraintTop_toBottomOf="@id/top_image_container"
+            app:thumbRadius="6dp"
+            app:trackHeight="3dp" />
+
+        <ImageButton
+            android:id="@+id/prev_audio_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/roundSelector"
+            android:padding="16dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toStartOf="@id/play_pause_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/play_pause_button"
+            app:srcCompat="@drawable/exo_icon_previous" />
+
+        <ImageButton
+            android:id="@+id/next_audio_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/roundSelector"
+            android:padding="16dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/play_pause_button"
+            app:layout_constraintTop_toTopOf="@+id/play_pause_button"
+            app:srcCompat="@drawable/exo_icon_next" />
+
+    </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>
