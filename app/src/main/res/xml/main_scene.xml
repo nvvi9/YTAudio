@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+    <ConstraintSet android:id="@+id/start" />
+    <ConstraintSet android:id="@+id/end" />
+
+    <Transition
+        motion:constraintSetEnd="@id/end"
+        motion:constraintSetStart="@id/start">
+        <KeyFrameSet>
+            <KeyAttribute
+                motion:framePosition="0"
+                motion:motionTarget="@id/bottom_nav">
+                <CustomAttribute
+                    motion:attributeName="translationY"
+                    motion:customDimension="0dp" />
+            </KeyAttribute>
+
+            <KeyAttribute
+                motion:framePosition="75"
+                motion:motionTarget="@id/bottom_nav">
+                <CustomAttribute
+                    motion:attributeName="translationY"
+                    motion:customDimension="55dp" />
+            </KeyAttribute>
+
+            <KeyAttribute
+                motion:framePosition="100"
+                motion:motionTarget="@id/background_dim">
+                <CustomAttribute
+                    motion:attributeName="BackgroundColor"
+                    motion:customColorValue="#6e232323" />
+            </KeyAttribute>
+
+            <KeyAttribute
+                motion:framePosition="0"
+                motion:motionTarget="@id/background_dim">
+                <CustomAttribute
+                    motion:attributeName="BackgroundColor"
+                    motion:customColorValue="@android:color/transparent" />
+            </KeyAttribute>
+        </KeyFrameSet>
+    </Transition>
+</MotionScene>
