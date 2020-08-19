@@ -15,7 +15,7 @@ interface YouTubeApiService {
         @Query("pageToken") pageToken: String?
     ): YTSearchPartId
 
-    @GET("videos?key=${BuildConfig.YOUTUBE_API_KEY}&part=id&chart=mostPopular&videoCategoryId=28")
+    @GET("videos?key=${BuildConfig.YOUTUBE_API_KEY}&part=id&chart=mostPopular&videoCategoryId=0")
     suspend fun getYTVideosIdResponse(
         @Query("maxResults") maxResults: Int,
         @Query("pageToken") pageToken: String? = null

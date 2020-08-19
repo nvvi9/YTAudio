@@ -29,9 +29,9 @@ data class AudioInfo(
             return with(videoData) {
                 val id = videoDetails.id
                 val details = AudioDetails(
-                    videoDetails.title,
-                    videoDetails.channel,
-                    videoDetails.durationSeconds
+                    videoDetails.title ?: "",
+                    videoDetails.channel ?: "",
+                    videoDetails.durationSeconds ?: 0
                 )
 
                 val thumbnails = videoDetails.thumbnails

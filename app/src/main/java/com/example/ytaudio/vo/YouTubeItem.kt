@@ -12,4 +12,4 @@ data class YouTubeItem(
 )
 
 fun VideoDetails.toYouTubeItem() =
-    YouTubeItem(id, title, thumbnails[1].url, channel)
+    YouTubeItem(id, title ?: "", thumbnails[1].url, channel ?: "")
