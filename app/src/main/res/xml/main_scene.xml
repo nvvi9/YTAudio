@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:motion="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <ConstraintSet android:id="@+id/start" />
     <ConstraintSet android:id="@+id/end" />
 
     <Transition
-        motion:constraintSetEnd="@id/end"
-        motion:constraintSetStart="@id/start">
+        app:constraintSetEnd="@id/end"
+        app:constraintSetStart="@id/start">
         <KeyFrameSet>
             <KeyAttribute
-                motion:framePosition="0"
-                motion:motionTarget="@id/bottom_nav">
+                app:framePosition="0"
+                app:motionTarget="@id/bottom_nav">
                 <CustomAttribute
-                    motion:attributeName="translationY"
-                    motion:customDimension="0dp" />
+                    app:attributeName="translationY"
+                    app:customDimension="0dp" />
             </KeyAttribute>
 
             <KeyAttribute
-                motion:framePosition="75"
-                motion:motionTarget="@id/bottom_nav">
+                app:framePosition="75"
+                app:motionTarget="@id/bottom_nav">
                 <CustomAttribute
-                    motion:attributeName="translationY"
-                    motion:customDimension="55dp" />
+                    app:attributeName="translationY"
+                    app:customDimension="55dp" />
             </KeyAttribute>
 
             <KeyAttribute
-                motion:framePosition="100"
-                motion:motionTarget="@id/background_dim">
+                app:framePosition="100"
+                app:motionTarget="@id/background_dim">
                 <CustomAttribute
-                    motion:attributeName="BackgroundColor"
-                    motion:customColorValue="#6e232323" />
+                    app:attributeName="BackgroundColor"
+                    app:customColorValue="#6e232323" />
             </KeyAttribute>
 
             <KeyAttribute
-                motion:framePosition="0"
-                motion:motionTarget="@id/background_dim">
+                app:framePosition="0"
+                app:motionTarget="@id/background_dim">
                 <CustomAttribute
-                    motion:attributeName="BackgroundColor"
-                    motion:customColorValue="@android:color/transparent" />
+                    app:attributeName="BackgroundColor"
+                    app:customColorValue="@android:color/transparent" />
             </KeyAttribute>
         </KeyFrameSet>
     </Transition>

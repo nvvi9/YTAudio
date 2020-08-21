@@ -30,25 +30,21 @@ class YTAudioApplication : Application(), HasAndroidInjector {
 
     private fun delayedInit() =
         coroutineScope.launch {
-            setupWork()
-        }
-
-    private fun setupWork() {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .setRequiresBatteryNotLow(true)
-            .build()
-
-        val periodicWorkRequest =
-            PeriodicWorkRequestBuilder<RefreshDatabaseWorker>(1, TimeUnit.HOURS)
-                .setConstraints(constraints)
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .setRequiresBatteryNotLow(true)
                 .build()
 
-        WorkManager.getInstance(this)
-            .enqueueUniquePeriodicWork(
-                RefreshDatabaseWorker.WORK_NAME,
-                ExistingPeriodicWorkPolicy.KEEP,
-                periodicWorkRequest
-            )
-    }
+            val periodicWorkRequest =
+                PeriodicWorkRequestBuilder<RefreshDatabaseWorker>(1, TimeUnit.HOURS)
+                    .setConstraints(constraints)
+                    .build()
+
+            WorkManager.getInstance(this@YTAudioApplication)
+                .enqueueUniquePeriodicWork(
+                    RefreshDatabaseWorker.WORK_NAME,
+                    ExistingPeriodicWorkPolicy.KEEP,
+                    periodicWorkRequest
+                )
+        }
 }

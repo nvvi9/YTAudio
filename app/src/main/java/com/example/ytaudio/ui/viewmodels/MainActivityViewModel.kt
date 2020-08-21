@@ -1,8 +1,11 @@
 package com.example.ytaudio.ui.viewmodels
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.ytaudio.domain.PlaylistUseCases
 import com.example.ytaudio.service.AudioServiceConnection
+import com.example.ytaudio.utils.Event
 import com.example.ytaudio.utils.extensions.id
 import com.example.ytaudio.utils.extensions.isPlayEnabled
 import com.example.ytaudio.utils.extensions.isPlaying
@@ -17,8 +20,13 @@ class MainActivityViewModel @Inject constructor(
     private val audioServiceConnection: AudioServiceConnection
 ) : ViewModel() {
 
+    private val _replaceEvent = MutableLiveData<Event<String>>()
+    val replaceEvent: LiveData<Event<String>>
+        get() = _replaceEvent
+
     fun audioItemClicked(audioId: String) {
         playAudio(audioId, false)
+        _replaceEvent.value = Event(audioId)
     }
 
     private fun playAudio(audioId: String, pauseAllowed: Boolean) {

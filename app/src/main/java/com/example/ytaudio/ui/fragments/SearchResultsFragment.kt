@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @ExperimentalPagingApi
 class SearchResultsFragment : Fragment(), YTItemAdapterListener, Injectable {
 
@@ -42,6 +44,17 @@ class SearchResultsFragment : Fragment(), YTItemAdapterListener, Injectable {
     private val navArgs: SearchResultsFragmentArgs by navArgs()
 
     private val youtubeItemsAdapter = YouTubeItemsAdapter(this)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    findNavController().navigate(SearchResultsFragmentDirections.actionSearchResultsFragmentToYouTubeFragment())
+                }
+            })
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

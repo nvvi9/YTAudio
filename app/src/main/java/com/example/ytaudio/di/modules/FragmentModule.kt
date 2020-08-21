@@ -24,4 +24,7 @@ abstract class FragmentModule {
     @ExperimentalPagingApi
     @ContributesAndroidInjector
     abstract fun contributeSearchResultsFragment(): SearchResultsFragment
+
+    @ContributesAndroidInjector
+    abstract fun contributePlayFragment(): PlayFragment
 }

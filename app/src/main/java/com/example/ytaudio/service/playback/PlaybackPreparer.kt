@@ -31,7 +31,7 @@ class PlaybackPreparer(
     private var nowPlaying: MediaMetadataCompat? = null
 
     private val metadataObserver = Observer<List<MediaMetadataCompat>> {
-        if (it.metadataEquals(currentMetadata)) {
+        if (!it.metadataEquals(currentMetadata)) {
             updateMetadata(it)
         }
     }

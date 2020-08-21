@@ -5,7 +5,6 @@ import android.view.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -38,7 +37,8 @@ class PlaylistFragment : ActionModeFragment() {
     private val playlistAdapter =
         PlaylistAdapter(this) {
             mainActivityViewModel.audioItemClicked(it.id)
-            findNavController().navigate(PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment())
+//            findNavController().navigate(PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment())
+//            findNavController().navigate(R.id.action_global_playFragment)
         }
 
     override fun onCreateView(

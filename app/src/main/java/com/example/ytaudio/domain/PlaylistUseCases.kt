@@ -14,7 +14,7 @@ class PlaylistUseCases @Inject constructor(
 ) : UseCases {
 
     fun getPlaylistItems() = Transformations.map(playlistRepository.getAudioInfo()) { list ->
-        list.filter { it.needUpdate == false }.map { PlaylistItem.from(it) }
+        list.map { PlaylistItem.from(it) }
     }
 
     fun getMediaMetadata() = Transformations.map(playlistRepository.getAudioInfo()) {

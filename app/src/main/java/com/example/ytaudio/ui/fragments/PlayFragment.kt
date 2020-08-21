@@ -11,14 +11,17 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.ytaudio.R
-import com.example.ytaudio.databinding.FragmentPlayerBinding
 import com.example.ytaudio.di.Injectable
 import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
 import com.example.ytaudio.ui.viewmodels.PlayerViewModel
+import kotlinx.android.synthetic.main.fragment_play.*
+import kotlinx.android.synthetic.main.fragment_player.*
 import javax.inject.Inject
 
-class PlayerFragment : Fragment(), Injectable {
+
+class PlayFragment : Fragment(), Injectable {
 
     @Inject
     lateinit var mainActivityViewModelFactory: ViewModelProvider.Factory
@@ -26,57 +29,58 @@ class PlayerFragment : Fragment(), Injectable {
     @Inject
     lateinit var playerViewModelFactory: ViewModelProvider.Factory
 
-    private val mainActivityViewModel: MainActivityViewModel by viewModels {
+    private val mainActivityViewModel by viewModels<MainActivityViewModel> {
         mainActivityViewModelFactory
     }
 
-    private val playerViewModel: PlayerViewModel by viewModels {
+    private val playerViewModel by viewModels<PlayerViewModel> {
         playerViewModelFactory
     }
-
-    private lateinit var binding: FragmentPlayerBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentPlayerBinding.inflate(inflater)
+    ): View? = inflater.inflate(R.layout.fragment_play, container, false)
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         playerViewModel.apply {
             currentAudioInfo.observe(viewLifecycleOwner, Observer {
                 updateUI(it)
             })
 
             audioButtonRes.observe(viewLifecycleOwner, Observer {
-                binding.audioButton.setImageResource(it)
+                play_pause_button.setImageResource(it)
             })
 
             audioPosition.observe(viewLifecycleOwner, Observer {
-                binding.currentTimeText.text = DateUtils.formatElapsedTime(it / 1000)
+                current_progress.text = DateUtils.formatElapsedTime(it / 1000)
             })
+
         }
 
-        binding.audioButton.setOnClickListener {
+        play_pause_button.setOnClickListener {
             playerViewModel.currentAudioInfo.value?.let {
                 mainActivityViewModel.playAudio(it.audioId)
             }
         }
-
-        return binding.root
     }
 
     private fun updateUI(currentAudioInfo: PlayerViewModel.NowPlayingAudioInfo) {
-        binding.apply {
-            if (currentAudioInfo.thumbnailUri == Uri.EMPTY) {
-                thumbnail.setImageResource(R.drawable.ic_album_black)
-            } else {
-                Glide.with(this@PlayerFragment).load(currentAudioInfo.thumbnailUri)
-                    .into(thumbnail)
-            }
-            durationText.text = currentAudioInfo.duration
-            textTitle.text = currentAudioInfo.title
-            textAuthor.text = currentAudioInfo.subtitle
+        if (currentAudioInfo.thumbnailUri == Uri.EMPTY) {
+            thumbnail.setImageResource(R.drawable.ic_album_black)
+        } else {
+            Glide.with(this@PlayFragment).load(currentAudioInfo.thumbnailUri)
+                .apply(
+                    RequestOptions()
+                        .placeholder(R.drawable.ic_notification)
+                        .error(R.drawable.ic_notification)
+                ).into(thumbnail)
         }
+        duration.text = currentAudioInfo.duration
+    }
+
+    companion object {
+        fun newInstance() = PlayFragment()
     }
 }

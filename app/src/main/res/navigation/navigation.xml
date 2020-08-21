@@ -32,7 +32,7 @@
         android:id="@+id/searchFragment"
         android:name="com.example.ytaudio.ui.fragments.SearchFragment"
         android:label="SearchFragment"
-        tools:layout="@layout/fragment_search" >
+        tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_searchFragment_to_searchResultsFragment"
             app:destination="@id/searchResultsFragment" />
@@ -41,7 +41,7 @@
         android:id="@+id/searchResultsFragment"
         android:name="com.example.ytaudio.ui.fragments.SearchResultsFragment"
         android:label="SearchResultsFragment"
-        tools:layout="@layout/fragment_search_results" >
+        tools:layout="@layout/fragment_search_results">
         <argument
             android:name="query"
             app:argType="string" />
@@ -50,4 +50,12 @@
             app:destination="@id/youTubeFragment"
             app:popUpTo="@id/youTubeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/playFragment"
+        android:name="com.example.ytaudio.ui.fragments.PlayFragment"
+        android:label="PlayFragment"
+        tools:layout="@layout/fragment_play" />
+    <action
+        android:id="@+id/action_global_playFragment"
+        app:destination="@+id/playFragment" />
 </navigation>
