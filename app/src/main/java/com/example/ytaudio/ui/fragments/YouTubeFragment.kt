@@ -66,23 +66,20 @@ class YouTubeFragment : Fragment(), YTItemAdapterListener, Injectable {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
-        binding.apply {
-            viewModel = youTubeViewModel
-            youtubeItemsView.apply {
-                ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
-                adapter = youTubeItemsAdapter
-            }
-            youtubeItemsView.adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
-            youtubeItemsView
-                .addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
-            swipeRefresh.setOnRefreshListener {
-                youTubeItemsAdapter.refresh()
-            }
-            toolbar.setNavigationOnClickListener {
-                findNavController().navigate(YouTubeFragmentDirections.actionYouTubeFragmentToSearchFragment())
-            }
-            lifecycleOwner = this@YouTubeFragment
+        binding.viewModel = youTubeViewModel
+        binding.youtubeItemsView.apply {
+            ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
+            adapter = youTubeItemsAdapter
+            adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
+            addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
         }
+        binding.swipeRefresh.setOnRefreshListener {
+            youTubeItemsAdapter.refresh()
+        }
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().navigate(YouTubeFragmentDirections.actionYouTubeFragmentToSearchFragment())
+        }
+        binding.lifecycleOwner = this
 
         setLoadState()
         setRecommended()
@@ -93,13 +90,11 @@ class YouTubeFragment : Fragment(), YTItemAdapterListener, Injectable {
     }
 
     override fun onItemIconChanged(item: YouTubeItem, newValue: Boolean) {
-        newValue.let {
-            item.isAdded = it
-            if (newValue) {
-                youTubeViewModel.addToPlaylist(item.videoId)
-            } else {
-                youTubeViewModel.deleteFromPlaylist(item.videoId)
-            }
+        item.isAdded = newValue
+        if (newValue) {
+            youTubeViewModel.addToPlaylist(item.videoId)
+        } else {
+            youTubeViewModel.deleteFromPlaylist(item.videoId)
         }
     }
 
