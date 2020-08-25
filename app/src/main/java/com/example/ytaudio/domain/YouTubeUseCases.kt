@@ -2,6 +2,7 @@ package com.example.ytaudio.domain
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
+import androidx.paging.map
 import com.example.ytaudio.repositories.YouTubeRepository
 import com.example.ytaudio.vo.YouTubeItem
 import com.example.ytaudio.vo.toYouTubeItem

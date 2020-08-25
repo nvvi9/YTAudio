@@ -33,4 +33,5 @@
     <string name="network_failure_msg">Check your network connection and update</string>
     <string name="autocomplete_arrow_description">set autocomplete text to search view</string>
     <string name="youtube_item_card_transition_name">youtube_item_card_%1$s</string>
+    <string name="view_on_youtube">View on YouTube</string>
 </resources>
