@@ -2,6 +2,7 @@ package com.example.ytaudio.ui.adapters
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ytaudio.R
 import com.example.ytaudio.databinding.ItemYoutubeBinding
 import com.example.ytaudio.vo.YouTubeItem
 import kotlin.math.abs
@@ -18,6 +19,9 @@ class YTItemViewHolder(
             root.background = YTItemSwipeActionDrawable(root.context)
         }
     }
+
+    private val addedCornerSize =
+        itemView.resources.getDimension(R.dimen.small_component_corner_radius)
 
     fun bind(item: YouTubeItem) {
         binding.youTubeItem = item
@@ -58,7 +62,7 @@ class YTItemViewHolder(
     private fun updateCardViewTopLeftCornerSize(interpolation: Float) {
         binding.cardView?.apply {
             shapeAppearanceModel = shapeAppearanceModel.toBuilder()
-                .setTopLeftCornerSize(interpolation * 24f)
+                .setTopLeftCornerSize(interpolation * addedCornerSize)
                 .build()
         }
     }

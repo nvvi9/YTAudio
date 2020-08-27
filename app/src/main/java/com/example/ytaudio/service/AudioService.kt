@@ -28,7 +28,8 @@ import javax.inject.Singleton
 
 
 @Singleton
-open class AudioService : MediaBrowserServiceCompat() {
+open class AudioService : MediaBrowserServiceCompat(), Player.EventListener,
+    PlayerNotificationManager.NotificationListener {
 
     @Inject
     lateinit var playlistUseCases: PlaylistUseCases
@@ -50,7 +51,7 @@ open class AudioService : MediaBrowserServiceCompat() {
     private val exoPlayer: ExoPlayer by lazy {
         SimpleExoPlayer.Builder(this).build().apply {
             setAudioAttributes(ytAudioAttributes, true)
-            addListener(PlayerListener())
+            addListener(this@AudioService)
         }
     }
 
@@ -70,10 +71,7 @@ open class AudioService : MediaBrowserServiceCompat() {
 
         sessionToken = mediaSession.sessionToken
 
-        notificationManager = NotificationManager(
-            this, exoPlayer, mediaSession.sessionToken,
-            PlayerNotificationListener()
-        )
+        notificationManager = NotificationManager(this, exoPlayer, mediaSession.sessionToken, this)
 
         becomingNoisyReceiver =
             BecomingNoisyReceiver(
@@ -112,61 +110,52 @@ open class AudioService : MediaBrowserServiceCompat() {
             release()
         }
 
-        exoPlayer.removeListener(PlayerListener())
+        exoPlayer.removeListener(this)
         exoPlayer.release()
         playbackPreparer.onCancel()
     }
 
+    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+        when (playbackState) {
+            Player.STATE_BUFFERING, Player.STATE_READY -> {
+                notificationManager.showNotification()
+                becomingNoisyReceiver.register()
 
-    private inner class PlayerListener : Player.EventListener {
-
-        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            when (playbackState) {
-                Player.STATE_BUFFERING, Player.STATE_READY -> {
-                    notificationManager.showNotification()
-                    becomingNoisyReceiver.register()
-
-                    if (playbackState == Player.STATE_READY && !playWhenReady) {
-                        stopForeground(false)
-                    }
-                }
-                else -> {
-                    notificationManager.hideNotification()
-                    becomingNoisyReceiver.unregister()
+                if (playbackState == Player.STATE_READY && !playWhenReady) {
+                    stopForeground(false)
                 }
             }
-        }
-
-        override fun onPlayerError(error: ExoPlaybackException) {
-            Log.e(javaClass.simpleName, error.toString())
+            else -> {
+                notificationManager.hideNotification()
+                becomingNoisyReceiver.unregister()
+            }
         }
     }
 
+    override fun onPlayerError(error: ExoPlaybackException) {
+        Log.e(javaClass.simpleName, error.toString())
+    }
 
-    private inner class PlayerNotificationListener :
-        PlayerNotificationManager.NotificationListener {
+    override fun onNotificationPosted(
+        notificationId: Int,
+        notification: Notification,
+        ongoing: Boolean
+    ) {
+        if (ongoing && !isForegroundService) {
+            ContextCompat.startForegroundService(
+                applicationContext,
+                Intent(applicationContext, this@AudioService.javaClass)
+            )
 
-        override fun onNotificationPosted(
-            notificationId: Int,
-            notification: Notification,
-            ongoing: Boolean
-        ) {
-            if (ongoing && !isForegroundService) {
-                ContextCompat.startForegroundService(
-                    applicationContext,
-                    Intent(applicationContext, this@AudioService.javaClass)
-                )
-
-                startForeground(notificationId, notification)
-                isForegroundService = true
-            }
+            startForeground(notificationId, notification)
+            isForegroundService = true
         }
+    }
 
-        override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
-            stopForeground(true)
-            isForegroundService = false
-            stopSelf()
-        }
+    override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
+        stopForeground(true)
+        isForegroundService = false
+        stopSelf()
     }
 }
 
