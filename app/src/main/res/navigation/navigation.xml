@@ -50,12 +50,4 @@
             app:destination="@id/youTubeFragment"
             app:popUpTo="@id/youTubeFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/playFragment"
-        android:name="com.example.ytaudio.ui.fragments.PlayFragment"
-        android:label="PlayFragment"
-        tools:layout="@layout/fragment_play" />
-    <action
-        android:id="@+id/action_global_playFragment"
-        app:destination="@+id/playFragment" />
 </navigation>

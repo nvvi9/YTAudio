@@ -17,7 +17,6 @@ import com.example.ytaudio.di.Injectable
 import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
 import com.example.ytaudio.ui.viewmodels.PlayerViewModel
 import kotlinx.android.synthetic.main.fragment_play.*
-import kotlinx.android.synthetic.main.fragment_player.*
 import javax.inject.Inject
 
 
