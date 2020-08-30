@@ -17,12 +17,6 @@
             app:defaultNavHost="true"
             app:navGraph="@navigation/navigation" />
 
-        <fragment
-            android:id="@+id/fragment_player"
-            android:name="com.example.ytaudio.ui.fragments.PlayFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_nav"
             android:layout_width="0dp"
