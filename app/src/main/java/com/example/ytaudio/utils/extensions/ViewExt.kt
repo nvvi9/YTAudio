@@ -13,9 +13,14 @@ import androidx.core.view.drawToBitmap
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
-fun View.hideKeyboard(context: Context?) =
+fun View.hideKeyboard() =
     (context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
         ?.hideSoftInputFromWindow(windowToken, 0)
+
+fun View.showKeyboard() {
+    (context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
+        ?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+}
 
 fun BottomNavigationView.show() {
     if (visibility == VISIBLE) return

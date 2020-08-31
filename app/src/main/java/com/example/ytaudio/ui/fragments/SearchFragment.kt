@@ -5,18 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.DefaultItemAnimator
 import com.example.ytaudio.databinding.FragmentSearchBinding
 import com.example.ytaudio.di.Injectable
 import com.example.ytaudio.ui.adapters.AutocompleteAdapterClickListener
 import com.example.ytaudio.ui.adapters.SearchAutocompleteAdapter
 import com.example.ytaudio.ui.viewmodels.SearchViewModel
 import com.example.ytaudio.utils.extensions.hideKeyboard
+import com.example.ytaudio.utils.extensions.showKeyboard
 import javax.inject.Inject
 
 
@@ -30,10 +32,11 @@ class SearchFragment : Fragment(), Injectable {
     }
 
     private lateinit var binding: FragmentSearchBinding
+    private val navArgs: SearchFragmentArgs by navArgs()
 
     private val adapter = SearchAutocompleteAdapter(AutocompleteAdapterClickListener(
-        { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() },
-        { binding.searchToolbar.searchText.setText(it) }
+        { navigateToResults(it) },
+        { setToolbarText(it) }
     ))
 
     override fun onCreateView(
@@ -44,22 +47,19 @@ class SearchFragment : Fragment(), Injectable {
         binding = FragmentSearchBinding.inflate(inflater).apply {
             viewModel = searchViewModel
             recyclerView.adapter = adapter
+            (recyclerView.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
             lifecycleOwner = this@SearchFragment
             searchToolbar.searchText.addTextChangedListener {
                 searchViewModel.setAutocomplete(it.toString())
             }
             searchToolbar.toolbar.setNavigationOnClickListener {
-                findNavController().navigateUp()
+                findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToYouTubeFragment())
             }
             searchToolbar.searchText.setOnEditorActionListener { v, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
                         v.text.takeIf { it.isNotEmpty() }?.let {
-                            findNavController().navigate(
-                                SearchFragmentDirections.actionSearchFragmentToSearchResultsFragment(
-                                    it.toString()
-                                )
-                            )
+                            navigateToResults(it.toString())
                         }
                         true
                     }
@@ -68,11 +68,38 @@ class SearchFragment : Fragment(), Injectable {
             }
         }
 
+        navArgs.query?.let {
+            setToolbarText(it)
+        }
+
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.searchToolbar.searchText.apply {
+            requestFocus()
+//            isEnabled = true
+//            isFocusable = true
+//            isFocusableInTouchMode = true
+            showKeyboard()
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        binding.root.hideKeyboard(context)
+        binding.root.hideKeyboard()
+    }
+
+    private fun setToolbarText(text: CharSequence) {
+        binding.searchToolbar.searchText.apply {
+            setText(text)
+            setSelection(text.length)
+        }
+    }
+
+    private fun navigateToResults(query: String) {
+        findNavController()
+            .navigate(SearchFragmentDirections.actionSearchFragmentToSearchResultsFragment(query))
     }
 }

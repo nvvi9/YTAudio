@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.doOnPreDraw
@@ -24,6 +25,7 @@ import com.example.ytaudio.ui.adapters.YTLoadStateAdapter
 import com.example.ytaudio.ui.adapters.YouTubeItemsAdapter
 import com.example.ytaudio.ui.viewmodels.SearchResultsViewModel
 import com.example.ytaudio.vo.YouTubeItem
+import kotlinx.android.synthetic.main.fragment_search_results.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -41,18 +43,14 @@ class SearchResultsFragment : Fragment(), YTItemAdapterListener, Injectable {
     }
 
     private lateinit var binding: FragmentSearchResultsBinding
-
     private var job: Job? = null
-
     private val navArgs: SearchResultsFragmentArgs by navArgs()
-
     private val youtubeItemsAdapter = YouTubeItemsAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback(
-            this,
-            object : OnBackPressedCallback(true) {
+            this, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     findNavController().navigate(SearchResultsFragmentDirections.actionSearchResultsFragmentToYouTubeFragment())
                 }
@@ -63,26 +61,32 @@ class SearchResultsFragment : Fragment(), YTItemAdapterListener, Injectable {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentSearchResultsBinding.inflate(inflater)
-        return binding.root
-    }
+    ): View? = FragmentSearchResultsBinding.inflate(inflater).also {
+        binding = it
+    }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
         binding.recyclerView.apply {
             ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
-            adapter = youtubeItemsAdapter
             adapter = youtubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
             addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
         }
-        binding.searchToolbar.apply {
-            searchText.setText(navArgs.query)
-            toolbar.setNavigationOnClickListener {
-                findNavController().navigate(SearchResultsFragmentDirections.actionSearchResultsFragmentToYouTubeFragment())
-            }
+
+        binding.searchResultsToolbar.setNavigationOnClickListener {
+            findNavController().navigate(SearchResultsFragmentDirections.actionSearchResultsFragmentToYouTubeFragment())
         }
+
+        search_query.text = navArgs.query
+        search_query.setOnClickListener {
+            findNavController().navigate(
+                SearchResultsFragmentDirections.actionSearchResultsFragmentToSearchFragment(
+                    (it as TextView).text.toString()
+                )
+            )
+        }
+
         binding.lifecycleOwner = this
         setFromQuery()
     }

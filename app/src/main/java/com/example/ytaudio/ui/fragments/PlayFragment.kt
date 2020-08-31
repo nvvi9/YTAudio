@@ -9,11 +9,11 @@ import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.ytaudio.R
+import com.example.ytaudio.databinding.FragmentPlayBinding
 import com.example.ytaudio.di.Injectable
 import com.example.ytaudio.ui.MainActivity
 import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
@@ -24,13 +24,15 @@ import javax.inject.Inject
 import kotlin.math.abs
 
 
-class PlayFragment : Fragment(), Injectable {
+class PlayFragment : Fragment(), MotionLayout.TransitionListener, Injectable {
 
     @Inject
     lateinit var mainActivityViewModelFactory: ViewModelProvider.Factory
 
     @Inject
     lateinit var playerViewModelFactory: ViewModelProvider.Factory
+
+    private lateinit var binding: FragmentPlayBinding
 
     private val mainActivityViewModel by viewModels<MainActivityViewModel> {
         mainActivityViewModelFactory
@@ -44,41 +46,48 @@ class PlayFragment : Fragment(), Injectable {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_play, container, false)
+    ): View? =
+        FragmentPlayBinding.inflate(inflater).apply {
+            playPauseButton.setOnClickListener {
+                playerViewModel.currentAudioInfo.value?.let {
+                    mainActivityViewModel.playAudio(it.audioId)
+                }
+            }
+
+            motionLayout.setTransitionListener(this@PlayFragment)
+        }.also { binding = it }.root
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         playerViewModel.apply {
-            currentAudioInfo.observe(viewLifecycleOwner, Observer {
+            currentAudioInfo.observe(viewLifecycleOwner) {
                 updateUI(it)
-            })
-
-            audioButtonRes.observe(viewLifecycleOwner, Observer {
-                play_pause_button.setImageResource(it)
-            })
-
-            audioPosition.observe(viewLifecycleOwner, Observer {
-                current_progress.text = DateUtils.formatElapsedTime(it / 1000)
-            })
-
-        }
-
-        play_pause_button.setOnClickListener {
-            playerViewModel.currentAudioInfo.value?.let {
-                mainActivityViewModel.playAudio(it.audioId)
-            }
-        }
-
-        motion_layout.setTransitionListener(object : MotionLayout.TransitionListener {
-            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
-                (activity as MainActivity).main_motion_layout.progress = abs(p3)
             }
 
-            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {}
+            audioButtonRes.observe(viewLifecycleOwner) {
+                binding.playPauseButton.setImageResource(it)
+            }
 
-            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {}
+            audioPosition.observe(viewLifecycleOwner) {
+                binding.currentProgress.text = DateUtils.formatElapsedTime(it / 1000)
+            }
+        }
+    }
 
-            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {}
-        })
+    override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
+        (activity as MainActivity).main_motion_layout.progress = abs(p3)
+    }
+
+    override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {}
+
+    override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {}
+
+    override fun onTransitionTrigger(
+        p0: MotionLayout?,
+        p1: Int,
+        p2: Boolean,
+        p3: Float
+    ) {
     }
 
     private fun updateUI(currentAudioInfo: PlayerViewModel.NowPlayingAudioInfo) {

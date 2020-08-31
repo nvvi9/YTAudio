@@ -36,6 +36,7 @@
             android:gravity="clip_vertical|center_vertical|fill_vertical"
             android:text="@{data}"
             android:textSize="16sp"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/fill_search_view_button"
             app:layout_constraintHorizontal_bias="1.0"

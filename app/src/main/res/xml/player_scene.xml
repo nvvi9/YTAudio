@@ -5,11 +5,12 @@
     <Transition
         motion:constraintSetEnd="@+id/end"
         motion:constraintSetStart="@+id/start"
-        motion:duration="1000"
+        motion:duration="300"
         motion:motionInterpolator="linear">
 
         <OnSwipe
             motion:dragDirection="dragUp"
+            motion:maxAcceleration="200"
             motion:touchAnchorId="@+id/thumbnail_container"
             motion:touchAnchorSide="bottom" />
 
@@ -65,6 +66,7 @@
             android:id="@id/thumbnail_container"
             android:layout_width="0dp"
             android:layout_height="320dp"
+            motion:layout_constraintDimensionRatio="H,3:4"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toTopOf="parent">
