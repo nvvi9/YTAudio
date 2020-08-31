@@ -17,6 +17,7 @@ import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_play.*
 import javax.inject.Inject
 
 
@@ -58,6 +59,12 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
                 replacePlayFragment()
             }
         })
+    }
+
+    override fun onBackPressed() {
+        (supportFragmentManager.findFragmentById(R.id.fragment_container) as PlayFragment).motion_layout
+            ?.takeIf { it.currentState == R.id.end }
+            ?.transitionToStart() ?: super.onBackPressed()
     }
 
     override fun androidInjector() = androidInjector

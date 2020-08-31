@@ -6,6 +6,7 @@ import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -14,10 +15,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.ytaudio.R
 import com.example.ytaudio.di.Injectable
+import com.example.ytaudio.ui.MainActivity
 import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
 import com.example.ytaudio.ui.viewmodels.PlayerViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_play.*
 import javax.inject.Inject
+import kotlin.math.abs
 
 
 class PlayFragment : Fragment(), Injectable {
@@ -63,6 +67,18 @@ class PlayFragment : Fragment(), Injectable {
                 mainActivityViewModel.playAudio(it.audioId)
             }
         }
+
+        motion_layout.setTransitionListener(object : MotionLayout.TransitionListener {
+            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
+                (activity as MainActivity).main_motion_layout.progress = abs(p3)
+            }
+
+            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {}
+
+            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {}
+
+            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {}
+        })
     }
 
     private fun updateUI(currentAudioInfo: PlayerViewModel.NowPlayingAudioInfo) {

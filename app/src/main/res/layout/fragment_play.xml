@@ -5,7 +5,7 @@
     android:id="@+id/motion_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#444"
+    android:background="@android:color/transparent"
     app:layoutDescription="@xml/player_scene">
 
     <androidx.constraintlayout.widget.ConstraintLayout
