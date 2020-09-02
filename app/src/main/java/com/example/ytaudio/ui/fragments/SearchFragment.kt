@@ -79,9 +79,6 @@ class SearchFragment : Fragment(), Injectable {
         super.onResume()
         binding.searchToolbar.searchText.apply {
             requestFocus()
-//            isEnabled = true
-//            isFocusable = true
-//            isFocusableInTouchMode = true
             showKeyboard()
         }
     }

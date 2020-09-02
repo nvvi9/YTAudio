@@ -48,16 +48,6 @@
                 android:alpha="0"
                 motion:framePosition="75"
                 motion:motionTarget="@id/duration" />
-
-            <KeyAttribute
-                android:alpha="0"
-                motion:framePosition="75"
-                motion:motionTarget="@id/prev_audio_button" />
-
-            <KeyAttribute
-                android:alpha="0"
-                motion:framePosition="75"
-                motion:motionTarget="@id/next_audio_button" />
         </KeyFrameSet>
     </Transition>
 
@@ -102,14 +92,6 @@
         </Constraint>
 
         <Constraint android:id="@id/duration">
-            <PropertySet android:alpha="1" />
-        </Constraint>
-
-        <Constraint android:id="@id/prev_audio_button">
-            <PropertySet android:alpha="1" />
-        </Constraint>
-
-        <Constraint android:id="@id/next_audio_button">
             <PropertySet android:alpha="1" />
         </Constraint>
     </ConstraintSet>
@@ -165,14 +147,6 @@
         </Constraint>
 
         <Constraint android:id="@id/duration">
-            <PropertySet android:alpha="0" />
-        </Constraint>
-
-        <Constraint android:id="@id/prev_audio_button">
-            <PropertySet android:alpha="0" />
-        </Constraint>
-
-        <Constraint android:id="@id/next_audio_button">
             <PropertySet android:alpha="0" />
         </Constraint>
     </ConstraintSet>
