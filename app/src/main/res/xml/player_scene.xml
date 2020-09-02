@@ -48,6 +48,16 @@
                 android:alpha="0"
                 motion:framePosition="75"
                 motion:motionTarget="@id/duration" />
+
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="75"
+                motion:motionTarget="@id/title" />
+
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="75"
+                motion:motionTarget="@id/author" />
         </KeyFrameSet>
     </Transition>
 
@@ -92,6 +102,14 @@
         </Constraint>
 
         <Constraint android:id="@id/duration">
+            <PropertySet android:alpha="1" />
+        </Constraint>
+
+        <Constraint android:id="@+id/title">
+            <PropertySet android:alpha="1" />
+        </Constraint>
+
+        <Constraint android:id="@+id/author">
             <PropertySet android:alpha="1" />
         </Constraint>
     </ConstraintSet>
@@ -147,6 +165,14 @@
         </Constraint>
 
         <Constraint android:id="@id/duration">
+            <PropertySet android:alpha="0" />
+        </Constraint>
+
+        <Constraint android:id="@+id/title">
+            <PropertySet android:alpha="0" />
+        </Constraint>
+
+        <Constraint android:id="@id/author">
             <PropertySet android:alpha="0" />
         </Constraint>
     </ConstraintSet>
