@@ -8,11 +8,15 @@
         motion:duration="300"
         motion:motionInterpolator="linear">
 
-        <OnSwipe
-            motion:dragDirection="dragUp"
-            motion:maxAcceleration="200"
-            motion:touchAnchorId="@+id/thumbnail_container"
-            motion:touchAnchorSide="bottom" />
+        <!--        <OnSwipe-->
+        <!--            motion:dragDirection="dragUp"-->
+        <!--            motion:maxAcceleration="200"-->
+        <!--            motion:touchAnchorId="@+id/thumbnail_container"-->
+        <!--            motion:touchAnchorSide="bottom" />-->
+
+        <OnClick
+            motion:clickAction="toggle"
+            motion:targetId="@id/player_toolbar" />
 
         <KeyFrameSet>
             <KeyPosition
@@ -63,13 +67,21 @@
 
     <ConstraintSet android:id="@id/end">
         <Constraint
+            android:id="@id/player_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toTopOf="parent" />
+
+        <Constraint
             android:id="@id/thumbnail_container"
             android:layout_width="0dp"
             android:layout_height="320dp"
             motion:layout_constraintDimensionRatio="H,3:4"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toTopOf="parent">
+            motion:layout_constraintTop_toBottomOf="@id/player_toolbar">
             <CustomAttribute
                 motion:attributeName="BackgroundColor"
                 motion:customColorValue="@android:color/transparent" />
@@ -112,15 +124,27 @@
         <Constraint android:id="@+id/author">
             <PropertySet android:alpha="1" />
         </Constraint>
+
+        <Constraint android:id="@id/down_arrow">
+            <PropertySet android:alpha="1" />
+        </Constraint>
     </ConstraintSet>
 
     <ConstraintSet android:id="@id/start">
         <Constraint
+            android:id="@id/player_toolbar"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:alpha="0"
+            motion:layout_constraintBottom_toBottomOf="@id/thumbnail_container"
+            motion:layout_constraintEnd_toEndOf="@id/thumbnail_container"
+            motion:layout_constraintStart_toStartOf="@id/thumbnail_container"
+            motion:layout_constraintTop_toTopOf="@id/thumbnail_container" />
+
+        <Constraint
             android:id="@id/thumbnail_container"
             android:layout_width="0dp"
             android:layout_height="54dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginBottom="65dp"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
@@ -130,10 +154,8 @@
             android:id="@id/thumbnail"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
             motion:layout_constraintBottom_toBottomOf="@id/thumbnail_container"
-            motion:layout_constraintDimensionRatio="H,1:2.5"
+            motion:layout_constraintDimensionRatio="H,1:1"
             motion:layout_constraintStart_toStartOf="@id/thumbnail_container"
             motion:layout_constraintTop_toTopOf="@id/thumbnail_container" />
 
@@ -144,6 +166,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:alpha="0"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
@@ -160,6 +183,17 @@
             motion:layout_constraintEnd_toEndOf="@id/thumbnail_container"
             motion:layout_constraintTop_toTopOf="@id/thumbnail_container" />
 
+        <Constraint
+            android:id="@id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            motion:layout_constraintBottom_toBottomOf="@id/thumbnail_container"
+            motion:layout_constraintEnd_toStartOf="@id/play_pause_button"
+            motion:layout_constraintStart_toEndOf="@id/thumbnail"
+            motion:layout_constraintTop_toTopOf="@id/thumbnail_container" />
+
         <Constraint android:id="@id/current_progress">
             <PropertySet android:alpha="0" />
         </Constraint>
@@ -168,11 +202,11 @@
             <PropertySet android:alpha="0" />
         </Constraint>
 
-        <Constraint android:id="@+id/title">
+        <Constraint android:id="@id/author">
             <PropertySet android:alpha="0" />
         </Constraint>
 
-        <Constraint android:id="@id/author">
+        <Constraint android:id="@id/down_arrow">
             <PropertySet android:alpha="0" />
         </Constraint>
     </ConstraintSet>

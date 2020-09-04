@@ -61,9 +61,17 @@ class SearchResultsFragment : Fragment(), YTItemAdapterListener, Injectable {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = FragmentSearchResultsBinding.inflate(inflater).also {
-        binding = it
-    }.root
+    ): View? {
+        binding = FragmentSearchResultsBinding.inflate(inflater)
+
+        searchResultsViewModel.errorEvent.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         postponeEnterTransition()

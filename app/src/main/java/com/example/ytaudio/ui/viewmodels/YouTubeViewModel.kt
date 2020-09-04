@@ -32,7 +32,11 @@ class YouTubeViewModel @Inject constructor(
 
     fun addToPlaylist(id: String) {
         viewModelScope.launch {
-            audioInfoRepository.insertIntoDatabase(id)
+            try {
+                audioInfoRepository.insertIntoDatabase(id)
+            } catch (t: Throwable) {
+                _errorEvent.value = Event(t.toString())
+            }
         }
     }
 

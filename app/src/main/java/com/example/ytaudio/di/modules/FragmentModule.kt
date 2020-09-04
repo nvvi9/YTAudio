@@ -14,9 +14,6 @@ abstract class FragmentModule {
     @ContributesAndroidInjector
     abstract fun contributeSearchFragment(): SearchFragment
 
-    @ContributesAndroidInjector
-    abstract fun contributePlayerFragment(): PlayerFragment
-
     @ExperimentalPagingApi
     @ContributesAndroidInjector
     abstract fun contributeYouTubeFragment(): YouTubeFragment
@@ -26,5 +23,5 @@ abstract class FragmentModule {
     abstract fun contributeSearchResultsFragment(): SearchResultsFragment
 
     @ContributesAndroidInjector
-    abstract fun contributePlayFragment(): PlayFragment
+    abstract fun contributePlayFragment(): PlayerFragment
 }

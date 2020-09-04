@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -41,10 +40,8 @@ class YouTubeFragment : Fragment(), YTItemAdapterListener, Injectable {
     }
 
     private lateinit var binding: FragmentYoutubeBinding
-
-    private var job: Job? = null
-
     private val youTubeItemsAdapter = YouTubeItemsAdapter(this)
+    private var job: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,11 +50,11 @@ class YouTubeFragment : Fragment(), YTItemAdapterListener, Injectable {
     ): View? {
         binding = FragmentYoutubeBinding.inflate(inflater)
 
-        youTubeViewModel.errorEvent.observe(viewLifecycleOwner, Observer { event ->
+        youTubeViewModel.errorEvent.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let {
                 Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
             }
-        })
+        }
 
         return binding.root
     }
@@ -66,21 +63,21 @@ class YouTubeFragment : Fragment(), YTItemAdapterListener, Injectable {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
-        binding.viewModel = youTubeViewModel
-        binding.youtubeItemsView.apply {
-            ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
-            adapter = youTubeItemsAdapter
-            adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
-            addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
+        binding.apply {
+            viewModel = youTubeViewModel
+            youtubeItemsView.apply {
+                ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
+                adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
+                addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
+            }
+            swipeRefresh.setOnRefreshListener {
+                youTubeItemsAdapter.refresh()
+            }
+            toolbar.setNavigationOnClickListener {
+                findNavController().navigate(YouTubeFragmentDirections.actionYouTubeFragmentToSearchFragment())
+            }
+            lifecycleOwner = this@YouTubeFragment
         }
-        binding.swipeRefresh.setOnRefreshListener {
-            youTubeItemsAdapter.refresh()
-        }
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigate(YouTubeFragmentDirections.actionYouTubeFragmentToSearchFragment())
-        }
-        binding.lifecycleOwner = this
-
         setLoadState()
         setRecommended()
     }

@@ -1,11 +1,14 @@
 package com.example.ytaudio.ui.adapters
 
+import android.net.Uri
 import android.text.format.DateUtils
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +17,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.ytaudio.R
 import com.example.ytaudio.vo.PlaylistItem
 import com.example.ytaudio.vo.YouTubeItem
+import com.google.android.material.textview.MaterialTextView
 
 
 @BindingAdapter("audioTitle")
@@ -43,6 +47,30 @@ fun ImageView.setImage(item: PlaylistItem?) {
 fun ImageView.setPlaybackState(item: PlaylistItem?) {
     item?.let {
         this.setImageResource(it.playbackState)
+    }
+}
+
+@BindingAdapter("srcIcon")
+fun ImageButton.setIcon(resId: Int?) {
+    resId?.let {
+        setImageResource(it)
+    }
+}
+
+@BindingAdapter("timeFormatted")
+fun MaterialTextView.setPosition(position: Long?) {
+    position?.let {
+        text = DateUtils.formatElapsedTime(it / 1000)
+    }
+}
+
+@BindingAdapter("thumbnailUri")
+fun AppCompatImageView.setImage(uri: Uri?) {
+    uri?.let {
+        Glide.with(context)
+            .load(it)
+            .apply(RequestOptions().error(R.drawable.ic_notification))
+            .into(this)
     }
 }
 

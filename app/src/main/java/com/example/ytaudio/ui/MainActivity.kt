@@ -11,13 +11,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.example.ytaudio.R
-import com.example.ytaudio.ui.fragments.PlayFragment
+import com.example.ytaudio.ui.fragments.PlayerFragment
 import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
 import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_play.*
+import kotlinx.android.synthetic.main.fragment_player.*
 import javax.inject.Inject
 
 
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
     }
 
     override fun onBackPressed() {
-        (supportFragmentManager.findFragmentById(R.id.fragment_container) as PlayFragment).motion_layout
+        (supportFragmentManager.findFragmentById(R.id.fragment_container) as PlayerFragment).motion_layout
             ?.takeIf { it.currentState == R.id.end }
             ?.transitionToStart() ?: super.onBackPressed()
     }
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
 
     private fun replacePlayFragment() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, PlayFragment.newInstance())
+            .replace(R.id.fragment_container, PlayerFragment.newInstance())
             .commit()
     }
 }

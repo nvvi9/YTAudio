@@ -1,24 +1,25 @@
 package com.example.ytaudio.ui.fragments
 
-import android.net.Uri
 import android.os.Bundle
-import android.text.format.DateUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
-import com.example.ytaudio.R
 import com.example.ytaudio.databinding.FragmentPlayerBinding
 import com.example.ytaudio.di.Injectable
+import com.example.ytaudio.ui.MainActivity
 import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
 import com.example.ytaudio.ui.viewmodels.PlayerViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
+import kotlin.math.abs
 
-class PlayerFragment : Fragment(), Injectable {
+
+class PlayerFragment : Fragment(), MotionLayout.TransitionListener, Injectable {
 
     @Inject
     lateinit var mainActivityViewModelFactory: ViewModelProvider.Factory
@@ -26,57 +27,49 @@ class PlayerFragment : Fragment(), Injectable {
     @Inject
     lateinit var playerViewModelFactory: ViewModelProvider.Factory
 
-    private val mainActivityViewModel: MainActivityViewModel by viewModels {
+    private lateinit var binding: FragmentPlayerBinding
+
+    private val mainActivityViewModel by viewModels<MainActivityViewModel> {
         mainActivityViewModelFactory
     }
 
-    private val playerViewModel: PlayerViewModel by viewModels {
+    private val playerViewModel by viewModels<PlayerViewModel> {
         playerViewModelFactory
     }
-
-    private lateinit var binding: FragmentPlayerBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentPlayerBinding.inflate(inflater)
-
-        playerViewModel.apply {
-            currentAudioInfo.observe(viewLifecycleOwner, Observer {
-                updateUI(it)
-            })
-
-            audioButtonRes.observe(viewLifecycleOwner, Observer {
-                binding.audioButton.setImageResource(it)
-            })
-
-            audioPosition.observe(viewLifecycleOwner, Observer {
-                binding.currentTimeText.text = DateUtils.formatElapsedTime(it / 1000)
-            })
-        }
-
-        binding.audioButton.setOnClickListener {
-            playerViewModel.currentAudioInfo.value?.let {
-                mainActivityViewModel.playAudio(it.audioId)
+    ): View? = FragmentPlayerBinding.inflate(inflater).apply {
+        playPauseButton.setOnClickListener {
+            playerViewModel.currentAudioInfo.value?.id?.let {
+                mainActivityViewModel.playAudio(it)
             }
         }
 
-        return binding.root
+        viewModel = playerViewModel
+
+        motionLayout.setTransitionListener(this@PlayerFragment)
+    }.also { binding = it }.root
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        playerViewModel.currentAudioInfo.observe(viewLifecycleOwner) {
+            Log.i(javaClass.simpleName, it?.toString() ?: "empty")
+        }
     }
 
-    private fun updateUI(currentAudioInfo: PlayerViewModel.NowPlayingAudioInfo) {
-        binding.apply {
-            if (currentAudioInfo.thumbnailUri == Uri.EMPTY) {
-                thumbnail.setImageResource(R.drawable.ic_album_black)
-            } else {
-                Glide.with(this@PlayerFragment).load(currentAudioInfo.thumbnailUri)
-                    .into(thumbnail)
-            }
-            durationText.text = currentAudioInfo.duration
-            textTitle.text = currentAudioInfo.title
-            textAuthor.text = currentAudioInfo.subtitle
-        }
+    override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
+        (activity as MainActivity).main_motion_layout.progress = abs(p3)
+    }
+
+    override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {}
+
+    override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {}
+
+    override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {}
+
+    companion object {
+        fun newInstance() = PlayerFragment()
     }
 }

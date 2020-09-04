@@ -21,6 +21,7 @@ data class AudioInfo(
         }
 
     companion object {
+
         @Ignore
         private const val UPDATE_TIME_GAP = 10
 

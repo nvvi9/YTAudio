@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/playlistFragment"
-        android:icon="@drawable/list_white"
+        android:icon="@drawable/queue_music_white"
         android:title="@string/playlist"
         app:showAsAction="ifRoom" />
     <item
