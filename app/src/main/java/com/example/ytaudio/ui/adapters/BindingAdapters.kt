@@ -89,16 +89,6 @@ fun RecyclerView.setStringList(items: List<String>?) {
     (adapter as SearchAutocompleteAdapter).submitList(items)
 }
 
-@BindingAdapter("videoTitle")
-fun TextView.setVideoTitle(item: YouTubeItem?) {
-    text = item?.title
-}
-
-@BindingAdapter("channelTitle")
-fun TextView.setChannelTitle(item: YouTubeItem?) {
-    text = item?.channelTitle
-}
-
 @BindingAdapter("videoThumbnail")
 fun ImageView.setThumbnail(item: YouTubeItem?) {
     item?.let {

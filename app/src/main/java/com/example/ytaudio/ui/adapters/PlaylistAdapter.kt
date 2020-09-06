@@ -1,59 +1,55 @@
 package com.example.ytaudio.ui.adapters
 
-import android.view.*
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
-import com.example.ytaudio.R
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.databinding.ItemPlaylistBinding
-import com.example.ytaudio.ui.fragments.PlaylistFragment
 import com.example.ytaudio.vo.PlaylistItem
 
 
-class PlaylistAdapter(
-    private val fragment: PlaylistFragment,
-    clickListener: (PlaylistItem) -> Unit
-) : RecyclerViewAdapter<PlaylistItem, ItemPlaylistBinding>(
-    PlaylistItemDiffCallback(), fragment, clickListener
-) {
+class PlaylistAdapter(private val clickListener: PlaylistClickListener) :
+    ListAdapter<PlaylistItem, PlaylistAdapter.ViewHolder>(PlaylistItemDiffCallback) {
 
-    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean =
-        when (item?.itemId) {
-            R.id.action_select_all -> {
-                selectAll()
-                fragment.actionMode?.title =
-                    fragment.getString(R.string.selected_items, selectedItems.size)
-                true
-            }
-            R.id.action_delete -> {
-                fragment.playlistViewModel.deleteFromDatabase(selectedItems.toList())
-                stopActionMode()
-                true
-            }
-            else -> false
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
+        ViewHolder.create(parent, clickListener)
 
-    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean =
-        mode?.run {
-            menuInflater.inflate(R.menu.playlist_toolbar_action_mode, menu)
-            true
-        } ?: false
-
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ViewHolder<ItemPlaylistBinding> {
-        val binding =
-            ItemPlaylistBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 
-    override fun onBindViewHolder(holder: ViewHolder<ItemPlaylistBinding>, position: Int) {
-        holder.binding.audioItem = getItem(position)
-        super.onBindViewHolder(holder, position)
+    class ViewHolder private constructor(
+        private val binding: ItemPlaylistBinding,
+        private val clickListener: PlaylistClickListener
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(item: PlaylistItem) {
+            binding.run {
+                audioItem = item
+                listener = clickListener
+                executePendingBindings()
+            }
+        }
+
+        companion object {
+            fun create(parent: ViewGroup, clickListener: PlaylistClickListener) =
+                ViewHolder(
+                    ItemPlaylistBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                    clickListener
+                )
+        }
     }
 }
 
 
-private class PlaylistItemDiffCallback : DiffUtil.ItemCallback<PlaylistItem>() {
+class PlaylistClickListener(
+    val onItemClicked: (item: PlaylistItem) -> Unit,
+    val onItemLongClicked: (item: PlaylistItem) -> Boolean
+)
+
+
+object PlaylistItemDiffCallback : DiffUtil.ItemCallback<PlaylistItem>() {
 
     override fun areItemsTheSame(oldItem: PlaylistItem, newItem: PlaylistItem) =
         oldItem.id == newItem.id

@@ -5,29 +5,34 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.example.ytaudio.R
+import com.example.ytaudio.databinding.ActivityMainBinding
 import com.example.ytaudio.ui.fragments.PlayerFragment
 import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
 import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_player.*
 import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity(), HasAndroidInjector {
+class MainActivity : AppCompatActivity(),
+    NavController.OnDestinationChangedListener,
+    HasAndroidInjector {
 
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
 
     @Inject
     lateinit var mainActivityViewModelFactory: ViewModelProvider.Factory
+
+    private lateinit var binding: ActivityMainBinding
 
     private val mainActivityViewModel: MainActivityViewModel by viewModels {
         mainActivityViewModelFactory
@@ -36,29 +41,21 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+//        setContentView(R.layout.activity_main)
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         volumeControlStream = AudioManager.STREAM_MUSIC
 
         val navController = Navigation.findNavController(this, R.id.nav_host_fragment)
 
-        bottom_nav.setupWithNavController(navController)
+        binding.bottomNav.setupWithNavController(navController)
 
-        lifecycleScope.launchWhenResumed {
-            navController.addOnDestinationChangedListener { _, destination, _ ->
-                when (destination.id) {
-                    R.id.playlistFragment, R.id.youTubeFragment -> bottom_nav.visibility =
-                        View.VISIBLE
-                    else -> bottom_nav.visibility = View.GONE
-                }
-            }
-        }
-
-        mainActivityViewModel.replaceEvent.observe(this, Observer {
+        mainActivityViewModel.replaceEvent.observe(this) {
             it.getContentIfNotHandled()?.let {
                 replacePlayFragment()
             }
-        })
+        }
     }
 
     override fun onBackPressed() {
@@ -68,6 +65,17 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
     }
 
     override fun androidInjector() = androidInjector
+
+    override fun onDestinationChanged(
+        controller: NavController,
+        destination: NavDestination,
+        arguments: Bundle?
+    ) {
+        binding.bottomNav.visibility = when (destination.id) {
+            R.id.searchFragment -> View.GONE
+            else -> View.VISIBLE
+        }
+    }
 
     private fun replacePlayFragment() {
         supportFragmentManager.beginTransaction()

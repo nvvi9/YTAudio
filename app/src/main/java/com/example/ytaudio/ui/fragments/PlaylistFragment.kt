@@ -1,22 +1,26 @@
 package com.example.ytaudio.ui.fragments
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
 import com.example.ytaudio.databinding.FragmentPlaylistBinding
+import com.example.ytaudio.di.Injectable
 import com.example.ytaudio.ui.adapters.PlaylistAdapter
+import com.example.ytaudio.ui.adapters.PlaylistClickListener
 import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
 import com.example.ytaudio.ui.viewmodels.PlaylistViewModel
 import javax.inject.Inject
 
 
-class PlaylistFragment : ActionModeFragment() {
+class PlaylistFragment : Fragment(), Injectable {
 
     @Inject
     lateinit var playlistViewModelFactory: ViewModelProvider.Factory
@@ -34,12 +38,14 @@ class PlaylistFragment : ActionModeFragment() {
 
     private lateinit var binding: FragmentPlaylistBinding
 
-    private val playlistAdapter =
-        PlaylistAdapter(this) {
-            mainActivityViewModel.audioItemClicked(it.id)
-//            findNavController().navigate(PlaylistFragmentDirections.actionPlaylistFragmentToAudioPlayerFragment())
-//            findNavController().navigate(R.id.action_global_playFragment)
-        }
+    private val playlistAdapter = PlaylistAdapter(PlaylistClickListener({
+        mainActivityViewModel.audioItemClicked(it.id)
+    }, {
+        MenuBottomSheetDialogFragment(R.menu.playlist_bottom_sheet_menu) {
+            true
+        }.show(parentFragmentManager, null)
+        true
+    }))
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,9 +55,9 @@ class PlaylistFragment : ActionModeFragment() {
         binding = FragmentPlaylistBinding.inflate(inflater)
         val application = requireNotNull(this.activity).application
 
-        playlistViewModel.networkFailure.observe(viewLifecycleOwner, Observer {
+        playlistViewModel.networkFailure.observe(viewLifecycleOwner) {
             binding.networkFailure.visibility = if (it) View.VISIBLE else View.GONE
-        })
+        }
 
         binding.viewModel = playlistViewModel
 
@@ -71,22 +77,5 @@ class PlaylistFragment : ActionModeFragment() {
         }
 
         return binding.root
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.overflow_playlist_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.delete -> {
-                if (!this.playlistViewModel.playlistItems.value.isNullOrEmpty()) {
-                    playlistAdapter.startActionMode()
-                }
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 }

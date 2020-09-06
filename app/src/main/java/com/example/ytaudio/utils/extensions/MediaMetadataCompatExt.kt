@@ -207,9 +207,9 @@ fun MediaMetadataCompat.Builder.from(audioInfo: AudioInfo): MediaMetadataCompat.
     artist = audioInfo.details.author
     duration = audioInfo.details.duration
     mediaUri = audioInfo.audioStreams.filter { it.extension == "WEBM" || it.extension == "M4A" }
-        .maxBy { it.bitrate }!!.url
+        .maxByOrNull { it.bitrate }!!.url
     displayIconUri = audioInfo.thumbnails[1].url
-    albumArtUri = audioInfo.thumbnails.maxBy { it.height }!!.url
+    albumArtUri = audioInfo.thumbnails.maxByOrNull { it.height }!!.url
     flag = MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
     downloadStatus = MediaDescriptionCompat.STATUS_NOT_DOWNLOADED
 

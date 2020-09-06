@@ -49,6 +49,7 @@
                     android:layout_marginEnd="16dp"
                     android:ellipsize="end"
                     android:maxLines="2"
+                    android:text="@{youTubeItem.title}"
                     android:textColor="@android:color/white"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toTopOf="@+id/channel"
@@ -57,7 +58,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/video_thumbnail"
                     app:layout_constraintVertical_chainStyle="packed"
-                    app:videoTitle="@{youTubeItem}"
                     tools:text="some long title" />
 
                 <ImageView
@@ -80,8 +80,8 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="16dp"
+                    android:text="@{youTubeItem.channelTitle}"
                     android:textSize="12sp"
-                    app:channelTitle="@{youTubeItem}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"

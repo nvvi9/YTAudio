@@ -60,7 +60,7 @@ class YTItemViewHolder(
     }
 
     private fun updateCardViewTopLeftCornerSize(interpolation: Float) {
-        binding.cardView?.apply {
+        binding.cardView.apply {
             shapeAppearanceModel = shapeAppearanceModel.toBuilder()
                 .setTopLeftCornerSize(interpolation * addedCornerSize)
                 .build()
