@@ -12,14 +12,14 @@
         <variable
             name="audioItem"
             type="com.example.ytaudio.vo.PlaylistItem" />
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/item_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/item_background"
+        android:layout_marginHorizontal="4dp"
+        android:layout_marginVertical="2dp"
         android:foreground="?attr/selectableItemBackground"
         android:onClick="@{(view) -> listener.onItemClicked.invoke(audioItem)}"
         android:onLongClick="@{(view) -> listener.onItemLongClicked.invoke(audioItem)}"
@@ -30,19 +30,34 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
+            android:maxLines="1"
             android:singleLine="true"
             android:text="@{audioItem.title}"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
+            android:textAppearance="?attr/textAppearanceHeadline5"
             app:layout_constraintBottom_toTopOf="@+id/author"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/audio_photo"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="spread_inside"
-            tools:text="title" />
+            tools:text="Title" />
+
+        <TextView
+            android:id="@+id/author"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:maxLines="1"
+            android:text="@{audioItem.author}"
+            android:textAppearance="?attr/textAppearanceBody1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/audio_title"
+            app:layout_constraintTop_toBottomOf="@+id/audio_title"
+            tools:text="author" />
 
         <ImageView
             android:id="@+id/audio_photo"
@@ -57,21 +72,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@tools:sample/backgrounds/scenic" />
-
-        <TextView
-            android:id="@+id/author"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="16dp"
-            android:text="@{audioItem.author}"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/audio_title"
-            app:layout_constraintTop_toBottomOf="@+id/audio_title"
-            tools:text="author" />
 
         <ImageView
             android:id="@+id/playback_state"

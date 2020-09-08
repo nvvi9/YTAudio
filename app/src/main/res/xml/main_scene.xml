@@ -25,17 +25,17 @@
             <KeyAttribute
                 motion:framePosition="100"
                 motion:motionTarget="@id/background_dim">
-                <CustomAttribute
-                    motion:attributeName="BackgroundColor"
-                    motion:customColorValue="#6e232323" />
+<!--                <CustomAttribute-->
+<!--                    motion:attributeName="BackgroundColor"-->
+<!--                    motion:customColorValue="#6e232323" />-->
             </KeyAttribute>
 
             <KeyAttribute
                 motion:framePosition="0"
                 motion:motionTarget="@id/background_dim">
-                <CustomAttribute
-                    motion:attributeName="BackgroundColor"
-                    motion:customColorValue="#6e232323" />
+<!--                <CustomAttribute-->
+<!--                    motion:attributeName="BackgroundColor"-->
+<!--                    motion:customColorValue="#6e232323" />-->
             </KeyAttribute>
         </KeyFrameSet>
     </Transition>

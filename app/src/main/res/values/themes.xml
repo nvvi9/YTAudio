@@ -3,7 +3,7 @@
 
     <style name="Theme.YTAudio.DayNight" parent="Theme.YTAudio" />
 
-    <style name="Theme.YTAudio" parent="Theme.MaterialComponents.DayNight">
+    <style name="Theme.YTAudio" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/yta_blue_700</item>
         <item name="colorPrimaryVariant">@color/yta_blue_800</item>
         <item name="colorSecondary">@color/yta_orange_500</item>
