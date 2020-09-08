@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.YTAudio.DayNight" parent="Theme.YTAudio" />
+
+    <style name="Theme.YTAudio" parent="Theme.MaterialComponents.DayNight">
+        <item name="colorPrimary">@color/yta_blue_700</item>
+        <item name="colorPrimaryVariant">@color/yta_blue_800</item>
+        <item name="colorSecondary">@color/yta_orange_500</item>
+        <item name="colorSecondaryVariant">@color/yta_orange_400</item>
+
+        <item name="android:colorBackground">@color/yta_blue_50</item>
+        <item name="colorSurface">@color/yta_white_50</item>
+        <item name="colorPrimarySurfaceVariant">?attr/colorPrimaryVariant</item>
+        <item name="colorError">@color/yta_red_400</item>
+
+        <item name="colorOnPrimary">@color/yta_white_50</item>
+        <item name="colorOnSecondary">@color/yta_black_900</item>
+        <item name="colorOnBackground">@color/yta_black_900</item>
+        <item name="colorOnSurface">@color/yta_black_900</item>
+        <item name="colorOnError">@color/yta_black_900</item>
+
+        <item name="scrimBackground">@color/yta_white_50_alpha_060</item>
+        <item name="android:statusBarColor">@color/yta_blue_50_alpha_060</item>
+        <item name="android:navigationBarColor">@color/nav_bar</item>
+
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.YTAudio.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.YTAudio.MediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.YTAudio.LargeComponent</item>
+
+        <item name="textAppearanceHeadline2">@style/TextAppearance.YTAudio.Headline2</item>
+        <item name="textAppearanceHeadline3">@style/TextAppearance.YTAudio.Headline3</item>
+        <item name="textAppearanceHeadline4">@style/TextAppearance.YTAudio.Headline4</item>
+        <item name="textAppearanceHeadline5">@style/TextAppearance.YTAudio.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.YTAudio.Headline6</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.YTAudio.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/TextAppearance.YTAudio.Subtitle2</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.YTAudio.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.YTAudio.Body2</item>
+        <item name="textAppearanceButton">@style/TextAppearance.YTAudio.Button</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.YTAudio.Caption</item>
+        <item name="textAppearanceOverline">@style/TextAppearance.YTAudio.Overline</item>
+
+        <item name="emphasisHighAlpha">0.87</item>
+        <item name="emphasisMediumAlpha">0.60</item>
+        <item name="emphasisDisabledAlpha">0.38</item>
+
+        <item name="motionInterpolatorPersistent">@android:interpolator/fast_out_slow_in</item>
+        <item name="motionInterpolatorIncoming">@android:interpolator/decelerate_cubic</item>
+        <item name="motionInterpolatorOutgoing">@android:interpolator/accelerate_cubic</item>
+
+        <item name="bottomAppBarStyle">@style/Widget.MaterialComponents.BottomAppBar.PrimarySurface</item>
+        <item name="bottomSheetStyle">@style/Widget.MaterialComponents.BottomSheet.Modal</item>
+        <item name="navigationViewStyle">@style/Widget.YTAudio.NavigationView</item>
+
+        <item name="android:windowBackground">?android:colorBackground</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+    </style>
+</resources>

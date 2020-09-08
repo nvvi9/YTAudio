@@ -12,4 +12,12 @@
         <item name="windowActionModeOverlay">true</item>
     </style>
 
+    <style name="Widget.YTAudio.NavigationView" parent="Widget.MaterialComponents.NavigationView">
+        <item name="insetForeground">@android:color/transparent</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="elevation">0dp</item>
+        <item name="itemTextAppearance">?attr/textAppearanceBody2</item>
+        <item name="itemTextColor">@color/color_on_surface_emphasis_medium</item>
+        <item name="itemIconTint">@color/color_on_surface_emphasis_medium</item>
+    </style>
 </resources>

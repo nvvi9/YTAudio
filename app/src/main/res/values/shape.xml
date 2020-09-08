@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <style name="ShapeAppearance.YTAudio.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/small_component_corner_radius</item>
+    </style>
+
+    <style name="ShapeAppearance.YTAudio.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/medium_component_corner_radius</item>
+    </style>
+
+    <style name="ShapeAppearance.YTAudio.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/large_component_corner_radius</item>
+    </style>
+
     <dimen name="small_component_corner_radius">24dp</dimen>
+    <dimen name="medium_component_corner_radius">0dp</dimen>
+    <dimen name="large_component_corner_radius">12dp</dimen>
 </resources>

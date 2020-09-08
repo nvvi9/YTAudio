@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <attr name="colorPrimarySurfaceVariant" format="color" />
     <attr name="motionInterpolatorPersistent" format="reference" />
     <attr name="roundSelector" format="reference" />
     <attr name="toolbarPopupTheme" format="reference" />
+    <attr name="emphasisHighAlpha" format="float" />
+    <attr name="emphasisMediumAlpha" format="float" />
+    <attr name="emphasisDisabledAlpha" format="float" />
+    <attr name="motionInterpolatorIncoming" format="reference" />
+    <attr name="motionInterpolatorOutgoing" format="reference" />
+    <attr name="bottomNavigationDrawerStyle" format="reference" />
+    <attr name="bottomNavigationDrawerNavigationViewTheme" format="reference" />
 </resources>
