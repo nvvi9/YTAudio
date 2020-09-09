@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
@@ -15,6 +16,8 @@ import com.example.ytaudio.R
 import com.example.ytaudio.databinding.ActivityMainBinding
 import com.example.ytaudio.ui.fragments.PlayerFragment
 import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
+import com.example.ytaudio.utils.extensions.hide
+import com.example.ytaudio.utils.extensions.show
 import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
@@ -41,15 +44,23 @@ class MainActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_main)
+        volumeControlStream = AudioManager.STREAM_MUSIC
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        volumeControlStream = AudioManager.STREAM_MUSIC
-
         val navController = Navigation.findNavController(this, R.id.nav_host_fragment)
 
-        binding.bottomNav.setupWithNavController(navController)
+        binding.apply {
+            bottomNav.setupWithNavController(navController)
+            lifecycleScope.launchWhenResumed {
+                navController.addOnDestinationChangedListener { _, destination, _ ->
+                    when (destination.id) {
+                        R.id.playlistFragment, R.id.youTubeFragment, R.id.searchResultsFragment -> bottomNav.show()
+                        else -> bottomNav.hide()
+                    }
+                }
+            }
+        }
 
         mainActivityViewModel.replaceEvent.observe(this) {
             it.getContentIfNotHandled()?.let {

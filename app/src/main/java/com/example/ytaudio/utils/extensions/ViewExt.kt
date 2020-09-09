@@ -26,7 +26,6 @@ fun BottomNavigationView.show() {
     if (visibility == VISIBLE) return
 
     val parent = parent as ViewGroup
-
     if (!isLaidOut) {
         measure(
             MeasureSpec.makeMeasureSpec(parent.width, MeasureSpec.EXACTLY),
@@ -38,18 +37,15 @@ fun BottomNavigationView.show() {
     val drawable = BitmapDrawable(context.resources, drawToBitmap())
     drawable.setBounds(left, parent.height, right, parent.height + height)
     parent.overlay.add(drawable)
-
     ValueAnimator.ofInt(parent.height, top).apply {
         startDelay = 100L
         duration = 300L
         interpolator =
             AnimationUtils.loadInterpolator(context, android.R.interpolator.linear_out_slow_in)
-
         addUpdateListener {
             val newTop = it.animatedValue as Int
             drawable.setBounds(left, newTop, right, newTop + height)
         }
-
         doOnEnd {
             parent.overlay.remove(drawable)
             visibility = VISIBLE
@@ -84,3 +80,14 @@ fun BottomNavigationView.hide() {
         start()
     }
 }
+
+//fun View.drawToBitmap(@Px extraPaddingBottom: Int = 0): Bitmap {
+//    if (!ViewCompat.isLaidOut(this)) {
+//        throw IllegalStateException("View needs to be laid out before calling drawToBitmap()")
+//    }
+//    return Bitmap.createBitmap(width, height + extraPaddingBottom, Bitmap.Config.ARGB_8888)
+//        .applyCanvas {
+//            translate(-scrollX.toFloat(), -scrollY.toFloat())
+//            draw(this)
+//        }
+//}

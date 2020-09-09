@@ -21,6 +21,8 @@
             android:layout_height="match_parent"
             android:scrollbars="vertical"
             app:audioPlaylist="@{viewModel.playlistItems}"
+            app:paddingBottomSystemWindowInsets="@{true}"
+            app:paddingTopSystemWindowInsets="@{true}"
             tools:listitem="@layout/item_playlist" />
 
         <TextView

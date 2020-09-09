@@ -6,7 +6,8 @@
         android:id="@+id/main_motion_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutDescription="@xml/main_scene">
+        app:layoutDescription="@xml/main_scene"
+        app:layoutFullscreen="@{true}">
 
         <fragment
             android:id="@+id/nav_host_fragment"
@@ -19,15 +20,18 @@
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_nav"
-            android:layout_width="0dp"
-            android:layout_height="55dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="?attr/colorPrimarySurfaceVariant"
-            app:elevation="10dp"
+            android:visibility="gone"
             app:labelVisibilityMode="labeled"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/bottom_menu" />
+            app:menu="@menu/bottom_menu"
+            app:paddingBottomSystemWindowInsets="@{true}"
+            app:paddingLeftSystemWindowInsets="@{true}"
+            app:paddingRightSystemWindowInsets="@{true}" />
 
         <FrameLayout
             android:id="@+id/fragment_container"
