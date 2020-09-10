@@ -8,6 +8,7 @@ import android.view.View.*
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.core.animation.doOnEnd
 import androidx.core.view.drawToBitmap
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -20,6 +21,11 @@ fun View.hideKeyboard() =
 fun View.showKeyboard() {
     (context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
         ?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+}
+
+fun EditText.showKeyboard() {
+    (context?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager)
+        ?.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
 }
 
 fun BottomNavigationView.show() {
@@ -80,14 +86,3 @@ fun BottomNavigationView.hide() {
         start()
     }
 }
-
-//fun View.drawToBitmap(@Px extraPaddingBottom: Int = 0): Bitmap {
-//    if (!ViewCompat.isLaidOut(this)) {
-//        throw IllegalStateException("View needs to be laid out before calling drawToBitmap()")
-//    }
-//    return Bitmap.createBitmap(width, height + extraPaddingBottom, Bitmap.Config.ARGB_8888)
-//        .applyCanvas {
-//            translate(-scrollX.toFloat(), -scrollY.toFloat())
-//            draw(this)
-//        }
-//}

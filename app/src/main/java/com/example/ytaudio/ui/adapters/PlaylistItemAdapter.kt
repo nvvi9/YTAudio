@@ -2,42 +2,54 @@ package com.example.ytaudio.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.databinding.ItemPlaylistBinding
 import com.example.ytaudio.vo.PlaylistItem
 
 
-class PlaylistItemAdapter {
+class PlaylistItemAdapter(private val itemListener: PlaylistItemListener) :
+    ListAdapter<PlaylistItem, PlaylistItemAdapter.ViewHolder>(DiffCallback) {
 
-    class ViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
+        ViewHolder.create(parent, itemListener)
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
+
+    class ViewHolder private constructor(
         private val binding: ItemPlaylistBinding,
-        private val clickListener: PlaylistItemClickListener
+        itemListener: PlaylistItemListener
     ) : RecyclerView.ViewHolder(binding.root) {
 
+        init {
+            binding.listener = itemListener
+        }
+
         fun bind(item: PlaylistItem) {
-            binding.apply {
+            binding.run {
                 audioItem = item
+                executePendingBindings()
             }
         }
 
         companion object {
-            fun create(parent: ViewGroup, clickListener: PlaylistItemClickListener) =
+            fun create(parent: ViewGroup, itemListener: PlaylistItemListener) =
                 ViewHolder(
-                    ItemPlaylistBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent,
-                        false
-                    ), clickListener
+                    ItemPlaylistBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                    itemListener
                 )
         }
     }
-}
 
+    private object DiffCallback : DiffUtil.ItemCallback<PlaylistItem>() {
 
-class PlaylistItemClickListener(
-    private val onItemClicked: (item: PlaylistItem) -> Unit,
-    private val onItemLongClicked: (item: PlaylistItem) -> Unit
-) {
-    fun onClick(item: PlaylistItem) = onItemClicked(item)
-    fun onLongClick(item: PlaylistItem) = onItemLongClicked(item)
+        override fun areItemsTheSame(oldItem: PlaylistItem, newItem: PlaylistItem) =
+            oldItem.id == newItem.id
+
+        override fun areContentsTheSame(oldItem: PlaylistItem, newItem: PlaylistItem) =
+            oldItem == newItem
+    }
 }

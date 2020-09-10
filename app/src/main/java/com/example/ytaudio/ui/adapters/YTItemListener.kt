@@ -4,7 +4,7 @@ import android.view.View
 import com.example.ytaudio.vo.YouTubeItem
 
 
-interface YTItemAdapterListener {
+interface YTItemListener {
     fun onItemClicked(cardView: View, items: YouTubeItem)
     fun onItemIconChanged(item: YouTubeItem, newValue: Boolean)
 }

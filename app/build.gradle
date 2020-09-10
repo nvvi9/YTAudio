@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'kotlin-kapt'
+apply plugin: "scabbard.gradle"
 
 android {
     compileSdkVersion 29
@@ -40,6 +41,10 @@ android {
 
     dataBinding {
         enabled = true
+    }
+
+    scabbard {
+        enabled true
     }
 }
 

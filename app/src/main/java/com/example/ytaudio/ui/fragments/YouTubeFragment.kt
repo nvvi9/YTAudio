@@ -13,14 +13,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.example.ytaudio.databinding.FragmentYoutubeBinding
 import com.example.ytaudio.di.Injectable
 import com.example.ytaudio.ui.adapters.ReboundingSwipeActionCallback
-import com.example.ytaudio.ui.adapters.YTItemAdapterListener
+import com.example.ytaudio.ui.adapters.YTItemAdapter
+import com.example.ytaudio.ui.adapters.YTItemListener
 import com.example.ytaudio.ui.adapters.YTLoadStateAdapter
-import com.example.ytaudio.ui.adapters.YouTubeItemsAdapter
 import com.example.ytaudio.ui.viewmodels.YouTubeViewModel
 import com.example.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.Job
@@ -30,7 +29,7 @@ import javax.inject.Inject
 
 
 @ExperimentalPagingApi
-class YouTubeFragment : Fragment(), YTItemAdapterListener, Injectable {
+class YouTubeFragment : Fragment(), YTItemListener, Injectable {
 
     @Inject
     lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
@@ -40,7 +39,7 @@ class YouTubeFragment : Fragment(), YTItemAdapterListener, Injectable {
     }
 
     private lateinit var binding: FragmentYoutubeBinding
-    private val youTubeItemsAdapter = YouTubeItemsAdapter(this)
+    private val youTubeItemsAdapter = YTItemAdapter(this)
     private var job: Job? = null
 
     override fun onCreateView(
@@ -68,12 +67,11 @@ class YouTubeFragment : Fragment(), YTItemAdapterListener, Injectable {
             youtubeItemsView.apply {
                 ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
                 adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
-                addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
             }
             swipeRefresh.setOnRefreshListener {
                 youTubeItemsAdapter.refresh()
             }
-            toolbar.setNavigationOnClickListener {
+            searchButton.setOnClickListener {
                 findNavController().navigate(YouTubeFragmentDirections.actionYouTubeFragmentToSearchFragment())
             }
             lifecycleOwner = this@YouTubeFragment

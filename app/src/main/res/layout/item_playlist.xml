@@ -7,7 +7,7 @@
 
         <variable
             name="listener"
-            type="com.example.ytaudio.ui.adapters.PlaylistClickListener" />
+            type="com.example.ytaudio.ui.adapters.PlaylistItemListener" />
 
         <variable
             name="audioItem"
@@ -21,8 +21,8 @@
         android:layout_marginHorizontal="4dp"
         android:layout_marginVertical="2dp"
         android:foreground="?attr/selectableItemBackground"
-        android:onClick="@{(view) -> listener.onItemClicked.invoke(audioItem)}"
-        android:onLongClick="@{(view) -> listener.onItemLongClicked.invoke(audioItem)}"
+        android:onClick="@{() -> listener.onItemClicked(audioItem)}"
+        android:onLongClick="@{() -> listener.onItemLongClicked(audioItem)}"
         android:orientation="horizontal">
 
         <TextView
@@ -35,7 +35,7 @@
             android:maxLines="1"
             android:singleLine="true"
             android:text="@{audioItem.title}"
-            android:textAppearance="?attr/textAppearanceHeadline5"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
             app:layout_constraintBottom_toTopOf="@+id/author"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/audio_photo"
@@ -51,7 +51,7 @@
             android:layout_marginBottom="16dp"
             android:maxLines="1"
             android:text="@{audioItem.author}"
-            android:textAppearance="?attr/textAppearanceBody1"
+            android:textAppearance="?attr/textAppearanceCaption"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -67,7 +67,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:contentDescription="@string/thumbnail_description"
-            app:audioPhoto="@{audioItem}"
+            app:imageUrl="@{audioItem.thumbnailUri}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -83,7 +83,7 @@
             app:layout_constraintEnd_toEndOf="@+id/audio_photo"
             app:layout_constraintStart_toStartOf="@+id/audio_photo"
             app:layout_constraintTop_toTopOf="@+id/audio_photo"
-            tools:srcCompat="@drawable/ic_play_arrow_black" />
+            tools:srcCompat="@drawable/ic_play_arrow" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

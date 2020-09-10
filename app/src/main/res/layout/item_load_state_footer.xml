@@ -15,7 +15,7 @@
             android:visibility="gone"
             android:layout_gravity="center"
             android:contentDescription="@string/network_failure_description"
-            app:srcCompat="@drawable/ic_wifi_off_white" />
+            app:srcCompat="@drawable/ic_wifi_off" />
 
         <TextView
             android:id="@+id/error_msg"

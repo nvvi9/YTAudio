@@ -86,7 +86,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@id/prev_audio_button"
             app:layout_constraintTop_toBottomOf="@+id/progress_slider"
-            app:srcCompat="@drawable/ic_pause_black"
+            app:srcCompat="@drawable/ic_pause"
             tools:tint="@android:color/black" />
 
 

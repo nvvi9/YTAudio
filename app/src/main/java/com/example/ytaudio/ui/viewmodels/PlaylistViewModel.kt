@@ -89,8 +89,8 @@ class PlaylistViewModel @Inject constructor(
 
         return when {
             !isActive -> 0
-            isPlaying -> R.drawable.ic_play_arrow_black
-            else -> R.drawable.ic_pause_black
+            isPlaying -> R.drawable.ic_play_arrow
+            else -> R.drawable.ic_pause
         }
     }
 
@@ -98,8 +98,8 @@ class PlaylistViewModel @Inject constructor(
         playbackState: PlaybackStateCompat,
         mediaMetadata: MediaMetadataCompat
     ): List<PlaylistItem> {
-        val newPlaybackStatus = if (playbackState.isPlaying) R.drawable.ic_play_arrow_black
-        else R.drawable.ic_pause_black
+        val newPlaybackStatus = if (playbackState.isPlaying) R.drawable.ic_play_arrow
+        else R.drawable.ic_pause
 
         return audioItemList.value?.map {
             val playbackStatus = if (it.id == mediaMetadata.id) newPlaybackStatus else 0

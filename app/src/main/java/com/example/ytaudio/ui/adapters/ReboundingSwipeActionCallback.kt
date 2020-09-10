@@ -7,9 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
 import kotlin.math.ln
 
-private const val swipeReboundingElasticity = 0.8f
-private const val trueSwipeThreshold = 0.4f
-
 
 class ReboundingSwipeActionCallback : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
 
@@ -28,6 +25,11 @@ class ReboundingSwipeActionCallback : ItemTouchHelper.SimpleCallback(0, ItemTouc
 
     private var currentTargetPosition: Int = -1
     private var currentTargetHasMetThresholdOnce = false
+
+    companion object {
+        private const val swipeReboundingElasticity = 0.8f
+        private const val trueSwipeThreshold = 0.4f
+    }
 
     override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float =
         Float.MAX_VALUE

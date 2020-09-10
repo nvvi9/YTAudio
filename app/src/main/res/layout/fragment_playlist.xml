@@ -47,7 +47,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/playlist_view"
-            app:srcCompat="@drawable/ic_wifi_off_white" />
+            app:srcCompat="@drawable/ic_wifi_off" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

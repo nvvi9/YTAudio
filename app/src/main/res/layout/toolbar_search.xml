@@ -10,7 +10,7 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         app:contentInsetStartWithNavigation="0dp"
-        app:navigationIcon="@drawable/arrow_back_white">
+        app:navigationIcon="@drawable/ic_arrow_back">
 
         <EditText
             android:id="@+id/search_text"

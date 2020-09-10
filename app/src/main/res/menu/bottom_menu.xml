@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/playlistFragment"
-        android:icon="@drawable/queue_music_white"
+        android:icon="@drawable/ic_queue_music"
         android:title="@string/playlist"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/youTubeFragment"
-        android:icon="@drawable/ic_youtube_white"
+        android:icon="@drawable/ic_youtube"
         android:title="@string/search"
         app:showAsAction="always" />
 </menu>

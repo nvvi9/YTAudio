@@ -7,7 +7,7 @@
 
         <variable
             name="listener"
-            type="com.example.ytaudio.ui.adapters.YTItemAdapterListener" />
+            type="com.example.ytaudio.ui.adapters.YTItemListener" />
 
         <variable
             name="youTubeItem"
@@ -37,57 +37,58 @@
                 android:id="@+id/item_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp">
-
-                <TextView
-                    android:id="@+id/video_title"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:text="@{youTubeItem.title}"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toTopOf="@+id/channel"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/video_thumbnail"
-                    app:layout_constraintVertical_chainStyle="packed"
-                    tools:text="some long title" />
+                android:paddingVertical="16dp">
 
                 <ImageView
-                    android:id="@+id/video_thumbnail"
-                    android:layout_width="0dp"
+                    android:id="@+id/thumbnail"
+                    android:layout_width="112dp"
                     android:layout_height="0dp"
                     android:contentDescription="@string/thumbnail_description"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
+                    android:scaleType="centerCrop"
+                    app:imageUrl="@{youTubeItem.thumbnailUri}"
+                    app:layout_constraintDimensionRatio="H,16:9"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:videoThumbnail="@{youTubeItem}"
                     tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:ellipsize="end"
+                    android:paddingHorizontal="16dp"
+                    android:text="@{youTubeItem.title}"
+                    android:textAppearance="?attr/textAppearanceSubtitle1"
+                    app:layout_constraintBottom_toTopOf="@id/channel"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/thumbnail"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="some long title" />
 
                 <TextView
                     android:id="@+id/channel"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="16dp"
                     android:text="@{youTubeItem.channelTitle}"
-                    android:textSize="12sp"
+                    android:textAppearance="?attr/textAppearanceCaption"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/thumbnail"
+                    app:layout_constraintTop_toBottomOf="@id/title"
+                    tools:text="author" />
+
+                <TextView
+                    android:id="@+id/duration"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:textAppearance="?attr/textAppearanceCaption"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/video_title"
-                    tools:text="author" />
+                    app:layout_constraintTop_toBottomOf="@id/title"
+                    app:timeFormattedSeconds="@{youTubeItem.durationSeconds}"
+                    tools:text="15:48" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
     </FrameLayout>

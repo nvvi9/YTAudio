@@ -14,15 +14,15 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.example.ytaudio.databinding.FragmentSearchBinding
 import com.example.ytaudio.di.Injectable
-import com.example.ytaudio.ui.adapters.AutocompleteAdapterClickListener
 import com.example.ytaudio.ui.adapters.SearchAutocompleteAdapter
+import com.example.ytaudio.ui.adapters.SearchAutocompleteItemListener
 import com.example.ytaudio.ui.viewmodels.SearchViewModel
 import com.example.ytaudio.utils.extensions.hideKeyboard
 import com.example.ytaudio.utils.extensions.showKeyboard
 import javax.inject.Inject
 
 
-class SearchFragment : Fragment(), Injectable {
+class SearchFragment : Fragment(), SearchAutocompleteItemListener, Injectable {
 
     @Inject
     lateinit var searchViewModelFactory: ViewModelProvider.Factory
@@ -34,10 +34,13 @@ class SearchFragment : Fragment(), Injectable {
     private lateinit var binding: FragmentSearchBinding
     private val navArgs: SearchFragmentArgs by navArgs()
 
-    private val adapter = SearchAutocompleteAdapter(AutocompleteAdapterClickListener(
-        { navigateToResults(it) },
-        { setToolbarText(it) }
-    ))
+    override fun onItemClicked(text: String) {
+        navigateToResults(text)
+    }
+
+    override fun onArrowClicked(text: String) {
+        setToolbarText(text)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,26 +49,38 @@ class SearchFragment : Fragment(), Injectable {
     ): View? {
         binding = FragmentSearchBinding.inflate(inflater).apply {
             viewModel = searchViewModel
-            recyclerView.adapter = adapter
+
+            recyclerView.adapter = SearchAutocompleteAdapter(this@SearchFragment)
             (recyclerView.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
-            lifecycleOwner = this@SearchFragment
-            searchToolbar.searchText.addTextChangedListener {
-                searchViewModel.setAutocomplete(it.toString())
-            }
-            searchToolbar.toolbar.setNavigationOnClickListener {
+
+            searchToolbar.setNavigationOnClickListener {
                 findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToYouTubeFragment())
             }
-            searchToolbar.searchText.setOnEditorActionListener { v, actionId, _ ->
-                when (actionId) {
-                    EditorInfo.IME_ACTION_DONE -> {
-                        v.text.takeIf { it.isNotEmpty() }?.let {
-                            navigateToResults(it.toString())
+
+            searchQuery.run {
+                addTextChangedListener {
+                    searchViewModel.setAutocomplete(it.toString())
+                }
+
+                setOnClickListener {
+                    requestFocus()
+                    showKeyboard()
+                }
+
+                setOnEditorActionListener { v, actionId, _ ->
+                    when (actionId) {
+                        EditorInfo.IME_ACTION_SEARCH -> {
+                            v.text.takeIf { it.isNotEmpty() }?.let {
+                                navigateToResults(it.toString())
+                            }
+                            true
                         }
-                        true
+                        else -> false
                     }
-                    else -> false
                 }
             }
+
+            lifecycleOwner = this@SearchFragment
         }
 
         navArgs.query?.let {
@@ -77,7 +92,7 @@ class SearchFragment : Fragment(), Injectable {
 
     override fun onResume() {
         super.onResume()
-        binding.searchToolbar.searchText.apply {
+        binding.searchQuery.run {
             requestFocus()
             showKeyboard()
         }
@@ -85,11 +100,14 @@ class SearchFragment : Fragment(), Injectable {
 
     override fun onPause() {
         super.onPause()
-        binding.root.hideKeyboard()
+        binding.searchQuery.run {
+            clearFocus()
+            hideKeyboard()
+        }
     }
 
     private fun setToolbarText(text: CharSequence) {
-        binding.searchToolbar.searchText.apply {
+        binding.searchQuery.apply {
             setText(text)
             setSelection(text.length)
         }

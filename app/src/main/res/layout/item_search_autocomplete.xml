@@ -9,24 +9,29 @@
         <variable
             name="data"
             type="String" />
+
+        <variable
+            name="listener"
+            type="com.example.ytaudio.ui.adapters.SearchAutocompleteItemListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foreground="?attr/selectableItemBackground">
+        android:foreground="?attr/selectableItemBackground"
+        android:onClick="@{() -> listener.onItemClicked(data)}"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp">
 
         <ImageView
             android:id="@+id/icon_search"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_margin="8dp"
-            android:layout_marginStart="44dp"
             android:contentDescription="@string/search"
             app:layout_constraintBottom_toBottomOf="@+id/autocomplete_text_view"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/autocomplete_text_view"
-            app:srcCompat="@drawable/ic_search_white" />
+            app:srcCompat="@drawable/ic_search" />
 
         <TextView
             android:id="@+id/autocomplete_text_view"
@@ -35,8 +40,7 @@
             android:layout_margin="8dp"
             android:gravity="clip_vertical|center_vertical|fill_vertical"
             android:text="@{data}"
-            android:textSize="16sp"
-
+            android:textAppearance="?attr/textAppearanceBody1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/fill_search_view_button"
             app:layout_constraintHorizontal_bias="1.0"
@@ -48,13 +52,11 @@
             android:id="@+id/fill_search_view_button"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_margin="8dp"
-            android:layout_marginEnd="16dp"
-            android:background="@android:color/transparent"
+            android:background="@null"
             android:contentDescription="@string/autocomplete_arrow_description"
-            android:foreground="?attr/selectableItemBackground"
-            android:scaleType="center"
-            android:src="@drawable/north_west_white"
+            android:onClick="@{() -> listener.onArrowClicked(data)}"
+            android:padding="8dp"
+            android:src="@drawable/ic_north_west"
             app:layout_constraintBottom_toBottomOf="@+id/autocomplete_text_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/autocomplete_text_view" />

@@ -20,4 +20,8 @@
         <item name="itemTextColor">@color/color_on_surface_emphasis_medium</item>
         <item name="itemIconTint">@color/color_on_surface_emphasis_medium</item>
     </style>
+
+    <style name="AppTheme.Launcher">
+        <item name="android:windowBackground">@drawable/launch_screen</item>
+    </style>
 </resources>

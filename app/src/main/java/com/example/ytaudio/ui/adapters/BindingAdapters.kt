@@ -20,16 +20,6 @@ import com.example.ytaudio.vo.YouTubeItem
 import com.google.android.material.textview.MaterialTextView
 
 
-@BindingAdapter("audioTitle")
-fun TextView.setTitle(item: PlaylistItem?) {
-    text = item?.title
-}
-
-@BindingAdapter("authorName")
-fun TextView.setAuthor(item: PlaylistItem?) {
-    text = item?.author
-}
-
 @BindingAdapter("audioPhoto")
 fun ImageView.setImage(item: PlaylistItem?) {
     item?.let {
@@ -43,10 +33,12 @@ fun ImageView.setImage(item: PlaylistItem?) {
     }
 }
 
-@BindingAdapter("playbackState")
-fun ImageView.setPlaybackState(item: PlaylistItem?) {
-    item?.let {
-        this.setImageResource(it.playbackState)
+@BindingAdapter("imageUrl")
+fun ImageView.setImageUrl(uri: String?) {
+    uri?.let {
+        Glide.with(context)
+            .load(it)
+            .into(this)
     }
 }
 
@@ -54,6 +46,13 @@ fun ImageView.setPlaybackState(item: PlaylistItem?) {
 fun ImageButton.setIcon(resId: Int?) {
     resId?.let {
         setImageResource(it)
+    }
+}
+
+@BindingAdapter("timeFormattedSeconds")
+fun TextView.setTime(time: Long?) {
+    time?.let {
+        text = DateUtils.formatElapsedTime(it)
     }
 }
 
@@ -74,14 +73,9 @@ fun AppCompatImageView.setImage(uri: Uri?) {
     }
 }
 
-@BindingAdapter("audioDuration")
-fun TextView.setDuration(item: PlaylistItem?) {
-    text = DateUtils.formatElapsedTime(item?.duration ?: 0)
-}
-
 @BindingAdapter("audioPlaylist")
 fun RecyclerView.setPlaylist(playlist: List<PlaylistItem>?) {
-    (adapter as PlaylistAdapter).submitList(playlist?.sortedBy { it.title })
+    (adapter as PlaylistItemAdapter).submitList(playlist?.sortedBy { it.title })
 }
 
 @BindingAdapter("stringList")

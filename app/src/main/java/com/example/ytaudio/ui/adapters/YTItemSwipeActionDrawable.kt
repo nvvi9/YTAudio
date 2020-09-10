@@ -28,7 +28,7 @@ class YTItemSwipeActionDrawable(context: Context) : Drawable() {
     private var cx = 0f
     private var cr = 0f
 
-    private val icon = AppCompatResources.getDrawable(context, R.drawable.done_white)
+    private val icon = AppCompatResources.getDrawable(context, R.drawable.ic_done)
 
     private val iconMargin = 32f
     private val iconIntrinsicWidth = icon?.intrinsicWidth ?: 0

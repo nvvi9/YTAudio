@@ -37,15 +37,12 @@ class YTLoadStateAdapter : LoadStateAdapter<YTLoadStateAdapter.YTLoadStateViewHo
 
         companion object {
 
-            fun create(parent: ViewGroup): YTLoadStateViewHolder {
-                val binding =
+            fun create(parent: ViewGroup) =
+                YTLoadStateViewHolder(
                     ItemLoadStateFooterBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent, false
+                        LayoutInflater.from(parent.context), parent, false
                     )
-
-                return YTLoadStateViewHolder(binding)
-            }
+                )
         }
     }
 }

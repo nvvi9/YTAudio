@@ -8,54 +8,49 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.databinding.ItemSearchAutocompleteBinding
 
 
-class SearchAutocompleteAdapter(private val clickListener: AutocompleteAdapterClickListener) :
-    ListAdapter<String, SearchAutocompleteAdapter.ViewHolder>(StringDiffCallback()) {
+class SearchAutocompleteAdapter(private val itemListener: SearchAutocompleteItemListener) :
+    ListAdapter<String, SearchAutocompleteAdapter.ViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-        ViewHolder.create(parent, clickListener)
+        ViewHolder.create(parent, itemListener)
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class ViewHolder(
+    class ViewHolder private constructor(
         private val binding: ItemSearchAutocompleteBinding,
-        private val clickListener: AutocompleteAdapterClickListener
+        itemListener: SearchAutocompleteItemListener
     ) : RecyclerView.ViewHolder(binding.root) {
 
+        init {
+            binding.listener = itemListener
+        }
+
         fun bind(item: String) {
-            binding.apply {
+            binding.run {
                 data = item
-                fillSearchViewButton.setOnClickListener { clickListener.arrowClicked(item) }
-                root.setOnClickListener { clickListener.itemClicked(item) }
                 executePendingBindings()
             }
         }
 
         companion object {
-            fun create(parent: ViewGroup, clickListener: AutocompleteAdapterClickListener) =
+            fun create(
+                parent: ViewGroup,
+                clickListenerSearchItem: SearchAutocompleteItemListener
+            ) =
                 ItemSearchAutocompleteBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
-                ).let { ViewHolder(it, clickListener) }
+                ).let { ViewHolder(it, clickListenerSearchItem) }
         }
     }
-}
 
+    private object DiffCallback : DiffUtil.ItemCallback<String>() {
 
-class StringDiffCallback : DiffUtil.ItemCallback<String>() {
+        override fun areItemsTheSame(oldItem: String, newItem: String): Boolean =
+            oldItem === newItem
 
-    override fun areItemsTheSame(oldItem: String, newItem: String): Boolean =
-        oldItem === newItem
-
-    override fun areContentsTheSame(oldItem: String, newItem: String): Boolean =
-        oldItem == newItem
-}
-
-
-class AutocompleteAdapterClickListener(
-    private val onItemClicked: (text: String) -> Unit,
-    private val onArrowClicked: (text: String) -> Unit
-) {
-    fun itemClicked(text: String) = onItemClicked(text)
-    fun arrowClicked(text: String) = onArrowClicked(text)
+        override fun areContentsTheSame(oldItem: String, newItem: String): Boolean =
+            oldItem == newItem
+    }
 }

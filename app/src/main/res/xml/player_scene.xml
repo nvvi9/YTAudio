@@ -78,7 +78,7 @@
             android:id="@id/thumbnail_container"
             android:layout_width="0dp"
             android:layout_height="320dp"
-            motion:layout_constraintDimensionRatio="H,3:4"
+            motion:layout_constraintDimensionRatio="H,9:16"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toBottomOf="@id/player_toolbar">

@@ -87,9 +87,9 @@ class PlayerViewModel @Inject constructor(
 
         _currentAudioInfo.postValue(_currentAudioInfo.value?.apply {
             audioButtonRes = if (playbackState.isPlaying) {
-                R.drawable.ic_pause_black
+                R.drawable.ic_pause
             } else {
-                R.drawable.ic_play_arrow_black
+                R.drawable.ic_play_arrow
             }
         })
     }

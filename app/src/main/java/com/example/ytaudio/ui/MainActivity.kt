@@ -16,8 +16,6 @@ import com.example.ytaudio.R
 import com.example.ytaudio.databinding.ActivityMainBinding
 import com.example.ytaudio.ui.fragments.PlayerFragment
 import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
-import com.example.ytaudio.utils.extensions.hide
-import com.example.ytaudio.utils.extensions.show
 import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
@@ -55,8 +53,8 @@ class MainActivity : AppCompatActivity(),
             lifecycleScope.launchWhenResumed {
                 navController.addOnDestinationChangedListener { _, destination, _ ->
                     when (destination.id) {
-                        R.id.playlistFragment, R.id.youTubeFragment, R.id.searchResultsFragment -> bottomNav.show()
-                        else -> bottomNav.hide()
+                        R.id.playlistFragment, R.id.youTubeFragment, R.id.searchResultsFragment -> mainMotionLayout.transitionToStart()
+                        else -> mainMotionLayout.transitionToEnd()
                     }
                 }
             }

@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.doOnPreDraw
@@ -20,12 +20,11 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.example.ytaudio.databinding.FragmentSearchResultsBinding
 import com.example.ytaudio.di.Injectable
 import com.example.ytaudio.ui.adapters.ReboundingSwipeActionCallback
-import com.example.ytaudio.ui.adapters.YTItemAdapterListener
+import com.example.ytaudio.ui.adapters.YTItemAdapter
+import com.example.ytaudio.ui.adapters.YTItemListener
 import com.example.ytaudio.ui.adapters.YTLoadStateAdapter
-import com.example.ytaudio.ui.adapters.YouTubeItemsAdapter
 import com.example.ytaudio.ui.viewmodels.SearchResultsViewModel
 import com.example.ytaudio.vo.YouTubeItem
-import kotlinx.android.synthetic.main.fragment_search_results.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -33,7 +32,7 @@ import javax.inject.Inject
 
 
 @ExperimentalPagingApi
-class SearchResultsFragment : Fragment(), YTItemAdapterListener, Injectable {
+class SearchResultsFragment : Fragment(), YTItemListener, Injectable {
 
     @Inject
     lateinit var searchResultsViewModelFactory: ViewModelProvider.Factory
@@ -45,7 +44,7 @@ class SearchResultsFragment : Fragment(), YTItemAdapterListener, Injectable {
     private lateinit var binding: FragmentSearchResultsBinding
     private var job: Job? = null
     private val navArgs: SearchResultsFragmentArgs by navArgs()
-    private val youtubeItemsAdapter = YouTubeItemsAdapter(this)
+    private val youtubeItemsAdapter = YTItemAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +61,29 @@ class SearchResultsFragment : Fragment(), YTItemAdapterListener, Injectable {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentSearchResultsBinding.inflate(inflater)
+        binding = FragmentSearchResultsBinding.inflate(inflater).apply {
+            recyclerView.run {
+                ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
+                adapter = youtubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
+                addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
+            }
+
+            searchToolbar.setNavigationOnClickListener {
+                findNavController().navigate(SearchResultsFragmentDirections.actionSearchResultsFragmentToYouTubeFragment())
+            }
+
+            searchQuery.run {
+                setText(navArgs.query)
+                setOnClickListener {
+                    findNavController().navigate(
+                        SearchResultsFragmentDirections.actionSearchResultsFragmentToSearchFragment(
+                            (it as EditText).text.toString()
+                        )
+                    )
+                }
+            }
+            lifecycleOwner = this@SearchResultsFragment
+        }
 
         searchResultsViewModel.errorEvent.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let {
@@ -76,26 +97,6 @@ class SearchResultsFragment : Fragment(), YTItemAdapterListener, Injectable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
-        binding.recyclerView.apply {
-            ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
-            adapter = youtubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
-            addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
-        }
-
-        binding.searchResultsToolbar.setNavigationOnClickListener {
-            findNavController().navigate(SearchResultsFragmentDirections.actionSearchResultsFragmentToYouTubeFragment())
-        }
-
-        search_query.text = navArgs.query
-        search_query.setOnClickListener {
-            findNavController().navigate(
-                SearchResultsFragmentDirections.actionSearchResultsFragmentToSearchFragment(
-                    (it as TextView).text.toString()
-                )
-            )
-        }
-
-        binding.lifecycleOwner = this
         setFromQuery()
     }
 

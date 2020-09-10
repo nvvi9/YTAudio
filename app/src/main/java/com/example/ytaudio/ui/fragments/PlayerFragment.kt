@@ -11,12 +11,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.example.ytaudio.databinding.FragmentPlayerBinding
 import com.example.ytaudio.di.Injectable
-import com.example.ytaudio.ui.MainActivity
 import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
 import com.example.ytaudio.ui.viewmodels.PlayerViewModel
-import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
-import kotlin.math.abs
 
 
 class PlayerFragment : Fragment(), MotionLayout.TransitionListener, Injectable {
@@ -60,7 +57,7 @@ class PlayerFragment : Fragment(), MotionLayout.TransitionListener, Injectable {
     }
 
     override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
-        (activity as MainActivity).main_motion_layout.progress = abs(p3)
+//        (activity as MainActivity).main_motion_layout.progress = abs(p3)
     }
 
     override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {}
