@@ -80,28 +80,39 @@ class PlaylistFragment : Fragment(), PlaylistItemListener, Injectable {
     override fun onItemLongClicked(item: PlaylistItem): Boolean {
         MenuBottomSheetDialogFragment(R.menu.playlist_bottom_sheet_menu) {
             when (it.itemId) {
+                R.id.menu_share -> {
+                    startShareIntent(item.id)
+                    true
+                }
                 R.id.menu_delete -> {
                     playlistViewModel.deleteFromDatabase(item)
                     true
                 }
                 R.id.menu_open_youtube -> {
-                    try {
-                        context?.startActivity(
-                            Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:${item.id}"))
-                        )
-                    } catch (e: ActivityNotFoundException) {
-                        context?.startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse("http://www.youtube.com/watch?v=${item.id}")
-                            )
-                        )
-                    }
+                    startYouTubeIntent(item.id)
                     true
                 }
                 else -> false
             }
         }.show(parentFragmentManager, null)
         return true
+    }
+
+    private fun startShareIntent(id: String) {
+        startActivity(Intent.createChooser(Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, "https://youtu.be/$id")
+            type = "text/plain"
+        }, null))
+    }
+
+    private fun startYouTubeIntent(id: String) {
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:$id")))
+        } catch (e: ActivityNotFoundException) {
+            startActivity(
+                Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=$id"))
+            )
+        }
     }
 }
