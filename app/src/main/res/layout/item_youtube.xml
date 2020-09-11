@@ -30,6 +30,7 @@
             android:elevation="0dp"
             android:focusable="true"
             android:onClick="@{(view)->listener.onItemClicked(view, youTubeItem)}"
+            android:onLongClick="@{() -> listener.onItemLongClicked(youTubeItem)}"
             android:transitionName="@{@string/youtube_item_card_transition_name(youTubeItem.videoId)}"
             app:cardPreventCornerOverlap="false">
 

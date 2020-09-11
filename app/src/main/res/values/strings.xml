@@ -25,6 +25,7 @@
     <string name="search">Search</string>
     <string name="open">open drawer</string>
     <string name="close">close drawer</string>
+    <string name="add_to_playlist">Add to playlist</string>
     <string name="delete">Delete</string>
     <string name="add">Add</string>
     <string name="playlist">Playlist</string>

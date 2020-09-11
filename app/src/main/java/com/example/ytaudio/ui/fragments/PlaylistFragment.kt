@@ -1,5 +1,8 @@
 package com.example.ytaudio.ui.fragments
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +20,7 @@ import com.example.ytaudio.ui.adapters.PlaylistItemAdapter
 import com.example.ytaudio.ui.adapters.PlaylistItemListener
 import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
 import com.example.ytaudio.ui.viewmodels.PlaylistViewModel
+import com.example.ytaudio.utils.SpringAddItemAnimator
 import com.example.ytaudio.vo.PlaylistItem
 import javax.inject.Inject
 
@@ -29,7 +33,7 @@ class PlaylistFragment : Fragment(), PlaylistItemListener, Injectable {
     @Inject
     lateinit var mainActivityViewModelFactory: ViewModelProvider.Factory
 
-    val playlistViewModel: PlaylistViewModel by viewModels {
+    private val playlistViewModel: PlaylistViewModel by viewModels {
         playlistViewModelFactory
     }
 
@@ -44,28 +48,26 @@ class PlaylistFragment : Fragment(), PlaylistItemListener, Injectable {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentPlaylistBinding.inflate(inflater)
-        val application = requireNotNull(this.activity).application
+        binding = FragmentPlaylistBinding.inflate(inflater).apply {
+            viewModel = playlistViewModel
+
+            itemPlaylistView.run {
+                adapter = PlaylistItemAdapter(this@PlaylistFragment)
+                itemAnimator = SpringAddItemAnimator()
+                layoutManager = LinearLayoutManager(
+                    requireNotNull(this@PlaylistFragment.activity).application,
+                    RecyclerView.VERTICAL,
+                    false
+                )
+                addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
+            }
+
+            lifecycleOwner = this@PlaylistFragment
+
+        }
 
         playlistViewModel.networkFailure.observe(viewLifecycleOwner) {
             binding.networkFailure.visibility = if (it) View.VISIBLE else View.GONE
-        }
-
-        binding.viewModel = playlistViewModel
-
-        binding.apply {
-
-            playlistView.adapter = PlaylistItemAdapter(this@PlaylistFragment)
-            playlistView.layoutManager =
-                LinearLayoutManager(application, RecyclerView.VERTICAL, false)
-            playlistView.addItemDecoration(
-                DividerItemDecoration(
-                    activity,
-                    DividerItemDecoration.VERTICAL
-                )
-            )
-
-            lifecycleOwner = this@PlaylistFragment
         }
 
         return binding.root
@@ -77,7 +79,28 @@ class PlaylistFragment : Fragment(), PlaylistItemListener, Injectable {
 
     override fun onItemLongClicked(item: PlaylistItem): Boolean {
         MenuBottomSheetDialogFragment(R.menu.playlist_bottom_sheet_menu) {
-            true
+            when (it.itemId) {
+                R.id.menu_delete -> {
+                    playlistViewModel.deleteFromDatabase(item)
+                    true
+                }
+                R.id.menu_open_youtube -> {
+                    try {
+                        context?.startActivity(
+                            Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:${item.id}"))
+                        )
+                    } catch (e: ActivityNotFoundException) {
+                        context?.startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("http://www.youtube.com/watch?v=${item.id}")
+                            )
+                        )
+                    }
+                    true
+                }
+                else -> false
+            }
         }.show(parentFragmentManager, null)
         return true
     }

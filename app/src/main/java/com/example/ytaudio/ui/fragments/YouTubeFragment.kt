@@ -1,5 +1,8 @@
 package com.example.ytaudio.ui.fragments
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.example.ytaudio.R
 import com.example.ytaudio.databinding.FragmentYoutubeBinding
 import com.example.ytaudio.di.Injectable
 import com.example.ytaudio.ui.adapters.ReboundingSwipeActionCallback
@@ -64,7 +68,7 @@ class YouTubeFragment : Fragment(), YTItemListener, Injectable {
         view.doOnPreDraw { startPostponedEnterTransition() }
         binding.apply {
             viewModel = youTubeViewModel
-            youtubeItemsView.apply {
+            itemYoutubeView.run {
                 ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
                 adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
             }
@@ -80,8 +84,25 @@ class YouTubeFragment : Fragment(), YTItemListener, Injectable {
         setRecommended()
     }
 
-    override fun onItemClicked(cardView: View, items: YouTubeItem) {
-        Toast.makeText(context, items.videoId, Toast.LENGTH_SHORT).show()
+    override fun onItemClicked(cardView: View, item: YouTubeItem) {
+        startYouTubeIntent(item.videoId)
+    }
+
+    override fun onItemLongClicked(item: YouTubeItem): Boolean {
+        MenuBottomSheetDialogFragment(R.menu.youtube_bottom_sheet_menu) {
+            when (it.itemId) {
+                R.id.menu_open_youtube -> {
+                    startYouTubeIntent(item.videoId)
+                    true
+                }
+                R.id.menu_add -> {
+                    youTubeViewModel.addToPlaylist(item.videoId)
+                    true
+                }
+                else -> false
+            }
+        }.show(parentFragmentManager, null)
+        return true
     }
 
     override fun onItemIconChanged(item: YouTubeItem, newValue: Boolean) {
@@ -90,6 +111,18 @@ class YouTubeFragment : Fragment(), YTItemListener, Injectable {
             youTubeViewModel.addToPlaylist(item.videoId)
         } else {
             youTubeViewModel.deleteFromPlaylist(item.videoId)
+        }
+    }
+
+    private fun startYouTubeIntent(id: String) {
+        try {
+            context?.startActivity(
+                Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:$id"))
+            )
+        } catch (e: ActivityNotFoundException) {
+            context?.startActivity(
+                Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=$id"))
+            )
         }
     }
 

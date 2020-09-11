@@ -1,7 +1,6 @@
 package com.example.ytaudio.ui.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.paging.LoadState
@@ -23,16 +22,7 @@ class YTLoadStateAdapter : LoadStateAdapter<YTLoadStateAdapter.YTLoadStateViewHo
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(loadState: LoadState) {
-            binding.apply {
-                progressBar.isVisible = loadState is LoadState.Loading
-                if ((loadState as? LoadState.Error)?.error?.message.isNullOrBlank()) {
-                    errorMsg.visibility = View.GONE
-                    errorImage.visibility = View.GONE
-                } else {
-                    errorMsg.visibility = View.VISIBLE
-                    errorImage.visibility = View.VISIBLE
-                }
-            }
+            binding.progressBar.isVisible = loadState is LoadState.Loading
         }
 
         companion object {

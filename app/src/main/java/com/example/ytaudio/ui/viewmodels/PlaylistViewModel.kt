@@ -50,7 +50,7 @@ class PlaylistViewModel @Inject constructor(
     private val _audioItemList = MutableLiveData<List<PlaylistItem>>()
     val audioItemList: LiveData<List<PlaylistItem>> = _audioItemList
 
-    fun deleteFromDatabase(items: List<PlaylistItem>) {
+    fun deleteFromDatabase(vararg items: PlaylistItem) {
         viewModelScope.launch {
             audioInfoRepository.deleteById(*items.map { it.id }.toTypedArray())
         }

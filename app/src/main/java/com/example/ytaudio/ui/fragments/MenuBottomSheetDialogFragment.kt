@@ -27,6 +27,7 @@ class MenuBottomSheetDialogFragment(
         super.onViewCreated(view, savedInstanceState)
         navigationView = view.findViewById<NavigationView>(R.id.navigation_view).apply {
             inflateMenu(menuRes)
+
             setNavigationItemSelectedListener {
                 onNavigationItemSelected(it).also { consumed ->
                     if (consumed) dismiss()
