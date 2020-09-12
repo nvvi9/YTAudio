@@ -4,7 +4,7 @@ import com.example.ytaudio.data.streamyt.VideoDetails
 
 
 data class YouTubeItem(
-    val videoId: String,
+    val id: String,
     val title: String,
     val thumbnailUri: String?,
     val channelTitle: String,

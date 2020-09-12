@@ -52,7 +52,7 @@ fun ImageButton.setIcon(resId: Int?) {
 @BindingAdapter("timeFormattedSeconds")
 fun TextView.setTime(time: Long?) {
     time?.let {
-        text = DateUtils.formatElapsedTime(it)
+        text = DateUtils.formatElapsedTime(it).removePrefix("0")
     }
 }
 

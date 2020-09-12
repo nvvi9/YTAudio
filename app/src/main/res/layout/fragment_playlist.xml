@@ -10,19 +10,24 @@
             type="com.example.ytaudio.ui.viewmodels.PlaylistViewModel" />
     </data>
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:paddingLeftSystemWindowInsets="@{true}"
+        app:paddingRightSystemWindowInsets="@{true}"
+        app:paddingTopSystemWindowInsets="@{true}">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/item_playlist_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingBottom="55dp"
             app:audioPlaylist="@{viewModel.playlistItems}"
-            app:paddingBottomSystemWindowInsets="@{true}"
-            app:paddingTopSystemWindowInsets="@{true}"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            tools:itemCount="15"
             tools:listitem="@layout/item_playlist" />
 
         <TextView
@@ -36,7 +41,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/item_playlist_view" />
 
-
         <ImageView
             android:id="@+id/network_failure"
             android:layout_width="80dp"
@@ -47,7 +51,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/item_playlist_view"
+            app:paddingBottomSystemWindowInsets="@{true}"
+            app:paddingTopSystemWindowInsets="@{true}"
             app:srcCompat="@drawable/ic_wifi_off" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

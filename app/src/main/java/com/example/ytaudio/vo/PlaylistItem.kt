@@ -18,7 +18,7 @@ data class PlaylistItem @JvmOverloads constructor(
             audioInfo.run {
                 PlaylistItem(
                     id, details.title, details.author,
-                    thumbnails.maxByOrNull { it.height }?.url,
+                    thumbnails.getOrNull(1)?.url,
                     details.duration
                 )
             }

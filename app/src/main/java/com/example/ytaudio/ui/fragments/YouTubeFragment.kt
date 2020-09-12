@@ -1,15 +1,11 @@
 package com.example.ytaudio.ui.fragments
 
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.doOnPreDraw
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -33,7 +29,7 @@ import javax.inject.Inject
 
 
 @ExperimentalPagingApi
-class YouTubeFragment : Fragment(), YTItemListener, Injectable {
+class YouTubeFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
 
     @Inject
     lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
@@ -85,18 +81,22 @@ class YouTubeFragment : Fragment(), YTItemListener, Injectable {
     }
 
     override fun onItemClicked(cardView: View, item: YouTubeItem) {
-        startYouTubeIntent(item.videoId)
+        startYouTubeIntent(item.id)
     }
 
     override fun onItemLongClicked(item: YouTubeItem): Boolean {
         MenuBottomSheetDialogFragment(R.menu.youtube_bottom_sheet_menu) {
             when (it.itemId) {
+                R.id.menu_share -> {
+                    startShareIntent(item.id)
+                    true
+                }
                 R.id.menu_open_youtube -> {
-                    startYouTubeIntent(item.videoId)
+                    startYouTubeIntent(item.id)
                     true
                 }
                 R.id.menu_add -> {
-                    youTubeViewModel.addToPlaylist(item.videoId)
+                    youTubeViewModel.addToPlaylist(item.id)
                     true
                 }
                 else -> false
@@ -108,21 +108,9 @@ class YouTubeFragment : Fragment(), YTItemListener, Injectable {
     override fun onItemIconChanged(item: YouTubeItem, newValue: Boolean) {
         item.isAdded = newValue
         if (newValue) {
-            youTubeViewModel.addToPlaylist(item.videoId)
+            youTubeViewModel.addToPlaylist(item.id)
         } else {
-            youTubeViewModel.deleteFromPlaylist(item.videoId)
-        }
-    }
-
-    private fun startYouTubeIntent(id: String) {
-        try {
-            context?.startActivity(
-                Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:$id"))
-            )
-        } catch (e: ActivityNotFoundException) {
-            context?.startActivity(
-                Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=$id"))
-            )
+            youTubeViewModel.deleteFromPlaylist(item.id)
         }
     }
 

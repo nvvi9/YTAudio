@@ -1,16 +1,11 @@
 package com.example.ytaudio.ui.fragments
 
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ytaudio.R
@@ -25,7 +20,7 @@ import com.example.ytaudio.vo.PlaylistItem
 import javax.inject.Inject
 
 
-class PlaylistFragment : Fragment(), PlaylistItemListener, Injectable {
+class PlaylistFragment : YouTubeIntentFragment(), PlaylistItemListener, Injectable {
 
     @Inject
     lateinit var playlistViewModelFactory: ViewModelProvider.Factory
@@ -59,7 +54,6 @@ class PlaylistFragment : Fragment(), PlaylistItemListener, Injectable {
                     RecyclerView.VERTICAL,
                     false
                 )
-                addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
             }
 
             lifecycleOwner = this@PlaylistFragment
@@ -96,23 +90,5 @@ class PlaylistFragment : Fragment(), PlaylistItemListener, Injectable {
             }
         }.show(parentFragmentManager, null)
         return true
-    }
-
-    private fun startShareIntent(id: String) {
-        startActivity(Intent.createChooser(Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, "https://youtu.be/$id")
-            type = "text/plain"
-        }, null))
-    }
-
-    private fun startYouTubeIntent(id: String) {
-        try {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:$id")))
-        } catch (e: ActivityNotFoundException) {
-            startActivity(
-                Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=$id"))
-            )
-        }
     }
 }

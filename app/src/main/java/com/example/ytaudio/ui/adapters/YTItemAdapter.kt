@@ -37,7 +37,7 @@ class YTItemAdapter(private val listener: YTItemListener) :
         }
 
         private val addedCornerSize =
-            itemView.resources.getDimension(R.dimen.large_component_corner_radius)
+            itemView.resources.getDimension(R.dimen.small_component_corner_radius)
 
         fun bind(item: YouTubeItem) {
             binding.youTubeItem = item
@@ -78,7 +78,6 @@ class YTItemAdapter(private val listener: YTItemListener) :
         private fun updateCardViewTopLeftCornerSize(interpolation: Float) {
             binding.cardView.apply {
                 shapeAppearanceModel = shapeAppearanceModel.toBuilder()
-                    .setTopLeftCornerSize(interpolation * addedCornerSize)
                     .setBottomLeftCornerSize(interpolation * addedCornerSize)
                     .build()
             }
@@ -88,7 +87,7 @@ class YTItemAdapter(private val listener: YTItemListener) :
     private object DiffCallback : DiffUtil.ItemCallback<YouTubeItem>() {
 
         override fun areItemsTheSame(oldItem: YouTubeItem, newItem: YouTubeItem): Boolean =
-            oldItem.videoId == newItem.videoId
+            oldItem.id == newItem.id
 
         override fun areContentsTheSame(oldItem: YouTubeItem, newItem: YouTubeItem): Boolean =
             oldItem == newItem

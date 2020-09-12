@@ -14,77 +14,90 @@
             type="com.example.ytaudio.vo.PlaylistItem" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/item_layout"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="4dp"
-        android:layout_marginVertical="2dp"
-        android:foreground="?attr/selectableItemBackground"
-        android:onClick="@{() -> listener.onItemClicked(audioItem)}"
-        android:onLongClick="@{() -> listener.onItemLongClicked(audioItem)}"
-        android:orientation="horizontal">
+        android:layout_marginVertical="2dp">
 
-        <TextView
-            android:id="@+id/audio_title"
-            android:layout_width="0dp"
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="@{audioItem.title}"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
-            app:layout_constraintBottom_toTopOf="@+id/author"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/audio_photo"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread_inside"
-            tools:text="Title" />
+            android:clickable="true"
+            android:elevation="0dp"
+            android:focusable="true"
+            android:onClick="@{() -> listener.onItemClicked(audioItem)}"
+            android:onLongClick="@{() -> listener.onItemLongClicked(audioItem)}">
 
-        <TextView
-            android:id="@+id/author"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="16dp"
-            android:maxLines="1"
-            android:text="@{audioItem.author}"
-            android:textAppearance="?attr/textAppearanceCaption"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/audio_title"
-            app:layout_constraintTop_toBottomOf="@+id/audio_title"
-            tools:text="author" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/item_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/audio_photo"
-            android:layout_width="120dp"
-            android:layout_height="70dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:contentDescription="@string/thumbnail_description"
-            app:imageUrl="@{audioItem.thumbnailUri}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+                <ImageView
+                    android:id="@+id/thumbnail"
+                    android:layout_width="112dp"
+                    android:layout_height="0dp"
+                    android:contentDescription="@string/thumbnail_description"
+                    app:imageUrl="@{audioItem.thumbnailUri}"
+                    app:layout_constraintDimensionRatio="H,16:9"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
-        <ImageView
-            android:id="@+id/playback_state"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:contentDescription="@string/audio_button_description"
-            android:scaleType="fitCenter"
-            app:layout_constraintBottom_toBottomOf="@+id/audio_photo"
-            app:layout_constraintEnd_toEndOf="@+id/audio_photo"
-            app:layout_constraintStart_toStartOf="@+id/audio_photo"
-            app:layout_constraintTop_toTopOf="@+id/audio_photo"
-            tools:srcCompat="@drawable/ic_play_arrow" />
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:maxLines="1"
+                    android:paddingHorizontal="8dp"
+                    android:singleLine="true"
+                    android:text="@{audioItem.title}"
+                    android:textAppearance="?attr/textAppearanceSubtitle2"
+                    app:layout_constraintEnd_toStartOf="@id/duration"
+                    app:layout_constraintStart_toEndOf="@id/thumbnail"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Very Important Title" />
 
+                <TextView
+                    android:id="@+id/author"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:padding="8dp"
+                    android:text="@{audioItem.author}"
+                    android:textAppearance="?attr/textAppearanceCaption"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/duration"
+                    app:layout_constraintStart_toStartOf="@id/title"
+                    app:layout_constraintTop_toBottomOf="@id/title"
+                    tools:text="author" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:textAppearance="?attr/textAppearanceCaption"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:timeFormattedSeconds="@{audioItem.duration}"
+                    tools:text="14:53" />
+
+                <ImageView
+                    android:id="@+id/playback_state"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:contentDescription="@string/audio_button_description"
+                    android:scaleType="fitCenter"
+                    app:layout_constraintBottom_toBottomOf="@+id/thumbnail"
+                    app:layout_constraintEnd_toEndOf="@+id/thumbnail"
+                    app:layout_constraintStart_toStartOf="@+id/thumbnail"
+                    app:layout_constraintTop_toTopOf="@+id/thumbnail"
+                    tools:srcCompat="@drawable/ic_play_arrow" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </FrameLayout>
 </layout>

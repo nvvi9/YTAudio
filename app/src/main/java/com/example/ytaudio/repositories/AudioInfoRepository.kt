@@ -17,11 +17,11 @@ class AudioInfoRepository @Inject constructor(
 
     suspend fun insertIntoDatabase(id: String) {
         withContext(Dispatchers.IO) {
-            audioInfoDao.insert(
-                AudioInfo.fromVideoData(
-                    ytStreamApiService.getVideoData(id).first()
-                )
-            )
+            ytStreamApiService.getVideoData(id).takeIf {
+                it.isNotEmpty()
+            }?.let {
+                audioInfoDao.insert(AudioInfo.fromVideoData(it.first()))
+            }
         }
     }
 
@@ -30,7 +30,7 @@ class AudioInfoRepository @Inject constructor(
             audioInfoDao.getAllAudioInfo().let { audioInfo ->
                 ytStreamApiService.getVideoData(audioInfo.joinToString("+") { it.id })
             }.let { videoData ->
-                audioInfoDao.update(videoData.map { AudioInfo.fromVideoData(it) })
+                audioInfoDao.updatePlaylist(videoData.map { AudioInfo.fromVideoData(it) })
             }
         }
     }
@@ -38,7 +38,7 @@ class AudioInfoRepository @Inject constructor(
     suspend fun updateById(vararg id: String) {
         withContext(Dispatchers.IO) {
             ytStreamApiService.getVideoData(id.joinToString("+")).let { videoData ->
-                audioInfoDao.update(videoData.map { AudioInfo.fromVideoData(it) })
+                audioInfoDao.updatePlaylist(videoData.map { AudioInfo.fromVideoData(it) })
             }
         }
     }

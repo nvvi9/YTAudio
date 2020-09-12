@@ -2,14 +2,11 @@ package com.example.ytaudio.ui
 
 import android.media.AudioManager
 import android.os.Bundle
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.example.ytaudio.R
@@ -23,9 +20,7 @@ import kotlinx.android.synthetic.main.fragment_player.*
 import javax.inject.Inject
 
 
-class MainActivity : AppCompatActivity(),
-    NavController.OnDestinationChangedListener,
-    HasAndroidInjector {
+class MainActivity : AppCompatActivity(), HasAndroidInjector {
 
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
@@ -68,23 +63,12 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onBackPressed() {
-        (supportFragmentManager.findFragmentById(R.id.fragment_container) as PlayerFragment).motion_layout
+        (supportFragmentManager.findFragmentById(R.id.fragment_container) as? PlayerFragment)?.motion_layout
             ?.takeIf { it.currentState == R.id.end }
             ?.transitionToStart() ?: super.onBackPressed()
     }
 
     override fun androidInjector() = androidInjector
-
-    override fun onDestinationChanged(
-        controller: NavController,
-        destination: NavDestination,
-        arguments: Bundle?
-    ) {
-        binding.bottomNav.visibility = when (destination.id) {
-            R.id.searchFragment -> View.GONE
-            else -> View.VISIBLE
-        }
-    }
 
     private fun replacePlayFragment() {
         supportFragmentManager.beginTransaction()
