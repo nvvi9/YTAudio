@@ -117,7 +117,9 @@ class YouTubeFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
     private fun setLoadState() {
         lifecycleScope.launch {
             youTubeItemsAdapter.loadStateFlow.collectLatest {
-                binding.swipeRefresh.isRefreshing = it.refresh is LoadState.Loading
+//                binding.swipeRefresh.isRefreshing = it.refresh is LoadState.Loading
+                binding.progressView.visibility =
+                    if (it.refresh is LoadState.Loading) View.VISIBLE else View.GONE
             }
         }
     }

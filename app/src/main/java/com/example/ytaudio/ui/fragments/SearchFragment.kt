@@ -11,7 +11,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.DefaultItemAnimator
 import com.example.ytaudio.databinding.FragmentSearchBinding
 import com.example.ytaudio.di.Injectable
 import com.example.ytaudio.ui.adapters.SearchAutocompleteAdapter
@@ -50,11 +49,13 @@ class SearchFragment : Fragment(), SearchAutocompleteItemListener, Injectable {
         binding = FragmentSearchBinding.inflate(inflater).apply {
             viewModel = searchViewModel
 
-            recyclerView.adapter = SearchAutocompleteAdapter(this@SearchFragment)
-            (recyclerView.itemAnimator as DefaultItemAnimator).supportsChangeAnimations = false
-
             searchToolbar.setNavigationOnClickListener {
                 findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToYouTubeFragment())
+            }
+
+            recyclerView.run {
+                adapter = SearchAutocompleteAdapter(this@SearchFragment)
+                itemAnimator = null
             }
 
             searchQuery.run {

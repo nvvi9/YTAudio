@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
     @Inject
     lateinit var mainActivityViewModelFactory: ViewModelProvider.Factory
 
-    private lateinit var binding: ActivityMainBinding
+    lateinit var binding: ActivityMainBinding
 
     private val mainActivityViewModel: MainActivityViewModel by viewModels {
         mainActivityViewModelFactory

@@ -9,8 +9,10 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import com.example.ytaudio.R
 import com.example.ytaudio.databinding.FragmentPlayerBinding
 import com.example.ytaudio.di.Injectable
+import com.example.ytaudio.ui.MainActivity
 import com.example.ytaudio.ui.viewmodels.MainActivityViewModel
 import com.example.ytaudio.ui.viewmodels.PlayerViewModel
 import javax.inject.Inject
@@ -60,7 +62,13 @@ class PlayerFragment : Fragment(), MotionLayout.TransitionListener, Injectable {
 //        (activity as MainActivity).main_motion_layout.progress = abs(p3)
     }
 
-    override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {}
+    override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
+        if (p1 == R.id.end) {
+            (activity as MainActivity).binding.mainMotionLayout.transitionToStart()
+        } else {
+            (activity as MainActivity).binding.mainMotionLayout.transitionToEnd()
+        }
+    }
 
     override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {}
 

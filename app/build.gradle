@@ -3,7 +3,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'kotlin-kapt'
-apply plugin: "scabbard.gradle"
 
 android {
     compileSdkVersion 29
@@ -42,10 +41,6 @@ android {
     dataBinding {
         enabled = true
     }
-
-    scabbard {
-        enabled true
-    }
 }
 
 dependencies {
@@ -73,7 +68,7 @@ dependencies {
     implementation "com.google.android.material:material:$material_version"
 
     // Paging
-    implementation "androidx.paging:paging-runtime:$paging_version"
+    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
 
     // Glide
     implementation "com.github.bumptech.glide:glide:$glide_version"
