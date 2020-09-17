@@ -7,11 +7,11 @@
 
         <variable
             name="listener"
-            type="com.example.ytaudio.ui.adapters.YTItemListener" />
+            type="com.nvvi9.ytaudio.ui.adapters.YTItemListener" />
 
         <variable
             name="youTubeItem"
-            type="com.example.ytaudio.vo.YouTubeItem" />
+            type="com.nvvi9.ytaudio.vo.YouTubeItem" />
     </data>
 
     <FrameLayout

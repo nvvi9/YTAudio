@@ -7,11 +7,11 @@
 
         <variable
             name="listener"
-            type="com.example.ytaudio.ui.adapters.PlaylistItemListener" />
+            type="com.nvvi9.ytaudio.ui.adapters.PlaylistItemListener" />
 
         <variable
             name="audioItem"
-            type="com.example.ytaudio.vo.PlaylistItem" />
+            type="com.nvvi9.ytaudio.vo.PlaylistItem" />
     </data>
 
     <FrameLayout

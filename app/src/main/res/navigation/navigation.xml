@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/playlistFragment"
-        android:name="com.example.ytaudio.ui.fragments.PlaylistFragment"
+        android:name="com.nvvi9.ytaudio.ui.fragments.PlaylistFragment"
         android:label="PlaylistFragment"
         tools:layout="@layout/fragment_playlist">
         <action
@@ -16,12 +16,12 @@
     </fragment>
     <fragment
         android:id="@+id/audioPlayerFragment"
-        android:name="com.example.ytaudio.ui.fragments.PlayerFragment"
+        android:name="com.nvvi9.ytaudio.ui.fragments.PlayerFragment"
         android:label="AudioPlayerFragment"
         tools:layout="@layout/fragment_player" />
     <fragment
         android:id="@+id/youTubeFragment"
-        android:name="com.example.ytaudio.ui.fragments.YouTubeFragment"
+        android:name="com.nvvi9.ytaudio.ui.fragments.YouTubeFragment"
         android:label="YouTubeFragment"
         tools:layout="@layout/fragment_youtube">
         <action
@@ -30,7 +30,7 @@
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.example.ytaudio.ui.fragments.SearchFragment"
+        android:name="com.nvvi9.ytaudio.ui.fragments.SearchFragment"
         android:label="SearchFragment"
         tools:layout="@layout/fragment_search">
         <action
@@ -47,7 +47,7 @@
     </fragment>
     <fragment
         android:id="@+id/searchResultsFragment"
-        android:name="com.example.ytaudio.ui.fragments.SearchResultsFragment"
+        android:name="com.nvvi9.ytaudio.ui.fragments.SearchResultsFragment"
         android:label="SearchResultsFragment"
         tools:layout="@layout/fragment_search_results">
         <argument

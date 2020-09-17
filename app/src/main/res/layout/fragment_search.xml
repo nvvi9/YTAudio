@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.ytaudio.ui.viewmodels.SearchViewModel" />
+            type="com.nvvi9.ytaudio.ui.viewmodels.SearchViewModel" />
     </data>
 
     <LinearLayout

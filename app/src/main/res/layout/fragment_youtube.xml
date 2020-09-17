@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.ytaudio.ui.viewmodels.YouTubeViewModel" />
+            type="com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

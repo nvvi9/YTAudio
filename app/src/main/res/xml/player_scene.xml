@@ -99,7 +99,7 @@
         <Constraint
             android:id="@id/player_toolbar"
             android:layout_height="55dp"
-            android:layout_marginBottom="65dp"
+            android:elevation="10dp"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent" />

@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.example.ytaudio.ui.view.StatusBarView
+            <com.nvvi9.ytaudio.ui.view.StatusBarView
                 android:layout_width="match_parent"
                 android:layout_height="0dp" />
 
