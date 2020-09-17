@@ -1,5 +1,6 @@
 package com.nvvi9.ytaudio.ui
 
+import android.content.Intent
 import android.media.AudioManager
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -17,6 +18,8 @@ import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import kotlinx.android.synthetic.main.fragment_player.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
 
@@ -34,6 +37,8 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
         mainActivityViewModelFactory
     }
 
+    @FlowPreview
+    @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
@@ -53,6 +58,12 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
                     }
                 }
             }
+        }
+
+        intent?.takeIf {
+            it.action == Intent.ACTION_SEND
+        }?.getStringExtra(Intent.EXTRA_TEXT)?.let {
+            mainActivityViewModel.addToPlaylist(it.takeLast(11))
         }
 
         mainActivityViewModel.replaceEvent.observe(this) {
