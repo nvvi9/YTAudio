@@ -24,6 +24,8 @@ import com.nvvi9.ytaudio.ui.adapters.YTItemListener
 import com.nvvi9.ytaudio.ui.adapters.YTLoadStateAdapter
 import com.nvvi9.ytaudio.ui.viewmodels.SearchResultsViewModel
 import com.nvvi9.ytaudio.vo.YouTubeItem
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -31,6 +33,8 @@ import javax.inject.Inject
 
 
 @ExperimentalPagingApi
+@ExperimentalCoroutinesApi
+@FlowPreview
 class SearchResultsFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
 
     @Inject

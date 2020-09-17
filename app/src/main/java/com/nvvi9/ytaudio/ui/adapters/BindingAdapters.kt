@@ -7,31 +7,17 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.textview.MaterialTextView
-import com.nvvi9.ytaudio.R
 import com.nvvi9.ytaudio.vo.PlaylistItem
-import com.nvvi9.ytaudio.vo.YouTubeItem
 
-
-@BindingAdapter("audioPhoto")
-fun ImageView.setImage(item: PlaylistItem?) {
-    item?.let {
-        Glide.with(context)
-            .load(it.thumbnailUri)
-            .apply(
-                RequestOptions()
-                    .placeholder(R.drawable.ic_notification)
-                    .error(R.drawable.ic_notification)
-            ).into(this)
-    }
-}
 
 @BindingAdapter("imageUrl")
 fun ImageView.setImageUrl(uri: String?) {
@@ -68,28 +54,18 @@ fun AppCompatImageView.setImage(uri: Uri?) {
     uri?.let {
         Glide.with(context)
             .load(it)
-            .apply(RequestOptions().error(R.drawable.ic_notification))
             .into(this)
     }
 }
 
 @BindingAdapter("audioPlaylist")
 fun RecyclerView.setPlaylist(playlist: List<PlaylistItem>?) {
-    (adapter as PlaylistItemAdapter).submitList(playlist?.sortedBy { it.title })
+    (adapter as? PlaylistItemAdapter)?.submitList(playlist?.sortedBy { it.title })
 }
 
 @BindingAdapter("stringList")
 fun RecyclerView.setStringList(items: List<String>?) {
-    (adapter as SearchAutocompleteAdapter).submitList(items)
-}
-
-@BindingAdapter("videoThumbnail")
-fun ImageView.setThumbnail(item: YouTubeItem?) {
-    item?.let {
-        Glide.with(context)
-            .load(it.thumbnailUri)
-            .into(this)
-    }
+    (adapter as? SearchAutocompleteAdapter)?.submitList(items)
 }
 
 @BindingAdapter("layoutFullscreen")
@@ -99,6 +75,16 @@ fun View.bindLayoutFullscreen(previousFullscreen: Boolean, fullscreen: Boolean) 
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }
+}
+
+@BindingAdapter("refreshState")
+fun SwipeRefreshLayout.setRefreshState(ytLoadState: YTLoadState?) {
+    isRefreshing = ytLoadState is YTLoadState.Loading
+}
+
+@BindingAdapter("isVisible")
+fun ProgressBar.setVisibility(ytLoadState: YTLoadState?) {
+    visibility = if (ytLoadState is YTLoadState.Empty) View.VISIBLE else View.GONE
 }
 
 @BindingAdapter(

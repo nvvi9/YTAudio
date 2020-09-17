@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
-import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.nvvi9.ytaudio.R
 import com.nvvi9.ytaudio.databinding.FragmentYoutubeBinding
@@ -22,13 +22,16 @@ import com.nvvi9.ytaudio.ui.adapters.YTItemListener
 import com.nvvi9.ytaudio.ui.adapters.YTLoadStateAdapter
 import com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel
 import com.nvvi9.ytaudio.vo.YouTubeItem
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @ExperimentalPagingApi
+@ExperimentalCoroutinesApi
+@FlowPreview
 class YouTubeFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
 
     @Inject
@@ -64,18 +67,22 @@ class YouTubeFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
         binding = it
     }.root
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
-        youTubeViewModel.errorEvent.observe(viewLifecycleOwner) { event ->
-            event.getContentIfNotHandled()?.let {
-                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+        youTubeViewModel.run {
+            updateRecommended()
+            errorEvent.observe(viewLifecycleOwner) { event ->
+                event.getContentIfNotHandled()?.let {
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            recommendedItems.observe(viewLifecycleOwner) {
+                setRecommended(it)
             }
         }
-        setLoadState()
-        setRecommended()
     }
 
     override fun onItemClicked(cardView: View, item: YouTubeItem) {
@@ -112,22 +119,11 @@ class YouTubeFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
         }
     }
 
-    private fun setLoadState() {
-        lifecycleScope.launch {
-            youTubeItemsAdapter.loadStateFlow.collectLatest {
-//                binding.swipeRefresh.isRefreshing = it.refresh is LoadState.Loading
-                binding.progressView.visibility =
-                    if (it.refresh is LoadState.Loading) View.VISIBLE else View.GONE
-            }
-        }
-    }
-
-    private fun setRecommended() {
+    private fun setRecommended(items: PagingData<YouTubeItem>) {
         job?.cancel()
         job = lifecycleScope.launch {
-            youTubeViewModel.getRecommended().collectLatest {
-                youTubeItemsAdapter.submitData(it)
-            }
+            youTubeItemsAdapter.submitData(items)
+            binding.itemYoutubeView.layoutManager?.scrollToPosition(0)
         }
     }
 }
