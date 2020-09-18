@@ -64,7 +64,7 @@ dependencies {
     implementation "androidx.core:core-ktx:$core_version"
 
     // YTStream
-    implementation project(path: ':YTStream')
+    implementation project(':YTStream')
 
     // Constraint Layout
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
