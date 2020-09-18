@@ -1,1 +1,6 @@
 /build
+/.idea/
+/local.properties
+/libs
+/consumer-rules.pro
+/proguard-rules.pro
