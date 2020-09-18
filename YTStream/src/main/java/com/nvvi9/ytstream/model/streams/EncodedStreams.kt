@@ -42,14 +42,17 @@ internal class EncodedStreams(
             }
 
             val (encodedSignatures, streams) =
-                    getEncSignaturesStreams(isEncoded, if (isEncoded || !statusOk) raw.videoPageSource else raw.videoDetails.rawResponse.raw)
+                getEncSignaturesStreams(
+                    isEncoded,
+                    if (isEncoded || !statusOk) raw.videoPageSource else raw.videoDetails.rawResponse.raw
+                )
 
             EncodedStreams(encodedSignatures, streams, raw.videoDetails, jsDecryptionDef?.await())
         }
 
         private fun getEncSignaturesStreams(
-                isEncoded: Boolean,
-                raw: String
+            isEncoded: Boolean,
+            raw: String
         ): Pair<Map<Int, String>, MutableList<Stream>> {
             val matcher = (if (isEncoded) patternCipher else patternUrl).matcher(raw)
             val encodedSignatures = mutableMapOf<Int, String>()
@@ -77,7 +80,7 @@ internal class EncodedStreams(
                 }
 
                 val itag = patternItag.matcher(url).takeIf { it.find() }?.group(1)
-                        ?.takeUnless { it.contains("&source=yt_otf&") }?.toInt() ?: continue
+                    ?.takeUnless { it.contains("&source=yt_otf&") }?.toInt() ?: continue
 
                 Stream.fromItag(itag, url)?.let { streams.add(it) }
 
@@ -89,7 +92,8 @@ internal class EncodedStreams(
         private val patternItag: Pattern = Pattern.compile("itag=([0-9]+?)(&|\\z)")
         private val patternEncSig: Pattern = Pattern.compile("s=(.{10,}?)(\\\\\\\\u0026|\\z)")
         private val patternUrl: Pattern = Pattern.compile("\"url\"\\s*:\\s*\"(.+?)\"")
-        private val patternCipher: Pattern = Pattern.compile("\"signatureCipher\"\\s*:\\s*\"(.+?)\"")
+        private val patternCipher: Pattern =
+            Pattern.compile("\"signatureCipher\"\\s*:\\s*\"(.+?)\"")
         private val patternCipherUrl: Pattern = Pattern.compile("url=(.+?)(\\\\\\\\u0026|\\z)")
     }
 }

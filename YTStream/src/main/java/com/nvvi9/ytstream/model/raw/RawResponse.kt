@@ -36,12 +36,16 @@ inline class RawResponse(val raw: String) {
         private val patternVideoId: Pattern = Pattern.compile("\"videoId\"\\s*:\\s*\"(.+?)\"")
         private val patternAuthor: Pattern = Pattern.compile("\"author\"\\s*:\\s*\"(.+?)\"")
         private val patternChannelId: Pattern = Pattern.compile("\"channelId\"\\s*:\\s*\"(.+?)\"")
-        private val patternLengthSeconds: Pattern = Pattern.compile("\"lengthSeconds\"\\s*:\\s*\"(\\d+?)\"")
+        private val patternLengthSeconds: Pattern =
+            Pattern.compile("\"lengthSeconds\"\\s*:\\s*\"(\\d+?)\"")
         private val patternViewCount: Pattern = Pattern.compile("\"viewCount\"\\s*:\\s*\"(\\d+?)\"")
-        private val patternExpiresInSeconds: Pattern = Pattern.compile("\"expiresInSeconds\"\\s*:\\s*\"(\\d+?)\"")
-        private val patternShortDescription: Pattern = Pattern.compile("\"shortDescription\"\\s*:\\s*\"(.+?)\"")
+        private val patternExpiresInSeconds: Pattern =
+            Pattern.compile("\"expiresInSeconds\"\\s*:\\s*\"(\\d+?)\"")
+        private val patternShortDescription: Pattern =
+            Pattern.compile("\"shortDescription\"\\s*:\\s*\"(.+?)\"")
         private val patternStatusOk: Pattern = Pattern.compile("status=ok(&|,|\\z)")
         private val patternHlsvp: Pattern = Pattern.compile("hlsvp=(.+?)(&|\\z)")
-        private val patternCipher: Pattern = Pattern.compile("\"signatureCipher\"\\s*:\\s*\"(.+?)\"")
+        private val patternCipher: Pattern =
+            Pattern.compile("\"signatureCipher\"\\s*:\\s*\"(.+?)\"")
     }
 }

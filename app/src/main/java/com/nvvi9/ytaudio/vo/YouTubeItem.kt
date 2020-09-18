@@ -10,6 +10,7 @@ data class YouTubeItem(
     val channelTitle: String,
     val viewCount: Long?,
     val durationSeconds: Long?,
+    val inPlaylist: Boolean = false,
     var isAdded: Boolean = false
 )
 

@@ -9,10 +9,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.flow
 
 
-internal class Raw(
-        val videoPageSource: String,
-        val videoDetails: VideoDetails
-) {
+internal class Raw(val videoPageSource: String, val videoDetails: VideoDetails) {
 
     companion object {
 

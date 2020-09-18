@@ -42,7 +42,7 @@ class YTItemAdapter(private val listener: YTItemListener) :
         fun bind(item: YouTubeItem) {
             binding.youTubeItem = item
             binding.root.isActivated = item.isAdded
-            updateCardViewTopLeftCornerSize(if (item.isAdded) 1f else 0f)
+            updateCardViewTopLeftCornerSize(if (item.isAdded || item.inPlaylist) 1f else 0f)
             binding.executePendingBindings()
         }
 

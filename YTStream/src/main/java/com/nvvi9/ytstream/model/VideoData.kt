@@ -17,8 +17,11 @@ data class VideoData(
         internal suspend fun fromEncodedStreamsFlow(encodedStreams: EncodedStreams?) = flow {
             emit(encodedStreams?.run {
                 jsCode?.let { script ->
-                    JsExecutor.executeScript("decode", script)?.split("\n")?.let {
-                        VideoData(videoDetails, streams.toMutableList().encodeStreams(it, encodedSignatures))
+                    JsExecutor.executeScript(script)?.split("\n")?.let {
+                        VideoData(
+                            videoDetails,
+                            streams.toMutableList().encodeStreams(it, encodedSignatures)
+                        )
                     }
                 } ?: VideoData(videoDetails, streams)
             })

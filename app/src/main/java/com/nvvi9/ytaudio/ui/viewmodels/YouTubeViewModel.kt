@@ -1,12 +1,11 @@
 package com.nvvi9.ytaudio.ui.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
+import com.nvvi9.ytaudio.domain.PlaylistUseCases
 import com.nvvi9.ytaudio.domain.YouTubeUseCases
 import com.nvvi9.ytaudio.repositories.AudioInfoRepository
 import com.nvvi9.ytaudio.ui.adapters.YTLoadState
@@ -25,9 +24,9 @@ import javax.inject.Singleton
 @ExperimentalCoroutinesApi
 @Singleton
 @ExperimentalPagingApi
-class YouTubeViewModel
-@Inject constructor(
-    private val useCases: YouTubeUseCases,
+class YouTubeViewModel @Inject constructor(
+    private val playlistUseCases: PlaylistUseCases,
+    private val youTubeUseCases: YouTubeUseCases,
     private val audioInfoRepository: AudioInfoRepository
 ) : ViewModel() {
 
@@ -38,7 +37,14 @@ class YouTubeViewModel
         get() = _errorEvent
 
     private val _recommendedItems = MutableLiveData<PagingData<YouTubeItem>>()
-    val recommendedItems: LiveData<PagingData<YouTubeItem>> get() = _recommendedItems
+    val recommendedItems = Transformations.switchMap(_recommendedItems) { ytPaging ->
+        Transformations.map(playlistUseCases.getItemsId()) { id ->
+            ytPaging.map {
+                it.isAdded = id.contains(it.id)
+                it
+            }
+        }
+    }
 
     private val _loadState = MutableLiveData<YTLoadState>(YTLoadState.Empty)
     val loadState: LiveData<YTLoadState> get() = _loadState
@@ -49,7 +55,7 @@ class YouTubeViewModel
             cancel()
         }
         job = viewModelScope.launch {
-            useCases.getRecommendedYouTubeItems().cachedIn(this).collectLatest {
+            youTubeUseCases.getRecommendedYouTubeItems().cachedIn(this).collectLatest {
                 _recommendedItems.postValue(it)
                 _loadState.postValue(YTLoadState.LoadingDone)
             }

@@ -3,14 +3,13 @@ package com.nvvi9.ytstream.utils
 import com.nvvi9.ytstream.model.streams.Stream
 import java.net.URLDecoder
 import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 
 internal fun String.decode(): String =
-        URLDecoder.decode(this, StandardCharsets.UTF_8.name())
+    URLDecoder.decode(this, "UTF-8")
 
 internal fun String.encode(): String =
-        URLEncoder.encode(this, StandardCharsets.UTF_8.name())
+    URLEncoder.encode(this, "UTF-8")
 
 internal inline fun <A, B, R> ifNotNull(a: A?, b: B?, f: (A, B) -> R): R? {
     return if (a != null && b != null) {
@@ -21,15 +20,18 @@ internal inline fun <A, B, R> ifNotNull(a: A?, b: B?, f: (A, B) -> R): R? {
 }
 
 internal inline fun <R> tryOrNull(action: () -> R) =
-        try {
-            action()
-        } catch (t: Throwable) {
-            null
-        }
+    try {
+        action()
+    } catch (t: Throwable) {
+        null
+    }
 
-internal fun MutableList<Stream>.encodeStreams(decodeSignatures: List<String>, encSignatures: Map<Int, String>): List<Stream> = apply {
+internal fun MutableList<Stream>.encodeStreams(
+    decodeSignatures: List<String>,
+    encSignatures: Map<Int, String>
+): List<Stream> = apply {
     encSignatures.keys.zip(decodeSignatures).forEach { (key, signature) ->
         find { it.streamDetails.itag == key }.also { remove(it) }?.url?.plus("&sig=$signature")
-                ?.let { Stream.fromItag(key, it) }?.let { add(it) }
+            ?.let { Stream.fromItag(key, it) }?.let { add(it) }
     }
 }

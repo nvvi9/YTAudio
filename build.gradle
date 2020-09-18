@@ -25,6 +25,7 @@ buildscript {
         gson_version = '2.8.6'
         work_version = '2.4.0'
         dagger_version = '2.29.1'
+        duktape_version = '1.3.0'
         junit_version = '4.13'
         junit_ext_version = '1.1.2'
         espresso_version = '3.3.0'

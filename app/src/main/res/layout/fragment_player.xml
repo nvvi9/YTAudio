@@ -61,9 +61,9 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/thumbnail"
-            android:layout_width="0dp"
-            android:layout_height="320dp"
-            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="H,16:9"
             app:layout_constraintEnd_toEndOf="@id/content"
             app:layout_constraintStart_toStartOf="@id/content"
             app:layout_constraintTop_toTopOf="@id/content"
@@ -129,7 +129,7 @@
             app:layout_constraintBottom_toBottomOf="@id/author"
             app:layout_constraintEnd_toEndOf="@id/content"
             app:layout_constraintTop_toTopOf="@id/title"
-            app:timeFormatted="@{nowPlaying.duration}"
+            app:timeFormatted="@{nowPlaying.duration / 1000}"
             tools:text="00:30" />
 
         <ImageButton

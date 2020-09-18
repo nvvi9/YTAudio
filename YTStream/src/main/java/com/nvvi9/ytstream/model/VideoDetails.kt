@@ -40,19 +40,8 @@ data class VideoDetails(
             raw?.run {
                 ifNotNull(id, title) { id, title ->
                     VideoDetails(
-                        id,
-                        title,
-                        author,
-                        channelId,
-                        description,
-                        durationSeconds,
-                        viewCount,
-                        thumbnails,
-                        expiresInSeconds,
-                        isLiveStream,
-                        isEncoded,
-                        statusOk,
-                        this
+                        id, title, author, channelId, description, durationSeconds, viewCount,
+                        thumbnails, expiresInSeconds, isLiveStream, isEncoded, statusOk, this
                     )
                 }
             }
