@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.nvvi9.ytaudio.domain.YouTubeUseCases
 import com.nvvi9.ytaudio.repositories.AudioInfoRepository
 import com.nvvi9.ytaudio.ui.adapters.YTLoadState
@@ -48,7 +49,7 @@ class YouTubeViewModel
             cancel()
         }
         job = viewModelScope.launch {
-            useCases.getRecommendedYouTubeItems().collectLatest {
+            useCases.getRecommendedYouTubeItems().cachedIn(this).collectLatest {
                 _recommendedItems.postValue(it)
                 _loadState.postValue(YTLoadState.LoadingDone)
             }
