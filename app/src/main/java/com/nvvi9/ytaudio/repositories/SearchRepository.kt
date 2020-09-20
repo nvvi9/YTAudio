@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+
 class SearchRepository @Inject constructor(
     private val autoCompleteService: AutoCompleteService
 ) : Repository {

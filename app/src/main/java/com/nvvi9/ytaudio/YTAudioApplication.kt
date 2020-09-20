@@ -1,18 +1,19 @@
 package com.nvvi9.ytaudio
 
 import android.app.Application
+import androidx.paging.ExperimentalPagingApi
 import androidx.work.*
 import com.nvvi9.ytaudio.di.AppInjector
 import com.nvvi9.ytaudio.workers.RefreshDatabaseWorker
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
+@ExperimentalCoroutinesApi
+@FlowPreview
 class YTAudioApplication : Application(), HasAndroidInjector {
 
     @Inject
@@ -20,6 +21,7 @@ class YTAudioApplication : Application(), HasAndroidInjector {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
 
+    @ExperimentalPagingApi
     override fun onCreate() {
         super.onCreate()
         AppInjector.init(this)

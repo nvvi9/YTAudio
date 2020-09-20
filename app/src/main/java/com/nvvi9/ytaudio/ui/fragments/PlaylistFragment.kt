@@ -17,9 +17,13 @@ import com.nvvi9.ytaudio.ui.viewmodels.MainActivityViewModel
 import com.nvvi9.ytaudio.ui.viewmodels.PlaylistViewModel
 import com.nvvi9.ytaudio.utils.SpringAddItemAnimator
 import com.nvvi9.ytaudio.vo.PlaylistItem
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class PlaylistFragment : YouTubeIntentFragment(), PlaylistItemListener, Injectable {
 
     @Inject

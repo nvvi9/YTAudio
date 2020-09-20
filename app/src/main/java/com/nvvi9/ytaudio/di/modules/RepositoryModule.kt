@@ -10,6 +10,8 @@ import javax.inject.Singleton
 
 
 @Module
+@ExperimentalCoroutinesApi
+@FlowPreview
 abstract class RepositoryModule {
 
     @Binds
@@ -25,8 +27,6 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindSearchRepository(searchRepository: SearchRepository): Repository
 
-    @ExperimentalCoroutinesApi
-    @FlowPreview
     @Binds
     @Singleton
     abstract fun bindAudioInfoRepository(audioInfoRepository: AudioInfoRepository): Repository

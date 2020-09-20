@@ -49,6 +49,10 @@ class YouTubeViewModel @Inject constructor(
     private val _loadState = MutableLiveData<YTLoadState>(YTLoadState.Empty)
     val loadState: LiveData<YTLoadState> get() = _loadState
 
+    init {
+        updatePopular()
+    }
+
     fun updateRecommended() {
         job?.run {
             _loadState.postValue(YTLoadState.Loading)
@@ -56,6 +60,19 @@ class YouTubeViewModel @Inject constructor(
         }
         job = viewModelScope.launch {
             youTubeUseCases.getRecommendedYouTubeItems().cachedIn(this).collectLatest {
+                _recommendedItems.postValue(it)
+                _loadState.postValue(YTLoadState.LoadingDone)
+            }
+        }
+    }
+
+    private fun updatePopular() {
+        job?.run {
+            _loadState.postValue(YTLoadState.Loading)
+            cancel()
+        }
+        job = viewModelScope.launch {
+            youTubeUseCases.getPopularYouTubeItems().cachedIn(this).collectLatest {
                 _recommendedItems.postValue(it)
                 _loadState.postValue(YTLoadState.LoadingDone)
             }

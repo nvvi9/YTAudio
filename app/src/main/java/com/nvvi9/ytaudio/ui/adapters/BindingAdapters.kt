@@ -8,7 +8,6 @@ import android.view.WindowInsets
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.BindingAdapter
@@ -36,9 +35,16 @@ fun ImageButton.setIcon(resId: Int?) {
 }
 
 @BindingAdapter("timeFormattedSeconds")
-fun TextView.setTime(time: Long?) {
+fun MaterialTextView.setTime(time: Long?) {
     time?.let {
         text = DateUtils.formatElapsedTime(it).removePrefix("0")
+    }
+}
+
+@BindingAdapter("timeFormattedMillis")
+fun MaterialTextView.setTimeMillis(time: Long?) {
+    time?.let {
+        text = DateUtils.formatElapsedTime(it / 1000).removePrefix("0")
     }
 }
 

@@ -6,15 +6,21 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import androidx.paging.ExperimentalPagingApi
 import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.nvvi9.ytaudio.YTAudioApplication
 import dagger.android.AndroidInjection
 import dagger.android.HasAndroidInjector
 import dagger.android.support.AndroidSupportInjection
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 
 object AppInjector {
 
+    @ExperimentalCoroutinesApi
+    @FlowPreview
+    @ExperimentalPagingApi
     fun init(ytAudioApplication: YTAudioApplication) {
         DaggerAppComponent.builder()
             .application(ytAudioApplication)

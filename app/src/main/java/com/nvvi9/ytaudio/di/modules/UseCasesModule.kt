@@ -7,6 +7,8 @@ import com.nvvi9.ytaudio.domain.UseCases
 import com.nvvi9.ytaudio.domain.YouTubeUseCases
 import dagger.Binds
 import dagger.Module
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Singleton
 
 
@@ -17,6 +19,8 @@ abstract class UseCasesModule {
     @Singleton
     abstract fun bindPlaylistUseCases(playlistUseCases: PlaylistUseCases): UseCases
 
+    @ExperimentalCoroutinesApi
+    @FlowPreview
     @Binds
     @Singleton
     @ExperimentalPagingApi

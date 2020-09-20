@@ -72,6 +72,10 @@ class MainActivityViewModel @Inject constructor(
         }
     }
 
+    fun seekTo(positionMillis: Long) {
+        audioServiceConnection.transportControls.seekTo(positionMillis)
+    }
+
     fun addToPlaylist(id: String) {
         viewModelScope.launch {
             try {

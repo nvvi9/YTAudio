@@ -33,7 +33,7 @@
         <FrameLayout
             android:id="@+id/player_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="15dp"
             android:background="?attr/colorOnPrimarySurface"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -72,37 +72,6 @@
             tools:src="@tools:sample/backgrounds/scenic" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:freezesText="true"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:text="@{nowPlaying.title}"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
-            app:layout_constraintEnd_toStartOf="@id/duration"
-            app:layout_constraintStart_toEndOf="@id/current_progress"
-            app:layout_constraintTop_toBottomOf="@id/thumbnail"
-            tools:text="title" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/author"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:text="@{nowPlaying.author}"
-            android:textAppearance="?attr/textAppearanceSubtitle2"
-            app:layout_constraintEnd_toEndOf="@id/title"
-            app:layout_constraintStart_toStartOf="@id/title"
-            app:layout_constraintTop_toBottomOf="@id/title"
-            tools:text="author" />
-
-        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/current_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -110,12 +79,26 @@
             android:gravity="center"
             android:minWidth="40dp"
             android:singleLine="true"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
-            app:layout_constraintBottom_toBottomOf="@id/author"
+            android:textAppearance="?attr/textAppearanceCaption"
+            app:layout_constraintBottom_toBottomOf="@id/progress_bar"
             app:layout_constraintStart_toStartOf="@id/content"
-            app:layout_constraintTop_toTopOf="@id/title"
-            app:timeFormatted="@{position}"
+            app:layout_constraintTop_toTopOf="@id/progress_bar"
+            app:timeFormattedSeconds="@{position}"
             tools:text="00:30" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/progress_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:max="@{Long.valueOf(nowPlaying.durationMillis).intValue()}"
+            android:progress="@{position.intValue()}"
+            app:haloRadius="0dp"
+            app:layout_constraintEnd_toStartOf="@id/duration"
+            app:layout_constraintStart_toEndOf="@id/current_progress"
+            app:layout_constraintTop_toBottomOf="@id/thumbnail"
+            app:thumbRadius="6dp"
+            app:trackHeight="3dp" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/duration"
@@ -125,25 +108,87 @@
             android:gravity="center"
             android:minWidth="40dp"
             android:singleLine="true"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
-            app:layout_constraintBottom_toBottomOf="@id/author"
+            android:textAppearance="?attr/textAppearanceCaption"
+            app:layout_constraintBottom_toBottomOf="@id/progress_bar"
             app:layout_constraintEnd_toEndOf="@id/content"
-            app:layout_constraintTop_toTopOf="@id/title"
-            app:timeFormatted="@{nowPlaying.duration / 1000}"
+            app:layout_constraintTop_toTopOf="@id/progress_bar"
+            app:timeFormattedSeconds="@{nowPlaying.durationMillis}"
             tools:text="00:30" />
 
-        <ImageButton
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="16dp"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:freezesText="true"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:padding="16dp"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="@{nowPlaying.title}"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            app:layout_constraintTop_toBottomOf="@id/progress_bar"
+            tools:text="title" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:padding="16dp"
+            android:singleLine="true"
+            android:text="@{nowPlaying.author}"
+            android:textAppearance="?attr/textAppearanceSubtitle2"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            tools:text="author" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/prev_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_selector"
+            android:padding="16dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="@id/play_pause_button"
+            app:layout_constraintEnd_toStartOf="@id/play_pause_button"
+            app:layout_constraintStart_toStartOf="@id/content"
+            app:layout_constraintTop_toTopOf="@id/play_pause_button"
+            app:srcCompat="@drawable/ic_skip_previous" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/play_pause_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
+            android:background="@drawable/round_selector"
             android:padding="16dp"
             android:scaleType="fitCenter"
-            app:layout_constraintEnd_toEndOf="@id/content"
-            app:layout_constraintStart_toStartOf="@id/content"
+            app:layout_constraintEnd_toStartOf="@id/next_button"
+            app:layout_constraintStart_toEndOf="@id/prev_button"
             app:layout_constraintTop_toBottomOf="@id/author"
             app:srcIcon="@{buttonRes}"
             tools:ignore="ContentDescription"
             tools:src="@drawable/ic_play_arrow" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/next_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_selector"
+            android:padding="16dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="@id/play_pause_button"
+            app:layout_constraintEnd_toEndOf="@id/content"
+            app:layout_constraintStart_toEndOf="@id/play_pause_button"
+            app:layout_constraintTop_toTopOf="@id/play_pause_button"
+            app:srcCompat="@drawable/ic_skip_next" />
+
     </com.nvvi9.ytaudio.ui.view.SingleViewTouchableMotionLayout>
 </layout>

@@ -2,6 +2,7 @@ package com.nvvi9.ytaudio.di
 
 import android.app.Application
 import android.content.Context
+import androidx.paging.ExperimentalPagingApi
 import com.nvvi9.ytaudio.YTAudioApplication
 import com.nvvi9.ytaudio.di.factories.YTAudioWorkerFactory
 import com.nvvi9.ytaudio.di.modules.*
@@ -9,9 +10,14 @@ import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Singleton
 
 
+@FlowPreview
+@ExperimentalCoroutinesApi
+@ExperimentalPagingApi
 @Singleton
 @Component(
     modules = [
@@ -22,7 +28,7 @@ import javax.inject.Singleton
         WorkerModule::class,
         RepositoryModule::class,
         UseCasesModule::class,
-        RemoteMediatorModule::class
+        PagingModule::class
     ]
 )
 interface AppComponent : AndroidInjector<YTAudioApplication> {

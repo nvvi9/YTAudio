@@ -36,14 +36,22 @@
             </KeyAttribute>
 
             <KeyAttribute
+                motion:framePosition="0"
+                motion:motionTarget="@id/title">
+                <CustomAttribute
+                    motion:attributeName="Padding"
+                    motion:customDimension="16dp" />
+            </KeyAttribute>
+
+            <KeyAttribute
                 android:alpha="0"
                 motion:framePosition="0"
-                motion:motionTarget="@id/current_progress" />
+                motion:motionTarget="@id/author" />
 
             <KeyAttribute
                 android:alpha="1"
                 motion:framePosition="100"
-                motion:motionTarget="@id/current_progress" />
+                motion:motionTarget="@id/author" />
 
             <KeyAttribute
                 android:alpha="0"
@@ -64,6 +72,31 @@
                 android:alpha="1"
                 motion:framePosition="100"
                 motion:motionTarget="@id/down_arrow" />
+
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="0"
+                motion:motionTarget="@id/progress_bar" />
+
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="95"
+                motion:motionTarget="@id/progress_bar" />
+
+            <KeyAttribute
+                android:alpha="1"
+                motion:framePosition="100"
+                motion:motionTarget="@id/progress_bar" />
+
+            <KeyAttribute
+                android:alpha="0"
+                motion:framePosition="0"
+                motion:motionTarget="@id/thumbnail" />
+
+            <KeyAttribute
+                android:alpha="1"
+                motion:framePosition="100"
+                motion:motionTarget="@id/thumbnail" />
         </KeyFrameSet>
     </Transition>
 
@@ -106,26 +139,24 @@
             motion:layout_constraintTop_toBottomOf="@id/player_toolbar" />
 
         <Constraint
-            android:id="@id/thumbnail"
-            android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
+            android:id="@id/title"
+            android:layout_width="0dp"
             motion:layout_constraintBottom_toBottomOf="@id/player_toolbar"
-            motion:layout_constraintDimensionRatio="H,1:1"
+            motion:layout_constraintEnd_toEndOf="@id/player_toolbar"
+            motion:layout_constraintStart_toEndOf="@id/current_progress"
+            motion:layout_constraintTop_toTopOf="@id/player_toolbar" />
+
+        <Constraint
+            android:id="@id/current_progress"
+            android:layout_width="wrap_content"
+            android:layout_marginStart="16dp"
+            motion:layout_constraintBottom_toBottomOf="@id/player_toolbar"
             motion:layout_constraintStart_toStartOf="@id/player_toolbar"
             motion:layout_constraintTop_toTopOf="@id/player_toolbar" />
 
         <Constraint
-            android:id="@id/title"
-            motion:layout_constraintBottom_toTopOf="@id/author"
-            motion:layout_constraintEnd_toEndOf="@id/player_toolbar"
-            motion:layout_constraintStart_toEndOf="@id/thumbnail"
-            motion:layout_constraintTop_toTopOf="@id/player_toolbar" />
-
-        <Constraint
-            android:id="@id/author"
-            motion:layout_constraintBottom_toBottomOf="@id/player_toolbar"
-            motion:layout_constraintEnd_toEndOf="@id/player_toolbar"
-            motion:layout_constraintStart_toEndOf="@id/thumbnail"
-            motion:layout_constraintTop_toBottomOf="@id/title" />
+            android:id="@id/progress_bar"
+            motion:layout_constraintStart_toStartOf="@id/current_progress"
+            motion:layout_constraintTop_toTopOf="@id/content" />
     </ConstraintSet>
 </MotionScene>

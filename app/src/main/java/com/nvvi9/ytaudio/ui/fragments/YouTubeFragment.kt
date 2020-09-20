@@ -72,7 +72,6 @@ class YouTubeFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
         youTubeViewModel.run {
-            updateRecommended()
             errorEvent.observe(viewLifecycleOwner) { event ->
                 event.getContentIfNotHandled()?.let {
                     Toast.makeText(context, it, Toast.LENGTH_SHORT).show()

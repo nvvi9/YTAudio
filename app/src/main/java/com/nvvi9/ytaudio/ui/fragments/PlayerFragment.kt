@@ -1,10 +1,12 @@
 package com.nvvi9.ytaudio.ui.fragments
 
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -15,10 +17,14 @@ import com.nvvi9.ytaudio.ui.MainActivity
 import com.nvvi9.ytaudio.ui.viewmodels.MainActivityViewModel
 import com.nvvi9.ytaudio.ui.viewmodels.PlayerViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 import kotlin.math.abs
 
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class PlayerFragment : Fragment(), MotionLayout.TransitionListener, Injectable {
 
     @Inject
@@ -48,6 +54,23 @@ class PlayerFragment : Fragment(), MotionLayout.TransitionListener, Injectable {
             }
         }
 
+        progressBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+//                mainActivityViewModel.seekTo(progress * 1000L)
+                binding.currentProgress.text =
+                    DateUtils.formatElapsedTime(progress / 1000L).removePrefix("0")
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                seekBar?.progress?.let {
+                    mainActivityViewModel.seekTo(it * 1000L)
+                }
+            }
+        })
+
         viewModel = playerViewModel
 
         motionLayout.setTransitionListener(this@PlayerFragment)
@@ -64,7 +87,7 @@ class PlayerFragment : Fragment(), MotionLayout.TransitionListener, Injectable {
                 binding.buttonRes = it
             }
 
-            currentPosition.observe(viewLifecycleOwner) {
+            currentPositionMillis.observe(viewLifecycleOwner) {
                 binding.position = it
             }
         }

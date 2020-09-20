@@ -45,11 +45,9 @@ class NotificationManager(
         }
     }
 
-
     fun hideNotification() {
         playerNotificationManager.setPlayer(null)
     }
-
 
     fun showNotification() {
         playerNotificationManager.setPlayer(player)
@@ -80,9 +78,7 @@ class NotificationManager(
             return if (currentIconUri != iconUri || bitmap == null) {
                 currentIconUri = iconUri
                 serviceScope.launch {
-                    bitmap = iconUri?.let {
-                        resolveUriAsBitmapAsync(it).await()
-                    }
+                    bitmap = iconUri?.let { resolveUriAsBitmapAsync(it) }
                     bitmap?.let { callback.onBitmap(it) }
                 }
                 null
@@ -91,22 +87,20 @@ class NotificationManager(
             }
         }
 
-        private suspend fun resolveUriAsBitmapAsync(uri: Uri): Deferred<Bitmap?> =
-            coroutineScope {
-                async(Dispatchers.IO) {
-                    try {
-                        Glide.with(context).asBitmap()
-                            .load(uri).apply(
-                                RequestOptions()
-                                    .placeholder(R.drawable.ic_notification)
-                                    .error(R.drawable.ic_notification)
-                            )
-                            .submit()
-                            .get()
-                    } catch (e: Exception) {
-                        Log.e(javaClass.simpleName, e.toString())
-                        null
-                    }
+        private suspend fun resolveUriAsBitmapAsync(uri: Uri): Bitmap? =
+            withContext(Dispatchers.IO) {
+                try {
+                    Glide.with(context).asBitmap()
+                        .load(uri).apply(
+                            RequestOptions()
+                                .placeholder(R.drawable.ic_notification)
+                                .error(R.drawable.ic_notification)
+                        )
+                        .submit()
+                        .get()
+                } catch (e: Exception) {
+                    Log.e(javaClass.simpleName, e.toString())
+                    null
                 }
             }
     }

@@ -24,8 +24,8 @@ class PlayerViewModel @Inject constructor(
     private val _currentAudioInfo = MutableLiveData<NowPlayingInfo>()
     val currentAudioInfo: LiveData<NowPlayingInfo> get() = _currentAudioInfo.distinctUntilChanged()
 
-    private val _currentPosition = MutableLiveData<Long>()
-    val currentPosition: LiveData<Long> get() = _currentPosition
+    private val _currentPositionMillis = MutableLiveData<Long>()
+    val currentPositionMillis: LiveData<Long> get() = _currentPositionMillis
 
     private val _currentButtonRes = MutableLiveData<Int>()
     val currentButtonRes: LiveData<Int> get() = _currentButtonRes
@@ -35,9 +35,9 @@ class PlayerViewModel @Inject constructor(
 
     private fun checkPlaybackPosition(): Boolean = handler.postDelayed({
         playbackState.currentPlayBackPosition.takeIf {
-            it != currentPosition.value
+            it != currentPositionMillis.value
         }?.let {
-            _currentPosition.postValue(it)
+            _currentPositionMillis.postValue(it)
         }
         if (updatePosition) {
             checkPlaybackPosition()
@@ -78,7 +78,9 @@ class PlayerViewModel @Inject constructor(
             it.duration != 0L && it.id != null
         }?.let {
             _currentAudioInfo.postValue(
-                NowPlayingInfo(it.id, it.title, it.displaySubtitle, it.albumArtUri, it.duration)
+                NowPlayingInfo(
+                    it.id, it.title, it.displaySubtitle, it.albumArtUri, it.duration * 1000
+                )
             )
         }
 

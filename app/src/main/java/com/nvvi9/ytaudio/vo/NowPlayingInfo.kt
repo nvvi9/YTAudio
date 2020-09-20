@@ -8,6 +8,6 @@ data class NowPlayingInfo(
     val title: String?,
     val author: String?,
     val thumbnailUri: Uri,
-    val duration: Long,
+    val durationMillis: Long,
     var audioButtonRes: Int? = null
 )

@@ -1,5 +1,6 @@
 package com.nvvi9.ytaudio.utils
 
+
 class Event<out T>(private val content: T) {
 
     var hasBeenHandled = false

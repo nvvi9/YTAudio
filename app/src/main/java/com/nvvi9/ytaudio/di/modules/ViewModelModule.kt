@@ -9,9 +9,13 @@ import com.nvvi9.ytaudio.ui.viewmodels.*
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 
 
 @Module
+@FlowPreview
+@ExperimentalCoroutinesApi
 abstract class ViewModelModule {
 
     @Binds
