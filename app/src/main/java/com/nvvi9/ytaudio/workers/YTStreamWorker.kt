@@ -1,11 +1,13 @@
 package com.nvvi9.ytaudio.workers
 
 import android.content.Context
+import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import com.nvvi9.ytaudio.data.audioinfo.AudioInfo
 import com.nvvi9.ytaudio.db.AudioInfoDao
+import com.nvvi9.ytaudio.utils.Constants.KEY_YT_ID_WORKER
 import com.nvvi9.ytstream.YTStream
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -15,7 +17,7 @@ import javax.inject.Inject
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class RefreshDatabaseWorker(
+class YTStreamWorker(
     private val ytStream: YTStream,
     private val audioInfoDao: AudioInfoDao,
     context: Context,
@@ -23,18 +25,25 @@ class RefreshDatabaseWorker(
 ) : CoroutineWorker(context, params) {
 
     companion object {
-        const val WORK_NAME = "RefreshDatabaseWorker"
+        const val WORK_NAME = "YTStreamWorker"
     }
 
-    override suspend fun doWork() =
+    override suspend fun doWork(): Result =
         try {
-            audioInfoDao.getAllAudioInfo()
-                .takeIf { it.isNotEmpty() }
-                ?.map { it.id }
-                ?.let { ytStream.extractVideoData(*it.toTypedArray()).toList().filterNotNull() }
-                ?.mapNotNull { AudioInfo.fromVideoData(it) }
-                ?.let { audioInfoDao.updatePlaylist(it) }
-            Result.success()
+            Log.i("YTStreamWorker", "here")
+            inputData.getString(KEY_YT_ID_WORKER).also {
+                Log.i("YTStreamWorker", "id: $it")
+            }?.let { id ->
+                Log.i("YTStreamWorker", id)
+                ytStream.extractVideoData(id)
+                    .toList().filterNotNull()
+                    .mapNotNull { AudioInfo.fromVideoData(it) }
+                    .takeIf { it.isNotEmpty() }
+                    ?.let {
+                        audioInfoDao.insert(it)
+                        Result.success()
+                    } ?: Result.failure()
+            } ?: Result.failure()
         } catch (t: Throwable) {
             Result.retry()
         }
@@ -46,6 +55,6 @@ class RefreshDatabaseWorker(
     ) : ChildWorkerFactory {
 
         override fun create(context: Context, params: WorkerParameters): ListenableWorker =
-            RefreshDatabaseWorker(ytStream, audioInfoDao, context, params)
+            YTStreamWorker(ytStream, audioInfoDao, context, params)
     }
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.nvvi9.ytaudio.data.audioinfo.AudioInfo
 
+
 @Dao
 interface AudioInfoDao : BaseDao<AudioInfo> {
 
@@ -11,7 +12,7 @@ interface AudioInfoDao : BaseDao<AudioInfo> {
     suspend fun updatePlaylist(items: List<AudioInfo>) {
         val oldData = getAllAudioInfo()
         update(items)
-        delete(oldData - items)
+        deleteById(*(oldData.map { it.id } - items.map { it.id }).toTypedArray())
     }
 
     @Update

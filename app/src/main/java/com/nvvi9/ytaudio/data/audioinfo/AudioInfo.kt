@@ -16,7 +16,7 @@ data class AudioInfo(
     val lastUpdateTimeSeconds: Long
 ) {
 
-    val needUpdate: Boolean?
+    val needUpdate
         get() = expiresInSeconds?.let {
             System.currentTimeMillis() / 1000 >= lastUpdateTimeSeconds + it - UPDATE_TIME_GAP
         }
@@ -27,28 +27,19 @@ data class AudioInfo(
         private const val UPDATE_TIME_GAP = 10
 
         @Ignore
-        fun fromVideoData(videoData: VideoData): AudioInfo {
-            return with(videoData) {
-                val id = videoDetails.id
-                val details = AudioDetails(
-                    videoDetails.title,
-                    videoDetails.channel ?: "",
-                    videoDetails.durationSeconds ?: 0
-                )
-
-                val thumbnails = videoDetails.thumbnails
-                val streams = streams
-                    .filter { it.streamDetails.type == StreamType.AUDIO }
-                    .map { AudioStream.fromStream(it) }.takeIf { it.isNotEmpty() }
-                    ?: throw IllegalStateException("empty audio streams")
-
-                val expiresInSeconds = videoDetails.expiresInSeconds
-
-                AudioInfo(
-                    id, details, thumbnails, streams,
-                    expiresInSeconds, System.currentTimeMillis() / 1000
-                )
+        fun fromVideoData(videoData: VideoData): AudioInfo? =
+            with(videoData) {
+                streams.filter { it.streamDetails.type == StreamType.AUDIO }
+                    .mapNotNull { AudioStream.fromStream(it) }
+                    .takeIf { it.isNotEmpty() }?.let { streams ->
+                        videoDetails.run {
+                            AudioInfo(
+                                id, AudioDetails(title, channel ?: "", durationSeconds ?: 0),
+                                thumbnails, streams, expiresInSeconds,
+                                System.currentTimeMillis() / 1000
+                            )
+                        }
+                    }
             }
-        }
     }
 }

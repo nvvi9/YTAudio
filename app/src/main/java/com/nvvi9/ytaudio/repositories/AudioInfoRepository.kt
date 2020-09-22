@@ -21,11 +21,17 @@ class AudioInfoRepository @Inject constructor(
     private val audioInfoDao: AudioInfoDao
 ) : Repository {
 
+    suspend fun addToPlaylist(id: String) {
+
+    }
+
     suspend fun insertIntoDatabase(id: String) {
         withContext(Dispatchers.IO) {
             ytStream.extractVideoData(id).collect {
                 it?.let {
-                    audioInfoDao.insert(AudioInfo.fromVideoData(it))
+                    AudioInfo.fromVideoData(it)?.let { it1 ->
+                        audioInfoDao.insert(it1)
+                    }
                 }
             }
         }
@@ -38,7 +44,8 @@ class AudioInfoRepository @Inject constructor(
                     .toList()
                     .filterNotNull()
             }.let { videoData ->
-                audioInfoDao.updatePlaylist(videoData.map { AudioInfo.fromVideoData(it) })
+                videoData.map { AudioInfo.fromVideoData(it) }
+                    .let { audioInfoDao.updatePlaylist(it as List<AudioInfo>) }
             }
         }
     }
@@ -46,9 +53,9 @@ class AudioInfoRepository @Inject constructor(
     suspend fun updateById(vararg id: String) {
         withContext(Dispatchers.IO) {
             ytStream.extractVideoData(*id).toList().filterNotNull().let { videoData ->
-                audioInfoDao.updatePlaylist(videoData.map {
+                videoData.map {
                     AudioInfo.fromVideoData(it)
-                })
+                }.let { audioInfoDao.updatePlaylist(it as List<AudioInfo>) }
             }
         }
     }

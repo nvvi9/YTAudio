@@ -17,6 +17,9 @@ import kotlinx.coroutines.FlowPreview
 import javax.inject.Singleton
 
 
+@ExperimentalPagingApi
+@ExperimentalCoroutinesApi
+@FlowPreview
 @Module(includes = [ViewModelModule::class, RetrofitModule::class])
 class AppModule {
 
@@ -49,14 +52,10 @@ class AppModule {
             context, ComponentName(context, AudioService::class.java)
         )
 
-    @FlowPreview
-    @ExperimentalCoroutinesApi
+
     @Provides
     fun provideYTStream() = YTStream()
 
-    @ExperimentalCoroutinesApi
-    @FlowPreview
-    @ExperimentalPagingApi
     @Provides
     @Singleton
     fun provideYTVideoDataRemoteMediator(

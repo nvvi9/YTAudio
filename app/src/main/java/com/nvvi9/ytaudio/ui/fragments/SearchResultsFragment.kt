@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.paging.ExperimentalPagingApi
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.nvvi9.ytaudio.R
 import com.nvvi9.ytaudio.databinding.FragmentSearchResultsBinding
@@ -22,12 +23,11 @@ import com.nvvi9.ytaudio.ui.adapters.ReboundingSwipeActionCallback
 import com.nvvi9.ytaudio.ui.adapters.YTItemAdapter
 import com.nvvi9.ytaudio.ui.adapters.YTItemListener
 import com.nvvi9.ytaudio.ui.adapters.YTLoadStateAdapter
-import com.nvvi9.ytaudio.ui.viewmodels.SearchResultsViewModel
+import com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel
 import com.nvvi9.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,16 +38,16 @@ import javax.inject.Inject
 class SearchResultsFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
 
     @Inject
-    lateinit var searchResultsViewModelFactory: ViewModelProvider.Factory
+    lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
 
-    private val searchResultsViewModel: SearchResultsViewModel by viewModels {
-        searchResultsViewModelFactory
+    private val youTubeViewModel: YouTubeViewModel by viewModels {
+        youTubeViewModelFactory
     }
 
     private lateinit var binding: FragmentSearchResultsBinding
     private var job: Job? = null
     private val navArgs: SearchResultsFragmentArgs by navArgs()
-    private val youtubeItemsAdapter = YTItemAdapter(this)
+    private val youTubeItemsAdapter = YTItemAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,43 +63,45 @@ class SearchResultsFragment : YouTubeIntentFragment(), YTItemListener, Injectabl
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentSearchResultsBinding.inflate(inflater).apply {
-            itemYoutubeView.run {
-                ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
-                adapter = youtubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
-            }
+    ): View? = FragmentSearchResultsBinding.inflate(inflater).apply {
+        itemYoutubeView.run {
+            ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
+            adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
+        }
 
-            searchToolbar.setNavigationOnClickListener {
-                findNavController().navigate(SearchResultsFragmentDirections.actionSearchResultsFragmentToYouTubeFragment())
-            }
+        searchToolbar.setNavigationOnClickListener {
+            findNavController().navigate(SearchResultsFragmentDirections.actionSearchResultsFragmentToYouTubeFragment())
+        }
 
-            searchQuery.run {
-                setText(navArgs.query)
-                setOnClickListener {
-                    findNavController().navigate(
-                        SearchResultsFragmentDirections.actionSearchResultsFragmentToSearchFragment(
-                            (it as EditText).text.toString()
-                        )
+        searchQuery.run {
+            setText(navArgs.query)
+            setOnClickListener {
+                findNavController().navigate(
+                    SearchResultsFragmentDirections.actionSearchResultsFragmentToSearchFragment(
+                        (it as EditText).text.toString()
                     )
-                }
-            }
-            lifecycleOwner = this@SearchResultsFragment
-        }
-
-        searchResultsViewModel.errorEvent.observe(viewLifecycleOwner) { event ->
-            event.getContentIfNotHandled()?.let {
-                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                )
             }
         }
-
-        return binding.root
-    }
+        lifecycleOwner = this@SearchResultsFragment
+    }.also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
-        setFromQuery()
+        youTubeViewModel.run {
+            errorEvent.observe(viewLifecycleOwner) { event ->
+                event.getContentIfNotHandled()?.let {
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            youTubeItems.observe(viewLifecycleOwner) {
+                setItems(it)
+            }
+
+            updateItems(navArgs.query)
+        }
     }
 
     override fun onItemClicked(cardView: View, item: YouTubeItem) {
@@ -118,7 +120,7 @@ class SearchResultsFragment : YouTubeIntentFragment(), YTItemListener, Injectabl
                     true
                 }
                 R.id.menu_add -> {
-                    searchResultsViewModel.addToPlaylist(item.id)
+                    youTubeViewModel.addToPlaylist(item.id)
                     true
                 }
                 else -> false
@@ -130,18 +132,17 @@ class SearchResultsFragment : YouTubeIntentFragment(), YTItemListener, Injectabl
     override fun onItemIconChanged(item: YouTubeItem, newValue: Boolean) {
         item.isAdded = newValue
         if (newValue) {
-            searchResultsViewModel.addToPlaylist(item.id)
+            youTubeViewModel.addToPlaylist(item.id)
         } else {
-            searchResultsViewModel.deleteFromPlaylist(item.id)
+            youTubeViewModel.deleteFromPlaylist(item.id)
         }
     }
 
-    private fun setFromQuery() {
+    private fun setItems(items: PagingData<YouTubeItem>) {
         job?.cancel()
         job = lifecycleScope.launch {
-            searchResultsViewModel.getFromQuery(navArgs.query).collectLatest {
-                youtubeItemsAdapter.submitData(it)
-            }
+            youTubeItemsAdapter.submitData(items)
+            binding.itemYoutubeView.layoutManager?.scrollToPosition(0)
         }
     }
 }

@@ -19,6 +19,6 @@ data class AudioStream(
                     url, streamDetails.extension.toString(),
                     streamDetails.audioCodec!!.toString(), streamDetails.bitrate!!
                 )
-            } ?: throw IllegalArgumentException("AUDIO type expected")
+            }
     }
 }

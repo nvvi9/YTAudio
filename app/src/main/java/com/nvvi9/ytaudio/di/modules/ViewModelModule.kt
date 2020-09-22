@@ -16,6 +16,7 @@ import kotlinx.coroutines.FlowPreview
 @Module
 @FlowPreview
 @ExperimentalCoroutinesApi
+@ExperimentalPagingApi
 abstract class ViewModelModule {
 
     @Binds
@@ -35,20 +36,13 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ExperimentalPagingApi
-    @ViewModelKey(YouTubeViewModel::class)
-    abstract fun bindYouTubeViewModel(youTubeViewModel: YouTubeViewModel): ViewModel
-
-    @Binds
-    @IntoMap
     @ViewModelKey(SearchViewModel::class)
     abstract fun bindSearchViewModel(searchViewModel: SearchViewModel): ViewModel
 
     @Binds
     @IntoMap
-    @ExperimentalPagingApi
-    @ViewModelKey(SearchResultsViewModel::class)
-    abstract fun bindSearchResultsViewModel(searchResultsViewModel: SearchResultsViewModel): ViewModel
+    @ViewModelKey(YouTubeViewModel::class)
+    abstract fun bindYouTubeViewModel(youTubeViewModel: YouTubeViewModel): ViewModel
 
     @Binds
     abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory

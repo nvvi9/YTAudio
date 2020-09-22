@@ -37,7 +37,7 @@ class YouTubeFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
     @Inject
     lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
 
-    private val youTubeViewModel: YouTubeViewModel by viewModels {
+    private val youTubePopularViewModel: YouTubeViewModel by viewModels {
         youTubeViewModelFactory
     }
 
@@ -50,7 +50,7 @@ class YouTubeFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? = FragmentYoutubeBinding.inflate(inflater).apply {
-        viewModel = youTubeViewModel
+        viewModel = youTubePopularViewModel
         itemYoutubeView.run {
             ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
             adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
@@ -71,16 +71,18 @@ class YouTubeFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
-        youTubeViewModel.run {
+        youTubePopularViewModel.run {
             errorEvent.observe(viewLifecycleOwner) { event ->
                 event.getContentIfNotHandled()?.let {
                     Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                 }
             }
 
-            recommendedItems.observe(viewLifecycleOwner) {
+            youTubeItems.observe(viewLifecycleOwner) {
                 setRecommended(it)
             }
+
+            updateItems()
         }
     }
 
@@ -100,7 +102,7 @@ class YouTubeFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
                     true
                 }
                 R.id.menu_add -> {
-                    youTubeViewModel.addToPlaylist(item.id)
+                    youTubePopularViewModel.addToPlaylist(item.id)
                     true
                 }
                 else -> false
@@ -112,9 +114,9 @@ class YouTubeFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
     override fun onItemIconChanged(item: YouTubeItem, newValue: Boolean) {
         item.isAdded = newValue
         if (newValue) {
-            youTubeViewModel.addToPlaylist(item.id)
+            youTubePopularViewModel.addToPlaylist(item.id)
         } else {
-            youTubeViewModel.deleteFromPlaylist(item.id)
+            youTubePopularViewModel.deleteFromPlaylist(item.id)
         }
     }
 
