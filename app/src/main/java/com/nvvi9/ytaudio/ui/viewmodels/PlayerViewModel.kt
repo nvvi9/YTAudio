@@ -4,7 +4,10 @@ import android.os.Handler
 import android.os.Looper
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import com.nvvi9.ytaudio.R
 import com.nvvi9.ytaudio.service.AudioServiceConnection
 import com.nvvi9.ytaudio.service.EMPTY_PLAYBACK_STATE
@@ -22,7 +25,7 @@ class PlayerViewModel @Inject constructor(
 
     private var playbackState = EMPTY_PLAYBACK_STATE
     private val _currentAudioInfo = MutableLiveData<NowPlayingInfo>()
-    val currentAudioInfo: LiveData<NowPlayingInfo> get() = _currentAudioInfo.distinctUntilChanged()
+    val currentAudioInfo: LiveData<NowPlayingInfo> get() = _currentAudioInfo
 
     private val _currentPositionMillis = MutableLiveData<Long>()
     val currentPositionMillis: LiveData<Long> get() = _currentPositionMillis

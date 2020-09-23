@@ -84,7 +84,7 @@
             android:textAppearance="?attr/textAppearanceCaption"
             app:layout_constraintStart_toStartOf="@id/progress_bar"
             app:layout_constraintTop_toBottomOf="@id/progress_bar"
-            app:timeFormattedSeconds="@{position}"
+            app:timeFormattedMillis="@{position}"
             tools:text="0:30" />
 
         <androidx.appcompat.widget.AppCompatSeekBar
@@ -113,7 +113,7 @@
             android:textAppearance="?attr/textAppearanceCaption"
             app:layout_constraintEnd_toEndOf="@id/progress_bar"
             app:layout_constraintTop_toBottomOf="@id/progress_bar"
-            app:timeFormattedSeconds="@{nowPlaying.durationMillis}"
+            app:timeFormattedMillis="@{nowPlaying.durationMillis}"
             tools:text="0:30" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -141,13 +141,13 @@
             android:id="@+id/author"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
             android:text="@{nowPlaying.author}"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             android:textAppearance="?attr/textAppearanceSubtitle2"
             app:layout_constraintEnd_toEndOf="@id/content"
             app:layout_constraintStart_toStartOf="@id/content"

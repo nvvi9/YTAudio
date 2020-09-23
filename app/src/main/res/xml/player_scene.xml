@@ -108,10 +108,12 @@
             motion:layout_constraintEnd_toEndOf="@id/content"
             motion:layout_constraintStart_toStartOf="@id/content"
             motion:layout_constraintTop_toTopOf="@id/content" />
+
         <Constraint
             android:id="@+id/author"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            motion:layout_constraintEnd_toEndOf="@id/title"
             motion:layout_constraintStart_toStartOf="@+id/title"
             motion:layout_constraintTop_toBottomOf="@id/title" />
     </ConstraintSet>
@@ -120,7 +122,7 @@
         <Constraint
             android:id="@id/player_toolbar"
             android:layout_height="55dp"
-            android:alpha="0"
+            android:alpha="1"
             android:elevation="10dp"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
@@ -146,19 +148,17 @@
             android:id="@id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
             motion:layout_constraintEnd_toStartOf="@id/current_progress"
             motion:layout_constraintStart_toEndOf="@id/thumbnail"
-            motion:layout_constraintTop_toTopOf="@id/player_toolbar">
-            <CustomAttribute
-                motion:attributeName="padding"
-                motion:customDimension="0dp" />
-        </Constraint>
+            motion:layout_constraintTop_toTopOf="@id/player_toolbar" />
 
         <Constraint
             android:id="@id/author"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
             motion:layout_constraintBottom_toBottomOf="@id/player_toolbar"
             motion:layout_constraintEnd_toEndOf="@id/title"
             motion:layout_constraintStart_toStartOf="@id/title"

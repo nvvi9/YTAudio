@@ -37,38 +37,32 @@ class MainActivityViewModel @Inject constructor(
     }
 
     private fun playAudio(audioId: String, pauseAllowed: Boolean) {
-        val nowPlaying = audioServiceConnection.nowPlaying.value
-        val transportControls = audioServiceConnection.transportControls
-
-        val isPrepared = audioServiceConnection.playbackState.value?.isPrepared ?: false
-
-        if (isPrepared && audioId == nowPlaying?.id) {
-            audioServiceConnection.playbackState.value?.let {
-                when {
-                    it.isPlaying -> if (pauseAllowed) transportControls.pause() else Unit
-                    it.isPlayEnabled -> transportControls.play()
+        audioServiceConnection.run {
+            if (playbackState.value?.isPrepared == true && audioId == nowPlaying.value?.id) {
+                playbackState.value?.let {
+                    when {
+                        it.isPlaying -> if (pauseAllowed) transportControls.pause() else Unit
+                        it.isPlayEnabled -> transportControls.play()
+                    }
                 }
+            } else {
+                transportControls.playFromMediaId(audioId, null)
             }
-        } else {
-            transportControls.playFromMediaId(audioId, null)
         }
     }
 
     fun playAudio(audioId: String) {
-        val nowPlaying = audioServiceConnection.nowPlaying.value
-        val transportControls = audioServiceConnection.transportControls
-
-        val isPrepared = audioServiceConnection.playbackState.value?.isPrepared ?: false
-
-        if (isPrepared && audioId == nowPlaying?.id) {
-            audioServiceConnection.playbackState.value?.let {
-                when {
-                    it.isPlaying -> transportControls.pause()
-                    it.isPlayEnabled -> transportControls.play()
+        audioServiceConnection.run {
+            if (playbackState.value?.isPrepared == true && audioId == nowPlaying.value?.id) {
+                playbackState.value?.let {
+                    when {
+                        it.isPlaying -> transportControls.pause()
+                        it.isPlayEnabled -> transportControls.play()
+                    }
                 }
+            } else {
+                transportControls.playFromMediaId(audioId, null)
             }
-        } else {
-            transportControls.playFromMediaId(audioId, null)
         }
     }
 

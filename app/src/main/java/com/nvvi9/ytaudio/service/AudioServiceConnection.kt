@@ -15,6 +15,7 @@ import com.nvvi9.ytaudio.utils.extensions.id
 
 
 class AudioServiceConnection(context: Context, serviceComponent: ComponentName) {
+
     val isConnected = MutableLiveData<Boolean>().apply { postValue(false) }
     val networkFailure = MutableLiveData<Boolean>().apply { postValue(false) }
     val rootMediaId: String

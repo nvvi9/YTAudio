@@ -1,7 +1,6 @@
 package com.nvvi9.ytaudio.ui.fragments
 
 import android.os.Bundle
-import android.text.format.DateUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +24,10 @@ import kotlin.math.abs
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class PlayerFragment : Fragment(), MotionLayout.TransitionListener, Injectable {
+class PlayerFragment :
+    Fragment(),
+    MotionLayout.TransitionListener,
+    Injectable {
 
     @Inject
     lateinit var mainActivityViewModelFactory: ViewModelProvider.Factory
@@ -35,12 +37,34 @@ class PlayerFragment : Fragment(), MotionLayout.TransitionListener, Injectable {
 
     private lateinit var binding: FragmentPlayerBinding
 
+    private var userIsSeeking = false
+
     private val mainActivityViewModel by viewModels<MainActivityViewModel> {
         mainActivityViewModelFactory
     }
 
     private val playerViewModel by viewModels<PlayerViewModel> {
         playerViewModelFactory
+    }
+
+    private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
+
+        private var userSelectedPosition: Int? = null
+
+        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            userSelectedPosition = progress.takeIf { fromUser }
+        }
+
+        override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            userIsSeeking = true
+        }
+
+        override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            userIsSeeking = false
+            userSelectedPosition?.let {
+                mainActivityViewModel.seekTo(it.toLong())
+            }
+        }
     }
 
     override fun onCreateView(
@@ -53,27 +77,10 @@ class PlayerFragment : Fragment(), MotionLayout.TransitionListener, Injectable {
                 mainActivityViewModel.playAudio(it)
             }
         }
-
-        progressBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-//                mainActivityViewModel.seekTo(progress * 1000L)
-                binding.currentProgress.text =
-                    DateUtils.formatElapsedTime(progress / 1000L).removePrefix("0")
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                seekBar?.progress?.let {
-                    mainActivityViewModel.seekTo(it * 1000L)
-                }
-            }
-        })
-
-        viewModel = playerViewModel
+        progressBar.setOnSeekBarChangeListener(seekBarChangeListener)
 
         motionLayout.setTransitionListener(this@PlayerFragment)
+        viewModel = playerViewModel
     }.also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -88,7 +95,9 @@ class PlayerFragment : Fragment(), MotionLayout.TransitionListener, Injectable {
             }
 
             currentPositionMillis.observe(viewLifecycleOwner) {
-                binding.position = it
+                if (!userIsSeeking) {
+                    binding.position = it
+                }
             }
         }
     }
@@ -97,13 +106,7 @@ class PlayerFragment : Fragment(), MotionLayout.TransitionListener, Injectable {
         (activity as MainActivity).main_motion_layout.progress = abs(p3)
     }
 
-    override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
-//        if (p1 == R.id.end) {
-//            (activity as MainActivity).binding.mainMotionLayout.transitionToStart()
-//        } else {
-//            (activity as MainActivity).binding.mainMotionLayout.transitionToEnd()
-//        }
-    }
+    override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {}
 
     override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {}
 
