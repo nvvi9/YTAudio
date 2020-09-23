@@ -42,9 +42,9 @@ fun MaterialTextView.setTime(time: Long?) {
 }
 
 @BindingAdapter("timeFormattedMillis")
-fun MaterialTextView.setTimeMillis(time: Long?) {
+fun MaterialTextView.setTimeMillis(time: Int?) {
     time?.let {
-        text = DateUtils.formatElapsedTime(it / 1000).removePrefix("0")
+        text = DateUtils.formatElapsedTime(it / 1000L).removePrefix("0")
     }
 }
 

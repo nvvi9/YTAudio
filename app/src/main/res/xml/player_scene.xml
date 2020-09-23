@@ -45,39 +45,12 @@
                 motion:motionTarget="@id/down_arrow" />
 
             <KeyAttribute
-                android:alpha="1"
-                motion:framePosition="100"
-                motion:motionTarget="@id/current_progress" />
-
-            <KeyAttribute
-                android:alpha="0"
-                motion:framePosition="95"
-                motion:motionTarget="@id/current_progress" />
-
-            <KeyAttribute
-                android:alpha="0"
-                motion:framePosition="5"
-                motion:motionTarget="@id/current_progress" />
-
-            <KeyAttribute
-                android:alpha="1"
                 motion:framePosition="0"
-                motion:motionTarget="@id/current_progress" />
-
-            <KeyAttribute
-                android:alpha="1"
-                motion:framePosition="100"
-                motion:motionTarget="@id/duration" />
-
-            <KeyAttribute
-                android:alpha="0"
-                motion:framePosition="95"
-                motion:motionTarget="@id/duration" />
-
-            <KeyAttribute
-                android:alpha="1"
-                motion:framePosition="5"
-                motion:motionTarget="@id/duration" />
+                motion:motionTarget="@id/play_pause_button">
+                <CustomAttribute
+                    motion:attributeName="borderWidth"
+                    motion:customDimension="0dp" />
+            </KeyAttribute>
         </KeyFrameSet>
     </Transition>
 
@@ -150,7 +123,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
-            motion:layout_constraintEnd_toStartOf="@id/current_progress"
+            motion:layout_constraintEnd_toStartOf="@id/play_pause_button"
             motion:layout_constraintStart_toEndOf="@id/thumbnail"
             motion:layout_constraintTop_toTopOf="@id/player_toolbar" />
 
@@ -165,10 +138,25 @@
             motion:layout_constraintTop_toBottomOf="@id/title" />
 
         <Constraint
-            android:id="@id/current_progress"
+            android:id="@id/play_pause_button"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             motion:layout_constraintBottom_toBottomOf="@id/player_toolbar"
             motion:layout_constraintEnd_toEndOf="@id/player_toolbar"
             motion:layout_constraintTop_toTopOf="@id/player_toolbar" />
+
+        <Constraint
+            android:id="@id/prev_button"
+            motion:layout_constraintBottom_toBottomOf="@id/next_button"
+            motion:layout_constraintEnd_toStartOf="@id/next_button"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="parent" />
+
+        <Constraint
+            android:id="@id/next_button"
+            motion:layout_constraintBottom_toBottomOf="@id/prev_button"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toEndOf="@id/prev_button"
+            motion:layout_constraintTop_toBottomOf="parent" />
     </ConstraintSet>
 </MotionScene>

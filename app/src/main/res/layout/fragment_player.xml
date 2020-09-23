@@ -6,8 +6,12 @@
     <data>
 
         <variable
+            name="displayPosition"
+            type="Integer" />
+
+        <variable
             name="position"
-            type="Long" />
+            type="Integer" />
 
         <variable
             name="nowPlaying"
@@ -84,7 +88,7 @@
             android:textAppearance="?attr/textAppearanceCaption"
             app:layout_constraintStart_toStartOf="@id/progress_bar"
             app:layout_constraintTop_toBottomOf="@id/progress_bar"
-            app:timeFormattedMillis="@{position}"
+            app:timeFormattedMillis="@{displayPosition}"
             tools:text="0:30" />
 
         <androidx.appcompat.widget.AppCompatSeekBar
@@ -94,13 +98,14 @@
             android:layout_margin="8dp"
             android:layout_marginTop="8dp"
             android:max="@{Long.valueOf(nowPlaying.durationMillis).intValue()}"
-            android:progress="@{position.intValue()}"
+            android:progress="@{position}"
             app:haloRadius="0dp"
             app:layout_constraintEnd_toEndOf="@id/content"
             app:layout_constraintStart_toStartOf="@id/content"
             app:layout_constraintTop_toBottomOf="@id/author"
-            app:thumbRadius="6dp"
-            app:trackHeight="3dp" />
+            app:thumbRadius="0dp"
+            app:trackHeight="3dp"
+            tools:progress="30" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/duration"
@@ -113,7 +118,7 @@
             android:textAppearance="?attr/textAppearanceCaption"
             app:layout_constraintEnd_toEndOf="@id/progress_bar"
             app:layout_constraintTop_toBottomOf="@id/progress_bar"
-            app:timeFormattedMillis="@{nowPlaying.durationMillis}"
+            app:timeFormattedMillis="@{progressBar.max}"
             tools:text="0:30" />
 
         <com.google.android.material.textview.MaterialTextView

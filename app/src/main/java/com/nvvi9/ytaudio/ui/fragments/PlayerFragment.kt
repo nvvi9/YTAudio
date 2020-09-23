@@ -37,7 +37,7 @@ class PlayerFragment :
 
     private lateinit var binding: FragmentPlayerBinding
 
-    private var userIsSeeking = false
+    private var isUserSeeking = false
 
     private val mainActivityViewModel by viewModels<MainActivityViewModel> {
         mainActivityViewModelFactory
@@ -53,14 +53,15 @@ class PlayerFragment :
 
         override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
             userSelectedPosition = progress.takeIf { fromUser }
+            binding.displayPosition = progress
         }
 
         override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            userIsSeeking = true
+            isUserSeeking = true
         }
 
         override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            userIsSeeking = false
+            isUserSeeking = false
             userSelectedPosition?.let {
                 mainActivityViewModel.seekTo(it.toLong())
             }
@@ -95,8 +96,11 @@ class PlayerFragment :
             }
 
             currentPositionMillis.observe(viewLifecycleOwner) {
-                if (!userIsSeeking) {
-                    binding.position = it
+                if (!isUserSeeking) {
+                    binding.run {
+                        position = it?.toInt()
+                        displayPosition = it?.toInt()
+                    }
                 }
             }
         }
