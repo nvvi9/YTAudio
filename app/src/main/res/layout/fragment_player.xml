@@ -24,6 +24,10 @@
         <variable
             name="viewModel"
             type="com.nvvi9.ytaudio.ui.viewmodels.PlayerViewModel" />
+
+        <variable
+            name="listener"
+            type="com.nvvi9.ytaudio.ui.adapters.PlayerListener" />
     </data>
 
     <com.nvvi9.ytaudio.ui.view.SingleViewTouchableMotionLayout
@@ -164,6 +168,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/round_selector"
+            android:onClick="@{() -> listener.onSkipToPreviousClicked()}"
             android:padding="16dp"
             android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="@id/play_pause_button"
@@ -178,6 +183,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@drawable/round_selector"
+            android:onClick="@{() -> listener.onPlayPauseClicked(nowPlaying.id)}"
             android:padding="16dp"
             android:scaleType="fitCenter"
             app:layout_constraintEnd_toStartOf="@id/next_button"
@@ -192,6 +198,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/round_selector"
+            android:onClick="@{() -> listener.onSkipToNextClicked()}"
             android:padding="16dp"
             android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="@id/play_pause_button"

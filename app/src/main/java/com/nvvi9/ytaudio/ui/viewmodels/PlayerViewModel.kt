@@ -20,7 +20,7 @@ import javax.inject.Singleton
 
 @Singleton
 class PlayerViewModel @Inject constructor(
-    audioServiceConnection: AudioServiceConnection
+    private val audioServiceConnection: AudioServiceConnection
 ) : ViewModel() {
 
     private var playbackState = EMPTY_PLAYBACK_STATE
@@ -56,10 +56,12 @@ class PlayerViewModel @Inject constructor(
         updateState(playbackState, it)
     }
 
-    private val mediaPlaybackServiceConnection = audioServiceConnection.apply {
-        playbackState.observeForever(playbackStateObserver)
-        nowPlaying.observeForever(mediaMetadataObserver)
-        checkPlaybackPosition()
+    init {
+        audioServiceConnection.run {
+            playbackState.observeForever(playbackStateObserver)
+            nowPlaying.observeForever(mediaMetadataObserver)
+            checkPlaybackPosition()
+        }
     }
 
     companion object {
@@ -68,18 +70,36 @@ class PlayerViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        mediaPlaybackServiceConnection.playbackState.removeObserver(playbackStateObserver)
-        mediaPlaybackServiceConnection.nowPlaying.removeObserver(mediaMetadataObserver)
+        audioServiceConnection.playbackState.removeObserver(playbackStateObserver)
+        audioServiceConnection.nowPlaying.removeObserver(mediaMetadataObserver)
         updatePosition = false
     }
 
-    private fun updateState(
-        playbackState: PlaybackStateCompat,
-        mediaMetadata: MediaMetadataCompat
-    ) {
-        mediaMetadata.takeIf {
-            it.duration != 0L && it.id != null
-        }?.let {
+    fun playPause(audioId: String) {
+        audioServiceConnection.takeIf { it.nowPlaying.value?.id == audioId }?.run {
+            playbackState.value?.let {
+                when {
+                    it.isPlaying -> transportControls.pause()
+                    it.isPlayEnabled && it.isPrepared -> transportControls.play()
+                }
+            }
+        }
+    }
+
+    fun seekTo(positionMillis: Long) {
+        audioServiceConnection.transportControls.seekTo(positionMillis)
+    }
+
+    fun skipToNext() {
+        audioServiceConnection.transportControls.skipToNext()
+    }
+
+    fun skipToPrevious() {
+        audioServiceConnection.transportControls.skipToPrevious()
+    }
+
+    private fun updateState(playbackState: PlaybackStateCompat, metadata: MediaMetadataCompat) {
+        metadata.takeIf { it.duration != 0L && it.id != null }?.let {
             _currentAudioInfo.postValue(
                 NowPlayingInfo(
                     it.id, it.title, it.displaySubtitle, it.albumArtUri, it.duration * 1000

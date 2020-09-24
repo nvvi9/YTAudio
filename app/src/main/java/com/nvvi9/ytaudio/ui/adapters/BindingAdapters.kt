@@ -64,6 +64,15 @@ fun AppCompatImageView.setImage(uri: Uri?) {
     }
 }
 
+@BindingAdapter("thumbnailUri")
+fun ImageView.setImage(uri: Uri?) {
+    uri?.let {
+        Glide.with(context)
+            .load(it)
+            .into(this)
+    }
+}
+
 @BindingAdapter("audioPlaylist")
 fun RecyclerView.setPlaylist(playlist: List<PlaylistItem>?) {
     (adapter as? PlaylistItemAdapter)?.submitList(playlist?.sortedBy { it.title })

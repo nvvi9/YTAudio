@@ -23,6 +23,8 @@ import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class MainActivity : AppCompatActivity(), HasAndroidInjector {
 
     @Inject
@@ -37,8 +39,6 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
         mainActivityViewModelFactory
     }
 
-    @FlowPreview
-    @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)

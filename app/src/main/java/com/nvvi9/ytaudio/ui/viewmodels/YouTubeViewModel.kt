@@ -3,17 +3,11 @@ package com.nvvi9.ytaudio.ui.viewmodels
 import android.app.Application
 import androidx.lifecycle.*
 import androidx.paging.*
-import androidx.work.Data
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.nvvi9.ytaudio.domain.PlaylistUseCases
 import com.nvvi9.ytaudio.domain.YouTubeUseCases
 import com.nvvi9.ytaudio.repositories.AudioInfoRepository
-import com.nvvi9.ytaudio.utils.Constants.KEY_YT_ID_WORKER
 import com.nvvi9.ytaudio.utils.Event
 import com.nvvi9.ytaudio.vo.YouTubeItem
-import com.nvvi9.ytaudio.workers.YTStreamWorker
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -32,15 +26,13 @@ class YouTubeViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val workManager = WorkManager.getInstance(application)
-
     private var job: Job? = null
 
     private val _errorEvent = MutableLiveData<Event<String>>()
     val errorEvent: LiveData<Event<String>>
         get() = _errorEvent
 
-    private val _loadState = MutableLiveData<LoadState>()
+    private val _loadState = MutableLiveData<LoadState>().apply { postValue(LoadState.Loading) }
     val loadState: LiveData<LoadState> get() = _loadState
 
     override fun onCleared() {
@@ -75,29 +67,16 @@ class YouTubeViewModel @Inject constructor(
     }
 
     fun addToPlaylist(id: String) {
-        WorkManager.getInstance(getApplication()).enqueueUniqueWork(
-            YTStreamWorker.WORK_NAME,
-            ExistingWorkPolicy.APPEND,
-            OneTimeWorkRequestBuilder<YTStreamWorker>()
-                .setInputData(
-                    Data.Builder()
-                        .putString(KEY_YT_ID_WORKER, id)
-                        .build()
-                ).build()
-        )
+        viewModelScope.launch {
+            try {
+                audioInfoRepository.insertIntoDatabase(id)
+            } catch (t: Throwable) {
+                t.message?.let {
+                    _errorEvent.postValue(Event(it))
+                }
+            }
+        }
     }
-
-//    fun addToPlaylist(id: String) {
-//        viewModelScope.launch {
-//            try {
-//                audioInfoRepository.insertIntoDatabase(id)
-//            } catch (t: Throwable) {
-//                t.message?.let {
-//                    _errorEvent.postValue(Event(it))
-//                }
-//            }
-//        }
-//    }
 
     fun deleteFromPlaylist(id: String) {
         viewModelScope.launch {

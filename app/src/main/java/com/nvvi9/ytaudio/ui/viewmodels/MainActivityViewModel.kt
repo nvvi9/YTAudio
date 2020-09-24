@@ -70,6 +70,10 @@ class MainActivityViewModel @Inject constructor(
         audioServiceConnection.transportControls.seekTo(positionMillis)
     }
 
+    fun skipToNext() {
+        audioServiceConnection.transportControls.skipToNext()
+    }
+
     fun addToPlaylist(id: String) {
         viewModelScope.launch {
             try {

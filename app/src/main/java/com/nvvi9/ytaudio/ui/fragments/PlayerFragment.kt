@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.nvvi9.ytaudio.databinding.FragmentPlayerBinding
 import com.nvvi9.ytaudio.di.Injectable
 import com.nvvi9.ytaudio.ui.MainActivity
-import com.nvvi9.ytaudio.ui.viewmodels.MainActivityViewModel
+import com.nvvi9.ytaudio.ui.adapters.PlayerListener
 import com.nvvi9.ytaudio.ui.viewmodels.PlayerViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,18 +30,11 @@ class PlayerFragment :
     Injectable {
 
     @Inject
-    lateinit var mainActivityViewModelFactory: ViewModelProvider.Factory
-
-    @Inject
     lateinit var playerViewModelFactory: ViewModelProvider.Factory
 
     private lateinit var binding: FragmentPlayerBinding
 
     private var isUserSeeking = false
-
-    private val mainActivityViewModel by viewModels<MainActivityViewModel> {
-        mainActivityViewModelFactory
-    }
 
     private val playerViewModel by viewModels<PlayerViewModel> {
         playerViewModelFactory
@@ -63,7 +56,7 @@ class PlayerFragment :
         override fun onStopTrackingTouch(seekBar: SeekBar?) {
             isUserSeeking = false
             userSelectedPosition?.let {
-                mainActivityViewModel.seekTo(it.toLong())
+                playerViewModel.seekTo(it.toLong())
             }
         }
     }
@@ -73,13 +66,10 @@ class PlayerFragment :
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? = FragmentPlayerBinding.inflate(inflater).apply {
-        playPauseButton.setOnClickListener {
-            playerViewModel.currentAudioInfo.value?.id?.let {
-                mainActivityViewModel.playAudio(it)
-            }
-        }
         progressBar.setOnSeekBarChangeListener(seekBarChangeListener)
-
+        listener = PlayerListener({ playerViewModel.playPause(it) },
+            { playerViewModel.skipToNext() },
+            { playerViewModel.skipToPrevious() })
         motionLayout.setTransitionListener(this@PlayerFragment)
         viewModel = playerViewModel
     }.also { binding = it }.root

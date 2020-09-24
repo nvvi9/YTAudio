@@ -20,16 +20,6 @@
 
         <KeyFrameSet>
             <KeyAttribute
-                android:alpha="0"
-                motion:framePosition="0"
-                motion:motionTarget="@id/player_toolbar" />
-
-            <KeyAttribute
-                android:alpha="1"
-                motion:framePosition="100"
-                motion:motionTarget="@id/player_toolbar" />
-
-            <KeyAttribute
                 android:alpha="1"
                 motion:framePosition="100"
                 motion:motionTarget="@id/down_arrow" />
@@ -58,7 +48,6 @@
         <Constraint
             android:id="@id/player_toolbar"
             android:layout_height="30dp"
-            android:alpha="1"
             android:elevation="0dp"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
@@ -95,7 +84,6 @@
         <Constraint
             android:id="@id/player_toolbar"
             android:layout_height="55dp"
-            android:alpha="1"
             android:elevation="10dp"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
