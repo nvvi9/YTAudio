@@ -5,22 +5,25 @@
     <data>
 
         <variable
-            name="playerViewModel"
-            type="com.nvvi9.ytaudio.ui.viewmodels.PlayerViewModel" />
+            name="nowPlaying"
+            type="com.nvvi9.ytaudio.vo.NowPlayingInfo" />
+
+        <variable
+            name="buttonRes"
+            type="Integer" />
     </data>
 
-    <androidx.constraintlayout.motion.widget.MotionLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main_motion_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutDescription="@xml/main_scene"
         app:layoutFullscreen="@{true}">
 
         <fragment
             android:id="@+id/nav_host_fragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             app:defaultNavHost="true"
             app:navGraph="@navigation/navigation" />
@@ -39,27 +42,11 @@
             app:paddingLeftSystemWindowInsets="@{true}"
             app:paddingRightSystemWindowInsets="@{true}" />
 
-        <FrameLayout
-            android:id="@+id/fragment_container"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:elevation="20dp"
-            app:layout_constraintBottom_toTopOf="@id/bottom_nav"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <View
-                android:id="@+id/background_dim"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:elevation="10dp" />
-        </FrameLayout>
-
         <androidx.cardview.widget.CardView
             android:id="@+id/bottom_controls"
             android:layout_width="match_parent"
             android:layout_height="72dp"
+            android:background="@null"
             android:orientation="vertical"
             app:cardElevation="25dp"
             app:layout_constraintTop_toBottomOf="@id/nav_host_fragment">
@@ -81,7 +68,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginStart="12dp"
                     android:transitionName="now_cover"
-                    app:thumbnailUri="@{playerViewModel.currentAudioInfo.thumbnailUri}" />
+                    app:thumbnailUri="@{nowPlaying.thumbnailUri}" />
 
                 <LinearLayout
                     android:id="@+id/listViewTextContainer"
@@ -113,8 +100,7 @@
                             android:marqueeRepeatLimit="marquee_forever"
                             android:scrollHorizontally="true"
                             android:singleLine="true"
-                            android:text="@{playerViewModel.currentAudioInfo.title}"
-                            android:textColor="?titleTextColor"
+                            android:text="@{nowPlaying.title}"
                             android:textSize="16sp"
                             android:textStyle="bold" />
                     </RelativeLayout>
@@ -131,7 +117,7 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:singleLine="true"
-                            android:text="@{playerViewModel.currentAudioInfo.author}"
+                            android:text="@{nowPlaying.author}"
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -152,9 +138,9 @@
                         android:background="@android:color/transparent"
                         android:clickable="false"
                         android:focusable="false"
-                        app:srcIcon="@{playerViewModel.currentButtonRes}" />
+                        app:srcIcon="@{buttonRes}" />
                 </RelativeLayout>
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
-    </androidx.constraintlayout.motion.widget.MotionLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

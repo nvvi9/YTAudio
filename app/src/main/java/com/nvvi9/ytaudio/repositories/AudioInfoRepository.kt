@@ -1,8 +1,8 @@
 package com.nvvi9.ytaudio.repositories
 
+import com.nvvi9.YTStream
 import com.nvvi9.ytaudio.data.audioinfo.AudioInfo
 import com.nvvi9.ytaudio.db.AudioInfoDao
-import com.nvvi9.ytstream.YTStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

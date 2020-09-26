@@ -11,6 +11,7 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import javax.inject.Singleton
 
 
 @Module
@@ -21,6 +22,7 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
+    @Singleton
     @ViewModelKey(MainActivityViewModel::class)
     abstract fun bindMainActivityViewModel(mainActivityViewModel: MainActivityViewModel): ViewModel
 
@@ -31,6 +33,7 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
+    @Singleton
     @ViewModelKey(PlayerViewModel::class)
     abstract fun bindPlayerViewModel(playerViewModel: PlayerViewModel): ViewModel
 
@@ -41,9 +44,11 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
+    @Singleton
     @ViewModelKey(YouTubeViewModel::class)
     abstract fun bindYouTubeViewModel(youTubeViewModel: YouTubeViewModel): ViewModel
 
     @Binds
+    @Singleton
     abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
 }

@@ -1,9 +1,9 @@
 package com.nvvi9.ytaudio.data.audioinfo
 
 import androidx.room.*
-import com.nvvi9.ytstream.model.Thumbnail
-import com.nvvi9.ytstream.model.VideoData
-import com.nvvi9.ytstream.model.streams.StreamType
+import com.nvvi9.model.Thumbnail
+import com.nvvi9.model.VideoData
+import com.nvvi9.model.streams.StreamType
 
 
 @Entity(indices = [Index(value = ["id"], unique = true)])
@@ -31,7 +31,8 @@ data class AudioInfo(
             with(videoData) {
                 streams.filter { it.streamDetails.type == StreamType.AUDIO }
                     .mapNotNull { AudioStream.fromStream(it) }
-                    .takeIf { it.isNotEmpty() }?.let { streams ->
+                    .takeIf { it.isNotEmpty() }
+                    ?.let { streams ->
                         videoDetails.run {
                             AudioInfo(
                                 id, AudioDetails(title, channel ?: "", durationSeconds ?: 0),

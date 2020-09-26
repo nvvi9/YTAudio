@@ -5,6 +5,7 @@ import org.simpleframework.xml.Element
 import org.simpleframework.xml.ElementList
 import org.simpleframework.xml.Root
 
+
 @Root(name = "toplevel", strict = false)
 class AutoComplete @JvmOverloads constructor(
     @field: ElementList(inline = true)

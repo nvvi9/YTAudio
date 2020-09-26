@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nvvi9.ytaudio.R
 import com.nvvi9.ytaudio.databinding.FragmentPlaylistBinding
 import com.nvvi9.ytaudio.di.Injectable
+import com.nvvi9.ytaudio.ui.MainActivity
 import com.nvvi9.ytaudio.ui.adapters.PlaylistItemAdapter
 import com.nvvi9.ytaudio.ui.adapters.PlaylistItemListener
 import com.nvvi9.ytaudio.ui.viewmodels.MainActivityViewModel
@@ -73,6 +74,7 @@ class PlaylistFragment : YouTubeIntentFragment(), PlaylistItemListener, Injectab
 
     override fun onItemClicked(item: PlaylistItem) {
         mainActivityViewModel.audioItemClicked(item.id)
+        (activity as MainActivity).showMiniPlayer()
     }
 
     override fun onItemLongClicked(item: PlaylistItem): Boolean {

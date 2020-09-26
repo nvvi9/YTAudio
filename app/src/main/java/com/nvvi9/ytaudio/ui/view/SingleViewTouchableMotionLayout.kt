@@ -1,14 +1,6 @@
 package com.nvvi9.ytaudio.ui.view
 
-import android.content.Context
-import android.graphics.Rect
-import android.util.AttributeSet
-import android.view.MotionEvent
-import android.view.View
-import androidx.constraintlayout.motion.widget.MotionLayout
-import com.nvvi9.ytaudio.R
-
-
+/*
 class SingleViewTouchableMotionLayout(context: Context, attributeSet: AttributeSet? = null) :
     MotionLayout(context, attributeSet) {
 
@@ -71,3 +63,4 @@ class SingleViewTouchableMotionLayout(context: Context, attributeSet: AttributeS
         return touchStarted && super.onTouchEvent(event)
     }
 }
+*/

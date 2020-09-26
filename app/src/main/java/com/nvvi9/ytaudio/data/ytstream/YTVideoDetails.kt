@@ -2,8 +2,8 @@ package com.nvvi9.ytaudio.data.ytstream
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.nvvi9.ytstream.model.Thumbnail
-import com.nvvi9.ytstream.model.VideoDetails
+import com.nvvi9.model.Thumbnail
+import com.nvvi9.model.VideoDetails
 
 
 @Entity

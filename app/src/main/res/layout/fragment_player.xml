@@ -30,182 +30,256 @@
             type="com.nvvi9.ytaudio.ui.adapters.PlayerListener" />
     </data>
 
-    <com.nvvi9.ytaudio.ui.view.SingleViewTouchableMotionLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/motion_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutDescription="@xml/player_scene"
         app:layout_collapseMode="parallax"
         app:paddingTopSystemWindowInsets="@{true}">
 
-        <FrameLayout
-            android:id="@+id/player_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:background="?attr/colorOnPrimarySurface"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/down_arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@id/player_toolbar"
-            app:layout_constraintEnd_toEndOf="@id/player_toolbar"
-            app:layout_constraintStart_toStartOf="@id/player_toolbar"
-            app:layout_constraintTop_toTopOf="@id/player_toolbar"
-            app:srcCompat="@drawable/ic_arrow_down" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/content"
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageButton
+                android:id="@+id/back_button"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/button_ripple"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_back" />
+
+            <ImageButton
+                android:id="@+id/menu"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/button_ripple"
+                android:src="@drawable/ic_more"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="?attr/colorOnPrimarySurface"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/player_details_shape"
+            android:clickable="true"
+            android:focusable="true"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/thumbnail" />
+
+        <ImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="280dp"
+            android:layout_height="280dp"
+            android:background="@drawable/thumbnail_frame"
+            android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/player_toolbar" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/thumbnail"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_margin="16dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintDimensionRatio="H,1:1"
-            app:layout_constraintEnd_toEndOf="@id/content"
-            app:layout_constraintStart_toStartOf="@id/content"
-            app:layout_constraintTop_toTopOf="@id/content"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:recycled="@{true}"
             app:thumbnailUri="@{nowPlaying.thumbnailUri}"
             tools:ignore="ContentDescription"
             tools:src="@tools:sample/backgrounds/scenic" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/current_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:minWidth="40dp"
-            android:padding="3dp"
-            android:singleLine="true"
-            android:textAppearance="?attr/textAppearanceCaption"
-            app:layout_constraintStart_toStartOf="@id/progress_bar"
-            app:layout_constraintTop_toBottomOf="@id/progress_bar"
-            app:timeFormattedMillis="@{displayPosition}"
-            tools:text="0:30" />
-
-        <androidx.appcompat.widget.AppCompatSeekBar
-            android:id="@+id/progress_bar"
+        <LinearLayout
+            android:id="@+id/info_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:layout_marginTop="8dp"
-            android:max="@{Long.valueOf(nowPlaying.durationMillis).intValue()}"
-            android:progress="@{position}"
-            app:haloRadius="0dp"
-            app:layout_constraintEnd_toEndOf="@id/content"
-            app:layout_constraintStart_toStartOf="@id/content"
-            app:layout_constraintTop_toBottomOf="@id/author"
-            app:thumbRadius="0dp"
-            app:trackHeight="3dp"
-            tools:progress="30" />
+            android:layout_marginTop="22dp"
+            android:elevation="10dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@id/progress_container"
+            app:layout_constraintEnd_toEndOf="@id/view"
+            app:layout_constraintStart_toStartOf="@id/view"
+            app:layout_constraintTop_toTopOf="@id/view">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:minWidth="40dp"
-            android:padding="3dp"
-            android:singleLine="true"
-            android:textAppearance="?attr/textAppearanceCaption"
-            app:layout_constraintEnd_toEndOf="@id/progress_bar"
-            app:layout_constraintTop_toBottomOf="@id/progress_bar"
-            app:timeFormattedMillis="@{progressBar.max}"
-            tools:text="0:30" />
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="10dp"
+                android:ellipsize="marquee"
+                android:gravity="center"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:text="@{nowPlaying.title}"
+                android:textAppearance="?attr/textAppearanceSubtitle1"
+                tools:text="title" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/title"
+            <TextView
+                android:id="@+id/author"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="3dp"
+                android:layout_weight="1"
+                android:elevation="10dp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="@{nowPlaying.author}"
+                android:textAppearance="?attr/textAppearanceSubtitle2"
+                app:layout_constraintEnd_toEndOf="@id/content"
+                app:layout_constraintStart_toStartOf="@id/content"
+                app:layout_constraintTop_toBottomOf="@id/title"
+                tools:text="author" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/progress_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="16dp"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:freezesText="true"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:text="@{nowPlaying.title}"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
-            app:layout_constraintBottom_toTopOf="@id/author"
-            app:layout_constraintEnd_toEndOf="@id/content"
-            app:layout_constraintStart_toStartOf="@id/content"
-            app:layout_constraintTop_toBottomOf="@id/thumbnail"
-            tools:text="title" />
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginEnd="12dp"
+            app:layout_constraintBottom_toTopOf="@id/controller_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/info_container">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/author"
-            android:layout_width="0dp"
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/current_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceCaption"
+                app:timeFormattedMillis="@{displayPosition}"
+                tools:text="0:30" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="12dp"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceCaption"
+                tools:ignore="RelativeOverlap"
+                tools:text="0:30" />
+
+            <rm.com.audiowave.AudioWaveView
+                android:id="@+id/progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="34dp"
+                app:animateExpansion="true"
+                app:chunkHeight="30dp"
+                app:chunkRadius="1dp"
+                app:chunkSpacing="1dp"
+                app:chunkWidth="2dp"
+                app:minChunkHeight="2dp"
+                app:raw="@{viewModel.raw}" />
+        </RelativeLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/controller_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="@{nowPlaying.author}"
-            android:textAppearance="?attr/textAppearanceSubtitle2"
-            app:layout_constraintEnd_toEndOf="@id/content"
-            app:layout_constraintStart_toStartOf="@id/content"
-            app:layout_constraintTop_toBottomOf="@id/title"
-            tools:text="author" />
+            android:elevation="10dp"
+            app:layout_constraintBottom_toTopOf="@id/mode_button_container"
+            app:layout_constraintTop_toBottomOf="@id/progress_container">
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/prev_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/round_selector"
-            android:onClick="@{() -> listener.onSkipToPreviousClicked()}"
-            android:padding="16dp"
-            android:scaleType="fitCenter"
-            app:layout_constraintBottom_toBottomOf="@id/play_pause_button"
-            app:layout_constraintEnd_toStartOf="@id/play_pause_button"
-            app:layout_constraintStart_toStartOf="@id/content"
-            app:layout_constraintTop_toTopOf="@id/play_pause_button"
-            app:srcCompat="@drawable/ic_skip_previous" />
+            <ImageButton
+                android:id="@+id/prev_button"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/round_selector"
+                android:onClick="@{() -> listener.onSkipToPreviousClicked()}"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="@id/play_pause_button"
+                app:layout_constraintEnd_toStartOf="@id/play_pause_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/play_pause_button"
+                app:srcCompat="@drawable/ic_skip_previous" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/play_pause_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/round_selector"
-            android:onClick="@{() -> listener.onPlayPauseClicked(nowPlaying.id)}"
-            android:padding="16dp"
-            android:scaleType="fitCenter"
-            app:layout_constraintEnd_toStartOf="@id/next_button"
-            app:layout_constraintStart_toEndOf="@id/prev_button"
-            app:layout_constraintTop_toBottomOf="@id/progress_bar"
-            app:srcIcon="@{buttonRes}"
-            tools:ignore="ContentDescription"
-            tools:src="@drawable/ic_play_arrow" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/play_pause_button"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/round_selector"
+                android:clickable="true"
+                android:elevation="2dp"
+                android:focusable="true"
+                android:onClick="@{() -> listener.onPlayPauseClicked(nowPlaying.id)}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcIcon="@{buttonRes}"
+                tools:ignore="ContentDescription"
+                tools:src="@drawable/ic_play_arrow" />
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/next_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/round_selector"
-            android:onClick="@{() -> listener.onSkipToNextClicked()}"
-            android:padding="16dp"
-            android:scaleType="fitCenter"
-            app:layout_constraintBottom_toBottomOf="@id/play_pause_button"
-            app:layout_constraintEnd_toEndOf="@id/content"
-            app:layout_constraintStart_toEndOf="@id/play_pause_button"
-            app:layout_constraintTop_toTopOf="@id/play_pause_button"
-            app:srcCompat="@drawable/ic_skip_next" />
+            <ImageButton
+                android:id="@+id/next_button"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/round_selector"
+                android:onClick="@{() -> listener.onSkipToNextClicked()}"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="@+id/play_pause_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/play_pause_button"
+                app:layout_constraintTop_toTopOf="@+id/play_pause_button"
+                app:srcCompat="@drawable/ic_skip_next" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </com.nvvi9.ytaudio.ui.view.SingleViewTouchableMotionLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/mode_button_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="16dp"
+            android:elevation="10dp"
+            app:layout_constraintBottom_toBottomOf="@id/view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageButton
+                android:id="@+id/shuffle_button"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/round_selector"
+                android:onClick="@{() -> listener.onShuffleButtonClicked()}"
+                android:src="@drawable/ic_shuffle"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shuffleMode="@{viewModel.playbackState.shuffleMode}" />
+
+            <ImageButton
+                android:id="@+id/repeat_button"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/round_selector"
+                android:onClick="@{() -> listener.onRepeatButtonClicked()}"
+                android:src="@drawable/ic_repeat"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:repeatMode="@{viewModel.playbackState.repeatMode}" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
