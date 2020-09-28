@@ -3,12 +3,14 @@ package com.nvvi9.ytaudio.ui
 import android.content.Intent
 import android.media.AudioManager
 import android.os.Bundle
+import android.view.View
 import android.view.animation.AccelerateInterpolator
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.github.florent37.kotlin.pleaseanimate.please
@@ -16,6 +18,10 @@ import com.nvvi9.ytaudio.R
 import com.nvvi9.ytaudio.databinding.ActivityMainBinding
 import com.nvvi9.ytaudio.ui.viewmodels.MainActivityViewModel
 import com.nvvi9.ytaudio.ui.viewmodels.PlayerViewModel
+import com.nvvi9.ytaudio.utils.extensions.fixPercentBounds
+import com.nvvi9.ytaudio.utils.extensions.fixToPercent
+import com.nvvi9.ytaudio.utils.extensions.fixToStep
+import com.nvvi9.ytaudio.utils.extensions.percentToMillis
 import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
@@ -39,6 +45,8 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
 
     lateinit var binding: ActivityMainBinding
 
+    private lateinit var navController: NavController
+
     private val mainActivityViewModel: MainActivityViewModel by viewModels {
         mainActivityViewModelFactory
     }
@@ -54,15 +62,21 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        val navController = Navigation.findNavController(this, R.id.nav_host_fragment)
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment)
 
         binding.run {
             bottomNav.setupWithNavController(navController)
             lifecycleScope.launchWhenResumed {
                 navController.addOnDestinationChangedListener { _, destination, _ ->
                     when (destination.id) {
-                        R.id.playlistFragment, R.id.youTubeFragment, R.id.searchResultsFragment -> showBottomNav()
-                        else -> hideBottomNav()
+                        R.id.playlistFragment, R.id.youTubeFragment, R.id.searchResultsFragment -> {
+                            showBottomNav()
+                            showMiniPlayer()
+                        }
+                        else -> {
+                            hideBottomNav()
+                            hideMiniPlayer()
+                        }
                     }
                 }
             }
@@ -70,13 +84,27 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
 
         playerViewModel.run {
             nowPlayingInfo.observe(this@MainActivity) {
+                binding.nowPlaying = it
                 it?.let {
-                    showMiniPlayer()
-                    binding.nowPlaying = it
-                }
+                    when (navController.currentDestination?.id) {
+                        R.id.playlistFragment, R.id.youTubeFragment, R.id.searchResultsFragment -> showMiniPlayer()
+                        else -> hideMiniPlayer()
+                    }
+                } ?: hideMiniPlayer()
             }
             currentButtonRes.observe(this@MainActivity) {
                 binding.buttonRes = it
+            }
+            currentPositionMillis.observe(this@MainActivity) { pos ->
+                binding.progressCircular.run {
+                    (nowPlayingInfo.value?.durationMillis ?: 0).let { total ->
+                        progress.percentToMillis(total).fixToStep(1000).takeIf {
+                            it != pos
+                        }?.let {
+                            progress = pos.fixToPercent(total).fixPercentBounds()
+                        }
+                    }
+                }
             }
         }
 
@@ -88,6 +116,10 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
     }
 
     override fun androidInjector() = androidInjector
+
+    fun showPlayer(v: View) {
+        navController.navigate(R.id.action_global_audioPlayerFragment)
+    }
 
     fun showMiniPlayer() {
         binding.run {

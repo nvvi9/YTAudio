@@ -11,7 +11,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.nvvi9.ytaudio.databinding.FragmentPlayerBinding
 import com.nvvi9.ytaudio.di.Injectable
 import com.nvvi9.ytaudio.ui.adapters.PlayerListener
+import com.nvvi9.ytaudio.ui.adapters.setRaw
 import com.nvvi9.ytaudio.ui.viewmodels.PlayerViewModel
+import com.nvvi9.ytaudio.utils.extensions.fixPercentBounds
+import com.nvvi9.ytaudio.utils.extensions.fixToPercent
+import com.nvvi9.ytaudio.utils.extensions.fixToStep
+import com.nvvi9.ytaudio.utils.extensions.percentToMillis
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
@@ -28,8 +33,6 @@ class PlayerFragment :
 
     private lateinit var binding: FragmentPlayerBinding
 
-    private var isUserSeeking = false
-
     private val playerViewModel by viewModels<PlayerViewModel> {
         playerViewModelFactory
     }
@@ -42,11 +45,12 @@ class PlayerFragment :
         progressBar.run {
             onStopTracking = {
                 playerViewModel.seekTo(
-                    (it * (playerViewModel.nowPlayingInfo.value?.durationMillis ?: 0) / 100).toLong()
+                    (it * (playerViewModel.nowPlayingInfo.value?.durationMillis
+                        ?: 0) / 100).toLong()
                 )
             }
-            onProgressChanged = { position, byUser ->
-                if (byUser) {
+            onProgressChanged = { position, fromUser ->
+                if (fromUser) {
                     playerViewModel.run {
                         updateTimePosition(
                             (position * (nowPlayingInfo.value?.durationMillis ?: 0) / 100).toLong()
@@ -76,11 +80,23 @@ class PlayerFragment :
                 binding.buttonRes = it
             }
 
-            currentPositionMillis.observe(viewLifecycleOwner) {
-                if (!isUserSeeking) {
-                    binding.run {
-                        position = it?.toInt()
-                        displayPosition = it?.toInt()
+            raw.observe(viewLifecycleOwner) {
+                it?.let {
+                    binding.progressBar.setRaw(it)
+                }
+            }
+
+            currentPositionMillis.observe(viewLifecycleOwner) { pos ->
+                binding.run {
+                    position = pos?.toInt()
+                    progressBar.run {
+                        (nowPlayingInfo.value?.durationMillis ?: 0).let { total ->
+                            progress.percentToMillis(total).fixToStep(1000).takeIf {
+                                it != pos
+                            }?.let {
+                                progress = pos.fixToPercent(total).fixPercentBounds()
+                            }
+                        }
                     }
                 }
             }

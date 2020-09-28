@@ -33,7 +33,6 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @Singleton
     @ViewModelKey(PlayerViewModel::class)
     abstract fun bindPlayerViewModel(playerViewModel: PlayerViewModel): ViewModel
 

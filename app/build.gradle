@@ -122,6 +122,9 @@ dependencies {
     // AudioWave
     implementation "com.github.alxrm:audiowave-progressbar:$audiowave_progressbar_version"
 
+    // Circular ProgressBar
+    implementation "com.mikhaellopez:circularprogressbar:$circlular_progressbar_version"
+
     // YTStream
     implementation "com.nvvi9:ytstream:$ytstream_version"
 

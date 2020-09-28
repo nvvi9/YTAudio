@@ -31,8 +31,10 @@
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_nav"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
             android:background="?attr/colorPrimarySurfaceVariant"
+            app:itemIconTint="@drawable/bottom_nav_selector"
+            app:itemTextColor="@drawable/bottom_nav_selector"
             app:labelVisibilityMode="labeled"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -45,8 +47,9 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/bottom_controls"
             android:layout_width="match_parent"
-            android:layout_height="72dp"
+            android:layout_height="55dp"
             android:background="@null"
+            android:onClick="showPlayer"
             android:orientation="vertical"
             app:cardElevation="25dp"
             app:layout_constraintTop_toBottomOf="@id/nav_host_fragment">
@@ -129,6 +132,13 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="8dp">
+
+                    <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                        android:id="@+id/progress_circular"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:cpb_progressbar_color="?attr/colorSecondary"
+                        app:cpb_progressbar_width="3dp" />
 
                     <ImageButton
                         android:id="@+id/btn_play"

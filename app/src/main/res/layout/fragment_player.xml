@@ -6,10 +6,6 @@
     <data>
 
         <variable
-            name="displayPosition"
-            type="Integer" />
-
-        <variable
             name="position"
             type="Integer" />
 
@@ -158,7 +154,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:textAppearance="?attr/textAppearanceCaption"
-                app:timeFormattedMillis="@{displayPosition}"
+                app:timeFormattedMillis="@{position}"
                 tools:text="0:30" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -171,6 +167,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:textAppearance="?attr/textAppearanceCaption"
+                app:timeFormattedMillis="@{Long.valueOf(nowPlaying.durationMillis).intValue()}"
                 tools:ignore="RelativeOverlap"
                 tools:text="0:30" />
 
@@ -185,8 +182,7 @@
                 app:chunkRadius="1dp"
                 app:chunkSpacing="1dp"
                 app:chunkWidth="2dp"
-                app:minChunkHeight="2dp"
-                app:raw="@{viewModel.raw}" />
+                app:minChunkHeight="2dp" />
         </RelativeLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout

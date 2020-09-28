@@ -5,6 +5,7 @@ import android.os.Looper
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
+import android.util.Log
 import androidx.lifecycle.*
 import com.nvvi9.ytaudio.R
 import com.nvvi9.ytaudio.service.AudioServiceConnection
@@ -15,10 +16,9 @@ import com.nvvi9.ytaudio.vo.NowPlayingInfo
 import com.nvvi9.ytaudio.vo.PlaybackState
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Singleton
+import kotlin.random.Random
 
 
-@Singleton
 class PlayerViewModel @Inject constructor(
     private val audioServiceConnection: AudioServiceConnection
 ) : ViewModel() {
@@ -41,6 +41,10 @@ class PlayerViewModel @Inject constructor(
         get() = Transformations.map(audioServiceConnection.playbackState) {
             PlaybackState.fromPlaybackStateCompat(it)
         }
+
+    init {
+        Log.i("PlayerViewModel", "initialized")
+    }
 
     private var updatePosition = true
     private val handler = Handler(Looper.getMainLooper())
@@ -130,7 +134,10 @@ class PlayerViewModel @Inject constructor(
         )
     }
 
-    private fun updateState(playbackStateCompat: PlaybackStateCompat, metadata: MediaMetadataCompat) {
+    private fun updateState(
+        playbackStateCompat: PlaybackStateCompat,
+        metadata: MediaMetadataCompat
+    ) {
         metadata.takeIf { it.duration != 0L && it.id != null }?.let {
             _nowPlayingInfo.postValue(
                 NowPlayingInfo(
@@ -138,7 +145,7 @@ class PlayerViewModel @Inject constructor(
                 )
             )
             viewModelScope.launch {
-                _raw.postValue(it.mediaUri.toString().urlToByteArray())
+                _raw.postValue(Random.nextBytes(it.duration.toInt() * 1000))
             }
         }
 
