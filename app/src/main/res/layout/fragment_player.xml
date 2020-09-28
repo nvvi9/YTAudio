@@ -30,7 +30,9 @@
         android:id="@+id/motion_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_collapseMode="parallax"
+        app:paddingBottomSystemWindowInsets="@{true}"
+        app:paddingLeftSystemWindowInsets="@{true}"
+        app:paddingRightSystemWindowInsets="@{true}"
         app:paddingTopSystemWindowInsets="@{true}">
 
         <androidx.constraintlayout.widget.ConstraintLayout

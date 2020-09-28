@@ -14,7 +14,6 @@ import com.nvvi9.ytaudio.service.NOTHING_PLAYING
 import com.nvvi9.ytaudio.utils.extensions.*
 import com.nvvi9.ytaudio.vo.NowPlayingInfo
 import com.nvvi9.ytaudio.vo.PlaybackState
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -139,14 +138,14 @@ class PlayerViewModel @Inject constructor(
         metadata: MediaMetadataCompat
     ) {
         metadata.takeIf { it.duration != 0L && it.id != null }?.let {
+            if (it.id != nowPlayingInfo.value?.id) {
+                _raw.postValue(Random.nextBytes(it.duration.toInt() * 1000))
+            }
             _nowPlayingInfo.postValue(
                 NowPlayingInfo(
                     it.id, it.title, it.displaySubtitle, it.albumArtUri, it.duration * 1000
                 )
             )
-            viewModelScope.launch {
-                _raw.postValue(Random.nextBytes(it.duration.toInt() * 1000))
-            }
         }
 
         _currentButtonRes.postValue(

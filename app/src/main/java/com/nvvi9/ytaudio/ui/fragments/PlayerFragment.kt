@@ -37,13 +37,19 @@ class PlayerFragment :
         playerViewModelFactory
     }
 
+    private var isUserSeeking = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? = FragmentPlayerBinding.inflate(inflater).apply {
         progressBar.run {
+            onStartTracking = {
+                isUserSeeking = true
+            }
             onStopTracking = {
+                isUserSeeking = false
                 playerViewModel.seekTo(
                     (it * (playerViewModel.nowPlayingInfo.value?.durationMillis
                         ?: 0) / 100).toLong()
@@ -51,11 +57,9 @@ class PlayerFragment :
             }
             onProgressChanged = { position, fromUser ->
                 if (fromUser) {
-                    playerViewModel.run {
-                        updateTimePosition(
-                            (position * (nowPlayingInfo.value?.durationMillis ?: 0) / 100).toLong()
-                        )
-                    }
+                    this@apply.position =
+                        (position * (playerViewModel.nowPlayingInfo.value?.durationMillis
+                            ?: 0) / 100).toInt()
                 }
             }
         }
@@ -82,19 +86,22 @@ class PlayerFragment :
 
             raw.observe(viewLifecycleOwner) {
                 it?.let {
+                    binding.progressBar
                     binding.progressBar.setRaw(it)
                 }
             }
 
             currentPositionMillis.observe(viewLifecycleOwner) { pos ->
-                binding.run {
-                    position = pos?.toInt()
-                    progressBar.run {
-                        (nowPlayingInfo.value?.durationMillis ?: 0).let { total ->
-                            progress.percentToMillis(total).fixToStep(1000).takeIf {
-                                it != pos
-                            }?.let {
-                                progress = pos.fixToPercent(total).fixPercentBounds()
+                if (!isUserSeeking) {
+                    binding.run {
+                        position = pos?.toInt()
+                        progressBar.run {
+                            (nowPlayingInfo.value?.durationMillis ?: 0).let { total ->
+                                progress.percentToMillis(total).fixToStep(1000).takeIf {
+                                    it != pos
+                                }?.let {
+                                    progress = pos.fixToPercent(total).fixPercentBounds()
+                                }
                             }
                         }
                     }
