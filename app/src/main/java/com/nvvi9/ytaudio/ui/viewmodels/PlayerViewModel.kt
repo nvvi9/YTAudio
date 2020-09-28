@@ -91,8 +91,8 @@ class PlayerViewModel @Inject constructor(
         _currentPositionMillis.postValue(new)
     }
 
-    fun playPause(audioId: String) {
-        audioServiceConnection.takeIf { it.nowPlaying.value?.id == audioId }?.run {
+    fun playPause() {
+        audioServiceConnection.run {
             playbackState.value?.let {
                 when {
                     it.isPlaying -> transportControls.pause()
@@ -101,6 +101,7 @@ class PlayerViewModel @Inject constructor(
             }
         }
     }
+
 
     fun seekTo(positionMillis: Long) {
         audioServiceConnection.transportControls.seekTo(positionMillis)

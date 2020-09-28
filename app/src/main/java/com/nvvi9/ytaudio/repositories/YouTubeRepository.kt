@@ -23,8 +23,7 @@ class YouTubeRepository @Inject constructor(
     private val ytApiService: YouTubeApiService,
     private val ytStream: YTStream,
     private val YTVideoDetailsDao: YTVideoDetailsDao,
-    private val ytVideoDetailsRemoteMediator: YTVideoDetailsRemoteMediator,
-    private val ytVideoDetailsPagingSource: YTVideoDetailsPagingSource
+    private val ytVideoDetailsRemoteMediator: YTVideoDetailsRemoteMediator
 ) : Repository {
 
     fun getVideosResponse(): Flow<PagingData<YTVideoDetails>> = Pager(
@@ -40,7 +39,7 @@ class YouTubeRepository @Inject constructor(
 
     fun getPopularResponse() =
         Pager(PagingConfig(PAGE_SIZE)) {
-            ytVideoDetailsPagingSource
+            YTVideoDetailsPagingSource(ytApiService, ytStream)
         }.flow
 
     companion object {

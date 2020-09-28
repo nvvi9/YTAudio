@@ -64,7 +64,7 @@ class PlayerFragment :
             }
         }
         listener = PlayerListener(
-            { playerViewModel.playPause(it) },
+            { playerViewModel.playPause() },
             { playerViewModel.skipToNext() },
             { playerViewModel.skipToPrevious() },
             { playerViewModel.setRepeatMode() },

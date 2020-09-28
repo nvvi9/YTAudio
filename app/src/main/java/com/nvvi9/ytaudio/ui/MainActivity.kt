@@ -71,7 +71,6 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
                     when (destination.id) {
                         R.id.playlistFragment, R.id.youTubeFragment, R.id.searchResultsFragment -> {
                             showBottomNav()
-                            showMiniPlayer()
                         }
                         else -> {
                             hideBottomNav()
@@ -121,6 +120,10 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
         navController.navigate(R.id.action_global_audioPlayerFragment)
     }
 
+    fun playPause(v: View) {
+        playerViewModel.playPause()
+    }
+
     fun showMiniPlayer() {
         binding.run {
             bottomControls.isEnabled = true
@@ -154,7 +157,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
     fun hideBottomNav() {
         please(190, AccelerateInterpolator()) {
             animate(binding.bottomNav) {
-                bottomOfItsParent()
+                belowOf(binding.mainContainer)
             }
         }.start()
     }
