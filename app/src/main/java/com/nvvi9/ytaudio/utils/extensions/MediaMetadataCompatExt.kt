@@ -219,6 +219,18 @@ fun List<MediaMetadataCompat>.metadataEquals(other: List<MediaMetadataCompat>) =
     map { it.mediaUri.toString() } == other.map { it.mediaUri.toString() }
 
 
+fun Iterable<MediaMetadataCompat>.spread(old: Iterable<MediaMetadataCompat>) {
+    val toRemove = mutableListOf<MediaMetadataCompat>()
+    val toAdd = mutableListOf<MediaMetadataCompat>()
+    forEach { new ->
+        if (new.id in old.map { it.id }) {
+            toAdd += new
+            toRemove
+        }
+    }
+}
+
+
 const val METADATA_KEY_FLAGS = "com.example.ytaudio.service.METADATA_KEY_FLAGS"
 const val NO_GET = "No get"
 const val GET_ERROR = "Cannot get from MediaMetadataCompat.Builder"
