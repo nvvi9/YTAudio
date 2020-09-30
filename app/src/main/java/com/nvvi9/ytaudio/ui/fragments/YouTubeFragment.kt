@@ -32,12 +32,15 @@ import javax.inject.Inject
 @ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @FlowPreview
-class YouTubeFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
+class YouTubeFragment :
+    YouTubeIntentFragment(),
+    YTItemListener,
+    Injectable {
 
     @Inject
     lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
 
-    private val youTubePopularViewModel: YouTubeViewModel by viewModels {
+    private val youTubeViewModel: YouTubeViewModel by viewModels {
         youTubeViewModelFactory
     }
 
@@ -50,7 +53,7 @@ class YouTubeFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? = FragmentYoutubeBinding.inflate(inflater).apply {
-        viewModel = youTubePopularViewModel
+        viewModel = youTubeViewModel
         itemYoutubeView.run {
             ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
             adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
@@ -71,7 +74,7 @@ class YouTubeFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
         super.onViewCreated(view, savedInstanceState)
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
-        youTubePopularViewModel.run {
+        youTubeViewModel.run {
             errorEvent.observe(viewLifecycleOwner) { event ->
                 event.getContentIfNotHandled()?.let {
                     Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -102,7 +105,7 @@ class YouTubeFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
                     true
                 }
                 R.id.menu_add -> {
-                    youTubePopularViewModel.addToPlaylist(item.id)
+                    youTubeViewModel.addToPlaylist(item.id)
                     true
                 }
                 else -> false
@@ -114,9 +117,9 @@ class YouTubeFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
     override fun onItemIconChanged(item: YouTubeItem, newValue: Boolean) {
         item.isAdded = newValue
         if (newValue) {
-            youTubePopularViewModel.addToPlaylist(item.id)
+            youTubeViewModel.addToPlaylist(item.id)
         } else {
-            youTubePopularViewModel.deleteFromPlaylist(item.id)
+            youTubeViewModel.deleteFromPlaylist(item.id)
         }
     }
 

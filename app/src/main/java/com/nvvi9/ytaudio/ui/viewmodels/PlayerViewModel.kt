@@ -4,6 +4,8 @@ import android.os.Handler
 import android.os.Looper
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.support.v4.media.session.PlaybackStateCompat.*
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -15,17 +17,17 @@ import com.nvvi9.ytaudio.service.NOTHING_PLAYING
 import com.nvvi9.ytaudio.utils.extensions.*
 import com.nvvi9.ytaudio.vo.NowPlayingInfo
 import javax.inject.Inject
-import javax.inject.Singleton
+import kotlin.random.Random
 
 
-@Singleton
 class PlayerViewModel @Inject constructor(
     private val audioServiceConnection: AudioServiceConnection
 ) : ViewModel() {
 
-    private var playbackState = EMPTY_PLAYBACK_STATE
-    private val _currentAudioInfo = MutableLiveData<NowPlayingInfo>()
-    val currentAudioInfo: LiveData<NowPlayingInfo> get() = _currentAudioInfo
+    private var playbackStateCompat = EMPTY_PLAYBACK_STATE
+
+    private val _nowPlayingInfo = MutableLiveData<NowPlayingInfo>()
+    val nowPlayingInfo: LiveData<NowPlayingInfo> get() = _nowPlayingInfo
 
     private val _currentPositionMillis = MutableLiveData<Long>()
     val currentPositionMillis: LiveData<Long> get() = _currentPositionMillis
@@ -33,14 +35,24 @@ class PlayerViewModel @Inject constructor(
     private val _currentButtonRes = MutableLiveData<Int>()
     val currentButtonRes: LiveData<Int> get() = _currentButtonRes
 
+    private val _raw = MutableLiveData<ByteArray>().apply { postValue(byteArrayOf()) }
+    val raw: LiveData<ByteArray> get() = _raw
+
+    val shuffleMode = audioServiceConnection.shuffleMode
+    val repeatMode = audioServiceConnection.repeatMode
+
+    init {
+        Log.i("PlayerViewModel", "initialized")
+    }
+
     private var updatePosition = true
     private val handler = Handler(Looper.getMainLooper())
 
     private fun checkPlaybackPosition(): Boolean = handler.postDelayed({
-        playbackState.currentPlayBackPosition.takeIf {
+        playbackStateCompat.currentPlayBackPosition.takeIf {
             it != currentPositionMillis.value
         }?.let {
-            _currentPositionMillis.postValue(it)
+            updateTimePosition(it)
         }
         if (updatePosition) {
             checkPlaybackPosition()
@@ -48,12 +60,12 @@ class PlayerViewModel @Inject constructor(
     }, POSITION_UPDATE_INTERVAL_MILLIS)
 
     private val playbackStateObserver = Observer<PlaybackStateCompat> {
-        playbackState = it ?: EMPTY_PLAYBACK_STATE
-        updateState(playbackState, audioServiceConnection.nowPlaying.value ?: NOTHING_PLAYING)
+        playbackStateCompat = it ?: EMPTY_PLAYBACK_STATE
+        updateState(playbackStateCompat, audioServiceConnection.nowPlaying.value ?: NOTHING_PLAYING)
     }
 
     private val mediaMetadataObserver = Observer<MediaMetadataCompat> {
-        updateState(playbackState, it)
+        updateState(playbackStateCompat, it)
     }
 
     init {
@@ -75,12 +87,16 @@ class PlayerViewModel @Inject constructor(
         updatePosition = false
     }
 
-    fun playPause(audioId: String) {
-        audioServiceConnection.takeIf { it.nowPlaying.value?.id == audioId }?.run {
+    fun updateTimePosition(new: Long) {
+        _currentPositionMillis.postValue(new)
+    }
+
+    fun playPause() {
+        audioServiceConnection.run {
             playbackState.value?.let {
                 when {
                     it.isPlaying -> transportControls.pause()
-                    it.isPlayEnabled && it.isPrepared -> transportControls.play()
+                    else -> transportControls.play()
                 }
             }
         }
@@ -98,9 +114,34 @@ class PlayerViewModel @Inject constructor(
         audioServiceConnection.transportControls.skipToPrevious()
     }
 
-    private fun updateState(playbackState: PlaybackStateCompat, metadata: MediaMetadataCompat) {
+    fun setRepeatMode() {
+        audioServiceConnection.transportControls.setRepeatMode(
+            when (repeatMode.value) {
+                REPEAT_MODE_ONE -> REPEAT_MODE_ALL
+                REPEAT_MODE_ALL -> REPEAT_MODE_NONE
+                else -> REPEAT_MODE_ONE
+            }
+        )
+    }
+
+    fun setShuffleMode() {
+        audioServiceConnection.transportControls.setShuffleMode(
+            when (shuffleMode.value) {
+                SHUFFLE_MODE_ALL -> SHUFFLE_MODE_NONE
+                else -> SHUFFLE_MODE_ALL
+            }
+        )
+    }
+
+    private fun updateState(
+        playbackStateCompat: PlaybackStateCompat,
+        metadata: MediaMetadataCompat
+    ) {
         metadata.takeIf { it.duration != 0L && it.id != null }?.let {
-            _currentAudioInfo.postValue(
+            if (it.id != nowPlayingInfo.value?.id) {
+                _raw.postValue(Random.nextBytes(it.duration.toInt() * 1000))
+            }
+            _nowPlayingInfo.postValue(
                 NowPlayingInfo(
                     it.id, it.title, it.displaySubtitle, it.albumArtUri, it.duration * 1000
                 )
@@ -108,7 +149,7 @@ class PlayerViewModel @Inject constructor(
         }
 
         _currentButtonRes.postValue(
-            if (playbackState.isPlaying) R.drawable.ic_pause else R.drawable.ic_play_arrow
+            if (playbackStateCompat.isPlaying) R.drawable.ic_pause else R.drawable.ic_play_arrow
         )
     }
 }

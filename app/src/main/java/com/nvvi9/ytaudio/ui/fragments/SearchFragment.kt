@@ -21,7 +21,10 @@ import com.nvvi9.ytaudio.utils.extensions.showKeyboard
 import javax.inject.Inject
 
 
-class SearchFragment : Fragment(), SearchAutocompleteItemListener, Injectable {
+class SearchFragment :
+    Fragment(),
+    SearchAutocompleteItemListener,
+    Injectable {
 
     @Inject
     lateinit var searchViewModelFactory: ViewModelProvider.Factory

@@ -4,12 +4,12 @@ import android.content.ComponentName
 import android.content.Context
 import androidx.paging.ExperimentalPagingApi
 import androidx.room.Room
+import com.nvvi9.YTStream
 import com.nvvi9.ytaudio.db.AudioDatabase
 import com.nvvi9.ytaudio.network.YouTubeApiService
 import com.nvvi9.ytaudio.repositories.YTVideoDetailsRemoteMediator
 import com.nvvi9.ytaudio.service.AudioService
 import com.nvvi9.ytaudio.service.AudioServiceConnection
-import com.nvvi9.ytstream.YTStream
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.ExperimentalCoroutinesApi

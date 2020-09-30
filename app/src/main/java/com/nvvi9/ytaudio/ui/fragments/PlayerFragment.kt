@@ -5,28 +5,29 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SeekBar
-import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.nvvi9.ytaudio.databinding.FragmentPlayerBinding
 import com.nvvi9.ytaudio.di.Injectable
-import com.nvvi9.ytaudio.ui.MainActivity
 import com.nvvi9.ytaudio.ui.adapters.PlayerListener
+import com.nvvi9.ytaudio.ui.adapters.setRaw
 import com.nvvi9.ytaudio.ui.viewmodels.PlayerViewModel
-import kotlinx.android.synthetic.main.activity_main.*
+import com.nvvi9.ytaudio.utils.extensions.fixPercentBounds
+import com.nvvi9.ytaudio.utils.extensions.fixToPercent
+import com.nvvi9.ytaudio.utils.extensions.fixToStep
+import com.nvvi9.ytaudio.utils.extensions.percentToMillis
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
-import kotlin.math.abs
 
 
 @FlowPreview
 @ExperimentalCoroutinesApi
 class PlayerFragment :
     Fragment(),
-    MotionLayout.TransitionListener,
+    PlayerListener,
     Injectable {
 
     @Inject
@@ -34,31 +35,14 @@ class PlayerFragment :
 
     private lateinit var binding: FragmentPlayerBinding
 
-    private var isUserSeeking = false
-
     private val playerViewModel by viewModels<PlayerViewModel> {
         playerViewModelFactory
     }
 
-    private val seekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
+    private var isUserSeeking = false
 
-        private var userSelectedPosition: Int? = null
-
-        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-            userSelectedPosition = progress.takeIf { fromUser }
-            binding.displayPosition = progress
-        }
-
-        override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            isUserSeeking = true
-        }
-
-        override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            isUserSeeking = false
-            userSelectedPosition?.let {
-                playerViewModel.seekTo(it.toLong())
-            }
-        }
+    companion object {
+        fun newInstance() = PlayerFragment()
     }
 
     override fun onCreateView(
@@ -66,17 +50,31 @@ class PlayerFragment :
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? = FragmentPlayerBinding.inflate(inflater).apply {
-        progressBar.setOnSeekBarChangeListener(seekBarChangeListener)
-        listener = PlayerListener({ playerViewModel.playPause(it) },
-            { playerViewModel.skipToNext() },
-            { playerViewModel.skipToPrevious() })
-        motionLayout.setTransitionListener(this@PlayerFragment)
+        progressBar.run {
+            onStartTracking = {
+                isUserSeeking = true
+            }
+            onStopTracking = {
+                isUserSeeking = false
+                playerViewModel.seekTo(
+                    (it * (playerViewModel.nowPlayingInfo.value?.durationMillis
+                        ?: 0) / 100).toLong()
+                )
+            }
+            onProgressChanged = { pos, fromUser ->
+                if (fromUser) {
+                    position = (pos * (playerViewModel.nowPlayingInfo.value?.durationMillis
+                        ?: 0) / 100).toInt()
+                }
+            }
+        }
+        listener = this@PlayerFragment
         viewModel = playerViewModel
     }.also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         playerViewModel.run {
-            currentAudioInfo.observe(viewLifecycleOwner) {
+            nowPlayingInfo.observe(viewLifecycleOwner) {
                 binding.nowPlaying = it
                 Log.i(javaClass.simpleName, it?.toString() ?: "empty")
             }
@@ -85,28 +83,64 @@ class PlayerFragment :
                 binding.buttonRes = it
             }
 
-            currentPositionMillis.observe(viewLifecycleOwner) {
+            raw.observe(viewLifecycleOwner) {
+                it?.let {
+                    binding.progressBar.setRaw(it)
+                }
+            }
+
+            shuffleMode.observe(viewLifecycleOwner) {
+                it?.let {
+                    binding.shuffleState = it
+                }
+            }
+
+            repeatMode.observe(viewLifecycleOwner) {
+                it?.let {
+                    binding.repeatState = it
+                }
+            }
+
+            currentPositionMillis.observe(viewLifecycleOwner) { pos ->
                 if (!isUserSeeking) {
                     binding.run {
-                        position = it?.toInt()
-                        displayPosition = it?.toInt()
+                        position = pos?.toInt()
+                        progressBar.run {
+                            (nowPlayingInfo.value?.durationMillis ?: 0).let { total ->
+                                progress.percentToMillis(total).fixToStep(1000).takeIf {
+                                    it != pos
+                                }?.let {
+                                    progress = pos.fixToPercent(total).fixPercentBounds()
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
-        (activity as MainActivity).main_motion_layout.progress = abs(p3)
+    override fun onPlayPauseClicked() {
+        playerViewModel.playPause()
     }
 
-    override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {}
+    override fun onSkipToNextClicked() {
+        playerViewModel.skipToNext()
+    }
 
-    override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {}
+    override fun onSkipToPreviousClicked() {
+        playerViewModel.skipToPrevious()
+    }
 
-    override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {}
+    override fun onRepeatButtonClicked() {
+        playerViewModel.setRepeatMode()
+    }
 
-    companion object {
-        fun newInstance() = PlayerFragment()
+    override fun onShuffleButtonClicked() {
+        playerViewModel.setShuffleMode()
+    }
+
+    override fun onBackButtonClicked() {
+        findNavController().navigateUp()
     }
 }

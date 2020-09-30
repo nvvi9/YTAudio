@@ -1,8 +1,8 @@
 package com.nvvi9.ytaudio.repositories
 
+import com.nvvi9.YTStream
 import com.nvvi9.ytaudio.data.audioinfo.AudioInfo
 import com.nvvi9.ytaudio.db.AudioInfoDao
-import com.nvvi9.ytstream.YTStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -20,10 +20,6 @@ class AudioInfoRepository @Inject constructor(
     private val ytStream: YTStream,
     private val audioInfoDao: AudioInfoDao
 ) : Repository {
-
-    suspend fun addToPlaylist(id: String) {
-
-    }
 
     suspend fun insertIntoDatabase(id: String) {
         withContext(Dispatchers.IO) {
@@ -44,8 +40,8 @@ class AudioInfoRepository @Inject constructor(
                     .toList()
                     .filterNotNull()
             }.let { videoData ->
-                videoData.map { AudioInfo.fromVideoData(it) }
-                    .let { audioInfoDao.updatePlaylist(it as List<AudioInfo>) }
+                videoData.mapNotNull { AudioInfo.fromVideoData(it) }
+                    .let { audioInfoDao.updatePlaylist(it) }
             }
         }
     }

@@ -1,21 +1,27 @@
 package com.nvvi9.ytaudio.ui.adapters
 
+import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.support.v4.media.session.PlaybackStateCompat.*
 import android.text.format.DateUtils
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.ProgressBar
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.textview.MaterialTextView
+import com.nvvi9.ytaudio.R
 import com.nvvi9.ytaudio.vo.PlaylistItem
+import rm.com.audiowave.AudioWaveView
 
 
 @BindingAdapter("imageUrl")
@@ -32,6 +38,27 @@ fun ImageButton.setIcon(resId: Int?) {
     resId?.let {
         setImageResource(it)
     }
+}
+
+@BindingAdapter("shuffleMode")
+fun ImageButton.setShuffleState(state: Int) {
+    setImageResource(
+        when (state) {
+            SHUFFLE_MODE_ALL -> R.drawable.ic_shuffle_all
+            else -> R.drawable.ic_shuffle
+        }
+    )
+}
+
+@BindingAdapter("repeatMode")
+fun ImageButton.setRepeatState(state: Int) {
+    setImageResource(
+        when (state) {
+            REPEAT_MODE_ALL -> R.drawable.ic_repeat_all
+            REPEAT_MODE_ONE -> R.drawable.ic_repeat_one
+            else -> R.drawable.ic_repeat
+        }
+    )
 }
 
 @BindingAdapter("timeFormattedSeconds")
@@ -55,22 +82,33 @@ fun MaterialTextView.setPosition(position: Long?) {
     }
 }
 
-@BindingAdapter("thumbnailUri")
-fun AppCompatImageView.setImage(uri: Uri?) {
-    uri?.let {
-        Glide.with(context)
-            .load(it)
-            .into(this)
-    }
-}
+@BindingAdapter("app:thumbnailUri", "app:recycled", requireAll = false)
+fun ImageView.setImage(thumbnailUri: Uri?, recycled: Boolean = false) {
+    clipToOutline = true
+    Glide.with(this)
+        .load(thumbnailUri)
+        .transition(DrawableTransitionOptions.withCrossFade()).apply {
+            if (recycled) {
+                error(Glide.with(this@setImage).load(drawable))
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(object : CustomTarget<Drawable>() {
+                        override fun onLoadCleared(placeholder: Drawable?) {
+                            setImageDrawable(placeholder)
+                        }
 
-@BindingAdapter("thumbnailUri")
-fun ImageView.setImage(uri: Uri?) {
-    uri?.let {
-        Glide.with(context)
-            .load(it)
-            .into(this)
-    }
+                        override fun onResourceReady(
+                            resource: Drawable,
+                            transition: Transition<in Drawable>?
+                        ) {
+                            setImageDrawable(resource)
+                        }
+                    })
+            } else {
+                placeholder(R.drawable.ic_audiotrack)
+                    .error(R.drawable.ic_audiotrack)
+                    .into(this@setImage)
+            }
+        }
 }
 
 @BindingAdapter("audioPlaylist")
@@ -83,6 +121,17 @@ fun RecyclerView.setStringList(items: List<String>?) {
     (adapter as? SearchAutocompleteAdapter)?.submitList(items)
 }
 
+@BindingAdapter("raw")
+fun AudioWaveView.setRaw(raw: ByteArray?) {
+    raw?.let {
+        try {
+            setRawData(raw)
+        } catch (t: Throwable) {
+            Log.e(javaClass.simpleName, t.toString())
+        }
+    }
+}
+
 @BindingAdapter("layoutFullscreen")
 fun View.bindLayoutFullscreen(previousFullscreen: Boolean, fullscreen: Boolean) {
     if (previousFullscreen != fullscreen && fullscreen) {
@@ -90,16 +139,6 @@ fun View.bindLayoutFullscreen(previousFullscreen: Boolean, fullscreen: Boolean) 
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }
-}
-
-@BindingAdapter("refreshState")
-fun SwipeRefreshLayout.setRefreshState(ytLoadState: YTLoadState?) {
-    isRefreshing = ytLoadState is YTLoadState.Loading
-}
-
-@BindingAdapter("isVisible")
-fun ProgressBar.setVisibility(ytLoadState: YTLoadState?) {
-    visibility = if (ytLoadState is YTLoadState.Empty) View.VISIBLE else View.GONE
 }
 
 @BindingAdapter(

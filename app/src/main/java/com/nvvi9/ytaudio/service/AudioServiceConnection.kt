@@ -10,57 +10,63 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.support.v4.media.session.PlaybackStateCompat.REPEAT_MODE_NONE
+import android.support.v4.media.session.PlaybackStateCompat.SHUFFLE_MODE_NONE
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.nvvi9.ytaudio.utils.extensions.id
+import javax.inject.Singleton
 
 
-class AudioServiceConnection(context: Context, serviceComponent: ComponentName) {
+@Singleton
+class AudioServiceConnection(private val context: Context, serviceComponent: ComponentName) :
+    MediaBrowserCompat.ConnectionCallback() {
 
-    val isConnected = MutableLiveData<Boolean>().apply { postValue(false) }
-    val networkFailure = MutableLiveData<Boolean>().apply { postValue(false) }
-    val rootMediaId: String
-        get() = mediaBrowser.root
+    val rootMediaId get() = mediaBrowser.root
 
-    val playbackState =
+    private val _isConnected = MutableLiveData<Boolean>().apply { postValue(false) }
+    val isConnected: LiveData<Boolean> get() = _isConnected
+
+    private val _networkFailure = MutableLiveData<Boolean>().apply { postValue(false) }
+    val networkFailure: LiveData<Boolean> get() = _networkFailure
+
+    private val _playbackState =
         MutableLiveData<PlaybackStateCompat>().apply { postValue(EMPTY_PLAYBACK_STATE) }
-    val nowPlaying =
+    val playbackState: LiveData<PlaybackStateCompat> get() = _playbackState
+
+    private val _nowPlaying =
         MutableLiveData<MediaMetadataCompat>().apply { postValue(NOTHING_PLAYING) }
+    val nowPlaying: LiveData<MediaMetadataCompat> get() = _nowPlaying
 
     val transportControls: MediaControllerCompat.TransportControls
         get() = mediaController.transportControls
 
+    private val _repeatMode = MutableLiveData<Int>().apply { postValue(REPEAT_MODE_NONE) }
+    val repeatMode: LiveData<Int> get() = _repeatMode
+
+    private val _shuffleMode = MutableLiveData<Int>().apply { postValue(SHUFFLE_MODE_NONE) }
+    val shuffleMode: LiveData<Int> get() = _shuffleMode
+
     lateinit var mediaController: MediaControllerCompat
 
-    private val mediaBrowserConnectionCallback = MediaBrowserConnectionCallback(context)
-    private val mediaBrowser = MediaBrowserCompat(
-        context,
-        serviceComponent,
-        mediaBrowserConnectionCallback,
-        null
-    ).apply { connect() }
-
-    private val mediaControllerCallback = object : MediaControllerCompat.Callback() {
-
-        override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
-            playbackState.postValue(state ?: EMPTY_PLAYBACK_STATE)
+    private val mediaBrowser =
+        MediaBrowserCompat(context, serviceComponent, this, null).apply {
+            connect()
         }
 
-        override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
-            nowPlaying.postValue(if (metadata?.id == null) NOTHING_PLAYING else metadata)
+    override fun onConnected() {
+        mediaController = MediaControllerCompat(context, mediaBrowser.sessionToken).apply {
+            registerCallback(mediaControllerCallback)
         }
+        _isConnected.postValue(true)
+    }
 
-        override fun onSessionEvent(event: String?, extras: Bundle?) {
-            super.onSessionEvent(event, extras)
-            when (event) {
-                NETWORK_FAILURE -> networkFailure.postValue(true)
-            }
-        }
+    override fun onConnectionSuspended() {
+        _isConnected.postValue(false)
+    }
 
-        override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {}
-
-        override fun onSessionDestroyed() {
-            mediaBrowserConnectionCallback.onConnectionSuspended()
-        }
+    override fun onConnectionFailed() {
+        _isConnected.postValue(false)
     }
 
     fun subscribe(parentId: String, callback: MediaBrowserCompat.SubscriptionCallback) {
@@ -89,26 +95,37 @@ class AudioServiceConnection(context: Context, serviceComponent: ComponentName) 
         false
     }
 
-    private inner class MediaBrowserConnectionCallback(private val context: Context) :
-        MediaBrowserCompat.ConnectionCallback() {
+    private val mediaControllerCallback = object : MediaControllerCompat.Callback() {
 
-        override fun onConnected() {
-            mediaController = MediaControllerCompat(context, mediaBrowser.sessionToken).apply {
-                registerCallback(mediaControllerCallback)
-//                MediaControllerCompat.setMediaController(context as Activity, this)
+        override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
+            _playbackState.postValue(state ?: EMPTY_PLAYBACK_STATE)
+        }
+
+        override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
+            _nowPlaying.postValue(if (metadata?.id == null) NOTHING_PLAYING else metadata)
+        }
+
+        override fun onSessionEvent(event: String?, extras: Bundle?) {
+            super.onSessionEvent(event, extras)
+            when (event) {
+                NETWORK_FAILURE -> _networkFailure.postValue(true)
             }
-            isConnected.postValue(true)
         }
 
-        override fun onConnectionSuspended() {
-            isConnected.postValue(false)
+        override fun onRepeatModeChanged(repeatMode: Int) {
+            _repeatMode.postValue(repeatMode)
         }
 
-        override fun onConnectionFailed() {
-            isConnected.postValue(false)
+        override fun onShuffleModeChanged(shuffleMode: Int) {
+            _shuffleMode.postValue(shuffleMode)
+        }
+
+        override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {}
+
+        override fun onSessionDestroyed() {
+            onConnectionSuspended()
         }
     }
-
 
     companion object {
         @Volatile

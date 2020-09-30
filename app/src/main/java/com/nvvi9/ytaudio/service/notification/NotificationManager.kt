@@ -39,7 +39,7 @@ class NotificationManager(
             notificationListener
         ).apply {
             setMediaSessionToken(sessionToken)
-            setSmallIcon(R.drawable.ic_notification)
+            setSmallIcon(R.drawable.ic_audiotrack)
             setRewindIncrementMs(0)
             setFastForwardIncrementMs(0)
         }
@@ -93,8 +93,8 @@ class NotificationManager(
                     Glide.with(context).asBitmap()
                         .load(uri).apply(
                             RequestOptions()
-                                .placeholder(R.drawable.ic_notification)
-                                .error(R.drawable.ic_notification)
+                                .placeholder(R.drawable.ic_audiotrack)
+                                .error(R.drawable.ic_audiotrack)
                         )
                         .submit()
                         .get()

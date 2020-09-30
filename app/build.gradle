@@ -63,9 +63,6 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation "androidx.core:core-ktx:$core_version"
 
-    // YTStream
-    implementation project(':YTStream')
-
     // Constraint Layout
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
 
@@ -118,6 +115,18 @@ dependencies {
 
     // Work
     implementation "androidx.work:work-runtime-ktx:$work_version"
+
+    // Kotlin Pleasure Animate
+    implementation "com.github.florent37:kotlinpleaseanimate:$kotlin_pleasure_animate_version"
+
+    // AudioWave
+    implementation "com.github.alxrm:audiowave-progressbar:$audiowave_progressbar_version"
+
+    // Circular ProgressBar
+    implementation "com.mikhaellopez:circularprogressbar:$circlular_progressbar_version"
+
+    // YTStream
+    implementation "com.nvvi9:ytstream:$ytstream_version"
 
     // Dagger
     implementation "com.google.dagger:dagger:$dagger_version"

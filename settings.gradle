@@ -1,2 +1,2 @@
-include ':app', ':YTStream'
+include ':app'
 rootProject.name = 'YTAudio'

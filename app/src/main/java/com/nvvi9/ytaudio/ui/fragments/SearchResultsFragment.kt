@@ -104,6 +104,11 @@ class SearchResultsFragment : YouTubeIntentFragment(), YTItemListener, Injectabl
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        youTubeViewModel.updateItems(navArgs.query)
+    }
+
     override fun onItemClicked(cardView: View, item: YouTubeItem) {
         startYouTubeIntent(item.id)
     }

@@ -15,7 +15,6 @@ import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 import com.nvvi9.ytaudio.domain.PlaylistUseCases
 import com.nvvi9.ytaudio.utils.extensions.id
-import com.nvvi9.ytaudio.utils.extensions.metadataEquals
 import com.nvvi9.ytaudio.utils.extensions.title
 import com.nvvi9.ytaudio.utils.extensions.toMediaSource
 
@@ -31,20 +30,32 @@ class PlaybackPreparer(
     private var nowPlaying: MediaMetadataCompat? = null
 
     private val metadataObserver = Observer<List<MediaMetadataCompat>> {
-        if (!it.metadataEquals(currentMetadata)) {
-            updateMetadata(it)
+        it?.let {
+            update(it)
         }
+//        if (!it.metadataEquals(currentMetadata)) {
+//            updateMetadata(it)
+//        }
     }
 
     init {
         playlistUseCases.getMediaMetadata().observeForever(metadataObserver)
     }
 
+    private fun update(new: List<MediaMetadataCompat>) {
+        currentMetadata = new
+        val isPlaying = exoPlayer.isPlaying
+        mediaSource = new.toMediaSource(dataSourceFactory).also {
+            exoPlayer.setMediaSource(it)
+            exoPlayer.playWhenReady = isPlaying
+        }
+    }
+
     private fun updateMetadata(newMetadata: List<MediaMetadataCompat>) {
         currentMetadata = newMetadata
         mediaSource = currentMetadata.toMediaSource(dataSourceFactory)
 
-        val isPlaying = exoPlayer.playbackState == Player.TIMELINE_CHANGE_REASON_PREPARED
+        val isPlaying = exoPlayer.isPlaying
         var position = exoPlayer.currentPosition
         val window = nowPlaying?.let { playing ->
             if (playing.id in currentMetadata.map { it.id }) {
@@ -72,7 +83,7 @@ class PlaybackPreparer(
         }
     }
 
-    fun onCancel() {
+    fun cancel() {
         playlistUseCases.getMediaMetadata().removeObserver(metadataObserver)
     }
 
@@ -80,19 +91,23 @@ class PlaybackPreparer(
         PlaybackStateCompat.ACTION_PREPARE_FROM_MEDIA_ID or
                 PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID or
                 PlaybackStateCompat.ACTION_PREPARE_FROM_SEARCH or
-                PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH
+                PlaybackStateCompat.ACTION_PLAY_FROM_SEARCH or
+                PlaybackStateCompat.ACTION_PREPARE_FROM_URI or
+                PlaybackStateCompat.ACTION_PLAY_FROM_URI
 
 
     override fun onPrepareFromMediaId(mediaId: String, playWhenReady: Boolean, extras: Bundle?) {
-        val itemToPlay = currentMetadata.find { it.id == mediaId }
-
-        itemToPlay?.let { item ->
-            val initialWindowIndex = currentMetadata.indexOf(item)
-            mediaSource?.let { exoPlayer.prepare(it) }
-            exoPlayer.seekTo(initialWindowIndex, 0)
-            exoPlayer.playWhenReady = playWhenReady
-            nowPlaying = item
-        } ?: Log.w(javaClass.name, "Content not found: id=$mediaId")
+        currentMetadata.indexOfFirst { it.id == mediaId }.takeIf { it != -1 }?.let {
+            try {
+                exoPlayer.run {
+                    prepare()
+                    seekTo(it, 0)
+                    this.playWhenReady = playWhenReady
+                }
+            } catch (t: Throwable) {
+                Log.e(javaClass.simpleName, t.stackTraceToString())
+            }
+        } ?: Log.w(javaClass.simpleName, "Content not found: id=$mediaId")
     }
 
     override fun onCommand(

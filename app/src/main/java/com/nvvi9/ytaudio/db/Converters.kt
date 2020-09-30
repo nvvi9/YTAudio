@@ -3,8 +3,8 @@ package com.nvvi9.ytaudio.db
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.nvvi9.model.Thumbnail
 import com.nvvi9.ytaudio.data.audioinfo.AudioStream
-import com.nvvi9.ytstream.model.Thumbnail
 
 
 class Converters {

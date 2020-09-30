@@ -1,8 +1,8 @@
 package com.nvvi9.ytaudio.data.audioinfo
 
 import androidx.room.Ignore
-import com.nvvi9.ytstream.model.streams.Stream
-import com.nvvi9.ytstream.model.streams.StreamType
+import com.nvvi9.model.streams.Stream
+import com.nvvi9.model.streams.StreamType
 
 
 data class AudioStream(
