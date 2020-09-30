@@ -2,10 +2,13 @@ package com.nvvi9.ytaudio.ui.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.*
-import androidx.paging.*
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.nvvi9.ytaudio.domain.PlaylistUseCases
 import com.nvvi9.ytaudio.domain.YouTubeUseCases
-import com.nvvi9.ytaudio.repositories.AudioInfoRepository
+import com.nvvi9.ytaudio.ui.adapters.YTLoadState
 import com.nvvi9.ytaudio.utils.Event
 import com.nvvi9.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,7 +25,6 @@ import javax.inject.Inject
 class YouTubeViewModel @Inject constructor(
     private val playlistUseCases: PlaylistUseCases,
     private val youTubeUseCases: YouTubeUseCases,
-    private val audioInfoRepository: AudioInfoRepository,
     application: Application
 ) : AndroidViewModel(application) {
 
@@ -32,8 +34,8 @@ class YouTubeViewModel @Inject constructor(
     val errorEvent: LiveData<Event<String>>
         get() = _errorEvent
 
-    private val _loadState = MutableLiveData<LoadState>().apply { postValue(LoadState.Loading) }
-    val loadState: LiveData<LoadState> get() = _loadState
+    private val _loadState = MutableLiveData<YTLoadState>().apply { postValue(YTLoadState.Empty) }
+    val loadState: LiveData<YTLoadState> get() = _loadState
 
     override fun onCleared() {
         super.onCleared()
@@ -52,7 +54,7 @@ class YouTubeViewModel @Inject constructor(
 
     fun updateItems(query: String? = null) {
         job?.run {
-            _loadState.postValue(LoadState.Loading)
+            _loadState.postValue(YTLoadState.Loading)
             cancel()
         }
         job = viewModelScope.launch {
@@ -63,28 +65,7 @@ class YouTubeViewModel @Inject constructor(
             }.cachedIn(this).collectLatest {
                 _youTubeItems.postValue(it)
             }
-        }
-    }
-
-    fun addToPlaylist(id: String) {
-        viewModelScope.launch {
-            try {
-                audioInfoRepository.insertIntoDatabase(id)
-            } catch (t: Throwable) {
-                t.message?.let {
-                    _errorEvent.postValue(Event(it))
-                }
-            }
-        }
-    }
-
-    fun deleteFromPlaylist(id: String) {
-        viewModelScope.launch {
-            try {
-                audioInfoRepository.deleteById(id)
-            } catch (t: Throwable) {
-                _errorEvent.value = Event(t.toString())
-            }
+            _loadState.postValue(YTLoadState.LoadingDone)
         }
     }
 }

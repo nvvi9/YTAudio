@@ -27,9 +27,7 @@ class PlaybackPreparer(
     private var currentMetadata = emptyList<MediaMetadataCompat>()
 
     private val metadataObserver = Observer<List<MediaMetadataCompat>> {
-        it?.let {
-            update(it)
-        }
+        it?.let { update(it) }
     }
 
     init {
@@ -74,10 +72,13 @@ class PlaybackPreparer(
     }
 
     private fun update(new: List<MediaMetadataCompat>) {
+        val nowPlayingMediaId =
+            currentMetadata.takeIf { it.isNotEmpty() }?.get(exoPlayer.currentWindowIndex)?.id
+        var position = exoPlayer.currentPosition
+        val window = new.map { it.id }.indexOf(nowPlayingMediaId).takeIf { it != -1 }
+            ?: exoPlayer.currentWindowIndex.also { position = 0 }
         currentMetadata = new
         val isPlaying = exoPlayer.isPlaying
-        val position = exoPlayer.currentPosition
-        val window = exoPlayer.currentWindowIndex
         exoPlayer.setMediaSource(new.toMediaSource(dataSourceFactory))
         if (currentMetadata.isNotEmpty()) {
             try {

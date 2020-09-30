@@ -60,15 +60,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_arrow_back" />
 
-            <ImageButton
-                android:id="@+id/menu"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:background="@drawable/round_selector"
-                android:src="@drawable/ic_more"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View

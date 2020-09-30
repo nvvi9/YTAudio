@@ -23,8 +23,8 @@ abstract class ViewModelModule {
     @Binds
     @IntoMap
     @Singleton
-    @ViewModelKey(MainActivityViewModel::class)
-    abstract fun bindMainActivityViewModel(mainActivityViewModel: MainActivityViewModel): ViewModel
+    @ViewModelKey(MainViewModel::class)
+    abstract fun bindMainActivityViewModel(mainViewModel: MainViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -43,7 +43,6 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @Singleton
     @ViewModelKey(YouTubeViewModel::class)
     abstract fun bindYouTubeViewModel(youTubeViewModel: YouTubeViewModel): ViewModel
 

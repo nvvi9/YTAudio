@@ -72,7 +72,8 @@
             android:id="@+id/swipe_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            app:loadState="@{viewModel.loadState}">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/item_youtube_view"

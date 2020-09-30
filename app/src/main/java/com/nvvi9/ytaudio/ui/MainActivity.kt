@@ -4,7 +4,6 @@ import android.content.Intent
 import android.media.AudioManager
 import android.os.Bundle
 import android.view.View
-import android.view.animation.AccelerateInterpolator
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -14,10 +13,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
-import com.github.florent37.kotlin.pleaseanimate.please
 import com.nvvi9.ytaudio.R
 import com.nvvi9.ytaudio.databinding.ActivityMainBinding
-import com.nvvi9.ytaudio.ui.viewmodels.MainActivityViewModel
+import com.nvvi9.ytaudio.ui.viewmodels.MainViewModel
 import com.nvvi9.ytaudio.ui.viewmodels.PlayerViewModel
 import com.nvvi9.ytaudio.utils.extensions.fixPercentBounds
 import com.nvvi9.ytaudio.utils.extensions.fixToPercent
@@ -48,7 +46,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
 
     private lateinit var navController: NavController
 
-    private val mainActivityViewModel: MainActivityViewModel by viewModels {
+    private val mainViewModel: MainViewModel by viewModels {
         mainActivityViewModelFactory
     }
 
@@ -72,6 +70,9 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
                     when (destination.id) {
                         R.id.playlistFragment, R.id.youTubeFragment, R.id.searchResultsFragment -> {
                             showBottomNav()
+                            playerViewModel.nowPlayingInfo.value?.let {
+                                showMiniPlayer()
+                            }
                         }
                         else -> {
                             hideBottomNav()
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
             }
         }
 
-        mainActivityViewModel.networkFailure.observe(this) {
+        mainViewModel.networkFailure.observe(this) {
             it?.getContentIfNotHandled()?.let { isNetworkFailure ->
                 if (isNetworkFailure) {
                     Toast.makeText(this, "Check your connection", Toast.LENGTH_SHORT).show()
@@ -119,7 +120,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
         intent?.takeIf {
             it.action == Intent.ACTION_SEND
         }?.getStringExtra(Intent.EXTRA_TEXT)?.let {
-            mainActivityViewModel.addToPlaylist(it.takeLast(11))
+            mainViewModel.addToPlaylist(it.takeLast(11))
         }
     }
 
@@ -134,40 +135,44 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
     }
 
     fun showMiniPlayer() {
-        binding.run {
-            bottomControls.isEnabled = true
-            please(190, AccelerateInterpolator()) {
-                animate(bottomControls) {
-                    aboveOf(bottomNav)
-                }
-            }.start()
-        }
+        binding.bottomControls.visibility = View.VISIBLE
+//        binding.run {
+//            bottomControls.isEnabled = true
+//            please(190, AccelerateInterpolator()) {
+//                animate(bottomControls) {
+//                    aboveOf(bottomNav)
+//                }
+//            }.start()
+//        }
     }
 
     fun hideMiniPlayer() {
-        binding.run {
-            bottomControls.isEnabled = false
-            please(190, AccelerateInterpolator()) {
-                animate(bottomControls) {
-                    belowOf(bottomNav)
-                }
-            }.start()
-        }
+        binding.bottomControls.visibility = View.GONE
+//        binding.run {
+//            bottomControls.isEnabled = false
+//            please(190, AccelerateInterpolator()) {
+//                animate(bottomControls) {
+//                    belowOf(bottomNav)
+//                }
+//            }.start()
+//        }
     }
 
     fun showBottomNav() {
-        please(190, AccelerateInterpolator()) {
-            animate(binding.bottomNav) {
-                bottomOfItsParent()
-            }
-        }.start()
+        binding.bottomNav.visibility = View.VISIBLE
+//        please(190, AccelerateInterpolator()) {
+//            animate(binding.bottomNav) {
+//                bottomOfItsParent()
+//            }
+//        }.start()
     }
 
     fun hideBottomNav() {
-        please(190, AccelerateInterpolator()) {
-            animate(binding.bottomNav) {
-                belowOf(binding.mainContainer)
-            }
-        }.start()
+        binding.bottomNav.visibility = View.GONE
+//        please(190, AccelerateInterpolator()) {
+//            animate(binding.bottomNav) {
+//                belowOf(binding.mainContainer)
+//            }
+//        }.start()
     }
 }

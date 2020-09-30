@@ -13,6 +13,7 @@ import android.widget.ImageView
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -138,6 +139,15 @@ fun View.bindLayoutFullscreen(previousFullscreen: Boolean, fullscreen: Boolean) 
         systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+    }
+}
+
+@BindingAdapter("loadState")
+fun SwipeRefreshLayout.setLoadState(loadState: YTLoadState?) {
+    visibility = if (loadState == YTLoadState.Empty) {
+        View.VISIBLE
+    } else {
+        View.GONE
     }
 }
 

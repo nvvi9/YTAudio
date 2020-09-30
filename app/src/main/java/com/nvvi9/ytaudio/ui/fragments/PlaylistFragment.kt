@@ -15,7 +15,7 @@ import com.nvvi9.ytaudio.di.Injectable
 import com.nvvi9.ytaudio.ui.MainActivity
 import com.nvvi9.ytaudio.ui.adapters.PlaylistItemAdapter
 import com.nvvi9.ytaudio.ui.adapters.PlaylistItemListener
-import com.nvvi9.ytaudio.ui.viewmodels.MainActivityViewModel
+import com.nvvi9.ytaudio.ui.viewmodels.MainViewModel
 import com.nvvi9.ytaudio.ui.viewmodels.PlaylistViewModel
 import com.nvvi9.ytaudio.utils.SpringAddItemAnimator
 import com.nvvi9.ytaudio.vo.PlaylistItem
@@ -38,7 +38,7 @@ class PlaylistFragment : YouTubeIntentFragment(), PlaylistItemListener, Injectab
         playlistViewModelFactory
     }
 
-    private val mainActivityViewModel: MainActivityViewModel by viewModels {
+    private val mainViewModel: MainViewModel by viewModels {
         mainActivityViewModelFactory
     }
 
@@ -74,7 +74,7 @@ class PlaylistFragment : YouTubeIntentFragment(), PlaylistItemListener, Injectab
     }
 
     override fun onItemClicked(item: PlaylistItem) {
-        mainActivityViewModel.audioItemClicked(item.id)
+        mainViewModel.audioItemClicked(item.id)
         (activity as MainActivity).showMiniPlayer()
     }
 

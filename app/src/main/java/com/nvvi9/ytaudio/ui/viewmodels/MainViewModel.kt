@@ -22,7 +22,7 @@ import javax.inject.Singleton
 @ExperimentalCoroutinesApi
 @FlowPreview
 @Singleton
-class MainActivityViewModel @Inject constructor(
+class MainViewModel @Inject constructor(
     private val audioInfoRepository: AudioInfoRepository,
     private val audioServiceConnection: AudioServiceConnection
 ) : ViewModel() {
@@ -55,7 +55,17 @@ class MainActivityViewModel @Inject constructor(
             try {
                 audioInfoRepository.insertIntoDatabase(id)
             } catch (t: Throwable) {
-                Log.e(javaClass.simpleName, t.toString())
+                Log.e(javaClass.simpleName, t.stackTraceToString())
+            }
+        }
+    }
+
+    fun deleteFromPlaylist(id: String) {
+        viewModelScope.launch {
+            try {
+                audioInfoRepository.deleteById(id)
+            } catch (t: Throwable) {
+                Log.e(javaClass.simpleName, t.stackTraceToString())
             }
         }
     }

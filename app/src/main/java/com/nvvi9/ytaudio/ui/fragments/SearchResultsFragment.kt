@@ -23,6 +23,7 @@ import com.nvvi9.ytaudio.ui.adapters.ReboundingSwipeActionCallback
 import com.nvvi9.ytaudio.ui.adapters.YTItemAdapter
 import com.nvvi9.ytaudio.ui.adapters.YTItemListener
 import com.nvvi9.ytaudio.ui.adapters.YTLoadStateAdapter
+import com.nvvi9.ytaudio.ui.viewmodels.MainViewModel
 import com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel
 import com.nvvi9.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,6 +43,13 @@ class SearchResultsFragment : YouTubeIntentFragment(), YTItemListener, Injectabl
 
     private val youTubeViewModel: YouTubeViewModel by viewModels {
         youTubeViewModelFactory
+    }
+
+    @Inject
+    lateinit var mainViewModelFactory: ViewModelProvider.Factory
+
+    private val mainViewModel: MainViewModel by viewModels {
+        mainViewModelFactory
     }
 
     private lateinit var binding: FragmentSearchResultsBinding
@@ -125,7 +133,7 @@ class SearchResultsFragment : YouTubeIntentFragment(), YTItemListener, Injectabl
                     true
                 }
                 R.id.menu_add -> {
-                    youTubeViewModel.addToPlaylist(item.id)
+                    mainViewModel.addToPlaylist(item.id)
                     true
                 }
                 else -> false
@@ -137,9 +145,9 @@ class SearchResultsFragment : YouTubeIntentFragment(), YTItemListener, Injectabl
     override fun onItemIconChanged(item: YouTubeItem, newValue: Boolean) {
         item.isAdded = newValue
         if (newValue) {
-            youTubeViewModel.addToPlaylist(item.id)
+            mainViewModel.addToPlaylist(item.id)
         } else {
-            youTubeViewModel.deleteFromPlaylist(item.id)
+            mainViewModel.deleteFromPlaylist(item.id)
         }
     }
 

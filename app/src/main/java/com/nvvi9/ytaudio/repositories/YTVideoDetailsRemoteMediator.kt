@@ -29,8 +29,8 @@ class YTVideoDetailsRemoteMediator @Inject constructor(
     private val ytApiService: YouTubeApiService,
     private val ytStream: YTStream,
     private val database: AudioDatabase,
-    private val YTVideoDetailsDao: YTVideoDetailsDao,
-    private val YTVideoDetailsRemoteKeysDao: YTVideoDetailsRemoteKeysDao
+    private val ytVideoDetailsDao: YTVideoDetailsDao,
+    private val ytVideoDetailsRemoteKeysDao: YTVideoDetailsRemoteKeysDao
 ) : RemoteMediator<Int, YTVideoDetails>() {
 
     @FlowPreview
@@ -40,14 +40,14 @@ class YTVideoDetailsRemoteMediator @Inject constructor(
     ): MediatorResult {
         val pageToken = when (loadType) {
             LoadType.APPEND -> state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
-                ?.let { YTVideoDetailsRemoteKeysDao.remoteKeysById(it.id) }?.nextPageToken
+                ?.let { ytVideoDetailsRemoteKeysDao.remoteKeysById(it.id) }?.nextPageToken
                 ?: return MediatorResult.Success(true)
             LoadType.PREPEND -> state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
-                ?.let { YTVideoDetailsRemoteKeysDao.remoteKeysById(it.id) }?.prevPageToken
+                ?.let { ytVideoDetailsRemoteKeysDao.remoteKeysById(it.id) }?.prevPageToken
                 ?: return MediatorResult.Success(true)
             LoadType.REFRESH -> state.anchorPosition?.let {
                 state.closestItemToPosition(it)?.id
-                    ?.let { id -> YTVideoDetailsRemoteKeysDao.remoteKeysById(id) }?.nextPageToken
+                    ?.let { id -> ytVideoDetailsRemoteKeysDao.remoteKeysById(id) }?.nextPageToken
             }
         }
 
@@ -67,12 +67,12 @@ class YTVideoDetailsRemoteMediator @Inject constructor(
 
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
-                    YTVideoDetailsRemoteKeysDao.clear()
-                    YTVideoDetailsDao.clear()
+                    ytVideoDetailsRemoteKeysDao.clear()
+                    ytVideoDetailsDao.clear()
                 }
 
-                YTVideoDetailsRemoteKeysDao.insert(keys)
-                YTVideoDetailsDao.insert(items)
+                ytVideoDetailsRemoteKeysDao.insert(keys)
+                ytVideoDetailsDao.insert(items)
             }
 
             MediatorResult.Success(items.isEmpty())
