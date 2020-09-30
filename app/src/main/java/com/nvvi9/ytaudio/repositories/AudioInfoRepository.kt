@@ -21,10 +21,6 @@ class AudioInfoRepository @Inject constructor(
     private val audioInfoDao: AudioInfoDao
 ) : Repository {
 
-    suspend fun addToPlaylist(id: String) {
-
-    }
-
     suspend fun insertIntoDatabase(id: String) {
         withContext(Dispatchers.IO) {
             ytStream.extractVideoData(id).collect {
@@ -44,8 +40,8 @@ class AudioInfoRepository @Inject constructor(
                     .toList()
                     .filterNotNull()
             }.let { videoData ->
-                videoData.map { AudioInfo.fromVideoData(it) }
-                    .let { audioInfoDao.updatePlaylist(it as List<AudioInfo>) }
+                videoData.mapNotNull { AudioInfo.fromVideoData(it) }
+                    .let { audioInfoDao.updatePlaylist(it) }
             }
         }
     }

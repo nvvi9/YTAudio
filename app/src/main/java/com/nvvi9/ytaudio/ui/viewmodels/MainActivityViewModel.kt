@@ -1,10 +1,13 @@
 package com.nvvi9.ytaudio.ui.viewmodels
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.nvvi9.ytaudio.repositories.AudioInfoRepository
 import com.nvvi9.ytaudio.service.AudioServiceConnection
+import com.nvvi9.ytaudio.utils.Event
 import com.nvvi9.ytaudio.utils.extensions.id
 import com.nvvi9.ytaudio.utils.extensions.isPlayEnabled
 import com.nvvi9.ytaudio.utils.extensions.isPlaying
@@ -24,23 +27,12 @@ class MainActivityViewModel @Inject constructor(
     private val audioServiceConnection: AudioServiceConnection
 ) : ViewModel() {
 
+    val networkFailure: LiveData<Event<Boolean>>
+        get() = audioServiceConnection.networkFailure
+            .map { Event(it) }
+
     fun audioItemClicked(audioId: String) {
         playAudio(audioId, false)
-    }
-
-    private fun playAudio(audioId: String, pauseAllowed: Boolean) {
-        audioServiceConnection.run {
-            if (playbackState.value?.isPrepared == true && audioId == nowPlaying.value?.id) {
-                playbackState.value?.let {
-                    when {
-                        it.isPlaying -> if (pauseAllowed) transportControls.pause() else Unit
-                        it.isPlayEnabled -> transportControls.play()
-                    }
-                }
-            } else {
-                transportControls.playFromMediaId(audioId, null)
-            }
-        }
     }
 
     fun playAudio(audioId: String) {
@@ -58,20 +50,27 @@ class MainActivityViewModel @Inject constructor(
         }
     }
 
-    fun seekTo(positionMillis: Long) {
-        audioServiceConnection.transportControls.seekTo(positionMillis)
-    }
-
-    fun skipToNext() {
-        audioServiceConnection.transportControls.skipToNext()
-    }
-
     fun addToPlaylist(id: String) {
         viewModelScope.launch {
             try {
                 audioInfoRepository.insertIntoDatabase(id)
             } catch (t: Throwable) {
                 Log.e(javaClass.simpleName, t.toString())
+            }
+        }
+    }
+
+    private fun playAudio(audioId: String, pauseAllowed: Boolean) {
+        audioServiceConnection.run {
+            if (playbackState.value?.isPrepared == true && audioId == nowPlaying.value?.id) {
+                playbackState.value?.let {
+                    when {
+                        it.isPlaying -> if (pauseAllowed) transportControls.pause() else Unit
+                        it.isPlayEnabled -> transportControls.play()
+                    }
+                }
+            } else {
+                transportControls.playFromMediaId(audioId, null)
             }
         }
     }

@@ -71,7 +71,7 @@ inline val MediaMetadataCompat.albumArt: Bitmap?
     get() = getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART)
 
 inline val MediaMetadataCompat.albumArtUri: Uri
-    get() = this.getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI).toUri()
+    get() = getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI).toUri()
 
 inline val MediaMetadataCompat.userRating
     get() = getLong(MediaMetadataCompat.METADATA_KEY_USER_RATING)
@@ -192,29 +192,28 @@ fun MediaMetadataCompat.toMediaSource(dataSourceFactory: DataSource.Factory): Pr
         .createMediaSource(mediaUri)
 
 
-fun Iterable<MediaMetadataCompat>.toMediaSource(dataSourceFactory: DataSource.Factory): ConcatenatingMediaSource {
-    val concatenatingMediaSource = ConcatenatingMediaSource()
-    forEach {
-        concatenatingMediaSource.addMediaSource(it.toMediaSource(dataSourceFactory))
+fun Iterable<MediaMetadataCompat>.toMediaSource(dataSourceFactory: DataSource.Factory) =
+    ConcatenatingMediaSource().apply {
+        this@toMediaSource.forEach {
+            addMediaSource(it.toMediaSource(dataSourceFactory))
+        }
     }
-    return concatenatingMediaSource
-}
 
 
-fun MediaMetadataCompat.Builder.from(audioInfo: AudioInfo): MediaMetadataCompat.Builder {
-    id = audioInfo.id
-    title = audioInfo.details.title
-    artist = audioInfo.details.author
-    duration = audioInfo.details.duration
-    mediaUri = audioInfo.audioStreams.filter { it.extension == "WEBM" || it.extension == "M4A" }
-        .maxByOrNull { it.bitrate }!!.url
-    displayIconUri = audioInfo.thumbnails[1].url
-    albumArtUri = audioInfo.thumbnails.maxByOrNull { it.height }!!.url
-    flag = MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
-    downloadStatus = MediaDescriptionCompat.STATUS_NOT_DOWNLOADED
-
-    return this
-}
+fun MediaMetadataCompat.Builder.from(audioInfo: AudioInfo): MediaMetadataCompat.Builder =
+    this.apply {
+        id = audioInfo.id
+        title = audioInfo.details.title
+        artist = audioInfo.details.author
+        duration = audioInfo.details.duration
+        mediaUri = audioInfo.audioStreams
+            .filter { it.extension == "WEBM" || it.extension == "M4A" }
+            .maxByOrNull { it.bitrate }!!.url
+        displayIconUri = audioInfo.thumbnails[1].url
+        albumArtUri = audioInfo.thumbnails.maxByOrNull { it.height }!!.url
+        flag = MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
+        downloadStatus = MediaDescriptionCompat.STATUS_NOT_DOWNLOADED
+    }
 
 fun List<MediaMetadataCompat>.metadataEquals(other: List<MediaMetadataCompat>) =
     map { it.mediaUri.toString() } == other.map { it.mediaUri.toString() }

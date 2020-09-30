@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.nvvi9.ytaudio.databinding.FragmentPlayerBinding
 import com.nvvi9.ytaudio.di.Injectable
 import com.nvvi9.ytaudio.ui.adapters.PlayerListener
@@ -26,6 +27,7 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 class PlayerFragment :
     Fragment(),
+    PlayerListener,
     Injectable {
 
     @Inject
@@ -38,6 +40,10 @@ class PlayerFragment :
     }
 
     private var isUserSeeking = false
+
+    companion object {
+        fun newInstance() = PlayerFragment()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,21 +61,14 @@ class PlayerFragment :
                         ?: 0) / 100).toLong()
                 )
             }
-            onProgressChanged = { position, fromUser ->
+            onProgressChanged = { pos, fromUser ->
                 if (fromUser) {
-                    this@apply.position =
-                        (position * (playerViewModel.nowPlayingInfo.value?.durationMillis
-                            ?: 0) / 100).toInt()
+                    position = (pos * (playerViewModel.nowPlayingInfo.value?.durationMillis
+                        ?: 0) / 100).toInt()
                 }
             }
         }
-        listener = PlayerListener(
-            { playerViewModel.playPause() },
-            { playerViewModel.skipToNext() },
-            { playerViewModel.skipToPrevious() },
-            { playerViewModel.setRepeatMode() },
-            { playerViewModel.setShuffleMode() }
-        )
+        listener = this@PlayerFragment
         viewModel = playerViewModel
     }.also { binding = it }.root
 
@@ -86,8 +85,19 @@ class PlayerFragment :
 
             raw.observe(viewLifecycleOwner) {
                 it?.let {
-                    binding.progressBar
                     binding.progressBar.setRaw(it)
+                }
+            }
+
+            shuffleMode.observe(viewLifecycleOwner) {
+                it?.let {
+                    binding.shuffleState = it
+                }
+            }
+
+            repeatMode.observe(viewLifecycleOwner) {
+                it?.let {
+                    binding.repeatState = it
                 }
             }
 
@@ -110,7 +120,27 @@ class PlayerFragment :
         }
     }
 
-    companion object {
-        fun newInstance() = PlayerFragment()
+    override fun onPlayPauseClicked() {
+        playerViewModel.playPause()
+    }
+
+    override fun onSkipToNextClicked() {
+        playerViewModel.skipToNext()
+    }
+
+    override fun onSkipToPreviousClicked() {
+        playerViewModel.skipToPrevious()
+    }
+
+    override fun onRepeatButtonClicked() {
+        playerViewModel.setRepeatMode()
+    }
+
+    override fun onShuffleButtonClicked() {
+        playerViewModel.setShuffleMode()
+    }
+
+    override fun onBackButtonClicked() {
+        findNavController().navigateUp()
     }
 }

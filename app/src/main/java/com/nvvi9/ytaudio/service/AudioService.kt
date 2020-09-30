@@ -28,7 +28,9 @@ import javax.inject.Singleton
 
 
 @Singleton
-open class AudioService : MediaBrowserServiceCompat(), Player.EventListener,
+open class AudioService :
+    MediaBrowserServiceCompat(),
+    Player.EventListener,
     PlayerNotificationManager.NotificationListener {
 
     @Inject
@@ -59,35 +61,29 @@ open class AudioService : MediaBrowserServiceCompat(), Player.EventListener,
         AndroidInjection.inject(this)
         super.onCreate()
 
-        val sessionActivityPendingIntent =
-            packageManager.getLaunchIntentForPackage(packageName)
-                .let { PendingIntent.getActivity(this, 0, it, 0) }
-
-        mediaSession = MediaSessionCompat(this, javaClass.simpleName)
-            .apply {
-                setSessionActivity(sessionActivityPendingIntent)
-                isActive = true
-            }
-
+        mediaSession = MediaSessionCompat(this, javaClass.simpleName).apply {
+            setSessionActivity(
+                PendingIntent.getActivity(
+                    this@AudioService, 0, packageManager.getLaunchIntentForPackage(packageName), 0
+                )
+            )
+            isActive = true
+        }
         sessionToken = mediaSession.sessionToken
-
         notificationManager = NotificationManager(this, exoPlayer, mediaSession.sessionToken, this)
-
-        becomingNoisyReceiver =
-            BecomingNoisyReceiver(
-                this,
-                mediaSession.sessionToken
+        becomingNoisyReceiver = BecomingNoisyReceiver(this, mediaSession.sessionToken)
+        mediaSessionConnector = MediaSessionConnector(mediaSession).apply {
+            playbackPreparer = PlaybackPreparer(
+                playlistUseCases, exoPlayer, DefaultDataSourceFactory(
+                    this@AudioService,
+                    Util.getUserAgent(this@AudioService, YTAUDIO_USER_AGENT),
+                    null
+                )
             )
 
-        mediaSessionConnector = MediaSessionConnector(mediaSession).also {
-            val dataSourceFactory =
-                DefaultDataSourceFactory(this, Util.getUserAgent(this, YTAUDIO_USER_AGENT), null)
-
-            playbackPreparer = PlaybackPreparer(playlistUseCases, exoPlayer, dataSourceFactory)
-
-            it.setPlayer(exoPlayer)
-            it.setPlaybackPreparer(playbackPreparer)
-            it.setQueueNavigator(QueueNavigator(mediaSession))
+            setPlayer(exoPlayer)
+            setPlaybackPreparer(playbackPreparer)
+            setQueueNavigator(QueueNavigator(mediaSession))
         }
     }
 
@@ -112,7 +108,7 @@ open class AudioService : MediaBrowserServiceCompat(), Player.EventListener,
 
         exoPlayer.removeListener(this)
         exoPlayer.release()
-        playbackPreparer.onCancel()
+        playbackPreparer.cancel()
     }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
@@ -150,6 +146,14 @@ open class AudioService : MediaBrowserServiceCompat(), Player.EventListener,
             startForeground(notificationId, notification)
             isForegroundService = true
         }
+    }
+
+    override fun onRepeatModeChanged(repeatMode: Int) {
+        exoPlayer.repeatMode = repeatMode
+    }
+
+    override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+        exoPlayer.shuffleModeEnabled = shuffleModeEnabled
     }
 
     override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {

@@ -5,6 +5,7 @@ import android.media.AudioManager
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateInterpolator
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -77,6 +78,14 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
                             hideMiniPlayer()
                         }
                     }
+                }
+            }
+        }
+
+        mainActivityViewModel.networkFailure.observe(this) {
+            it?.getContentIfNotHandled()?.let { isNetworkFailure ->
+                if (isNetworkFailure) {
+                    Toast.makeText(this, "Check your connection", Toast.LENGTH_SHORT).show()
                 }
             }
         }

@@ -6,14 +6,16 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import com.nvvi9.ytaudio.R
 import com.nvvi9.ytaudio.service.AudioServiceConnection
 import com.nvvi9.ytaudio.service.EMPTY_PLAYBACK_STATE
 import com.nvvi9.ytaudio.service.NOTHING_PLAYING
 import com.nvvi9.ytaudio.utils.extensions.*
 import com.nvvi9.ytaudio.vo.NowPlayingInfo
-import com.nvvi9.ytaudio.vo.PlaybackState
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -36,10 +38,8 @@ class PlayerViewModel @Inject constructor(
     private val _raw = MutableLiveData<ByteArray>().apply { postValue(byteArrayOf()) }
     val raw: LiveData<ByteArray> get() = _raw
 
-    val playbackState: LiveData<PlaybackState>
-        get() = Transformations.map(audioServiceConnection.playbackState) {
-            PlaybackState.fromPlaybackStateCompat(it)
-        }
+    val shuffleMode = audioServiceConnection.shuffleMode
+    val repeatMode = audioServiceConnection.repeatMode
 
     init {
         Log.i("PlayerViewModel", "initialized")
@@ -102,7 +102,6 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-
     fun seekTo(positionMillis: Long) {
         audioServiceConnection.transportControls.seekTo(positionMillis)
     }
@@ -117,7 +116,7 @@ class PlayerViewModel @Inject constructor(
 
     fun setRepeatMode() {
         audioServiceConnection.transportControls.setRepeatMode(
-            when (playbackState.value?.repeatMode ?: PlaybackState()) {
+            when (repeatMode.value) {
                 REPEAT_MODE_ONE -> REPEAT_MODE_ALL
                 REPEAT_MODE_ALL -> REPEAT_MODE_NONE
                 else -> REPEAT_MODE_ONE
@@ -127,7 +126,7 @@ class PlayerViewModel @Inject constructor(
 
     fun setShuffleMode() {
         audioServiceConnection.transportControls.setShuffleMode(
-            when (playbackState.value?.repeatMode ?: PlaybackState()) {
+            when (shuffleMode.value) {
                 SHUFFLE_MODE_ALL -> SHUFFLE_MODE_NONE
                 else -> SHUFFLE_MODE_ALL
             }

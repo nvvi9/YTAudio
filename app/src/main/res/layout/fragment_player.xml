@@ -6,6 +6,14 @@
     <data>
 
         <variable
+            name="repeatState"
+            type="Integer" />
+
+        <variable
+            name="shuffleState"
+            type="Integer" />
+
+        <variable
             name="position"
             type="Integer" />
 
@@ -46,7 +54,8 @@
                 android:id="@+id/back_button"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:background="@drawable/button_ripple"
+                android:background="@drawable/round_selector"
+                android:onClick="@{() -> listener.onBackButtonClicked()}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_arrow_back" />
@@ -55,7 +64,7 @@
                 android:id="@+id/menu"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:background="@drawable/button_ripple"
+                android:background="@drawable/round_selector"
                 android:src="@drawable/ic_more"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -197,28 +206,27 @@
 
             <ImageButton
                 android:id="@+id/prev_button"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginStart="8dp"
                 android:background="@drawable/round_selector"
                 android:onClick="@{() -> listener.onSkipToPreviousClicked()}"
-                android:scaleType="centerCrop"
+                android:scaleType="fitCenter"
                 app:layout_constraintBottom_toBottomOf="@id/play_pause_button"
                 app:layout_constraintEnd_toStartOf="@id/play_pause_button"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/play_pause_button"
                 app:srcCompat="@drawable/ic_skip_previous" />
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
+            <ImageButton
                 android:id="@+id/play_pause_button"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:layout_marginTop="5dp"
                 android:background="@drawable/round_selector"
-                android:clickable="true"
-                android:elevation="2dp"
-                android:focusable="true"
-                android:onClick="@{() -> listener.onPlayPauseClicked(nowPlaying.id)}"
+                android:onClick="@{() -> listener.onPlayPauseClicked()}"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -228,8 +236,8 @@
 
             <ImageButton
                 android:id="@+id/next_button"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginEnd="8dp"
                 android:background="@drawable/round_selector"
                 android:onClick="@{() -> listener.onSkipToNextClicked()}"
@@ -262,7 +270,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shuffleMode="@{viewModel.playbackState.shuffleMode}" />
+                app:shuffleMode="@{shuffleState}" />
 
             <ImageButton
                 android:id="@+id/repeat_button"
@@ -275,7 +283,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:repeatMode="@{viewModel.playbackState.repeatMode}" />
+                app:repeatMode="@{repeatState}" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

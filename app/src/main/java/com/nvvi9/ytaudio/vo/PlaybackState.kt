@@ -11,6 +11,9 @@ class PlaybackState(
     val state: Int = 0
 ) {
 
+    override fun toString() =
+        "PlaybackState(position=${position}"
+
     companion object {
         fun fromPlaybackStateCompat(playbackState: PlaybackStateCompat) =
             with(playbackState.extras) {

@@ -103,6 +103,7 @@
                             android:scrollHorizontally="true"
                             android:singleLine="true"
                             android:text="@{nowPlaying.title}"
+                            android:textAppearance="?attr/textAppearanceSubtitle1"
                             android:textSize="16sp"
                             android:textStyle="bold" />
                     </RelativeLayout>
@@ -120,6 +121,7 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="@{nowPlaying.author}"
+                            android:textAppearance="?attr/textAppearanceSubtitle2"
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
