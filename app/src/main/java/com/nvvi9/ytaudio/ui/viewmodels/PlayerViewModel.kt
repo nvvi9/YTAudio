@@ -27,16 +27,16 @@ class PlayerViewModel @Inject constructor(
     private var playbackStateCompat = EMPTY_PLAYBACK_STATE
 
     private val _nowPlayingInfo = MutableLiveData<NowPlayingInfo>()
-    val nowPlayingInfo: LiveData<NowPlayingInfo> get() = _nowPlayingInfo
+    val nowPlayingInfo: LiveData<NowPlayingInfo> = _nowPlayingInfo
 
     private val _currentPositionMillis = MutableLiveData<Long>()
-    val currentPositionMillis: LiveData<Long> get() = _currentPositionMillis
+    val currentPositionMillis: LiveData<Long> = _currentPositionMillis
 
     private val _currentButtonRes = MutableLiveData<Int>()
-    val currentButtonRes: LiveData<Int> get() = _currentButtonRes
+    val currentButtonRes: LiveData<Int> = _currentButtonRes
 
     private val _raw = MutableLiveData<ByteArray>().apply { postValue(byteArrayOf()) }
-    val raw: LiveData<ByteArray> get() = _raw
+    val raw: LiveData<ByteArray> = _raw
 
     val shuffleMode = audioServiceConnection.shuffleMode
     val repeatMode = audioServiceConnection.repeatMode
@@ -137,16 +137,10 @@ class PlayerViewModel @Inject constructor(
         playbackStateCompat: PlaybackStateCompat,
         metadata: MediaMetadataCompat
     ) {
-        metadata.takeIf { it.duration != 0L && it.id != null }?.let {
-            if (it.id != nowPlayingInfo.value?.id) {
-                _raw.postValue(Random.nextBytes(it.duration.toInt() * 1000))
-            }
-            _nowPlayingInfo.postValue(
-                NowPlayingInfo(
-                    it.id, it.title, it.displaySubtitle, it.albumArtUri, it.duration * 1000
-                )
-            )
-        }
+        metadata.takeIf { it.duration != 0L && it.id != null && it.id != nowPlayingInfo.value?.id }
+            ?.let { _raw.postValue(Random.nextBytes(it.duration.toInt() * 1000)) }
+
+        _nowPlayingInfo.postValue(metadata.toNowPlayingInfo())
 
         _currentButtonRes.postValue(
             if (playbackStateCompat.isPlaying) R.drawable.ic_pause else R.drawable.ic_play_arrow

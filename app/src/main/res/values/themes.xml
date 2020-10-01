@@ -24,9 +24,12 @@
         <item name="android:statusBarColor">@color/yta_blue_50_alpha_060</item>
         <item name="android:navigationBarColor">@color/nav_bar</item>
 
-        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.YTAudio.SmallComponent</item>
-        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.YTAudio.MediumComponent</item>
-        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.YTAudio.LargeComponent</item>
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.YTAudio.SmallComponent
+        </item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.YTAudio.MediumComponent
+        </item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.YTAudio.LargeComponent
+        </item>
 
         <item name="textAppearanceHeadline2">@style/TextAppearance.YTAudio.Headline2</item>
         <item name="textAppearanceHeadline3">@style/TextAppearance.YTAudio.Headline3</item>
@@ -49,11 +52,21 @@
         <item name="motionInterpolatorIncoming">@android:interpolator/decelerate_cubic</item>
         <item name="motionInterpolatorOutgoing">@android:interpolator/accelerate_cubic</item>
 
-        <item name="bottomAppBarStyle">@style/Widget.MaterialComponents.BottomAppBar.PrimarySurface</item>
+        <item name="bottomAppBarStyle">
+            @style/Widget.MaterialComponents.BottomAppBar.PrimarySurface
+        </item>
         <item name="bottomSheetStyle">@style/Widget.MaterialComponents.BottomSheet.Modal</item>
         <item name="navigationViewStyle">@style/Widget.YTAudio.NavigationView</item>
 
         <item name="android:windowBackground">?android:colorBackground</item>
         <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+    </style>
+
+    <style name="ThemeOverlay.YTAudio.Light" parent="@style/ThemeOverlay.MaterialComponents.Light">
+        <item name="colorPrimary">@color/yta_blue_50</item>
+        <item name="colorPrimaryVariant">@color/yta_white_50</item>
+        <item name="colorSecondary">@color/yta_orange_500</item>
+        <item name="colorSecondaryVariant">@color/yta_orange_400</item>
+        <item name="colorOnPrimary">#fff</item>
     </style>
 </resources>

@@ -10,4 +10,7 @@ class PlaylistRepository @Inject constructor(private val audioInfoDao: AudioInfo
 
     fun getAudioInfo() =
         audioInfoDao.getAllAudio()
+
+    suspend fun getAllAudioInfo() =
+        audioInfoDao.getAllAudioInfo()
 }

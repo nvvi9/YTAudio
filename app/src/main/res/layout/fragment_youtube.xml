@@ -5,6 +5,12 @@
 
     <data>
 
+        <import type="androidx.lifecycle.LiveData" />
+
+        <import type="com.nvvi9.ytaudio.ui.adapters.YTLoadState" />
+
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel" />
@@ -19,9 +25,10 @@
         app:paddingTopSystemWindowInsets="@{true}">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@null"
+            android:theme="@style/ThemeOverlay.YTAudio.Light"
             app:liftOnScroll="true">
 
             <androidx.appcompat.widget.Toolbar
@@ -60,20 +67,11 @@
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <ProgressBar
-            android:id="@+id/progress_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            app:loadState="@{viewModel.loadState}">
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/item_youtube_view"

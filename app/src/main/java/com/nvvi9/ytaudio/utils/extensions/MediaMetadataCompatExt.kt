@@ -11,6 +11,7 @@ import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 import com.nvvi9.ytaudio.data.audioinfo.AudioInfo
+import com.nvvi9.ytaudio.vo.NowPlayingInfo
 
 
 inline val MediaMetadataCompat.id: String?
@@ -70,8 +71,8 @@ inline val MediaMetadataCompat.artUri: Uri
 inline val MediaMetadataCompat.albumArt: Bitmap?
     get() = getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART)
 
-inline val MediaMetadataCompat.albumArtUri: Uri
-    get() = getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI).toUri()
+inline val MediaMetadataCompat.albumArtUri: Uri?
+    get() = getString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI)?.toUri()
 
 inline val MediaMetadataCompat.userRating
     get() = getLong(MediaMetadataCompat.METADATA_KEY_USER_RATING)
@@ -215,8 +216,8 @@ fun MediaMetadataCompat.Builder.from(audioInfo: AudioInfo): MediaMetadataCompat.
         downloadStatus = MediaDescriptionCompat.STATUS_NOT_DOWNLOADED
     }
 
-fun List<MediaMetadataCompat>.metadataEquals(other: List<MediaMetadataCompat>) =
-    map { it.mediaUri.toString() } == other.map { it.mediaUri.toString() }
+fun MediaMetadataCompat.toNowPlayingInfo() =
+    albumArtUri?.let { NowPlayingInfo(id, title, displaySubtitle, it, duration * 1000) }
 
 
 const val METADATA_KEY_FLAGS = "com.example.ytaudio.service.METADATA_KEY_FLAGS"

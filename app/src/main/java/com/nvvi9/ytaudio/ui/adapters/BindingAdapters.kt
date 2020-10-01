@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -143,12 +144,13 @@ fun View.bindLayoutFullscreen(previousFullscreen: Boolean, fullscreen: Boolean) 
 }
 
 @BindingAdapter("loadState")
-fun SwipeRefreshLayout.setLoadState(loadState: YTLoadState?) {
-    visibility = if (loadState == YTLoadState.Empty) {
-        View.VISIBLE
-    } else {
-        View.GONE
-    }
+fun ProgressBar.setLoadState(loadState: YTLoadState?) {
+    visibility = if (loadState == YTLoadState.Empty) View.VISIBLE else View.GONE
+}
+
+@BindingAdapter("updateState")
+fun SwipeRefreshLayout.setUpdatingState(loadState: YTLoadState?) {
+    isRefreshing = loadState == YTLoadState.Loading
 }
 
 @BindingAdapter(

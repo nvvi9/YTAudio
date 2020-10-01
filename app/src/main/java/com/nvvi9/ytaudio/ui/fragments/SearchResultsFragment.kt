@@ -28,7 +28,7 @@ import com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel
 import com.nvvi9.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,19 +41,18 @@ class SearchResultsFragment : YouTubeIntentFragment(), YTItemListener, Injectabl
     @Inject
     lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
 
+    @Inject
+    lateinit var mainViewModelFactory: ViewModelProvider.Factory
+
     private val youTubeViewModel: YouTubeViewModel by viewModels {
         youTubeViewModelFactory
     }
-
-    @Inject
-    lateinit var mainViewModelFactory: ViewModelProvider.Factory
 
     private val mainViewModel: MainViewModel by viewModels {
         mainViewModelFactory
     }
 
     private lateinit var binding: FragmentSearchResultsBinding
-    private var job: Job? = null
     private val navArgs: SearchResultsFragmentArgs by navArgs()
     private val youTubeItemsAdapter = YTItemAdapter(this)
 
@@ -152,10 +151,14 @@ class SearchResultsFragment : YouTubeIntentFragment(), YTItemListener, Injectabl
     }
 
     private fun setItems(items: PagingData<YouTubeItem>) {
-        job?.cancel()
-        job = lifecycleScope.launch {
+        lifecycleScope.launch {
             youTubeItemsAdapter.submitData(items)
             binding.itemYoutubeView.layoutManager?.scrollToPosition(0)
+        }
+        lifecycleScope.launch {
+            youTubeItemsAdapter.loadStateFlow.collectLatest {
+                binding.loadState = it.refresh
+            }
         }
     }
 }

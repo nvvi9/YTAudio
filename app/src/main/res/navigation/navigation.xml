@@ -37,9 +37,6 @@
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_searchFragment_to_youTubeFragment"
-            app:destination="@id/youTubeFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchResultsFragment"

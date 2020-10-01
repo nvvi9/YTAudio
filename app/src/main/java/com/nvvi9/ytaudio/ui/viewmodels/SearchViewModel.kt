@@ -14,12 +14,11 @@ class SearchViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _autoComplete = MutableLiveData<List<String>>()
-    val autoComplete: LiveData<List<String>>
-        get() = _autoComplete
+    val autoComplete: LiveData<List<String>> = _autoComplete
 
     fun setAutocomplete(query: String) {
         viewModelScope.launch {
-            _autoComplete.value = searchUseCases.getAutoCompleteList(query)
+            _autoComplete.postValue(searchUseCases.getAutoCompleteList(query))
         }
     }
 }

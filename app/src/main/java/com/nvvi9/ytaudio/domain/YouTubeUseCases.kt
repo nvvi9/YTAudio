@@ -2,6 +2,7 @@ package com.nvvi9.ytaudio.domain
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.map
+import com.nvvi9.ytaudio.repositories.PlaylistRepository
 import com.nvvi9.ytaudio.repositories.YouTubeRepository
 import com.nvvi9.ytaudio.vo.toYouTubeItem
 import kotlinx.coroutines.Dispatchers
@@ -17,23 +18,23 @@ import javax.inject.Singleton
 @ExperimentalCoroutinesApi
 @Singleton
 @ExperimentalPagingApi
-class YouTubeUseCases @Inject constructor(private val repository: YouTubeRepository) : UseCases {
+class YouTubeUseCases @Inject constructor(
+    private val youTubeRepository: YouTubeRepository,
+    private val playlistRepository: PlaylistRepository
+) : UseCases {
 
     fun getRecommendedYouTubeItems() =
-        repository.getVideosResponse()
-            .map { details ->
-                details.map { it.toYouTubeItem() }
-            }.flowOn(Dispatchers.IO)
+        youTubeRepository.getVideosResponse()
+            .map { details -> details.map { it.toYouTubeItem() } }
+            .flowOn(Dispatchers.IO)
 
     fun getPopularYouTubeItems() =
-        repository.getPopularResponse()
-            .map { details ->
-                details.map { it.toYouTubeItem() }
-            }.flowOn(Dispatchers.IO)
+        youTubeRepository.getPopularResponse()
+            .map { details -> details.map { it.toYouTubeItem() } }
+            .flowOn(Dispatchers.IO)
 
     fun getYouTubeItemsFromQuery(query: String) =
-        repository.getSearchResponse(query)
-            .map { details ->
-                details.map { it.toYouTubeItem() }
-            }.flowOn(Dispatchers.IO)
+        youTubeRepository.getSearchResponse(query)
+            .map { details -> details.map { it.toYouTubeItem() } }
+            .flowOn(Dispatchers.IO)
 }

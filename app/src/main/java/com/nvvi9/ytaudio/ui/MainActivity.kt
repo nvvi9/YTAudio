@@ -159,6 +159,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
     }
 
     fun showBottomNav() {
+//        binding.bottomNav.show()
         binding.bottomNav.visibility = View.VISIBLE
 //        please(190, AccelerateInterpolator()) {
 //            animate(binding.bottomNav) {
@@ -168,6 +169,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
     }
 
     fun hideBottomNav() {
+//        binding.bottomNav.hide()
         binding.bottomNav.visibility = View.GONE
 //        please(190, AccelerateInterpolator()) {
 //            animate(binding.bottomNav) {

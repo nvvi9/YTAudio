@@ -3,7 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="androidx.paging.LoadState" />
+
+        <variable
+            name="loadState"
+            type="androidx.paging.LoadState" />
+    </data>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -12,53 +23,47 @@
         app:paddingRightSystemWindowInsets="@{true}"
         app:paddingTopSystemWindowInsets="@{true}">
 
-        <com.google.android.material.appbar.AppBarLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/search_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@null">
+            android:layout_alignParentTop="true"
+            android:clipChildren="false"
+            app:contentInsetStartWithNavigation="0dp"
+            app:navigationIcon="@drawable/ic_arrow_back">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/search_toolbar"
+            <EditText
+                android:id="@+id/search_query"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipChildren="false"
-                app:contentInsetStartWithNavigation="0dp"
-                app:navigationIcon="@drawable/ic_arrow_back">
-
-                <EditText
-                    android:id="@+id/search_query"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@null"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:hint="@string/search_hint"
-                    android:imeOptions="flagNoExtractUi|actionSearch"
-                    android:inputType="textNoSuggestions" />
-            </androidx.appcompat.widget.Toolbar>
-        </com.google.android.material.appbar.AppBarLayout>
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:background="@null"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:hint="@string/search_hint"
+                android:imeOptions="flagNoExtractUi|actionSearch"
+                android:inputType="textNoSuggestions" />
+        </androidx.appcompat.widget.Toolbar>
 
         <ProgressBar
             android:id="@+id/progress_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
+            android:layout_centerInParent="true"
+            android:visibility="@{loadState instanceof LoadState.Loading ? View.VISIBLE : View.GONE}"
             tools:visibility="visible" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/item_youtube_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/search_toolbar"
             android:clipToPadding="false"
             android:overScrollMode="never"
             android:paddingTop="2dp"
             android:transitionGroup="true"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="@id/search_toolbar"
             tools:listitem="@layout/item_youtube" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </RelativeLayout>
 </layout>

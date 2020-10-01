@@ -51,8 +51,10 @@ fun BottomNavigationView.show() {
     ValueAnimator.ofInt(parent.height, top).apply {
         startDelay = 100L
         duration = 300L
-        interpolator =
-            AnimationUtils.loadInterpolator(context, android.R.interpolator.linear_out_slow_in)
+        interpolator = AnimationUtils.loadInterpolator(
+            context,
+            android.R.interpolator.linear_out_slow_in
+        )
         addUpdateListener {
             val newTop = it.animatedValue as Int
             drawable.setBounds(left, newTop, right, newTop + height)

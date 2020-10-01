@@ -82,6 +82,7 @@ class PlaybackPreparer(
         exoPlayer.setMediaSource(new.toMediaSource(dataSourceFactory))
         if (currentMetadata.isNotEmpty()) {
             try {
+                exoPlayer.prepare()
                 exoPlayer.seekTo(window, position)
             } catch (e: IllegalSeekPositionException) {
                 exoPlayer.seekToDefaultPosition(currentMetadata.size - 1)

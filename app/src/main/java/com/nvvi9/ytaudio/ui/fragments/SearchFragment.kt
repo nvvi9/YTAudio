@@ -53,7 +53,7 @@ class SearchFragment :
             viewModel = searchViewModel
 
             searchToolbar.setNavigationOnClickListener {
-                findNavController().navigate(SearchFragmentDirections.actionSearchFragmentToYouTubeFragment())
+                findNavController().navigateUp()
             }
 
             recyclerView.run {

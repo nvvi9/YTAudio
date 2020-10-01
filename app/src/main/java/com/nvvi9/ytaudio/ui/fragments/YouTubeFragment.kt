@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.ExperimentalPagingApi
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.nvvi9.ytaudio.R
@@ -25,7 +26,7 @@ import com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel
 import com.nvvi9.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -54,7 +55,6 @@ class YouTubeFragment :
 
     private lateinit var binding: FragmentYoutubeBinding
     private val youTubeItemsAdapter = YTItemAdapter(this)
-    private var job: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,6 +69,7 @@ class YouTubeFragment :
         }
         swipeRefresh.setOnRefreshListener {
             youTubeItemsAdapter.refresh()
+            swipeRefresh.isRefreshing = true
         }
         searchButton.setOnClickListener {
             findNavController().navigate(YouTubeFragmentDirections.actionYouTubeFragmentToSearchFragment())
@@ -132,10 +133,14 @@ class YouTubeFragment :
     }
 
     private fun setRecommended(items: PagingData<YouTubeItem>) {
-        job?.cancel()
-        job = lifecycleScope.launch {
+        lifecycleScope.launch {
             youTubeItemsAdapter.submitData(items)
             binding.itemYoutubeView.layoutManager?.scrollToPosition(0)
+        }
+        lifecycleScope.launch {
+            youTubeItemsAdapter.loadStateFlow.collectLatest {
+                binding.swipeRefresh.isRefreshing = it.refresh is LoadState.Loading
+            }
         }
     }
 }
