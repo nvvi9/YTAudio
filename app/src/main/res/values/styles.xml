@@ -1,16 +1,6 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
-    <style name="YTAudioTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="windowActionModeOverlay">true</item>
-    </style>
 
     <style name="Widget.YTAudio.NavigationView" parent="Widget.MaterialComponents.NavigationView">
         <item name="insetForeground">@android:color/transparent</item>
@@ -21,7 +11,4 @@
         <item name="itemIconTint">@color/color_on_surface_emphasis_medium</item>
     </style>
 
-    <style name="AppTheme.Launcher">
-        <item name="android:windowBackground">@drawable/launch_screen</item>
-    </style>
 </resources>

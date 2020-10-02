@@ -22,8 +22,6 @@ import javax.inject.Singleton
 class AudioServiceConnection(private val context: Context, serviceComponent: ComponentName) :
     MediaBrowserCompat.ConnectionCallback() {
 
-    val rootMediaId get() = mediaBrowser.root
-
     private val _isConnected = MutableLiveData<Boolean>().apply { postValue(false) }
     val isConnected: LiveData<Boolean> get() = _isConnected
 
@@ -47,7 +45,9 @@ class AudioServiceConnection(private val context: Context, serviceComponent: Com
     private val _shuffleMode = MutableLiveData<Int>().apply { postValue(SHUFFLE_MODE_NONE) }
     val shuffleMode: LiveData<Int> get() = _shuffleMode
 
-    lateinit var mediaController: MediaControllerCompat
+    val rootMediaId get() = mediaBrowser.root
+
+    private lateinit var mediaController: MediaControllerCompat
 
     private val mediaBrowser =
         MediaBrowserCompat(context, serviceComponent, this, null).apply {

@@ -8,6 +8,7 @@ import com.nvvi9.ytaudio.di.keys.ViewModelKey
 import com.nvvi9.ytaudio.ui.viewmodels.*
 import dagger.Binds
 import dagger.Module
+import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -20,11 +21,14 @@ import javax.inject.Singleton
 @ExperimentalPagingApi
 abstract class ViewModelModule {
 
+    @ContributesAndroidInjector
+    abstract fun contributeYouTubeBaseViewModel(): YouTubeBaseViewModel
+
     @Binds
     @IntoMap
     @Singleton
     @ViewModelKey(MainViewModel::class)
-    abstract fun bindMainActivityViewModel(mainViewModel: MainViewModel): ViewModel
+    abstract fun bindMainViewModel(mainViewModel: MainViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -45,6 +49,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(YouTubeViewModel::class)
     abstract fun bindYouTubeViewModel(youTubeViewModel: YouTubeViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SearchResultsViewModel::class)
+    abstract fun bindSearchResultsViewModel(searchResultsViewModel: SearchResultsViewModel): ViewModel
 
     @Binds
     @Singleton

@@ -5,15 +5,11 @@
 
     <data>
 
-        <import type="androidx.lifecycle.LiveData" />
-
-        <import type="com.nvvi9.ytaudio.ui.adapters.YTLoadState" />
-
         <import type="android.view.View" />
 
         <variable
             name="viewModel"
-            type="com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel" />
+            type="com.nvvi9.ytaudio.ui.viewmodels.YouTubeBaseViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

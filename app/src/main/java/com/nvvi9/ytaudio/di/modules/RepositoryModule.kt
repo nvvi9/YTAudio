@@ -19,7 +19,6 @@ abstract class RepositoryModule {
 
     @ExperimentalPagingApi
     @Binds
-    @Singleton
     abstract fun bindYouTubeRepository(youTubeRepository: YouTubeRepository): Repository
 
     @Binds
@@ -27,6 +26,5 @@ abstract class RepositoryModule {
     abstract fun bindSearchRepository(searchRepository: SearchRepository): Repository
 
     @Binds
-    @Singleton
     abstract fun bindAudioInfoRepository(audioInfoRepository: AudioInfoRepository): Repository
 }

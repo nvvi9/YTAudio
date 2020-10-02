@@ -23,8 +23,7 @@ import com.nvvi9.ytaudio.ui.adapters.ReboundingSwipeActionCallback
 import com.nvvi9.ytaudio.ui.adapters.YTItemAdapter
 import com.nvvi9.ytaudio.ui.adapters.YTItemListener
 import com.nvvi9.ytaudio.ui.adapters.YTLoadStateAdapter
-import com.nvvi9.ytaudio.ui.viewmodels.MainViewModel
-import com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel
+import com.nvvi9.ytaudio.ui.viewmodels.SearchResultsViewModel
 import com.nvvi9.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -44,15 +43,8 @@ class SearchResultsFragment :
     @Inject
     lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
 
-    @Inject
-    lateinit var mainViewModelFactory: ViewModelProvider.Factory
-
-    private val youTubeViewModel: YouTubeViewModel by viewModels {
+    private val searchResultsViewModel: SearchResultsViewModel by viewModels {
         youTubeViewModelFactory
-    }
-
-    private val mainViewModel: MainViewModel by viewModels {
-        mainViewModelFactory
     }
 
     private lateinit var binding: FragmentSearchResultsBinding
@@ -99,7 +91,7 @@ class SearchResultsFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         postponeEnterTransition()
         view.doOnPreDraw { startPostponedEnterTransition() }
-        youTubeViewModel.run {
+        searchResultsViewModel.run {
             errorEvent.observe(viewLifecycleOwner) { event ->
                 event.getContentIfNotHandled()?.let {
                     Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -116,7 +108,7 @@ class SearchResultsFragment :
 
     override fun onResume() {
         super.onResume()
-        youTubeViewModel.updateYTItems(navArgs.query)
+        searchResultsViewModel.updateYTItems(navArgs.query)
     }
 
     override fun onItemClicked(cardView: View, item: YouTubeItem) {
@@ -135,7 +127,7 @@ class SearchResultsFragment :
                     true
                 }
                 R.id.menu_add -> {
-                    mainViewModel.addToPlaylist(item.id)
+                    searchResultsViewModel.addToPlaylist(item.id)
                     true
                 }
                 else -> false
@@ -147,9 +139,9 @@ class SearchResultsFragment :
     override fun onItemIconChanged(item: YouTubeItem, newValue: Boolean) {
         item.isAdded = newValue
         if (newValue) {
-            mainViewModel.addToPlaylist(item.id)
+            searchResultsViewModel.addToPlaylist(item.id)
         } else {
-            mainViewModel.deleteFromPlaylist(item.id)
+            searchResultsViewModel.deleteFromPlaylist(item.id)
         }
     }
 

@@ -31,7 +31,6 @@ class AppModule {
             .build()
 
     @Provides
-    @Singleton
     fun providePlaylistDao(database: AudioDatabase) =
         database.audioInfoDao
 
@@ -51,7 +50,6 @@ class AppModule {
         AudioServiceConnection.getInstance(
             context, ComponentName(context, AudioService::class.java)
         )
-
 
     @Provides
     fun provideYTStream() = YTStream()

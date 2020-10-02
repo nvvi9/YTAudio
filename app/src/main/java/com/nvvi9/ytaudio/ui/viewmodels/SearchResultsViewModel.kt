@@ -7,20 +7,19 @@ import com.nvvi9.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 
 @FlowPreview
 @ExperimentalCoroutinesApi
 @ExperimentalPagingApi
-class YouTubeViewModel @Inject constructor(
+class SearchResultsViewModel @Inject constructor(
     private val youTubeUseCases: YouTubeUseCases
 ) : YouTubeBaseViewModel() {
 
-    init {
-        updateYTItems()
-    }
-
     override fun loadItems(query: String?): Flow<PagingData<YouTubeItem>?> =
-        youTubeUseCases.getPopularYouTubeItems()
+        query?.let {
+            youTubeUseCases.getYouTubeItemsFromQuery(query)
+        } ?: flow { emit(null) }
 }

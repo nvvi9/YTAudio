@@ -23,10 +23,14 @@ import com.nvvi9.ytaudio.service.playback.QueueNavigator
 import com.nvvi9.ytaudio.utils.Constants.MEDIA_ROOT_ID
 import com.nvvi9.ytaudio.utils.extensions.flag
 import dagger.android.AndroidInjection
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 import javax.inject.Singleton
 
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 @Singleton
 open class AudioService :
     MediaBrowserServiceCompat(),

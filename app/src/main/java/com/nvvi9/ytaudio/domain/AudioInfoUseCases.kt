@@ -1,16 +1,14 @@
 package com.nvvi9.ytaudio.domain
 
 import androidx.lifecycle.map
-import com.nvvi9.ytaudio.data.audioinfo.AudioInfo
 import com.nvvi9.ytaudio.repositories.AudioInfoRepository
 import com.nvvi9.ytaudio.utils.extensions.toMediaMetadataList
 import com.nvvi9.ytaudio.vo.PlaylistItem
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
-import javax.inject.Singleton
 
 
-@Singleton
 @ExperimentalCoroutinesApi
 @FlowPreview
 class AudioInfoUseCases @Inject constructor(
@@ -40,11 +38,5 @@ class AudioInfoUseCases @Inject constructor(
 
     suspend fun addToPlaylist(id: String) {
         audioInfoRepository.insertIntoDatabase(id)
-    }
-
-    private fun update(audioInfo: List<AudioInfo>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            audioInfoRepository.updateById(*audioInfo.map { it.id }.toTypedArray())
-        }
     }
 }

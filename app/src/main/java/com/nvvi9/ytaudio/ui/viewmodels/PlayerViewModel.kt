@@ -52,7 +52,7 @@ class PlayerViewModel @Inject constructor(
         playbackStateCompat.currentPlayBackPosition.takeIf {
             it != currentPositionMillis.value
         }?.let {
-            updateTimePosition(it)
+            _currentPositionMillis.postValue(it)
         }
         if (updatePosition) {
             checkPlaybackPosition()
@@ -85,10 +85,6 @@ class PlayerViewModel @Inject constructor(
         audioServiceConnection.playbackState.removeObserver(playbackStateObserver)
         audioServiceConnection.nowPlaying.removeObserver(mediaMetadataObserver)
         updatePosition = false
-    }
-
-    fun updateTimePosition(new: Long) {
-        _currentPositionMillis.postValue(new)
     }
 
     fun playPause() {

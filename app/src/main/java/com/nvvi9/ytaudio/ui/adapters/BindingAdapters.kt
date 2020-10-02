@@ -10,11 +10,9 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.ProgressBar
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -141,16 +139,6 @@ fun View.bindLayoutFullscreen(previousFullscreen: Boolean, fullscreen: Boolean) 
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     }
-}
-
-@BindingAdapter("loadState")
-fun ProgressBar.setLoadState(loadState: YTLoadState?) {
-    visibility = if (loadState == YTLoadState.Empty) View.VISIBLE else View.GONE
-}
-
-@BindingAdapter("updateState")
-fun SwipeRefreshLayout.setUpdatingState(loadState: YTLoadState?) {
-    isRefreshing = loadState == YTLoadState.Loading
 }
 
 @BindingAdapter(

@@ -10,16 +10,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Singleton
 
 
 @ExperimentalCoroutinesApi
 @FlowPreview
-@Singleton
-class PlaylistViewModel
-@Inject constructor(
-    private val audioInfoUseCases: AudioInfoUseCases,
+class PlaylistViewModel @Inject constructor(
     private val audioInfoRepository: AudioInfoRepository,
+    audioInfoUseCases: AudioInfoUseCases,
     audioServiceConnection: AudioServiceConnection
 ) : ViewModel() {
 

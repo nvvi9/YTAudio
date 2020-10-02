@@ -41,10 +41,6 @@ class PlayerFragment :
 
     private var isUserSeeking = false
 
-    companion object {
-        fun newInstance() = PlayerFragment()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

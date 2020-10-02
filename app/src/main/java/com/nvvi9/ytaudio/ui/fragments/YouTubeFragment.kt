@@ -21,7 +21,6 @@ import com.nvvi9.ytaudio.ui.adapters.ReboundingSwipeActionCallback
 import com.nvvi9.ytaudio.ui.adapters.YTItemAdapter
 import com.nvvi9.ytaudio.ui.adapters.YTItemListener
 import com.nvvi9.ytaudio.ui.adapters.YTLoadStateAdapter
-import com.nvvi9.ytaudio.ui.viewmodels.MainViewModel
 import com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel
 import com.nvvi9.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,15 +41,8 @@ class YouTubeFragment :
     @Inject
     lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
 
-    @Inject
-    lateinit var mainViewModelFactory: ViewModelProvider.Factory
-
     private val youTubeViewModel: YouTubeViewModel by viewModels {
         youTubeViewModelFactory
-    }
-
-    private val mainViewModel: MainViewModel by viewModels {
-        mainViewModelFactory
     }
 
     private lateinit var binding: FragmentYoutubeBinding
@@ -61,23 +53,25 @@ class YouTubeFragment :
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = FragmentYoutubeBinding.inflate(inflater).apply {
-        viewModel = youTubeViewModel
-        itemYoutubeView.run {
-            ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
-            adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
-            itemAnimator = null
+    ): View? {
+        binding = FragmentYoutubeBinding.inflate(inflater).apply {
+            viewModel = youTubeViewModel
+            itemYoutubeView.run {
+                ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
+                adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
+                itemAnimator = null
+            }
+            swipeRefresh.setOnRefreshListener {
+                youTubeItemsAdapter.refresh()
+            }
+            searchButton.setOnClickListener {
+                findNavController().navigate(YouTubeFragmentDirections.actionYouTubeFragmentToSearchFragment())
+            }
+            lifecycleOwner = this@YouTubeFragment
         }
-        swipeRefresh.setOnRefreshListener {
-            youTubeItemsAdapter.refresh()
-        }
-        searchButton.setOnClickListener {
-            findNavController().navigate(YouTubeFragmentDirections.actionYouTubeFragmentToSearchFragment())
-        }
-        lifecycleOwner = this@YouTubeFragment
-    }.also {
-        binding = it
-    }.root
+
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -93,8 +87,6 @@ class YouTubeFragment :
             youTubeItems.observe(viewLifecycleOwner) {
                 setRecommended(it)
             }
-
-            updateYTItems()
         }
     }
 
@@ -114,7 +106,7 @@ class YouTubeFragment :
                     true
                 }
                 R.id.menu_add -> {
-                    mainViewModel.addToPlaylist(item.id)
+                    youTubeViewModel.addToPlaylist(item.id)
                     true
                 }
                 else -> false
@@ -126,9 +118,9 @@ class YouTubeFragment :
     override fun onItemIconChanged(item: YouTubeItem, newValue: Boolean) {
         item.isAdded = newValue
         if (newValue) {
-            mainViewModel.addToPlaylist(item.id)
+            youTubeViewModel.addToPlaylist(item.id)
         } else {
-            mainViewModel.deleteFromPlaylist(item.id)
+            youTubeViewModel.deleteFromPlaylist(item.id)
         }
     }
 

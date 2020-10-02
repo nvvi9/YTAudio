@@ -13,10 +13,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
+import androidx.paging.ExperimentalPagingApi
 import com.nvvi9.ytaudio.R
 import com.nvvi9.ytaudio.databinding.ActivityMainBinding
 import com.nvvi9.ytaudio.ui.viewmodels.MainViewModel
 import com.nvvi9.ytaudio.ui.viewmodels.PlayerViewModel
+import com.nvvi9.ytaudio.ui.viewmodels.YouTubeBaseViewModel
 import com.nvvi9.ytaudio.utils.extensions.*
 import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
@@ -28,27 +30,35 @@ import javax.inject.Inject
 
 @FlowPreview
 @ExperimentalCoroutinesApi
+@ExperimentalPagingApi
 class MainActivity : AppCompatActivity(), HasAndroidInjector {
 
     @Inject
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
 
     @Inject
-    lateinit var mainActivityViewModelFactory: ViewModelProvider.Factory
+    lateinit var mainViewModelFactory: ViewModelProvider.Factory
 
     @Inject
     lateinit var playerViewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
 
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var navController: NavController
 
     private val mainViewModel: MainViewModel by viewModels {
-        mainActivityViewModelFactory
+        mainViewModelFactory
     }
 
     private val playerViewModel: PlayerViewModel by viewModels {
         playerViewModelFactory
+    }
+
+    private val youTubeBaseViewModel: YouTubeBaseViewModel by viewModels {
+        youTubeViewModelFactory
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,14 +76,14 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
                 navController.addOnDestinationChangedListener { _, destination, _ ->
                     when (destination.id) {
                         R.id.playlistFragment, R.id.youTubeFragment, R.id.searchResultsFragment -> {
-                            showBottomNav()
+                            bottomNav.show()
                             playerViewModel.nowPlayingInfo.value?.let {
-                                showMiniPlayer()
+                                bottomControls.visibility = View.VISIBLE
                             }
                         }
                         else -> {
-                            hideBottomNav()
-                            hideMiniPlayer()
+                            bottomNav.hide()
+                            bottomControls.visibility = View.GONE
                         }
                     }
                 }
@@ -91,12 +101,12 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
         playerViewModel.run {
             nowPlayingInfo.observe(this@MainActivity) {
                 binding.nowPlaying = it
-                it?.let {
+                binding.bottomControls.visibility = it?.let {
                     when (navController.currentDestination?.id) {
-                        R.id.playlistFragment, R.id.youTubeFragment, R.id.searchResultsFragment -> showMiniPlayer()
-                        else -> hideMiniPlayer()
+                        R.id.playlistFragment, R.id.youTubeFragment, R.id.searchResultsFragment -> View.VISIBLE
+                        else -> View.GONE
                     }
-                } ?: hideMiniPlayer()
+                } ?: View.GONE
             }
             currentButtonRes.observe(this@MainActivity) {
                 binding.buttonRes = it
@@ -117,7 +127,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
         intent?.takeIf {
             it.action == Intent.ACTION_SEND
         }?.getStringExtra(Intent.EXTRA_TEXT)?.let {
-            mainViewModel.addToPlaylist(it.takeLast(11))
+            youTubeBaseViewModel.addToPlaylist(it.takeLast(11))
         }
     }
 
@@ -129,21 +139,5 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
 
     fun playPause(v: View) {
         playerViewModel.playPause()
-    }
-
-    fun showMiniPlayer() {
-        binding.bottomControls.visibility = View.VISIBLE
-    }
-
-    fun hideMiniPlayer() {
-        binding.bottomControls.visibility = View.GONE
-    }
-
-    fun showBottomNav() {
-        binding.bottomNav.show()
-    }
-
-    fun hideBottomNav() {
-        binding.bottomNav.hide()
     }
 }

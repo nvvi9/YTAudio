@@ -13,10 +13,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import javax.inject.Singleton
 
 
-@Singleton
 @FlowPreview
 @ExperimentalCoroutinesApi
 class AudioInfoRepository @Inject constructor(
@@ -33,19 +31,6 @@ class AudioInfoRepository @Inject constructor(
                 audioInfoDao.insert(it)
                 Log.i("AudioInfoRepository", "Added to playlist: ${it.id}")
             }
-    }
-
-    suspend fun updateAll() {
-        withContext(Dispatchers.IO) {
-            audioInfoDao.getAllAudioInfo().let { audioInfo ->
-                ytStream.extractVideoData(*audioInfo.map { it.id }.toTypedArray())
-                    .toList()
-                    .filterNotNull()
-            }.let { videoData ->
-                videoData.mapNotNull { AudioInfo.fromVideoData(it) }
-                    .let { audioInfoDao.updatePlaylist(it) }
-            }
-        }
     }
 
     suspend fun updateById(vararg id: String) {

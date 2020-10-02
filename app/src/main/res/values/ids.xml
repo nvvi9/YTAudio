@@ -14,5 +14,4 @@
     <item name="alpha" type="id" />
     <item name="scroll_x" type="id" />
     <item name="scroll_y" type="id" />
-    <item name="tag_pending_end_listener" type="id" />
 </resources>
