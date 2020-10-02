@@ -17,10 +17,7 @@ import com.nvvi9.ytaudio.R
 import com.nvvi9.ytaudio.databinding.ActivityMainBinding
 import com.nvvi9.ytaudio.ui.viewmodels.MainViewModel
 import com.nvvi9.ytaudio.ui.viewmodels.PlayerViewModel
-import com.nvvi9.ytaudio.utils.extensions.fixPercentBounds
-import com.nvvi9.ytaudio.utils.extensions.fixToPercent
-import com.nvvi9.ytaudio.utils.extensions.fixToStep
-import com.nvvi9.ytaudio.utils.extensions.percentToMillis
+import com.nvvi9.ytaudio.utils.extensions.*
 import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
@@ -42,7 +39,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
     @Inject
     lateinit var playerViewModelFactory: ViewModelProvider.Factory
 
-    lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
 
     private lateinit var navController: NavController
 
@@ -136,45 +133,17 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
 
     fun showMiniPlayer() {
         binding.bottomControls.visibility = View.VISIBLE
-//        binding.run {
-//            bottomControls.isEnabled = true
-//            please(190, AccelerateInterpolator()) {
-//                animate(bottomControls) {
-//                    aboveOf(bottomNav)
-//                }
-//            }.start()
-//        }
     }
 
     fun hideMiniPlayer() {
         binding.bottomControls.visibility = View.GONE
-//        binding.run {
-//            bottomControls.isEnabled = false
-//            please(190, AccelerateInterpolator()) {
-//                animate(bottomControls) {
-//                    belowOf(bottomNav)
-//                }
-//            }.start()
-//        }
     }
 
     fun showBottomNav() {
-//        binding.bottomNav.show()
-        binding.bottomNav.visibility = View.VISIBLE
-//        please(190, AccelerateInterpolator()) {
-//            animate(binding.bottomNav) {
-//                bottomOfItsParent()
-//            }
-//        }.start()
+        binding.bottomNav.show()
     }
 
     fun hideBottomNav() {
-//        binding.bottomNav.hide()
-        binding.bottomNav.visibility = View.GONE
-//        please(190, AccelerateInterpolator()) {
-//            animate(binding.bottomNav) {
-//                belowOf(binding.mainContainer)
-//            }
-//        }.start()
+        binding.bottomNav.hide()
     }
 }

@@ -36,7 +36,10 @@ import javax.inject.Inject
 @ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @FlowPreview
-class SearchResultsFragment : YouTubeIntentFragment(), YTItemListener, Injectable {
+class SearchResultsFragment :
+    YouTubeIntentFragment(),
+    YTItemListener,
+    Injectable {
 
     @Inject
     lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
@@ -107,13 +110,13 @@ class SearchResultsFragment : YouTubeIntentFragment(), YTItemListener, Injectabl
                 setItems(it)
             }
 
-            updateItems(navArgs.query)
+            updateYTItems(navArgs.query)
         }
     }
 
     override fun onResume() {
         super.onResume()
-        youTubeViewModel.updateItems(navArgs.query)
+        youTubeViewModel.updateYTItems(navArgs.query)
     }
 
     override fun onItemClicked(cardView: View, item: YouTubeItem) {

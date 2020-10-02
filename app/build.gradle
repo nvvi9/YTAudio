@@ -116,9 +116,6 @@ dependencies {
     // Work
     implementation "androidx.work:work-runtime-ktx:$work_version"
 
-    // Kotlin Pleasure Animate
-    implementation "com.github.florent37:kotlinpleaseanimate:$kotlin_pleasure_animate_version"
-
     // AudioWave
     implementation "com.github.alxrm:audiowave-progressbar:$audiowave_progressbar_version"
 

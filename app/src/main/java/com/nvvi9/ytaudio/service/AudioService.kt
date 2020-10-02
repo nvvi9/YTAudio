@@ -15,7 +15,7 @@ import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
-import com.nvvi9.ytaudio.domain.PlaylistUseCases
+import com.nvvi9.ytaudio.domain.AudioInfoUseCases
 import com.nvvi9.ytaudio.service.notification.NotificationManager
 import com.nvvi9.ytaudio.service.playback.BecomingNoisyReceiver
 import com.nvvi9.ytaudio.service.playback.PlaybackPreparer
@@ -34,7 +34,7 @@ open class AudioService :
     PlayerNotificationManager.NotificationListener {
 
     @Inject
-    lateinit var playlistUseCases: PlaylistUseCases
+    lateinit var audioInfoUseCases: AudioInfoUseCases
 
     private lateinit var playbackPreparer: PlaybackPreparer
     private lateinit var becomingNoisyReceiver: BecomingNoisyReceiver
@@ -74,7 +74,7 @@ open class AudioService :
         becomingNoisyReceiver = BecomingNoisyReceiver(this, mediaSession.sessionToken)
         mediaSessionConnector = MediaSessionConnector(mediaSession).apply {
             playbackPreparer = PlaybackPreparer(
-                playlistUseCases, exoPlayer, DefaultDataSourceFactory(
+                audioInfoUseCases, exoPlayer, DefaultDataSourceFactory(
                     this@AudioService,
                     Util.getUserAgent(this@AudioService, YTAUDIO_USER_AGENT),
                     null
@@ -92,7 +92,7 @@ open class AudioService :
 
     @Synchronized
     override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaItem>>) {
-        val children = playlistUseCases.getMetadata().map {
+        val children = audioInfoUseCases.getMetadata().map {
             MediaItem(it.description, it.flag)
         }
 

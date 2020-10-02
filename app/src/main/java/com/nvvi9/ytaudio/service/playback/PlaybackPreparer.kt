@@ -13,13 +13,13 @@ import com.google.android.exoplayer2.IllegalSeekPositionException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.upstream.DataSource
-import com.nvvi9.ytaudio.domain.PlaylistUseCases
+import com.nvvi9.ytaudio.domain.AudioInfoUseCases
 import com.nvvi9.ytaudio.utils.extensions.id
 import com.nvvi9.ytaudio.utils.extensions.toMediaSource
 
 
 class PlaybackPreparer(
-    private val playlistUseCases: PlaylistUseCases,
+    private val audioInfoUseCases: AudioInfoUseCases,
     private val exoPlayer: ExoPlayer,
     private val dataSourceFactory: DataSource.Factory
 ) : MediaSessionConnector.PlaybackPreparer {
@@ -31,7 +31,7 @@ class PlaybackPreparer(
     }
 
     init {
-        playlistUseCases.getMediaMetadata().observeForever(metadataObserver)
+        audioInfoUseCases.getMediaMetadata().observeForever(metadataObserver)
     }
 
     override fun getSupportedPrepareActions() =
@@ -68,7 +68,7 @@ class PlaybackPreparer(
     override fun onPrepareFromUri(uri: Uri, playWhenReady: Boolean, extras: Bundle?) = Unit
 
     fun cancel() {
-        playlistUseCases.getMediaMetadata().removeObserver(metadataObserver)
+        audioInfoUseCases.getMediaMetadata().removeObserver(metadataObserver)
     }
 
     private fun update(new: List<MediaMetadataCompat>) {

@@ -14,38 +14,21 @@
             type="Integer" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/main_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         app:layoutFullscreen="@{true}">
 
         <fragment
             android:id="@+id/nav_host_fragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
             app:defaultNavHost="true"
             app:navGraph="@navigation/navigation" />
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_nav"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimarySurfaceVariant"
-            android:visibility="gone"
-            app:itemIconTint="@drawable/bottom_nav_selector"
-            app:itemTextColor="@drawable/bottom_nav_selector"
-            app:labelVisibilityMode="labeled"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/bottom_menu"
-            app:paddingBottomSystemWindowInsets="@{true}"
-            app:paddingLeftSystemWindowInsets="@{true}"
-            app:paddingRightSystemWindowInsets="@{true}"
-            tools:visibility="visible" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/bottom_controls"
@@ -160,5 +143,19 @@
                 </RelativeLayout>
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_nav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimarySurfaceVariant"
+            app:itemIconTint="@drawable/bottom_nav_selector"
+            app:itemTextColor="@drawable/bottom_nav_selector"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/bottom_menu"
+            app:paddingBottomSystemWindowInsets="@{true}"
+            app:paddingLeftSystemWindowInsets="@{true}"
+            app:paddingRightSystemWindowInsets="@{true}"
+            tools:visibility="visible" />
+    </LinearLayout>
 </layout>

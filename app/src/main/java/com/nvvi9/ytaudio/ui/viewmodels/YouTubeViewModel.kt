@@ -6,7 +6,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.nvvi9.ytaudio.domain.PlaylistUseCases
+import com.nvvi9.ytaudio.domain.AudioInfoUseCases
 import com.nvvi9.ytaudio.domain.YouTubeUseCases
 import com.nvvi9.ytaudio.utils.Event
 import com.nvvi9.ytaudio.vo.YouTubeItem
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @ExperimentalPagingApi
 class YouTubeViewModel @Inject constructor(
-    private val playlistUseCases: PlaylistUseCases,
+    private val audioInfoUseCases: AudioInfoUseCases,
     private val youTubeUseCases: YouTubeUseCases,
     application: Application
 ) : AndroidViewModel(application) {
@@ -32,7 +32,7 @@ class YouTubeViewModel @Inject constructor(
 
     private val _youTubeItems = MutableLiveData<PagingData<YouTubeItem>>()
     val youTubeItems = Transformations.switchMap(_youTubeItems) { ytPaging ->
-        Transformations.map(playlistUseCases.getItemsId()) { id ->
+        Transformations.map(audioInfoUseCases.getItemsId()) { id ->
             ytPaging.map {
                 it.isAdded = id.contains(it.id)
                 it
@@ -40,7 +40,7 @@ class YouTubeViewModel @Inject constructor(
         }
     }
 
-    fun updateItems(query: String? = null) {
+    fun updateYTItems(query: String? = null) {
         viewModelScope.launch {
             youTubeUseCases.run {
                 query?.let {

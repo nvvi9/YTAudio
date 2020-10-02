@@ -4,17 +4,13 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
-import androidx.lifecycle.viewModelScope
-import com.nvvi9.ytaudio.repositories.AudioInfoRepository
+import com.nvvi9.ytaudio.domain.AudioInfoUseCases
 import com.nvvi9.ytaudio.service.AudioServiceConnection
 import com.nvvi9.ytaudio.utils.Event
 import com.nvvi9.ytaudio.utils.extensions.id
 import com.nvvi9.ytaudio.utils.extensions.isPlayEnabled
-import com.nvvi9.ytaudio.utils.extensions.isPlaying
 import com.nvvi9.ytaudio.utils.extensions.isPrepared
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,27 +19,30 @@ import javax.inject.Singleton
 @FlowPreview
 @Singleton
 class MainViewModel @Inject constructor(
-    private val audioInfoRepository: AudioInfoRepository,
+    private val audioInfoUseCases: AudioInfoUseCases,
     private val audioServiceConnection: AudioServiceConnection
 ) : ViewModel() {
+
+    private val addJob = Job()
+    private val deleteJob = Job()
+
+    private val addScope = CoroutineScope(Dispatchers.Main + addJob)
+    private val deleteScope = CoroutineScope(Dispatchers.Main + deleteJob)
 
     val networkFailure: LiveData<Event<Boolean>>
         get() = audioServiceConnection.networkFailure
             .map { Event(it) }
 
-    fun audioItemClicked(audioId: String) {
-        playAudio(audioId, false)
+    override fun onCleared() {
+        super.onCleared()
+        deleteJob.cancel()
+        addJob.cancel()
     }
 
-    fun playAudio(audioId: String) {
+    fun audioItemClicked(audioId: String) {
         audioServiceConnection.run {
-            if (playbackState.value?.isPrepared == true && audioId == nowPlaying.value?.id) {
-                playbackState.value?.let {
-                    when {
-                        it.isPlaying -> transportControls.pause()
-                        it.isPlayEnabled -> transportControls.play()
-                    }
-                }
+            if (playbackState.value?.isPrepared == true && playbackState.value?.isPlayEnabled == true && audioId == nowPlaying.value?.id) {
+                transportControls.play()
             } else {
                 transportControls.playFromMediaId(audioId, null)
             }
@@ -51,9 +50,9 @@ class MainViewModel @Inject constructor(
     }
 
     fun addToPlaylist(id: String) {
-        viewModelScope.launch {
+        addScope.launch {
             try {
-                audioInfoRepository.insertIntoDatabase(id)
+                audioInfoUseCases.addToPlaylist(id)
             } catch (t: Throwable) {
                 Log.e(javaClass.simpleName, t.stackTraceToString())
             }
@@ -61,26 +60,11 @@ class MainViewModel @Inject constructor(
     }
 
     fun deleteFromPlaylist(id: String) {
-        viewModelScope.launch {
+        deleteScope.launch {
             try {
-                audioInfoRepository.deleteById(id)
+                audioInfoUseCases.addToPlaylist(id)
             } catch (t: Throwable) {
                 Log.e(javaClass.simpleName, t.stackTraceToString())
-            }
-        }
-    }
-
-    private fun playAudio(audioId: String, pauseAllowed: Boolean) {
-        audioServiceConnection.run {
-            if (playbackState.value?.isPrepared == true && audioId == nowPlaying.value?.id) {
-                playbackState.value?.let {
-                    when {
-                        it.isPlaying -> if (pauseAllowed) transportControls.pause() else Unit
-                        it.isPlayEnabled -> transportControls.play()
-                    }
-                }
-            } else {
-                transportControls.playFromMediaId(audioId, null)
             }
         }
     }

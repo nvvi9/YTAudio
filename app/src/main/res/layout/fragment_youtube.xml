@@ -19,7 +19,6 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:paddingBottomSystemWindowInsets="@{true}"
         app:paddingLeftSystemWindowInsets="@{true}"
         app:paddingRightSystemWindowInsets="@{true}"
         app:paddingTopSystemWindowInsets="@{true}">
@@ -82,7 +81,6 @@
                 android:paddingTop="2dp"
                 android:transitionGroup="true"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
                 tools:listitem="@layout/item_youtube" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

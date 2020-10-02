@@ -16,7 +16,7 @@
         <item name="cornerSize">@dimen/large_component_corner_radius</item>
     </style>
 
-    <dimen name="small_component_corner_radius">24dp</dimen>
+    <dimen name="small_component_corner_radius">34dp</dimen>
     <dimen name="medium_component_corner_radius">0dp</dimen>
     <dimen name="large_component_corner_radius">12dp</dimen>
 </resources>

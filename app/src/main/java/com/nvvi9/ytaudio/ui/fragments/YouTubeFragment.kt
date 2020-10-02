@@ -54,6 +54,7 @@ class YouTubeFragment :
     }
 
     private lateinit var binding: FragmentYoutubeBinding
+
     private val youTubeItemsAdapter = YTItemAdapter(this)
 
     override fun onCreateView(
@@ -69,7 +70,6 @@ class YouTubeFragment :
         }
         swipeRefresh.setOnRefreshListener {
             youTubeItemsAdapter.refresh()
-            swipeRefresh.isRefreshing = true
         }
         searchButton.setOnClickListener {
             findNavController().navigate(YouTubeFragmentDirections.actionYouTubeFragmentToSearchFragment())
@@ -94,7 +94,7 @@ class YouTubeFragment :
                 setRecommended(it)
             }
 
-            updateItems()
+            updateYTItems()
         }
     }
 
@@ -135,7 +135,6 @@ class YouTubeFragment :
     private fun setRecommended(items: PagingData<YouTubeItem>) {
         lifecycleScope.launch {
             youTubeItemsAdapter.submitData(items)
-            binding.itemYoutubeView.layoutManager?.scrollToPosition(0)
         }
         lifecycleScope.launch {
             youTubeItemsAdapter.loadStateFlow.collectLatest {

@@ -1,7 +1,7 @@
 package com.nvvi9.ytaudio.di.modules
 
 import androidx.paging.ExperimentalPagingApi
-import com.nvvi9.ytaudio.domain.PlaylistUseCases
+import com.nvvi9.ytaudio.domain.AudioInfoUseCases
 import com.nvvi9.ytaudio.domain.SearchUseCases
 import com.nvvi9.ytaudio.domain.UseCases
 import com.nvvi9.ytaudio.domain.YouTubeUseCases
@@ -17,7 +17,7 @@ abstract class UseCasesModule {
 
     @Binds
     @Singleton
-    abstract fun bindPlaylistUseCases(playlistUseCases: PlaylistUseCases): UseCases
+    abstract fun bindPlaylistUseCases(audioInfoUseCases: AudioInfoUseCases): UseCases
 
     @ExperimentalCoroutinesApi
     @FlowPreview

@@ -5,12 +5,14 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="com.nvvi9.ytaudio.ui.viewmodels.PlaylistViewModel" />
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:paddingLeftSystemWindowInsets="@{true}"
@@ -23,7 +25,6 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:overScrollMode="never"
-            android:paddingBottom="55dp"
             app:audioPlaylist="@{viewModel.playlistItems}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
@@ -34,26 +35,18 @@
             android:id="@+id/nothing_to_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:text="@string/nothing_to_play_msg"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/item_playlist_view" />
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/network_failure"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:layout_centerInParent="true"
             android:contentDescription="@string/network_failure_description"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/item_playlist_view"
-            app:paddingBottomSystemWindowInsets="@{true}"
-            app:paddingTopSystemWindowInsets="@{true}"
+            android:visibility="@{viewModel.networkFailure ? View.VISIBLE : View.GONE}"
             app:srcCompat="@drawable/ic_wifi_off" />
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </RelativeLayout>
 </layout>
