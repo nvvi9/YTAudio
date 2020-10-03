@@ -68,10 +68,6 @@ class PlaylistFragment :
 
         }
 
-        playlistViewModel.networkFailure.observe(viewLifecycleOwner) {
-            binding.networkFailure.visibility = if (it) View.VISIBLE else View.GONE
-        }
-
         return binding.root
     }
 

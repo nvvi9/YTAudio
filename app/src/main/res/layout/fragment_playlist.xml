@@ -5,8 +5,6 @@
 
     <data>
 
-        <import type="android.view.View" />
-
         <variable
             name="viewModel"
             type="com.nvvi9.ytaudio.ui.viewmodels.PlaylistViewModel" />
@@ -38,15 +36,5 @@
             android:layout_centerInParent="true"
             android:text="@string/nothing_to_play_msg"
             android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/network_failure"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_centerInParent="true"
-            android:contentDescription="@string/network_failure_description"
-            android:visibility="@{viewModel.networkFailure ? View.VISIBLE : View.GONE}"
-            app:srcCompat="@drawable/ic_wifi_off" />
-
     </RelativeLayout>
 </layout>

@@ -65,28 +65,32 @@ class SearchResultsFragment :
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = FragmentSearchResultsBinding.inflate(inflater).apply {
-        itemYoutubeView.run {
-            ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
-            adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
-        }
-
-        searchToolbar.setNavigationOnClickListener {
-            findNavController().navigate(SearchResultsFragmentDirections.actionSearchResultsFragmentToYouTubeFragment())
-        }
-
-        searchQuery.run {
-            setText(navArgs.query)
-            setOnClickListener {
-                findNavController().navigate(
-                    SearchResultsFragmentDirections.actionSearchResultsFragmentToSearchFragment(
-                        (it as EditText).text.toString()
-                    )
-                )
+    ): View? {
+        binding = FragmentSearchResultsBinding.inflate(inflater).apply {
+            itemYoutubeView.run {
+                ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
+                adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
             }
+
+            searchToolbar.setNavigationOnClickListener {
+                findNavController().navigate(SearchResultsFragmentDirections.actionSearchResultsFragmentToYouTubeFragment())
+            }
+
+            searchQuery.run {
+                setText(navArgs.query)
+                setOnClickListener {
+                    findNavController().navigate(
+                        SearchResultsFragmentDirections.actionSearchResultsFragmentToSearchFragment(
+                            (it as EditText).text.toString()
+                        )
+                    )
+                }
+            }
+            lifecycleOwner = this@SearchResultsFragment
         }
-        lifecycleOwner = this@SearchResultsFragment
-    }.also { binding = it }.root
+
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         postponeEnterTransition()

@@ -45,28 +45,32 @@ class PlayerFragment :
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = FragmentPlayerBinding.inflate(inflater).apply {
-        progressBar.run {
-            onStartTracking = {
-                isUserSeeking = true
-            }
-            onStopTracking = {
-                isUserSeeking = false
-                playerViewModel.seekTo(
-                    (it * (playerViewModel.nowPlayingInfo.value?.durationMillis
-                        ?: 0) / 100).toLong()
-                )
-            }
-            onProgressChanged = { pos, fromUser ->
-                if (fromUser) {
-                    position = (pos * (playerViewModel.nowPlayingInfo.value?.durationMillis
-                        ?: 0) / 100).toInt()
+    ): View? {
+        binding = FragmentPlayerBinding.inflate(inflater).apply {
+            progressBar.run {
+                onStartTracking = {
+                    isUserSeeking = true
+                }
+                onStopTracking = {
+                    isUserSeeking = false
+                    playerViewModel.seekTo(
+                        (it * (playerViewModel.nowPlayingInfo.value?.durationMillis
+                            ?: 0) / 100).toLong()
+                    )
+                }
+                onProgressChanged = { pos, fromUser ->
+                    if (fromUser) {
+                        position = (pos * (playerViewModel.nowPlayingInfo.value?.durationMillis
+                            ?: 0) / 100).toInt()
+                    }
                 }
             }
+            listener = this@PlayerFragment
+            viewModel = playerViewModel
         }
-        listener = this@PlayerFragment
-        viewModel = playerViewModel
-    }.also { binding = it }.root
+
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         playerViewModel.run {

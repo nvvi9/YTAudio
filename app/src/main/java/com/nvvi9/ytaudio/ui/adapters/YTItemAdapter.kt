@@ -86,10 +86,7 @@ class YTItemAdapter(private val listener: YTItemListener) :
 
     private object DiffCallback : DiffUtil.ItemCallback<YouTubeItem>() {
 
-        override fun areItemsTheSame(oldItem: YouTubeItem, newItem: YouTubeItem): Boolean =
-            oldItem.id == newItem.id
-
-        override fun areContentsTheSame(oldItem: YouTubeItem, newItem: YouTubeItem): Boolean =
-            oldItem == newItem
+        override fun areItemsTheSame(oldItem: YouTubeItem, newItem: YouTubeItem) = false
+        override fun areContentsTheSame(oldItem: YouTubeItem, newItem: YouTubeItem) = false
     }
 }
