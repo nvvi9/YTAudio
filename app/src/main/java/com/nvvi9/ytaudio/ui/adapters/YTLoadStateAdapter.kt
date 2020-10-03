@@ -18,6 +18,7 @@ class YTLoadStateAdapter : LoadStateAdapter<YTLoadStateAdapter.YTLoadStateViewHo
     override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState) =
         YTLoadStateViewHolder.create(parent)
 
+
     class YTLoadStateViewHolder private constructor(private val binding: ItemLoadStateFooterBinding) :
         RecyclerView.ViewHolder(binding.root) {
 

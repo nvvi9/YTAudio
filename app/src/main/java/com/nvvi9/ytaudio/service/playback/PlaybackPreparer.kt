@@ -44,7 +44,6 @@ class PlaybackPreparer(
                 PlaybackStateCompat.ACTION_PREPARE_FROM_URI or
                 PlaybackStateCompat.ACTION_PLAY_FROM_URI
 
-
     override fun onPrepareFromMediaId(mediaId: String, playWhenReady: Boolean, extras: Bundle?) {
         currentMetadata.indexOfFirst { it.id == mediaId }.takeIf { it != -1 }?.let {
             try {

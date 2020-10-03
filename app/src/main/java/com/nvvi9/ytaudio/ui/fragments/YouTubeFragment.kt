@@ -23,6 +23,7 @@ import com.nvvi9.ytaudio.ui.adapters.YTItemListener
 import com.nvvi9.ytaudio.ui.adapters.YTLoadStateAdapter
 import com.nvvi9.ytaudio.ui.viewmodels.MainViewModel
 import com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel
+import com.nvvi9.ytaudio.utils.SpringAddItemAnimator
 import com.nvvi9.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -67,7 +68,7 @@ class YouTubeFragment :
             itemYoutubeView.run {
                 ItemTouchHelper(ReboundingSwipeActionCallback()).attachToRecyclerView(this)
                 adapter = youTubeItemsAdapter.withLoadStateFooter(YTLoadStateAdapter())
-                itemAnimator = null
+                itemAnimator = SpringAddItemAnimator()
             }
             swipeRefresh.setOnRefreshListener {
                 youTubeItemsAdapter.refresh()
