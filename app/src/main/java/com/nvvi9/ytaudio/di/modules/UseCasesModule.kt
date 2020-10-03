@@ -8,6 +8,7 @@ import dagger.Binds
 import dagger.Module
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import javax.inject.Singleton
 
 
 @ExperimentalCoroutinesApi
@@ -16,9 +17,10 @@ import kotlinx.coroutines.FlowPreview
 abstract class UseCasesModule {
 
     @Binds
-    abstract fun bindPlaylistUseCases(audioInfoUseCases: AudioInfoUseCases): UseCases
+    abstract fun bindAudioInfoUseCases(audioInfoUseCases: AudioInfoUseCases): UseCases
 
     @Binds
+    @Singleton
     @ExperimentalPagingApi
     abstract fun bindYouTubesUseCases(youTubeUseCases: YouTubeUseCases): UseCases
 }

@@ -16,8 +16,12 @@ import com.google.android.exoplayer2.upstream.DataSource
 import com.nvvi9.ytaudio.domain.AudioInfoUseCases
 import com.nvvi9.ytaudio.utils.extensions.id
 import com.nvvi9.ytaudio.utils.extensions.toMediaSource
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 class PlaybackPreparer(
     private val audioInfoUseCases: AudioInfoUseCases,
     private val exoPlayer: ExoPlayer,

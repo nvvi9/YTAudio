@@ -87,6 +87,8 @@ fun ImageView.setImage(thumbnailUri: Uri?, recycled: Boolean = false) {
     clipToOutline = true
     Glide.with(this)
         .load(thumbnailUri)
+        .override(480, 270)
+        .centerCrop()
         .transition(DrawableTransitionOptions.withCrossFade()).apply {
             if (recycled) {
                 error(Glide.with(this@setImage).load(drawable))

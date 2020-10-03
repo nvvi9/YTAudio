@@ -47,17 +47,16 @@ class AudioServiceConnection(private val context: Context, serviceComponent: Com
 
     val rootMediaId get() = mediaBrowser.root
 
-    private lateinit var mediaController: MediaControllerCompat
-
     private val mediaBrowser =
         MediaBrowserCompat(context, serviceComponent, this, null).apply {
             connect()
         }
 
+    private lateinit var mediaController: MediaControllerCompat
+
     override fun onConnected() {
-        mediaController = MediaControllerCompat(context, mediaBrowser.sessionToken).apply {
-            registerCallback(mediaControllerCallback)
-        }
+        mediaController = MediaControllerCompat(context, mediaBrowser.sessionToken)
+        mediaController.registerCallback(mediaControllerCallback)
         _isConnected.postValue(true)
     }
 

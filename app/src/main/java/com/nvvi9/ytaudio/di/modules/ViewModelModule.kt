@@ -12,7 +12,6 @@ import dagger.android.ContributesAndroidInjector
 import dagger.multibindings.IntoMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import javax.inject.Singleton
 
 
 @Module
@@ -26,7 +25,6 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @Singleton
     @ViewModelKey(MainViewModel::class)
     abstract fun bindMainViewModel(mainViewModel: MainViewModel): ViewModel
 
@@ -56,6 +54,5 @@ abstract class ViewModelModule {
     abstract fun bindSearchResultsViewModel(searchResultsViewModel: SearchResultsViewModel): ViewModel
 
     @Binds
-    @Singleton
     abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
 }

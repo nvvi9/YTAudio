@@ -75,7 +75,7 @@
 
         <ImageView
             android:id="@+id/thumbnail"
-            android:layout_width="280dp"
+            android:layout_width="340dp"
             android:layout_height="280dp"
             android:background="@drawable/thumbnail_frame"
             android:scaleType="centerCrop"

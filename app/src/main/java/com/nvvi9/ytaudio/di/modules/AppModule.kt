@@ -6,8 +6,6 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.room.Room
 import com.nvvi9.YTStream
 import com.nvvi9.ytaudio.db.AudioDatabase
-import com.nvvi9.ytaudio.network.YouTubeApiService
-import com.nvvi9.ytaudio.repositories.YTVideoDetailsRemoteMediator
 import com.nvvi9.ytaudio.service.AudioService
 import com.nvvi9.ytaudio.service.AudioServiceConnection
 import dagger.Module
@@ -36,16 +34,6 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideVideoDetailsDao(database: AudioDatabase) =
-        database.ytVideoDetailsDao
-
-    @Provides
-    @Singleton
-    fun provideVideoDetailsRemoteKeysDao(database: AudioDatabase) =
-        database.ytVideoDetailsRemoteKeysDao
-
-    @Provides
-    @Singleton
     fun provideMediaPlaybackServiceConnection(context: Context) =
         AudioServiceConnection.getInstance(
             context, ComponentName(context, AudioService::class.java)
@@ -53,16 +41,4 @@ class AppModule {
 
     @Provides
     fun provideYTStream() = YTStream()
-
-    @Provides
-    @Singleton
-    fun provideYTVideoDataRemoteMediator(
-        db: AudioDatabase,
-        ytApiService: YouTubeApiService,
-        ytStream: YTStream
-    ) =
-        YTVideoDetailsRemoteMediator(
-            ytApiService, ytStream, db,
-            db.ytVideoDetailsDao, db.ytVideoDetailsRemoteKeysDao
-        )
 }

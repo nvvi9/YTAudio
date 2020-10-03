@@ -25,7 +25,10 @@ import javax.inject.Inject
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class PlaylistFragment : YouTubeIntentFragment(), PlaylistItemListener, Injectable {
+class PlaylistFragment :
+    YouTubeIntentFragment(),
+    PlaylistItemListener,
+    Injectable {
 
     @Inject
     lateinit var playlistViewModelFactory: ViewModelProvider.Factory

@@ -8,11 +8,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
 @FlowPreview
 @ExperimentalCoroutinesApi
 @ExperimentalPagingApi
+@Singleton
 class YouTubeUseCases @Inject constructor(
     private val youTubeRepository: YouTubeRepository
 ) : UseCases {

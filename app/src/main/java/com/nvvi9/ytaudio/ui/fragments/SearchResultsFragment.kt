@@ -148,7 +148,6 @@ class SearchResultsFragment :
     private fun setItems(items: PagingData<YouTubeItem>) {
         lifecycleScope.launch {
             youTubeItemsAdapter.submitData(items)
-            binding.itemYoutubeView.layoutManager?.scrollToPosition(0)
         }
         lifecycleScope.launch {
             youTubeItemsAdapter.loadStateFlow.collectLatest {

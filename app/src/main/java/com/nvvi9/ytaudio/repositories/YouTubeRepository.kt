@@ -6,7 +6,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.nvvi9.YTStream
 import com.nvvi9.ytaudio.data.ytstream.YTVideoDetails
-import com.nvvi9.ytaudio.db.YTVideoDetailsDao
 import com.nvvi9.ytaudio.network.YouTubeApiService
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -20,15 +19,7 @@ import javax.inject.Inject
 class YouTubeRepository @Inject constructor(
     private val ytApiService: YouTubeApiService,
     private val ytStream: YTStream,
-    private val YTVideoDetailsDao: YTVideoDetailsDao,
-    private val ytVideoDetailsRemoteMediator: YTVideoDetailsRemoteMediator
 ) : Repository {
-
-    fun getVideosResponse(): Flow<PagingData<YTVideoDetails>> = Pager(
-        config = PagingConfig(PAGE_SIZE),
-        remoteMediator = ytVideoDetailsRemoteMediator,
-        pagingSourceFactory = { YTVideoDetailsDao.allItems() }
-    ).flow
 
     fun getSearchResponse(query: String): Flow<PagingData<YTVideoDetails>> =
         Pager(PagingConfig(PAGE_SIZE)) {

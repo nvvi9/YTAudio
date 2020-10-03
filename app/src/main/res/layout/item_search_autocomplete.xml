@@ -15,9 +15,10 @@
             type="com.nvvi9.ytaudio.ui.adapters.SearchAutocompleteItemListener" />
     </data>
 
-    <com.google.android.material.card.MaterialCardView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:foreground="?attr/selectableItemBackground"
         android:onClick="@{() -> listener.onItemClicked(data)}"
         android:paddingLeft="8dp"
         android:paddingRight="8dp">
@@ -61,5 +62,5 @@
             app:layout_constraintTop_toTopOf="@+id/autocomplete_text_view" />
 
 
-    </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

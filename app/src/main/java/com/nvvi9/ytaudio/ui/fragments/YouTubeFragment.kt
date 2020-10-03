@@ -21,6 +21,7 @@ import com.nvvi9.ytaudio.ui.adapters.ReboundingSwipeActionCallback
 import com.nvvi9.ytaudio.ui.adapters.YTItemAdapter
 import com.nvvi9.ytaudio.ui.adapters.YTItemListener
 import com.nvvi9.ytaudio.ui.adapters.YTLoadStateAdapter
+import com.nvvi9.ytaudio.ui.viewmodels.MainViewModel
 import com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel
 import com.nvvi9.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -41,8 +42,15 @@ class YouTubeFragment :
     @Inject
     lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
 
+    @Inject
+    lateinit var mainViewModelFactory: ViewModelProvider.Factory
+
     private val youTubeViewModel: YouTubeViewModel by viewModels {
         youTubeViewModelFactory
+    }
+
+    private val mainViewModel: MainViewModel by viewModels {
+        mainViewModelFactory
     }
 
     private lateinit var binding: FragmentYoutubeBinding
@@ -118,9 +126,9 @@ class YouTubeFragment :
     override fun onItemIconChanged(item: YouTubeItem, newValue: Boolean) {
         item.isAdded = newValue
         if (newValue) {
-            youTubeViewModel.addToPlaylist(item.id)
+            mainViewModel.addToPlaylist(item.id)
         } else {
-            youTubeViewModel.deleteFromPlaylist(item.id)
+            mainViewModel.deleteFromPlaylist(item.id)
         }
     }
 

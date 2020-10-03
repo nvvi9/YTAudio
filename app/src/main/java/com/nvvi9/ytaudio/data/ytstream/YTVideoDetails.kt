@@ -1,14 +1,11 @@
 package com.nvvi9.ytaudio.data.ytstream
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.nvvi9.model.Thumbnail
 import com.nvvi9.model.VideoDetails
 
 
-@Entity
 data class YTVideoDetails(
-    @PrimaryKey val id: String,
+    val id: String,
     val title: String?,
     val channel: String?,
     val channelId: String?,

@@ -2,10 +2,8 @@ package com.nvvi9.ytaudio.di.modules
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingSource
-import androidx.paging.RemoteMediator
 import com.nvvi9.ytaudio.data.ytstream.YTVideoDetails
 import com.nvvi9.ytaudio.repositories.YTVideoDetailsPagingSource
-import com.nvvi9.ytaudio.repositories.YTVideoDetailsRemoteMediator
 import dagger.Binds
 import dagger.Module
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,10 +16,6 @@ import javax.inject.Singleton
 @FlowPreview
 @ExperimentalPagingApi
 abstract class PagingModule {
-
-    @Binds
-    @Singleton
-    abstract fun bindYTVideoDetailsRemoteMediator(ytVideoDetailsRemoteMediator: YTVideoDetailsRemoteMediator): RemoteMediator<Int, YTVideoDetails>
 
     @Binds
     @Singleton
