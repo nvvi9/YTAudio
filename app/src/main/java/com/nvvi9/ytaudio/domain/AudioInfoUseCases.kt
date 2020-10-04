@@ -39,4 +39,8 @@ class AudioInfoUseCases @Inject constructor(
     suspend fun addToPlaylist(id: String) {
         audioInfoRepository.insertIntoDatabase(id)
     }
+
+    suspend fun deleteFromPlaylist(id: String) {
+        audioInfoRepository.deleteById(id)
+    }
 }

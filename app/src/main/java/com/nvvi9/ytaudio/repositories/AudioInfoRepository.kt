@@ -9,8 +9,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -25,22 +24,11 @@ class AudioInfoRepository @Inject constructor(
     suspend fun insertIntoDatabase(vararg id: String) {
         ytStream.extractVideoData(*id)
             .filterNotNull()
-            .map { AudioInfo.fromVideoData(it) }
-            .filterNotNull()
+            .mapNotNull { AudioInfo.fromVideoData(it) }
             .collect {
                 audioInfoDao.insert(it)
                 Log.i("AudioInfoRepository", "Added to playlist: ${it.id}")
             }
-    }
-
-    suspend fun updateById(vararg id: String) {
-        withContext(Dispatchers.IO) {
-            ytStream.extractVideoData(*id)
-                .toList()
-                .filterNotNull()
-                .mapNotNull { AudioInfo.fromVideoData(it) }
-                .let { audioInfoDao.updatePlaylist(it) }
-        }
     }
 
     suspend fun deleteById(vararg id: String) {

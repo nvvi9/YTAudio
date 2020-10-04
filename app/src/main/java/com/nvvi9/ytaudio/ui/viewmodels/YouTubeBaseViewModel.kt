@@ -8,6 +8,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.nvvi9.ytaudio.domain.AudioInfoUseCases
+import com.nvvi9.ytaudio.service.AudioServiceConnection
 import com.nvvi9.ytaudio.utils.Event
 import com.nvvi9.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.*
@@ -24,6 +25,9 @@ abstract class YouTubeBaseViewModel : ViewModel() {
 
     @Inject
     lateinit var audioInfoUseCases: AudioInfoUseCases
+
+    @Inject
+    lateinit var audioServiceConnection: AudioServiceConnection
 
     private val addJob = Job()
     private val deleteJob = Job()
@@ -80,7 +84,7 @@ abstract class YouTubeBaseViewModel : ViewModel() {
     fun deleteFromPlaylist(id: String) {
         deleteScope.launch {
             try {
-                audioInfoUseCases.addToPlaylist(id)
+                audioInfoUseCases.deleteFromPlaylist(id)
             } catch (t: Throwable) {
                 Log.e(javaClass.simpleName, t.stackTraceToString())
             }

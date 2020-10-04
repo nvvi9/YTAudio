@@ -68,7 +68,7 @@ class PlaybackPreparer(
 
     override fun onPrepare(playWhenReady: Boolean) = Unit
     override fun onPrepareFromSearch(query: String, playWhenReady: Boolean, extras: Bundle?) = Unit
-    override fun onPrepareFromUri(uri: Uri, playWhenReady: Boolean, extras: Bundle?) = Unit
+    override fun onPrepareFromUri(uri: Uri, playWhenReady: Boolean, extras: Bundle?) {}
 
     fun cancel() {
         audioInfoUseCases.getMediaMetadata().removeObserver(metadataObserver)
@@ -85,7 +85,7 @@ class PlaybackPreparer(
         exoPlayer.setMediaSource(new.toMediaSource(dataSourceFactory))
         if (currentMetadata.isNotEmpty()) {
             try {
-                if (exoPlayer.isPlaying) {
+                if (isPlaying) {
                     exoPlayer.prepare()
                 }
                 exoPlayer.seekTo(window, position)
