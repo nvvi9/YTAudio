@@ -60,6 +60,7 @@
                     android:layout_marginStart="8dp"
                     android:scaleType="centerCrop"
                     android:transitionName="now_cover"
+                    app:recycled="@{true}"
                     app:thumbnailUri="@{nowPlaying.thumbnailUri}"
                     tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
