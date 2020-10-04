@@ -14,6 +14,8 @@ class ReboundingSwipeActionCallback : ItemTouchHelper.SimpleCallback(0, ItemTouc
 
         val reboundableView: View?
 
+        var swipeEnabled: Boolean
+
         fun onReboundOffsetChanged(
             currentSwipePercentage: Float,
             swipeThreshold: Float,
@@ -87,6 +89,13 @@ class ReboundingSwipeActionCallback : ItemTouchHelper.SimpleCallback(0, ItemTouc
             currentTargetHasMetThresholdOnce = true
         }
     }
+
+    override fun getSwipeDirs(
+        recyclerView: RecyclerView,
+        viewHolder: RecyclerView.ViewHolder
+    ): Int = if (viewHolder is ReboundableViewHolder && viewHolder.swipeEnabled)
+        super.getSwipeDirs(recyclerView, viewHolder)
+    else 0
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
 }

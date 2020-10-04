@@ -42,10 +42,12 @@ class YTItemAdapter(private val listener: YTItemListener) :
         fun bind(item: YouTubeItem) {
             binding.youTubeItem = item
             binding.root.isActivated = item.isAdded
+            swipeEnabled = !item.isAdded
             updateCardViewTopLeftCornerSize(if (item.isAdded || item.inPlaylist) 1f else 0f)
             binding.executePendingBindings()
         }
 
+        override var swipeEnabled: Boolean = false
         override val reboundableView: View? = binding.cardView
 
         override fun onReboundOffsetChanged(

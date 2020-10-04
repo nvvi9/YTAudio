@@ -41,4 +41,10 @@ abstract class YouTubeBaseFragment : Fragment(), YTItemListener {
             }
         }
     }
+
+    @CallSuper
+    override fun onPause() {
+        super.onPause()
+        youTubeViewModel.removeSources()
+    }
 }

@@ -9,6 +9,6 @@
     <item
         android:id="@+id/youTubeFragment"
         android:icon="@drawable/ic_youtube"
-        android:title="@string/search"
+        android:title="@string/youtube"
         app:showAsAction="always" />
 </menu>

@@ -35,6 +35,8 @@ abstract class YouTubeBaseViewModel : ViewModel() {
     private val addScope = CoroutineScope(Dispatchers.Main + addJob)
     private val deleteScope = CoroutineScope(Dispatchers.Main + deleteJob)
 
+    private var isDeletingNow = false
+
     @CallSuper
     override fun onCleared() {
         super.onCleared()
@@ -68,12 +70,21 @@ abstract class YouTubeBaseViewModel : ViewModel() {
         }
 
         items.addSource(audioInfoUseCases.getItemsId()) { id ->
-            _youTubeItems.value?.map {
-                it.isAdded = id.contains(it.id)
-                it
-            }?.let {
-                items.postValue(it)
+            if (!isDeletingNow) {
+                _youTubeItems.value?.map {
+                    it.isAdded = id.contains(it.id)
+                    it
+                }?.let {
+                    items.postValue(it)
+                }
             }
+        }
+    }
+
+    fun removeSources() {
+        items.run {
+            removeSource(_youTubeItems)
+            removeSource(audioInfoUseCases.getItemsId())
         }
     }
 
@@ -106,10 +117,13 @@ abstract class YouTubeBaseViewModel : ViewModel() {
     fun deleteFromPlaylist(id: String) {
         deleteScope.launch {
             try {
+                isDeletingNow = true
                 audioInfoUseCases.deleteFromPlaylist(id)
             } catch (t: Throwable) {
                 _errorEvent.postValue(Event("Error occurred"))
                 Log.e(javaClass.simpleName, t.stackTraceToString())
+            } finally {
+                isDeletingNow = false
             }
         }
     }

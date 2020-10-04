@@ -34,6 +34,8 @@ class PlaybackPreparer(
         it?.let { update(it) }
     }
 
+    private var startedByUser = false
+
     init {
         audioInfoUseCases.getMediaMetadata().observeForever(metadataObserver)
     }
@@ -51,6 +53,7 @@ class PlaybackPreparer(
                     prepare()
                     seekTo(it, 0)
                     this.playWhenReady = playWhenReady
+                    startedByUser = true
                 }
             } catch (t: Throwable) {
                 Log.e(javaClass.simpleName, t.stackTraceToString())
@@ -85,9 +88,8 @@ class PlaybackPreparer(
         exoPlayer.setMediaSource(new.toMediaSource(dataSourceFactory))
         if (currentMetadata.isNotEmpty()) {
             try {
-                if (isPlaying) {
-                    exoPlayer.prepare()
-                }
+                Log.i("PlaybackPreparer", "preparing")
+                exoPlayer.prepare()
                 exoPlayer.seekTo(window, position)
             } catch (e: IllegalSeekPositionException) {
                 exoPlayer.seekToDefaultPosition(currentMetadata.size - 1)
