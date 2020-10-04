@@ -76,6 +76,7 @@ abstract class YouTubeBaseViewModel : ViewModel() {
             try {
                 audioInfoUseCases.addToPlaylist(id)
             } catch (t: Throwable) {
+                _errorEvent.postValue(Event("Error occurred"))
                 Log.e(javaClass.simpleName, t.stackTraceToString())
             }
         }
@@ -86,6 +87,7 @@ abstract class YouTubeBaseViewModel : ViewModel() {
             try {
                 audioInfoUseCases.deleteFromPlaylist(id)
             } catch (t: Throwable) {
+                _errorEvent.postValue(Event("Error occurred"))
                 Log.e(javaClass.simpleName, t.stackTraceToString())
             }
         }

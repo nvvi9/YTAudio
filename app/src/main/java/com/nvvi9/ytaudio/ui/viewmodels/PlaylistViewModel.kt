@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nvvi9.ytaudio.domain.AudioInfoUseCases
 import com.nvvi9.ytaudio.repositories.AudioInfoRepository
-import com.nvvi9.ytaudio.service.AudioServiceConnection
 import com.nvvi9.ytaudio.vo.PlaylistItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -17,7 +16,6 @@ import javax.inject.Inject
 class PlaylistViewModel @Inject constructor(
     private val audioInfoRepository: AudioInfoRepository,
     audioInfoUseCases: AudioInfoUseCases,
-    audioServiceConnection: AudioServiceConnection
 ) : ViewModel() {
 
     val playlistItems = audioInfoUseCases.getPlaylistItems()
@@ -27,6 +25,4 @@ class PlaylistViewModel @Inject constructor(
             audioInfoRepository.deleteById(*items.map { it.id }.toTypedArray())
         }
     }
-
-    val networkFailure = audioServiceConnection.networkFailure
 }

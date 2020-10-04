@@ -17,7 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class YouTubeUseCases @Inject constructor(
     private val youTubeRepository: YouTubeRepository
-) : UseCases {
+) {
 
     fun getPopularYouTubeItems() =
         youTubeRepository.getPopularResponse()

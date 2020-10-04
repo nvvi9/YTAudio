@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class SearchRepository @Inject constructor(
     private val autoCompleteService: AutoCompleteService
-) : Repository {
+) {
 
     suspend fun getAutoComplete(query: String) =
         withContext(Dispatchers.IO) {

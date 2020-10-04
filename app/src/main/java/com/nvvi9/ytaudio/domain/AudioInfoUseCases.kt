@@ -13,7 +13,7 @@ import javax.inject.Inject
 @FlowPreview
 class AudioInfoUseCases @Inject constructor(
     private val audioInfoRepository: AudioInfoRepository
-) : UseCases {
+) {
 
     fun getPlaylistItems() =
         audioInfoRepository.getAudioInfo().map { list ->

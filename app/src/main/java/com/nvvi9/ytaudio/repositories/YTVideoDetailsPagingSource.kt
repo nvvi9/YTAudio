@@ -1,6 +1,5 @@
 package com.nvvi9.ytaudio.repositories
 
-import android.util.Log
 import androidx.paging.PagingSource
 import com.nvvi9.YTStream
 import com.nvvi9.ytaudio.data.ytstream.YTVideoDetails
@@ -22,14 +21,11 @@ class YTVideoDetailsPagingSource @Inject constructor(
 
     override suspend fun load(params: LoadParams<String>) =
         try {
-            val startTime = System.currentTimeMillis()
             ytApiService.getYTVideosIdResponse(params.loadSize, params.key).run {
                 ytStream.extractVideoDetails(*items.map { it.id }.toTypedArray())
                     .toList().filterNotNull()
                     .map { YTVideoDetails.create(it) }
                     .let { LoadResult.Page(it, prevPageToken, nextPageToken) }
-            }.also {
-                Log.i("VideoDetailsPaging", "${System.currentTimeMillis() - startTime}")
             }
         } catch (e: IOException) {
             LoadResult.Error(e)

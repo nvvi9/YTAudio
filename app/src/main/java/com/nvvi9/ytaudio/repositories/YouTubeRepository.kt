@@ -19,7 +19,7 @@ import javax.inject.Inject
 class YouTubeRepository @Inject constructor(
     private val ytApiService: YouTubeApiService,
     private val ytStream: YTStream,
-) : Repository {
+) {
 
     fun getSearchResponse(query: String): Flow<PagingData<YTVideoDetails>> =
         Pager(PagingConfig(PAGE_SIZE)) {

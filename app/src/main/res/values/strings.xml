@@ -3,7 +3,6 @@
     <string name="thumbnail_description">video thumbnail</string>
     <string name="notification_channel">now playing</string>
     <string name="audio_button_description">managing playback state button</string>
-    <string name="network_failure_description">appears when network failure is happening</string>
     <string name="nothing_to_play_msg">Nothing to play</string>
     <string name="search">Search</string>
     <string name="share">Share</string>

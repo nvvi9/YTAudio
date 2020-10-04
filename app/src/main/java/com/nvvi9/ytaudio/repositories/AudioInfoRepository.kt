@@ -19,7 +19,7 @@ import javax.inject.Inject
 class AudioInfoRepository @Inject constructor(
     private val ytStream: YTStream,
     private val audioInfoDao: AudioInfoDao
-) : Repository {
+) {
 
     suspend fun insertIntoDatabase(vararg id: String) {
         ytStream.extractVideoData(*id)

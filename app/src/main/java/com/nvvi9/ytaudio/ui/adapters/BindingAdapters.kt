@@ -75,13 +75,6 @@ fun MaterialTextView.setTimeMillis(time: Int?) {
     }
 }
 
-@BindingAdapter("timeFormatted")
-fun MaterialTextView.setPosition(position: Long?) {
-    position?.let {
-        text = DateUtils.formatElapsedTime(it / 1000)
-    }
-}
-
 @BindingAdapter("app:thumbnailUri", "app:recycled", requireAll = false)
 fun ImageView.setImage(thumbnailUri: Uri?, recycled: Boolean = false) {
     clipToOutline = true

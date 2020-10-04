@@ -6,7 +6,13 @@ import com.nvvi9.ytaudio.data.audioinfo.AudioInfo
 
 
 @Dao
-interface AudioInfoDao : BaseDao<AudioInfo> {
+interface AudioInfoDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(item: AudioInfo)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(items: List<AudioInfo>)
 
     @Transaction
     suspend fun updatePlaylist(items: List<AudioInfo>) {
