@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -17,9 +15,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.nvvi9.ytaudio.R
 import com.nvvi9.ytaudio.databinding.FragmentYoutubeBinding
 import com.nvvi9.ytaudio.di.Injectable
+import com.nvvi9.ytaudio.ui.MainActivity
 import com.nvvi9.ytaudio.ui.adapters.ReboundingSwipeActionCallback
 import com.nvvi9.ytaudio.ui.adapters.YTItemAdapter
-import com.nvvi9.ytaudio.ui.adapters.YTItemListener
 import com.nvvi9.ytaudio.ui.adapters.YTLoadStateAdapter
 import com.nvvi9.ytaudio.ui.viewmodels.MainViewModel
 import com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel
@@ -35,10 +33,7 @@ import javax.inject.Inject
 @ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @FlowPreview
-class YouTubeFragment :
-    YouTubeIntentFragment(),
-    YTItemListener,
-    Injectable {
+class YouTubeFragment : YouTubeBaseFragment(), Injectable {
 
     @Inject
     lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
@@ -46,7 +41,7 @@ class YouTubeFragment :
     @Inject
     lateinit var mainViewModelFactory: ViewModelProvider.Factory
 
-    private val youTubeViewModel: YouTubeViewModel by viewModels {
+    override val youTubeViewModel: YouTubeViewModel by viewModels {
         youTubeViewModelFactory
     }
 
@@ -82,36 +77,19 @@ class YouTubeFragment :
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        postponeEnterTransition()
-        view.doOnPreDraw { startPostponedEnterTransition() }
-        youTubeViewModel.run {
-            errorEvent.observe(viewLifecycleOwner) { event ->
-                event.getContentIfNotHandled()?.let {
-                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            youTubeItems.observe(viewLifecycleOwner) {
-                setRecommended(it)
-            }
-        }
-    }
-
     override fun onItemClicked(cardView: View, item: YouTubeItem) {
-        startYouTubeIntent(item.id)
+        (activity as? MainActivity)?.startYouTubeIntent(item.id)
     }
 
     override fun onItemLongClicked(item: YouTubeItem): Boolean {
         MenuBottomSheetDialogFragment(R.menu.youtube_bottom_sheet_menu) {
             when (it.itemId) {
                 R.id.menu_share -> {
-                    startShareIntent(item.id)
+                    (activity as? MainActivity)?.startShareIntent(item.id)
                     true
                 }
                 R.id.menu_open_youtube -> {
-                    startYouTubeIntent(item.id)
+                    (activity as? MainActivity)?.startYouTubeIntent(item.id)
                     true
                 }
                 R.id.menu_add -> {
@@ -134,9 +112,12 @@ class YouTubeFragment :
         }
     }
 
-    private fun setRecommended(items: PagingData<YouTubeItem>) {
+    override fun setItems(items: PagingData<YouTubeItem>) {
         lifecycleScope.launch {
-            youTubeItemsAdapter.submitData(items)
+            youTubeItemsAdapter.run {
+                submitData(items)
+                notifyDataSetChanged()
+            }
         }
         lifecycleScope.launch {
             youTubeItemsAdapter.loadStateFlow.collectLatest {

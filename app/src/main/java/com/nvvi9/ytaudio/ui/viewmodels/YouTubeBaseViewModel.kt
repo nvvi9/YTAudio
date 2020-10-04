@@ -56,6 +56,27 @@ abstract class YouTubeBaseViewModel : ViewModel() {
         }
     }
 
+    val items = MediatorLiveData<PagingData<YouTubeItem>>()
+
+    fun observeOnYouTubeItems(owner: LifecycleOwner, observer: Observer<PagingData<YouTubeItem>>) {
+        items.observe(owner, observer)
+
+        items.addSource(_youTubeItems) {
+            it?.let {
+                items.postValue(it)
+            }
+        }
+
+        items.addSource(audioInfoUseCases.getItemsId()) { id ->
+            _youTubeItems.value?.map {
+                it.isAdded = id.contains(it.id)
+                it
+            }?.let {
+                items.postValue(it)
+            }
+        }
+    }
+
     init {
         Log.i("YouTubeBaseViewModel", "initialized")
     }

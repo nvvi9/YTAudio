@@ -5,13 +5,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.nvvi9.ytaudio.R
 import com.nvvi9.ytaudio.databinding.FragmentPlaylistBinding
 import com.nvvi9.ytaudio.di.Injectable
+import com.nvvi9.ytaudio.ui.MainActivity
 import com.nvvi9.ytaudio.ui.adapters.PlaylistItemAdapter
 import com.nvvi9.ytaudio.ui.adapters.PlaylistItemListener
 import com.nvvi9.ytaudio.ui.viewmodels.MainViewModel
@@ -26,7 +29,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 class PlaylistFragment :
-    YouTubeIntentFragment(),
+    Fragment(),
     PlaylistItemListener,
     Injectable {
 
@@ -75,11 +78,12 @@ class PlaylistFragment :
         mainViewModel.audioItemClicked(item.id)
     }
 
+    @ExperimentalPagingApi
     override fun onItemLongClicked(item: PlaylistItem): Boolean {
         MenuBottomSheetDialogFragment(R.menu.playlist_bottom_sheet_menu) {
             when (it.itemId) {
                 R.id.menu_share -> {
-                    startShareIntent(item.id)
+                    (activity as? MainActivity)?.startShareIntent(item.id)
                     true
                 }
                 R.id.menu_delete -> {
@@ -88,7 +92,7 @@ class PlaylistFragment :
                     true
                 }
                 R.id.menu_open_youtube -> {
-                    startYouTubeIntent(item.id)
+                    (activity as? MainActivity)?.startYouTubeIntent(item.id)
                     true
                 }
                 else -> false
