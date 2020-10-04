@@ -5,12 +5,14 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="listener"
             type="com.nvvi9.ytaudio.ui.adapters.PlaylistItemListener" />
 
         <variable
-            name="audioItem"
+            name="playlistItem"
             type="com.nvvi9.ytaudio.vo.PlaylistItem" />
     </data>
 
@@ -26,8 +28,8 @@
             android:clickable="true"
             android:elevation="0dp"
             android:focusable="true"
-            android:onClick="@{() -> listener.onItemClicked(audioItem)}"
-            android:onLongClick="@{() -> listener.onItemLongClicked(audioItem)}">
+            android:onClick="@{() -> listener.onItemClicked(playlistItem)}"
+            android:onLongClick="@{() -> listener.onItemLongClicked(playlistItem)}">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/item_layout"
@@ -39,7 +41,7 @@
                     android:layout_width="112dp"
                     android:layout_height="0dp"
                     android:contentDescription="@string/thumbnail_description"
-                    app:imageUrl="@{audioItem.thumbnailUri}"
+                    app:imageUrl="@{playlistItem.thumbnailUri}"
                     app:layout_constraintDimensionRatio="H,16:9"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -53,7 +55,7 @@
                     android:maxLines="1"
                     android:paddingHorizontal="8dp"
                     android:singleLine="true"
-                    android:text="@{audioItem.title}"
+                    android:text="@{playlistItem.title}"
                     android:textAppearance="?attr/textAppearanceSubtitle2"
                     app:layout_constraintEnd_toStartOf="@id/duration"
                     app:layout_constraintStart_toEndOf="@id/thumbnail"
@@ -66,7 +68,7 @@
                     android:layout_height="wrap_content"
                     android:maxLines="1"
                     android:padding="8dp"
-                    android:text="@{audioItem.author}"
+                    android:text="@{playlistItem.author}"
                     android:textAppearance="?attr/textAppearanceCaption"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/duration"
@@ -83,7 +85,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:timeFormattedSeconds="@{audioItem.duration}"
+                    app:timeFormattedSeconds="@{playlistItem.duration}"
                     tools:text="14:53" />
 
                 <ImageView
@@ -92,11 +94,13 @@
                     android:layout_height="0dp"
                     android:contentDescription="@string/audio_button_description"
                     android:scaleType="fitCenter"
+                    android:visibility="@{playlistItem.isPlayingNow ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toBottomOf="@+id/thumbnail"
                     app:layout_constraintEnd_toEndOf="@+id/thumbnail"
                     app:layout_constraintStart_toStartOf="@+id/thumbnail"
                     app:layout_constraintTop_toTopOf="@+id/thumbnail"
-                    tools:srcCompat="@drawable/ic_play_arrow" />
+                    app:srcCompat="@drawable/ic_play_arrow"
+                    app:tint="?attr/colorOnPrimarySurface" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
     </FrameLayout>

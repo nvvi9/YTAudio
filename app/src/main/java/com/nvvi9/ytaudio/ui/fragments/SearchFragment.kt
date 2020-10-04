@@ -34,6 +34,7 @@ class SearchFragment :
     }
 
     private lateinit var binding: FragmentSearchBinding
+
     private val navArgs: SearchFragmentArgs by navArgs()
 
     override fun onItemClicked(text: String) {

@@ -35,8 +35,6 @@ abstract class YouTubeBaseViewModel : ViewModel() {
     private val addScope = CoroutineScope(Dispatchers.Main + addJob)
     private val deleteScope = CoroutineScope(Dispatchers.Main + deleteJob)
 
-    private var isDeletingNow = false
-
     @CallSuper
     override fun onCleared() {
         super.onCleared()
@@ -48,42 +46,34 @@ abstract class YouTubeBaseViewModel : ViewModel() {
     val errorEvent: LiveData<Event<String>>
         get() = _errorEvent
 
-    private val _youTubeItems = MutableLiveData<PagingData<YouTubeItem>>()
-    val youTubeItems = Transformations.switchMap(_youTubeItems) { ytPaging ->
-        Transformations.map(audioInfoUseCases.getItemsId()) { id ->
-            ytPaging.map {
-                it.isAdded = id.contains(it.id)
-                it
-            }
-        }
-    }
+    private val youTubeItems = MutableLiveData<PagingData<YouTubeItem>>()
 
-    val items = MediatorLiveData<PagingData<YouTubeItem>>()
+    private val items = MediatorLiveData<PagingData<YouTubeItem>>()
+
+    protected abstract fun loadItems(query: String? = null): Flow<PagingData<YouTubeItem>?>
 
     fun observeOnYouTubeItems(owner: LifecycleOwner, observer: Observer<PagingData<YouTubeItem>>) {
         items.observe(owner, observer)
 
-        items.addSource(_youTubeItems) {
+        items.addSource(youTubeItems) {
             it?.let {
                 items.postValue(it)
             }
         }
 
         items.addSource(audioInfoUseCases.getItemsId()) { id ->
-            if (!isDeletingNow) {
-                _youTubeItems.value?.map {
-                    it.isAdded = id.contains(it.id)
-                    it
-                }?.let {
-                    items.postValue(it)
-                }
+            youTubeItems.value?.map {
+                it.isAdded = id.contains(it.id)
+                it
+            }?.let {
+                items.postValue(it)
             }
         }
     }
 
     fun removeSources() {
         items.run {
-            removeSource(_youTubeItems)
+            removeSource(youTubeItems)
             removeSource(audioInfoUseCases.getItemsId())
         }
     }
@@ -92,14 +82,12 @@ abstract class YouTubeBaseViewModel : ViewModel() {
         Log.i("YouTubeBaseViewModel", "initialized")
     }
 
-    protected abstract fun loadItems(query: String? = null): Flow<PagingData<YouTubeItem>?>
-
     fun updateYTItems(query: String? = null) {
         viewModelScope.launch {
             loadItems(query)
                 .filterNotNull()
                 .cachedIn(this)
-                .collectLatest { _youTubeItems.postValue(it) }
+                .collectLatest { youTubeItems.postValue(it) }
         }
     }
 
@@ -117,13 +105,10 @@ abstract class YouTubeBaseViewModel : ViewModel() {
     fun deleteFromPlaylist(id: String) {
         deleteScope.launch {
             try {
-                isDeletingNow = true
                 audioInfoUseCases.deleteFromPlaylist(id)
             } catch (t: Throwable) {
                 _errorEvent.postValue(Event("Error occurred"))
                 Log.e(javaClass.simpleName, t.stackTraceToString())
-            } finally {
-                isDeletingNow = false
             }
         }
     }

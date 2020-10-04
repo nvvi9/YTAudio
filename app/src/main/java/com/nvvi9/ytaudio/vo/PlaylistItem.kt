@@ -9,7 +9,7 @@ data class PlaylistItem @JvmOverloads constructor(
     val author: String,
     val thumbnailUri: String?,
     val duration: Long,
-    val playbackState: Int = 0
+    var isPlayingNow: Boolean = false
 ) {
 
     companion object {

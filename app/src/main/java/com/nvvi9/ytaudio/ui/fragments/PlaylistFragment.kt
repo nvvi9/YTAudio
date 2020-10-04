@@ -49,6 +49,8 @@ class PlaylistFragment :
 
     private lateinit var binding: FragmentPlaylistBinding
 
+    private val playlistItemAdapter = PlaylistItemAdapter(this)
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -58,7 +60,7 @@ class PlaylistFragment :
             viewModel = playlistViewModel
 
             itemPlaylistView.run {
-                adapter = PlaylistItemAdapter(this@PlaylistFragment)
+                adapter = playlistItemAdapter
                 itemAnimator = SpringAddItemAnimator()
                 layoutManager = LinearLayoutManager(
                     requireNotNull(this@PlaylistFragment.activity).application,
@@ -72,6 +74,21 @@ class PlaylistFragment :
         }
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        playlistViewModel.observeOnPlaylistItems(viewLifecycleOwner) {
+            it?.let {
+                playlistItemAdapter.submitList(it)
+                playlistItemAdapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        playlistViewModel.removeSources()
     }
 
     override fun onItemClicked(item: PlaylistItem) {

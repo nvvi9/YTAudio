@@ -30,7 +30,7 @@ class PlaylistItemAdapter(private val itemListener: PlaylistItemListener) :
 
         fun bind(item: PlaylistItem) {
             binding.run {
-                audioItem = item
+                playlistItem = item
                 executePendingBindings()
             }
         }

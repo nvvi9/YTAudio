@@ -20,7 +20,6 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.textview.MaterialTextView
 import com.nvvi9.ytaudio.R
-import com.nvvi9.ytaudio.vo.PlaylistItem
 import rm.com.audiowave.AudioWaveView
 
 
@@ -104,11 +103,6 @@ fun ImageView.setImage(thumbnailUri: Uri?, recycled: Boolean = false) {
                     .into(this@setImage)
             }
         }
-}
-
-@BindingAdapter("audioPlaylist")
-fun RecyclerView.setPlaylist(playlist: List<PlaylistItem>?) {
-    (adapter as? PlaylistItemAdapter)?.submitList(playlist?.sortedBy { it.title })
 }
 
 @BindingAdapter("stringList")
