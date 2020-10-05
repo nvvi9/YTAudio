@@ -133,7 +133,7 @@ open class AudioService :
     }
 
     override fun onPlayerError(error: ExoPlaybackException) {
-        Log.e(javaClass.simpleName, error.toString())
+        Log.e(javaClass.simpleName, error.stackTraceToString())
     }
 
     override fun onNotificationPosted(

@@ -88,9 +88,7 @@ class SearchFragment :
             lifecycleOwner = this@SearchFragment
         }
 
-        navArgs.query?.let {
-            setToolbarText(it)
-        }
+        navArgs.query?.let { setToolbarText(it) }
 
         return binding.root
     }

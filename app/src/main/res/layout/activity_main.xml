@@ -48,16 +48,12 @@
                 android:layout_height="match_parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
                 <ImageView
                     android:id="@+id/mini_player_cover"
                     android:layout_width="80dp"
                     android:layout_height="50dp"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="3dp"
                     android:scaleType="centerCrop"
                     android:transitionName="now_cover"
                     app:recycled="@{true}"
@@ -91,13 +87,15 @@
                             android:layout_marginStart="0dp"
                             android:layout_marginBottom="4dp"
                             android:ellipsize="marquee"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:freezesText="true"
                             android:marqueeRepeatLimit="marquee_forever"
                             android:scrollHorizontally="true"
                             android:singleLine="true"
                             android:text="@{nowPlaying.title}"
-                            android:textAppearance="?attr/textAppearanceSubtitle1"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:textAppearance="?attr/textAppearanceSubtitle2"
+                            tools:text="Title" />
                     </RelativeLayout>
 
                     <LinearLayout
@@ -113,8 +111,8 @@
                             android:ellipsize="end"
                             android:singleLine="true"
                             android:text="@{nowPlaying.author}"
-                            android:textAppearance="?attr/textAppearanceSubtitle2"
-                            android:textSize="14sp" />
+                            android:textAppearance="?attr/textAppearanceCaption"
+                            tools:text="artist" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -142,7 +140,8 @@
                         android:background="@android:color/transparent"
                         android:clickable="false"
                         android:focusable="false"
-                        app:srcIcon="@{buttonRes}" />
+                        app:srcIcon="@{buttonRes}"
+                        tools:srcCompat="@drawable/ic_play_arrow" />
                 </RelativeLayout>
             </RelativeLayout>
         </androidx.cardview.widget.CardView>

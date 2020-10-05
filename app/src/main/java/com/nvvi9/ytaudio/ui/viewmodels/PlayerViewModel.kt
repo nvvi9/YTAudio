@@ -5,7 +5,6 @@ import android.os.Looper
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -40,10 +39,6 @@ class PlayerViewModel @Inject constructor(
 
     val shuffleMode = audioServiceConnection.shuffleMode
     val repeatMode = audioServiceConnection.repeatMode
-
-    init {
-        Log.i("PlayerViewModel", "initialized")
-    }
 
     private var updatePosition = true
     private val handler = Handler(Looper.getMainLooper())

@@ -79,7 +79,7 @@ fun ImageView.setImage(thumbnailUri: Uri?, recycled: Boolean = false) {
     clipToOutline = true
     Glide.with(this)
         .load(thumbnailUri)
-        .override(480, 270)
+        .override(480, 260)
         .centerCrop()
         .transition(DrawableTransitionOptions.withCrossFade()).apply {
             if (recycled) {
@@ -116,7 +116,7 @@ fun AudioWaveView.setRaw(raw: ByteArray?) {
         try {
             setRawData(raw)
         } catch (t: Throwable) {
-            Log.e(javaClass.simpleName, t.toString())
+            Log.e(javaClass.simpleName, t.stackTraceToString())
         }
     }
 }

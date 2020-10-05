@@ -1,7 +1,6 @@
 package com.nvvi9.ytaudio.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,8 +56,6 @@ class PlaylistFragment :
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentPlaylistBinding.inflate(inflater).apply {
-            viewModel = playlistViewModel
-
             itemPlaylistView.run {
                 adapter = playlistItemAdapter
                 itemAnimator = SpringAddItemAnimator()
@@ -82,6 +79,7 @@ class PlaylistFragment :
             it?.let {
                 playlistItemAdapter.submitList(it)
                 playlistItemAdapter.notifyDataSetChanged()
+                binding.emptyMessage.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
             }
         }
     }
@@ -105,7 +103,6 @@ class PlaylistFragment :
                 }
                 R.id.menu_delete -> {
                     playlistViewModel.deleteFromDatabase(item)
-                    Log.i("PlaylistFragment", "$item deleted")
                     true
                 }
                 R.id.menu_open_youtube -> {

@@ -3,7 +3,7 @@
     <string name="thumbnail_description">video thumbnail</string>
     <string name="notification_channel">now playing</string>
     <string name="audio_button_description">managing playback state button</string>
-    <string name="nothing_to_play_msg">Nothing to play</string>
+    <string name="nothing_to_play_msg">Click on YouTube to add songs</string>
     <string name="search">Search</string>
     <string name="share">Share</string>
     <string name="add_to_playlist">Add to playlist</string>

@@ -21,18 +21,18 @@ class YTSearchPagingSource(
 
     override suspend fun load(params: LoadParams<String>): LoadResult<String, YTVideoDetails> =
         try {
-            val ytSearchPartId = ytApiService.getYTSearchPartId(query, params.loadSize, params.key)
+            val ytSearch = ytApiService.getYTSearchPartId(query, params.loadSize, params.key)
 
-            val items = ytStream.extractVideoDetails(*ytSearchPartId.items.map { it.id.videoId }
-                .toTypedArray())
-                .toList()
-                .filterNotNull()
-                .map { YTVideoDetails.create(it) }
+            val items =
+                ytStream.extractVideoDetails(*ytSearch.items.map { it.id.videoId }.toTypedArray())
+                    .toList()
+                    .filterNotNull()
+                    .map { YTVideoDetails.create(it) }
 
             LoadResult.Page(
                 data = items,
-                prevKey = ytSearchPartId.prevPageToken,
-                nextKey = ytSearchPartId.nextPageToken
+                prevKey = ytSearch.prevPageToken,
+                nextKey = ytSearch.nextPageToken
             )
         } catch (e: IOException) {
             LoadResult.Error(e)

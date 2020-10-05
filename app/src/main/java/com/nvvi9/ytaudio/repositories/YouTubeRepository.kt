@@ -32,6 +32,6 @@ class YouTubeRepository @Inject constructor(
         }.flow
 
     companion object {
-        private const val PAGE_SIZE = 7
+        private const val PAGE_SIZE = 4
     }
 }

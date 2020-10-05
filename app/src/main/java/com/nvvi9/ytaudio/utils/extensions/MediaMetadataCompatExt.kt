@@ -6,7 +6,6 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.RatingCompat
-import android.util.Log
 import androidx.core.net.toUri
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -205,14 +204,10 @@ fun Iterable<MediaMetadataCompat>.toMediaSource(dataSourceFactory: DataSource.Fa
 fun MediaMetadataCompat.Builder.from(audioInfo: AudioInfo): MediaMetadataCompat.Builder =
     this.apply {
         id = audioInfo.id
-        title = audioInfo.details.title.also {
-            Log.i("MediaMetadataExt", it)
-        }
+        title = audioInfo.details.title
         artist = audioInfo.details.author
         duration = audioInfo.details.duration
-        mediaUri = audioInfo.audioStreams.maxByOrNull { it.bitrate }!!.also {
-            Log.i("MediaMetadataExt", "codec: ${it.codec} extension: ${it.extension}")
-        }.url
+        mediaUri = audioInfo.audioStreams.maxByOrNull { it.bitrate }!!.url
         displayIconUri = audioInfo.thumbnails[1].url
         albumArtUri = audioInfo.thumbnails.maxByOrNull { it.height }!!.url
         flag = MediaBrowserCompat.MediaItem.FLAG_PLAYABLE

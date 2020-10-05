@@ -1,7 +1,6 @@
 package com.nvvi9.ytaudio.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -76,7 +75,6 @@ class PlayerFragment :
         playerViewModel.run {
             nowPlayingInfo.observe(viewLifecycleOwner) {
                 binding.nowPlaying = it
-                Log.i(javaClass.simpleName, it?.toString() ?: "empty")
             }
 
             currentButtonRes.observe(viewLifecycleOwner) {
@@ -84,21 +82,15 @@ class PlayerFragment :
             }
 
             raw.observe(viewLifecycleOwner) {
-                it?.let {
-                    binding.progressBar.setRaw(it)
-                }
+                it?.let { binding.progressBar.setRaw(it) }
             }
 
             shuffleMode.observe(viewLifecycleOwner) {
-                it?.let {
-                    binding.shuffleState = it
-                }
+                it?.let { binding.shuffleState = it }
             }
 
             repeatMode.observe(viewLifecycleOwner) {
-                it?.let {
-                    binding.repeatState = it
-                }
+                it?.let { binding.repeatState = it }
             }
 
             currentPositionMillis.observe(viewLifecycleOwner) { pos ->

@@ -19,8 +19,7 @@ class YTAudioWorkerFactory @Inject constructor(
         appContext: Context,
         workerClassName: String,
         workerParameters: WorkerParameters
-    ): ListenableWorker? = workerFactories.entries
-        .find {
-            Class.forName(workerClassName).isAssignableFrom(it.key)
-        }?.value?.get()?.create(appContext, workerParameters)
+    ): ListenableWorker? = workerFactories.entries.find {
+        Class.forName(workerClassName).isAssignableFrom(it.key)
+    }?.value?.get()?.create(appContext, workerParameters)
 }

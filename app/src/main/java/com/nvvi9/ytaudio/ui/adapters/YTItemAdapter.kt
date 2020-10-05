@@ -29,15 +29,15 @@ class YTItemAdapter(private val listener: YTItemListener) :
         listener: YTItemListener
     ) : RecyclerView.ViewHolder(binding.root), ReboundingSwipeActionCallback.ReboundableViewHolder {
 
+        private val addedCornerSize =
+            itemView.resources.getDimension(R.dimen.small_component_corner_radius)
+
         init {
             binding.apply {
                 this.listener = listener
                 root.background = YTItemSwipeActionDrawable(root.context)
             }
         }
-
-        private val addedCornerSize =
-            itemView.resources.getDimension(R.dimen.small_component_corner_radius)
 
         fun bind(item: YouTubeItem) {
             binding.youTubeItem = item

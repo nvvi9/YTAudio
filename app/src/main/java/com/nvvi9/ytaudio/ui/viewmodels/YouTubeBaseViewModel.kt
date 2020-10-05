@@ -1,6 +1,5 @@
 package com.nvvi9.ytaudio.ui.viewmodels
 
-import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.lifecycle.*
 import androidx.paging.ExperimentalPagingApi
@@ -78,10 +77,6 @@ abstract class YouTubeBaseViewModel : ViewModel() {
         }
     }
 
-    init {
-        Log.i("YouTubeBaseViewModel", "initialized")
-    }
-
     fun updateYTItems(query: String? = null) {
         viewModelScope.launch {
             loadItems(query)
@@ -97,7 +92,6 @@ abstract class YouTubeBaseViewModel : ViewModel() {
                 audioInfoUseCases.addToPlaylist(id)
             } catch (t: Throwable) {
                 _errorEvent.postValue(Event("Error occurred"))
-                Log.e(javaClass.simpleName, t.stackTraceToString())
             }
         }
     }
@@ -108,7 +102,6 @@ abstract class YouTubeBaseViewModel : ViewModel() {
                 audioInfoUseCases.deleteFromPlaylist(id)
             } catch (t: Throwable) {
                 _errorEvent.postValue(Event("Error occurred"))
-                Log.e(javaClass.simpleName, t.stackTraceToString())
             }
         }
     }

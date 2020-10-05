@@ -103,6 +103,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
         playerViewModel.run {
             nowPlayingInfo.observe(this@MainActivity) {
                 binding.nowPlaying = it
+                binding.title.isSelected = true
                 binding.bottomControls.visibility = it?.let {
                     when (navController.currentDestination?.id) {
                         R.id.playlistFragment, R.id.youTubeFragment, R.id.searchResultsFragment -> View.VISIBLE

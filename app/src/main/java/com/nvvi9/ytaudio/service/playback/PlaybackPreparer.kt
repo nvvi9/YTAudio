@@ -58,7 +58,7 @@ class PlaybackPreparer(
             } catch (t: Throwable) {
                 Log.e(javaClass.simpleName, t.stackTraceToString())
             }
-        } ?: Log.w(javaClass.simpleName, "Content not found: id=$mediaId")
+        }
     }
 
     override fun onCommand(
@@ -88,7 +88,6 @@ class PlaybackPreparer(
         exoPlayer.setMediaSource(new.toMediaSource(dataSourceFactory))
         if (currentMetadata.isNotEmpty()) {
             try {
-                Log.i("PlaybackPreparer", "preparing")
                 exoPlayer.prepare()
                 exoPlayer.seekTo(window, position)
             } catch (e: IllegalSeekPositionException) {
