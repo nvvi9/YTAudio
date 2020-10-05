@@ -75,6 +75,7 @@ class PlayerFragment :
         playerViewModel.run {
             nowPlayingInfo.observe(viewLifecycleOwner) {
                 binding.nowPlaying = it
+                binding.title.isSelected = true
             }
 
             currentButtonRes.observe(viewLifecycleOwner) {
