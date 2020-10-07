@@ -1,5 +1,6 @@
 # YTAudio
 
+[![API](https://img.shields.io/badge/API-23%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=23)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7d612263cf5e40fc81717adc3021e5f8)](https://app.codacy.com/gh/nvvi9/YTAudio?utm_source=github.com&utm_medium=referral&utm_content=nvvi9/YTAudio&utm_campaign=Badge_Grade)
 
 Android app that allows you play the audio track of a YouTube video in the background.
