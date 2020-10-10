@@ -13,6 +13,8 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.nvvi9.ytaudio.R
+import com.nvvi9.ytaudio.utils.Constants.NOW_PLAYING_CHANNEL
+import com.nvvi9.ytaudio.utils.Constants.NOW_PLAYING_NOTIFICATION
 import kotlinx.coroutines.*
 
 
@@ -33,7 +35,7 @@ class NotificationManager(
         playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
             context,
             NOW_PLAYING_CHANNEL,
-            R.string.notification_channel,
+            R.string.app_name,
             NOW_PLAYING_NOTIFICATION,
             DescriptionAdapter(mediaController),
             notificationListener
@@ -105,6 +107,3 @@ class NotificationManager(
             }
     }
 }
-
-const val NOW_PLAYING_CHANNEL = "channel"
-const val NOW_PLAYING_NOTIFICATION = 111

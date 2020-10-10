@@ -21,6 +21,7 @@ import com.nvvi9.ytaudio.service.playback.BecomingNoisyReceiver
 import com.nvvi9.ytaudio.service.playback.PlaybackPreparer
 import com.nvvi9.ytaudio.service.playback.QueueNavigator
 import com.nvvi9.ytaudio.utils.Constants.MEDIA_ROOT_ID
+import com.nvvi9.ytaudio.utils.Constants.YTAUDIO_USER_AGENT
 import com.nvvi9.ytaudio.utils.extensions.flag
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -166,7 +167,3 @@ open class AudioService :
         stopSelf()
     }
 }
-
-
-const val NETWORK_FAILURE = "service network failure"
-private const val YTAUDIO_USER_AGENT = "ytaudio.next"

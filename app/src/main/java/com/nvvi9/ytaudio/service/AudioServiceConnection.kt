@@ -14,6 +14,7 @@ import android.support.v4.media.session.PlaybackStateCompat.REPEAT_MODE_NONE
 import android.support.v4.media.session.PlaybackStateCompat.SHUFFLE_MODE_NONE
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.nvvi9.ytaudio.utils.Constants.NETWORK_FAILURE
 import com.nvvi9.ytaudio.utils.extensions.id
 import javax.inject.Singleton
 
