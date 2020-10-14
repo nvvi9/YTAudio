@@ -36,6 +36,7 @@ class NotificationManager(
             context,
             NOW_PLAYING_CHANNEL,
             R.string.app_name,
+            R.string.notification_channel,
             NOW_PLAYING_NOTIFICATION,
             DescriptionAdapter(mediaController),
             notificationListener
@@ -60,7 +61,6 @@ class NotificationManager(
 
         var currentIconUri: Uri? = null
         var bitmap: Bitmap? = null
-
 
         override fun createCurrentContentIntent(player: Player): PendingIntent? =
             controller.sessionActivity
