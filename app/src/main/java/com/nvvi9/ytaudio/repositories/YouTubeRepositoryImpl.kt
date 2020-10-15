@@ -6,7 +6,10 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.nvvi9.YTStream
 import com.nvvi9.ytaudio.data.ytstream.YTVideoDetails
-import com.nvvi9.ytaudio.network.YouTubeApiService
+import com.nvvi9.ytaudio.network.YouTubeNetworkDataSource
+import com.nvvi9.ytaudio.repositories.base.YouTubeRepository
+import com.nvvi9.ytaudio.repositories.paging.YTSearchPagingSource
+import com.nvvi9.ytaudio.repositories.paging.YTVideoDetailsPagingSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -16,19 +19,20 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @ExperimentalPagingApi
-class YouTubeRepository @Inject constructor(
-    private val ytApiService: YouTubeApiService,
+class YouTubeRepositoryImpl @Inject constructor(
+    private val ytNetworkDataSource: YouTubeNetworkDataSource,
     private val ytStream: YTStream,
-) {
+) : YouTubeRepository {
 
-    fun getSearchResponse(query: String): Flow<PagingData<YTVideoDetails>> =
+    override fun getVideoDetailsFromQuery(query: String): Flow<PagingData<YTVideoDetails>> =
         Pager(PagingConfig(PAGE_SIZE)) {
-            YTSearchPagingSource(query, ytApiService, ytStream)
+            YTSearchPagingSource(query, ytNetworkDataSource, ytStream)
         }.flow
 
-    fun getPopularResponse() =
+
+    override fun getVideoDetails(): Flow<PagingData<YTVideoDetails>> =
         Pager(PagingConfig(PAGE_SIZE)) {
-            YTVideoDetailsPagingSource(ytApiService, ytStream)
+            YTVideoDetailsPagingSource(ytNetworkDataSource, ytStream)
         }.flow
 
     companion object {

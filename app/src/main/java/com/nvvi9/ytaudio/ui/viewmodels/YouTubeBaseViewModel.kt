@@ -1,17 +1,15 @@
 package com.nvvi9.ytaudio.ui.viewmodels
 
-import androidx.annotation.CallSuper
 import androidx.lifecycle.*
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.nvvi9.ytaudio.domain.AudioInfoUseCases
-import com.nvvi9.ytaudio.service.AudioServiceConnection
+import com.nvvi9.ytaudio.domain.AudioInfoUseCase
+import com.nvvi9.ytaudio.domain.YouTubeUseCase
 import com.nvvi9.ytaudio.utils.Event
 import com.nvvi9.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import javax.inject.Inject
@@ -20,23 +18,25 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @ExperimentalPagingApi
-abstract class YouTubeBaseViewModel : ViewModel() {
-
-    @Inject
-    lateinit var audioInfoUseCases: AudioInfoUseCases
-
-    @Inject
-    lateinit var audioServiceConnection: AudioServiceConnection
+class YouTubeBaseViewModel @Inject constructor(
+    private val audioInfoUseCase: AudioInfoUseCase,
+    private val youTubeUseCase: YouTubeUseCase,
+    private val ioDispatcher: CoroutineDispatcher,
+    mainDispatcher: CoroutineDispatcher
+) : ViewModel() {
 
     private val addJob = Job()
     private val deleteJob = Job()
 
-    private val addScope = CoroutineScope(Dispatchers.Main + addJob)
-    private val deleteScope = CoroutineScope(Dispatchers.Main + deleteJob)
+    private val addScope = CoroutineScope(mainDispatcher + addJob)
+    private val deleteScope = CoroutineScope(mainDispatcher + deleteJob)
 
-    @CallSuper
     override fun onCleared() {
         super.onCleared()
+        items.run {
+            removeSource(youTubeItems)
+            removeSource(audioInfoUseCase.getItemsId())
+        }
         deleteJob.cancel()
         addJob.cancel()
     }
@@ -49,7 +49,11 @@ abstract class YouTubeBaseViewModel : ViewModel() {
 
     private val items = MediatorLiveData<PagingData<YouTubeItem>>()
 
-    protected abstract fun loadItems(query: String? = null): Flow<PagingData<YouTubeItem>?>
+    private fun loadItems(query: String? = null) =
+        query?.let {
+            youTubeUseCase.getYouTubeItemsFromQuery(it)
+        } ?: youTubeUseCase.getPopularYouTubeItems()
+
 
     fun observeOnYouTubeItems(owner: LifecycleOwner, observer: Observer<PagingData<YouTubeItem>>) {
         items.observe(owner, observer)
@@ -60,7 +64,7 @@ abstract class YouTubeBaseViewModel : ViewModel() {
             }
         }
 
-        items.addSource(audioInfoUseCases.getItemsId()) { id ->
+        items.addSource(audioInfoUseCase.getItemsId()) { id ->
             youTubeItems.value?.map {
                 it.isAdded = id.contains(it.id)
                 it
@@ -70,15 +74,8 @@ abstract class YouTubeBaseViewModel : ViewModel() {
         }
     }
 
-    fun removeSources() {
-        items.run {
-            removeSource(youTubeItems)
-            removeSource(audioInfoUseCases.getItemsId())
-        }
-    }
-
     fun updateYTItems(query: String? = null) {
-        viewModelScope.launch {
+        viewModelScope.launch(ioDispatcher) {
             loadItems(query)
                 .filterNotNull()
                 .cachedIn(this)
@@ -87,9 +84,9 @@ abstract class YouTubeBaseViewModel : ViewModel() {
     }
 
     fun addToPlaylist(id: String) {
-        addScope.launch {
+        addScope.launch(ioDispatcher) {
             try {
-                audioInfoUseCases.addToPlaylist(id)
+                audioInfoUseCase.addToPlaylist(id)
             } catch (t: Throwable) {
                 _errorEvent.postValue(Event("Error occurred"))
             }
@@ -97,9 +94,9 @@ abstract class YouTubeBaseViewModel : ViewModel() {
     }
 
     fun deleteFromPlaylist(id: String) {
-        deleteScope.launch {
+        deleteScope.launch(ioDispatcher) {
             try {
-                audioInfoUseCases.deleteFromPlaylist(id)
+                audioInfoUseCase.deleteFromPlaylist(id)
             } catch (t: Throwable) {
                 _errorEvent.postValue(Event("Error occurred"))
             }

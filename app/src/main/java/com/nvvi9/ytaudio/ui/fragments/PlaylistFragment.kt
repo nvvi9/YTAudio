@@ -84,11 +84,6 @@ class PlaylistFragment :
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        playlistViewModel.removeSources()
-    }
-
     override fun onItemClicked(item: PlaylistItem) {
         mainViewModel.audioItemClicked(item.id)
     }

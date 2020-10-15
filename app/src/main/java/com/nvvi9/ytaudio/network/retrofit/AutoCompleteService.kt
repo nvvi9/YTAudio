@@ -1,4 +1,4 @@
-package com.nvvi9.ytaudio.network
+package com.nvvi9.ytaudio.network.retrofit
 
 import com.nvvi9.ytaudio.data.autocomplete.AutoComplete
 import retrofit2.http.GET

@@ -5,7 +5,7 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion "29.0.3"
 
     compileOptions {
@@ -20,7 +20,7 @@ android {
     defaultConfig {
         applicationId 'com.nvvi9.ytaudio'
         minSdkVersion 23
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -108,7 +108,7 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-simplexml:$retrofit_version"
 
     // Retrofit Coroutines Adapter
-    implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:$retrofit_coroutines_adapter_version"
+//    implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:$retrofit_coroutines_adapter_version"
 
     // Gson
     implementation "com.google.code.gson:gson:$gson_version"

@@ -21,7 +21,7 @@ import com.nvvi9.ytaudio.ui.MainActivity
 import com.nvvi9.ytaudio.ui.adapters.ReboundingSwipeActionCallback
 import com.nvvi9.ytaudio.ui.adapters.YTItemAdapter
 import com.nvvi9.ytaudio.ui.adapters.YTLoadStateAdapter
-import com.nvvi9.ytaudio.ui.viewmodels.SearchResultsViewModel
+import com.nvvi9.ytaudio.ui.viewmodels.YouTubeBaseViewModel
 import com.nvvi9.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -38,7 +38,7 @@ class SearchResultsFragment : YouTubeBaseFragment(), Injectable {
     @Inject
     lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
 
-    override val youTubeViewModel: SearchResultsViewModel by viewModels {
+    override val youTubeViewModel: YouTubeBaseViewModel by viewModels {
         youTubeViewModelFactory
     }
 

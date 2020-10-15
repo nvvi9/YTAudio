@@ -1,42 +1,35 @@
 package com.nvvi9.ytaudio.repositories
 
-import android.util.Log
 import com.nvvi9.YTStream
 import com.nvvi9.ytaudio.data.audioinfo.AudioInfo
 import com.nvvi9.ytaudio.db.AudioInfoDao
-import kotlinx.coroutines.Dispatchers
+import com.nvvi9.ytaudio.repositories.base.AudioInfoRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class AudioInfoRepository @Inject constructor(
+class AudioInfoRepositoryImpl @Inject constructor(
     private val ytStream: YTStream,
     private val audioInfoDao: AudioInfoDao
-) {
+) : AudioInfoRepository {
 
-    suspend fun insertIntoDatabase(vararg id: String) {
+    override suspend fun addToPlaylist(vararg id: String) {
         ytStream.extractVideoData(*id)
             .filterNotNull()
             .mapNotNull { AudioInfo.fromVideoData(it) }
-            .collect {
-                audioInfoDao.insert(it)
-                Log.i("AudioInfoRepository", "Added to playlist: ${it.id}")
-            }
+            .collect { audioInfoDao.insert(it) }
     }
 
-    suspend fun deleteById(vararg id: String) {
-        withContext(Dispatchers.IO) {
-            audioInfoDao.deleteById(*id)
-        }
+    override suspend fun deleteFromPlaylist(vararg id: String) {
+        audioInfoDao.deleteById(*id)
     }
 
-    fun getAudioInfo() =
+    override fun getPlaylist() =
         audioInfoDao.getAllAudio()
 }

@@ -1,11 +1,11 @@
 package com.nvvi9.ytaudio.ui.viewmodels
 
 import androidx.lifecycle.*
-import com.nvvi9.ytaudio.domain.AudioInfoUseCases
-import com.nvvi9.ytaudio.repositories.AudioInfoRepository
+import com.nvvi9.ytaudio.domain.AudioInfoUseCase
 import com.nvvi9.ytaudio.service.AudioServiceConnection
 import com.nvvi9.ytaudio.utils.extensions.id
 import com.nvvi9.ytaudio.vo.PlaylistItem
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
@@ -15,17 +15,26 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @FlowPreview
 class PlaylistViewModel @Inject constructor(
-    private val audioInfoRepository: AudioInfoRepository,
+    private val audioInfoUseCase: AudioInfoUseCase,
     private val audioServiceConnection: AudioServiceConnection,
-    audioInfoUseCases: AudioInfoUseCases,
+    private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    private val playlistItems = audioInfoUseCases.getPlaylistItems()
+    private val playlistItems = audioInfoUseCase.getPlaylistItems()
 
     private val items = MediatorLiveData<List<PlaylistItem>>()
 
+    override fun onCleared() {
+        super.onCleared()
+        items.run {
+            removeSource(playlistItems)
+            removeSource(audioServiceConnection.nowPlaying)
+        }
+    }
+
     fun observeOnPlaylistItems(owner: LifecycleOwner, observer: Observer<List<PlaylistItem>>) {
         items.observe(owner, observer)
+
         items.addSource(playlistItems) {
             it?.let { items.postValue(it) }
         }
@@ -40,16 +49,9 @@ class PlaylistViewModel @Inject constructor(
         }
     }
 
-    fun removeSources() {
-        items.run {
-            removeSource(playlistItems)
-            removeSource(audioServiceConnection.nowPlaying)
-        }
-    }
-
     fun deleteFromDatabase(vararg items: PlaylistItem) {
-        viewModelScope.launch {
-            audioInfoRepository.deleteById(*items.map { it.id }.toTypedArray())
+        viewModelScope.launch(ioDispatcher) {
+            audioInfoUseCase.deleteFromPlaylist(*items.map { it.id }.toTypedArray())
         }
     }
 }

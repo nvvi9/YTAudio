@@ -2,7 +2,7 @@ package com.nvvi9.ytaudio.domain
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.map
-import com.nvvi9.ytaudio.repositories.YouTubeRepository
+import com.nvvi9.ytaudio.repositories.base.YouTubeRepository
 import com.nvvi9.ytaudio.vo.toYouTubeItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -15,15 +15,15 @@ import javax.inject.Singleton
 @ExperimentalCoroutinesApi
 @ExperimentalPagingApi
 @Singleton
-class YouTubeUseCases @Inject constructor(
+class YouTubeUseCase @Inject constructor(
     private val youTubeRepository: YouTubeRepository
 ) {
 
     fun getPopularYouTubeItems() =
-        youTubeRepository.getPopularResponse()
+        youTubeRepository.getVideoDetails()
             .map { details -> details.map { it.toYouTubeItem() } }
 
     fun getYouTubeItemsFromQuery(query: String) =
-        youTubeRepository.getSearchResponse(query)
+        youTubeRepository.getVideoDetailsFromQuery(query)
             .map { details -> details.map { it.toYouTubeItem() } }
 }

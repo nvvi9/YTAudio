@@ -1,8 +1,9 @@
 package com.nvvi9.ytaudio.di.modules
 
 import androidx.paging.ExperimentalPagingApi
-import com.nvvi9.ytaudio.domain.AudioInfoUseCases
-import com.nvvi9.ytaudio.domain.YouTubeUseCases
+import com.nvvi9.ytaudio.domain.AudioInfoUseCase
+import com.nvvi9.ytaudio.domain.SearchUseCase
+import com.nvvi9.ytaudio.domain.YouTubeUseCase
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -15,9 +16,12 @@ import kotlinx.coroutines.FlowPreview
 abstract class UseCasesModule {
 
     @ContributesAndroidInjector
-    abstract fun contributeAudioInfoUseCases(): AudioInfoUseCases
+    abstract fun contributeAudioInfoUseCase(): AudioInfoUseCase
 
     @ContributesAndroidInjector
     @ExperimentalPagingApi
-    abstract fun contributeYouTubeUseCases(): YouTubeUseCases
+    abstract fun contributeYouTubeUseCase(): YouTubeUseCase
+
+    @ContributesAndroidInjector
+    abstract fun contributeSearchUseCase(): SearchUseCase
 }

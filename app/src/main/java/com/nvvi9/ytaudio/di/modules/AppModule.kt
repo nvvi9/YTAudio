@@ -10,6 +10,7 @@ import com.nvvi9.ytaudio.service.AudioService
 import com.nvvi9.ytaudio.service.AudioServiceConnection
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Singleton
@@ -36,8 +37,15 @@ class AppModule {
     @Singleton
     fun provideMediaPlaybackServiceConnection(context: Context) =
         AudioServiceConnection.getInstance(
-            context, ComponentName(context, AudioService::class.java)
+            context,
+            ComponentName(context, AudioService::class.java)
         )
+
+    @Provides
+    fun provideIODispatcher() = Dispatchers.IO
+
+    @Provides
+    fun provideMainDispatcher() = Dispatchers.Main
 
     @Provides
     fun provideYTStream() = YTStream()

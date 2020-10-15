@@ -1,11 +1,14 @@
 package com.nvvi9.ytaudio.di.modules
 
 import androidx.paging.ExperimentalPagingApi
-import com.nvvi9.ytaudio.repositories.AudioInfoRepository
-import com.nvvi9.ytaudio.repositories.SearchRepository
-import com.nvvi9.ytaudio.repositories.YouTubeRepository
+import com.nvvi9.ytaudio.repositories.AudioInfoRepositoryImpl
+import com.nvvi9.ytaudio.repositories.SearchRepositoryImpl
+import com.nvvi9.ytaudio.repositories.YouTubeRepositoryImpl
+import com.nvvi9.ytaudio.repositories.base.AudioInfoRepository
+import com.nvvi9.ytaudio.repositories.base.SearchRepository
+import com.nvvi9.ytaudio.repositories.base.YouTubeRepository
+import dagger.Binds
 import dagger.Module
-import dagger.android.ContributesAndroidInjector
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
@@ -16,12 +19,12 @@ import kotlinx.coroutines.FlowPreview
 abstract class RepositoryModule {
 
     @ExperimentalPagingApi
-    @ContributesAndroidInjector
-    abstract fun contributeYouTubeRepository(): YouTubeRepository
+    @Binds
+    abstract fun bindYouTubeRepository(youTubeRepositoryImpl: YouTubeRepositoryImpl): YouTubeRepository
 
-    @ContributesAndroidInjector
-    abstract fun contributeSearchRepository(): SearchRepository
+    @Binds
+    abstract fun bindSearchRepository(searchRepositoryImpl: SearchRepositoryImpl): SearchRepository
 
-    @ContributesAndroidInjector
-    abstract fun contributeAudioInfoRepository(): AudioInfoRepository
+    @Binds
+    abstract fun bindAudioInfoRepository(audioInfoRepositoryImpl: AudioInfoRepositoryImpl): AudioInfoRepository
 }

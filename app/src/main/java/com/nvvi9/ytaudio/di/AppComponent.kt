@@ -28,6 +28,7 @@ import javax.inject.Singleton
         WorkerModule::class,
         RepositoryModule::class,
         UseCasesModule::class,
+        DataSourceModule::class,
         PagingModule::class
     ]
 )
