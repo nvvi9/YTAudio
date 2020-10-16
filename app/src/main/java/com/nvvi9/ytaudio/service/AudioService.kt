@@ -15,7 +15,7 @@ import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
-import com.nvvi9.ytaudio.domain.AudioInfoUseCases
+import com.nvvi9.ytaudio.domain.AudioInfoUseCase
 import com.nvvi9.ytaudio.service.notification.NotificationManager
 import com.nvvi9.ytaudio.service.playback.BecomingNoisyReceiver
 import com.nvvi9.ytaudio.service.playback.PlaybackPreparer
@@ -24,6 +24,7 @@ import com.nvvi9.ytaudio.utils.Constants.MEDIA_ROOT_ID
 import com.nvvi9.ytaudio.utils.Constants.YTAUDIO_USER_AGENT
 import com.nvvi9.ytaudio.utils.extensions.flag
 import dagger.android.AndroidInjection
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
@@ -39,7 +40,10 @@ open class AudioService :
     PlayerNotificationManager.NotificationListener {
 
     @Inject
-    lateinit var audioInfoUseCases: AudioInfoUseCases
+    lateinit var audioInfoUseCase: AudioInfoUseCase
+
+    @Inject
+    lateinit var ioDispatcher: CoroutineDispatcher
 
     private lateinit var playbackPreparer: PlaybackPreparer
     private lateinit var becomingNoisyReceiver: BecomingNoisyReceiver
@@ -75,11 +79,12 @@ open class AudioService :
             isActive = true
         }
         sessionToken = mediaSession.sessionToken
-        notificationManager = NotificationManager(this, exoPlayer, mediaSession.sessionToken, this)
+        notificationManager =
+            NotificationManager(this, exoPlayer, ioDispatcher, mediaSession.sessionToken, this)
         becomingNoisyReceiver = BecomingNoisyReceiver(this, mediaSession.sessionToken)
         mediaSessionConnector = MediaSessionConnector(mediaSession).apply {
             playbackPreparer = PlaybackPreparer(
-                audioInfoUseCases, exoPlayer, DefaultDataSourceFactory(
+                audioInfoUseCase, exoPlayer, DefaultDataSourceFactory(
                     this@AudioService,
                     Util.getUserAgent(this@AudioService, YTAUDIO_USER_AGENT),
                     null
@@ -97,7 +102,7 @@ open class AudioService :
 
     @Synchronized
     override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaItem>>) {
-        val children = audioInfoUseCases.getMetadata().map {
+        val children = audioInfoUseCase.getMetadata().map {
             MediaItem(it.description, it.flag)
         }
 

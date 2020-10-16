@@ -17,7 +17,7 @@ interface AudioInfoDao {
     @Transaction
     suspend fun updatePlaylist(items: List<AudioInfo>) {
         val oldData = getAllAudioInfo()
-        update(items)
+        insert(items)
         deleteById(*(oldData.map { it.id } - items.map { it.id }).toTypedArray())
     }
 

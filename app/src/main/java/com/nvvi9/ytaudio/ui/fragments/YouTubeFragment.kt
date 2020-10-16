@@ -19,8 +19,7 @@ import com.nvvi9.ytaudio.ui.MainActivity
 import com.nvvi9.ytaudio.ui.adapters.ReboundingSwipeActionCallback
 import com.nvvi9.ytaudio.ui.adapters.YTItemAdapter
 import com.nvvi9.ytaudio.ui.adapters.YTLoadStateAdapter
-import com.nvvi9.ytaudio.ui.viewmodels.MainViewModel
-import com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel
+import com.nvvi9.ytaudio.ui.viewmodels.YouTubeBaseViewModel
 import com.nvvi9.ytaudio.utils.SpringAddItemAnimator
 import com.nvvi9.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,15 +37,8 @@ class YouTubeFragment : YouTubeBaseFragment(), Injectable {
     @Inject
     lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
 
-    @Inject
-    lateinit var mainViewModelFactory: ViewModelProvider.Factory
-
-    override val youTubeViewModel: YouTubeViewModel by viewModels {
+    override val youTubeViewModel: YouTubeBaseViewModel by viewModels {
         youTubeViewModelFactory
-    }
-
-    private val mainViewModel: MainViewModel by viewModels {
-        mainViewModelFactory
     }
 
     private lateinit var binding: FragmentYoutubeBinding
@@ -75,6 +67,11 @@ class YouTubeFragment : YouTubeBaseFragment(), Injectable {
         }
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        youTubeViewModel.updateYTItems()
     }
 
     override fun onItemClicked(cardView: View, item: YouTubeItem) {
@@ -106,9 +103,9 @@ class YouTubeFragment : YouTubeBaseFragment(), Injectable {
     override fun onItemIconChanged(item: YouTubeItem, newValue: Boolean) {
         item.isAdded = newValue
         if (newValue) {
-            mainViewModel.addToPlaylist(item.id)
+            youTubeViewModel.addToPlaylist(item.id)
         } else {
-            mainViewModel.deleteFromPlaylist(item.id)
+            youTubeViewModel.deleteFromPlaylist(item.id)
         }
     }
 

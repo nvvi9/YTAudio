@@ -21,6 +21,7 @@ import kotlinx.coroutines.*
 class NotificationManager(
     private val context: Context,
     private val player: ExoPlayer,
+    private val ioDispatcher: CoroutineDispatcher,
     sessionToken: MediaSessionCompat.Token,
     notificationListener: PlayerNotificationManager.NotificationListener
 ) {
@@ -80,7 +81,7 @@ class NotificationManager(
             return if (currentIconUri != iconUri || bitmap == null) {
                 currentIconUri = iconUri
                 serviceScope.launch {
-                    bitmap = iconUri?.let { resolveUriAsBitmapAsync(it) }
+                    bitmap = iconUri?.let { resolveUriAsBitmap(it) }
                     bitmap?.let { callback.onBitmap(it) }
                 }
                 null
@@ -89,8 +90,8 @@ class NotificationManager(
             }
         }
 
-        private suspend fun resolveUriAsBitmapAsync(uri: Uri): Bitmap? =
-            withContext(Dispatchers.IO) {
+        private suspend fun resolveUriAsBitmap(uri: Uri): Bitmap? =
+            withContext(ioDispatcher) {
                 try {
                     Glide.with(context).asBitmap()
                         .load(uri).apply(

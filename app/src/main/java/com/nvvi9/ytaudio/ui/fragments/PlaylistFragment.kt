@@ -67,7 +67,6 @@ class PlaylistFragment :
             }
 
             lifecycleOwner = this@PlaylistFragment
-
         }
 
         return binding.root
@@ -82,11 +81,6 @@ class PlaylistFragment :
                 binding.emptyMessage.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
             }
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        playlistViewModel.removeSources()
     }
 
     override fun onItemClicked(item: PlaylistItem) {

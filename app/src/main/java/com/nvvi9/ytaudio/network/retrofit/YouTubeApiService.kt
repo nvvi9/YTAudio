@@ -1,4 +1,4 @@
-package com.nvvi9.ytaudio.network
+package com.nvvi9.ytaudio.network.retrofit
 
 import com.nvvi9.ytaudio.BuildConfig
 import com.nvvi9.ytaudio.data.youtube.YTSearchPartId
