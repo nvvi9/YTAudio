@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.YTAudio.DayNight" parent="Theme.YTAudio.Dark" />
+
+    <style name="Theme.YTAudio.Dark" parent="Theme.YTAudio">
+        <item name="colorPrimary">@color/yta_blue_200</item>
+        <item name="colorPrimaryVariant">@color/yta_blue_300</item>
+        <item name="colorSecondary">@color/yta_orange_300</item>
+        <item name="colorSecondaryVariant">@color/yta_orange_300</item>
+        <item name="android:colorBackground">@color/yta_black_900</item>
+        <item name="colorSurface">@color/yta_black_800</item>
+        <item name="colorPrimarySurfaceVariant">?attr/colorSurface</item>
+        <item name="colorError">@color/yta_red_200</item>
+        <item name="colorOnPrimary">@color/yta_black_900</item>
+        <item name="colorOnSecondary">@color/yta_black_900</item>
+        <item name="colorOnBackground">@color/yta_white_50</item>
+        <item name="colorOnSurface">@color/yta_white_50</item>
+        <item name="colorOnError">@color/yta_black_900</item>
+        <item name="scrimBackground">@color/yta_black_900_alpha_087</item>
+        <item name="android:statusBarColor">@color/yta_black_900_alpha_060</item>
+        <item name="elevationOverlayEnabled">true</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
+    </style>
+</resources>

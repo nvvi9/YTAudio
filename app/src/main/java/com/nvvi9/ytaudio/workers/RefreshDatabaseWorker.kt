@@ -9,6 +9,8 @@ import com.nvvi9.ytaudio.data.audioinfo.AudioInfo
 import com.nvvi9.ytaudio.db.AudioInfoDao
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.toList
 import javax.inject.Inject
 
@@ -28,12 +30,15 @@ class RefreshDatabaseWorker(
 
     override suspend fun doWork() =
         try {
-            audioInfoDao.getAllAudioInfo()
-                .takeIf { it.isNotEmpty() }
-                ?.map { it.id }
-                ?.let { ytStream.extractVideoData(*it.toTypedArray()).toList().filterNotNull() }
-                ?.mapNotNull { AudioInfo.fromVideoData(it) }
-                ?.let { audioInfoDao.updatePlaylist(it) }
+            audioInfoDao.run {
+                getAllAudioInfo().map { it.id }
+                    .takeIf { it.isNotEmpty() }
+                    ?.let { ytStream.extractVideoData(*it.toTypedArray()) }
+                    ?.filterNotNull()
+                    ?.mapNotNull { AudioInfo.fromVideoData(it) }
+                    ?.toList()
+                    ?.let { updatePlaylist(it) }
+            }
             Result.success()
         } catch (t: Throwable) {
             Result.retry()

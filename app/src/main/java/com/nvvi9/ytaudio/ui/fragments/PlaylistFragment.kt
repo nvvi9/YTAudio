@@ -67,7 +67,6 @@ class PlaylistFragment :
             }
 
             lifecycleOwner = this@PlaylistFragment
-
         }
 
         return binding.root
