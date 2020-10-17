@@ -95,7 +95,7 @@ class YouTubeFragment : YouTubeBaseFragment(), Injectable {
                     true
                 }
                 R.id.menu_add -> {
-                    youTubeViewModel.addToPlaylist(item.id)
+                    youTubeViewModel.addToPlaylist(item)
                     true
                 }
                 else -> false
@@ -108,9 +108,9 @@ class YouTubeFragment : YouTubeBaseFragment(), Injectable {
     override fun onItemIconChanged(item: YouTubeItem, newValue: Boolean) {
         item.isAdded = newValue
         if (newValue) {
-            youTubeViewModel.addToPlaylist(item.id)
+            youTubeViewModel.addToPlaylist(item)
         } else {
-            youTubeViewModel.deleteFromPlaylist(item.id)
+            youTubeViewModel.deleteFromPlaylist(item)
         }
     }
 

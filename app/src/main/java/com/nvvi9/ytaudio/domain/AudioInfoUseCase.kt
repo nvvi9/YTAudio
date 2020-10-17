@@ -31,11 +31,9 @@ class AudioInfoUseCase @Inject constructor(
                 .map { MediaMetadataMapper.map(it) }
         }
 
-    suspend fun addToPlaylist(vararg id: String) {
-        audioInfoRepository.addToPlaylist(*id)
-    }
+    suspend fun addToPlaylist(id: String) =
+        audioInfoRepository.addToPlaylist(id)
 
-    suspend fun deleteFromPlaylist(vararg id: String) {
-        audioInfoRepository.deleteFromPlaylist(*id)
-    }
+    suspend fun deleteFromPlaylist(id: String) =
+        audioInfoRepository.deleteFromPlaylist(id)
 }

@@ -3,6 +3,7 @@ package com.nvvi9.ytaudio.ui.viewmodels
 import androidx.lifecycle.*
 import com.nvvi9.ytaudio.domain.AudioInfoUseCase
 import com.nvvi9.ytaudio.service.AudioServiceConnection
+import com.nvvi9.ytaudio.utils.Event
 import com.nvvi9.ytaudio.utils.extensions.id
 import com.nvvi9.ytaudio.utils.extensions.isPlayEnabled
 import com.nvvi9.ytaudio.utils.extensions.isPrepared
@@ -25,6 +26,9 @@ class PlaylistViewModel @Inject constructor(
     private val playlistItems = audioInfoUseCase.getPlaylistItems()
 
     private val items = MediatorLiveData<List<PlaylistItem>>()
+
+    private val _errorEvent = MutableLiveData<Event<String>>()
+    val errorEvent: LiveData<Event<String>> = _errorEvent
 
     override fun onCleared() {
         super.onCleared()
@@ -55,19 +59,21 @@ class PlaylistViewModel @Inject constructor(
         }
     }
 
-    fun deleteFromDatabase(vararg items: PlaylistItem) {
+    fun deleteFromPlaylist(item: PlaylistItem) {
         viewModelScope.launch(ioDispatcher) {
-            audioInfoUseCase.deleteFromPlaylist(*items.map { it.id }.toTypedArray())
+            if (!audioInfoUseCase.deleteFromPlaylist(item.id)) {
+                _errorEvent.postValue(Event("Can't delete ${item.title}"))
+            }
         }
     }
 
-    fun playFromId(id: String) {
+    fun playAudio(item: PlaylistItem) {
         audioServiceConnection.run {
             playbackState.value?.let {
-                if (it.isPrepared && it.isPlayEnabled && id == nowPlaying.value?.id) {
+                if (it.isPrepared && it.isPlayEnabled && item.id == nowPlaying.value?.id) {
                     transportControls.play()
                 } else {
-                    transportControls.playFromMediaId(id, null)
+                    transportControls.playFromMediaId(item.id, null)
                 }
             }
         }

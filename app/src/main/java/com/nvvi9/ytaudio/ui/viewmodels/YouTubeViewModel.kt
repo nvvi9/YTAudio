@@ -83,22 +83,18 @@ class YouTubeViewModel @Inject constructor(
         }
     }
 
-    fun addToPlaylist(id: String) {
+    fun addToPlaylist(youTubeItem: YouTubeItem) {
         addScope.launch(ioDispatcher) {
-            try {
-                audioInfoUseCase.addToPlaylist(id)
-            } catch (t: Throwable) {
-                _errorEvent.postValue(Event("Error occurred"))
+            if (!audioInfoUseCase.addToPlaylist(youTubeItem.id)) {
+                _errorEvent.postValue(Event("Can't add ${youTubeItem.title}"))
             }
         }
     }
 
-    fun deleteFromPlaylist(id: String) {
+    fun deleteFromPlaylist(youTubeItem: YouTubeItem) {
         deleteScope.launch(ioDispatcher) {
-            try {
-                audioInfoUseCase.deleteFromPlaylist(id)
-            } catch (t: Throwable) {
-                _errorEvent.postValue(Event("Error occurred"))
+            if (!audioInfoUseCase.deleteFromPlaylist(youTubeItem.id)) {
+                _errorEvent.postValue(Event("Can't delete ${youTubeItem.title}"))
             }
         }
     }

@@ -5,7 +5,7 @@ import com.nvvi9.ytaudio.data.audioinfo.AudioInfo
 
 
 interface AudioInfoRepository {
-    suspend fun addToPlaylist(vararg id: String)
-    suspend fun deleteFromPlaylist(vararg id: String)
+    suspend fun addToPlaylist(id: String): Boolean
+    suspend fun deleteFromPlaylist(id: String): Boolean
     fun getPlaylist(): LiveData<List<AudioInfo>>
 }

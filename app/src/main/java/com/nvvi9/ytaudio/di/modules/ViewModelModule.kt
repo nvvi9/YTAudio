@@ -5,10 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.paging.ExperimentalPagingApi
 import com.nvvi9.ytaudio.di.factories.ViewModelFactory
 import com.nvvi9.ytaudio.di.keys.ViewModelKey
-import com.nvvi9.ytaudio.ui.viewmodels.PlayerViewModel
-import com.nvvi9.ytaudio.ui.viewmodels.PlaylistViewModel
-import com.nvvi9.ytaudio.ui.viewmodels.SearchViewModel
-import com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel
+import com.nvvi9.ytaudio.ui.viewmodels.*
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -22,6 +19,11 @@ import javax.inject.Singleton
 @ExperimentalCoroutinesApi
 @ExperimentalPagingApi
 abstract class ViewModelModule {
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MainViewModel::class)
+    abstract fun bindMainViewModel(mainViewModel: MainViewModel): ViewModel
 
     @Binds
     @IntoMap

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -67,11 +68,19 @@ class PlaylistFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        playlistViewModel.observeOnPlaylistItems(viewLifecycleOwner) {
-            it?.let {
-                playlistItemAdapter.submitList(it)
-                playlistItemAdapter.notifyDataSetChanged()
-                binding.emptyMessage.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+        playlistViewModel.run {
+            observeOnPlaylistItems(viewLifecycleOwner) {
+                it?.let {
+                    playlistItemAdapter.submitList(it)
+                    playlistItemAdapter.notifyDataSetChanged()
+                    binding.emptyMessage.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
+                }
+            }
+
+            errorEvent.observe(viewLifecycleOwner) { event ->
+                event?.getContentIfNotHandled()?.let {
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -82,8 +91,7 @@ class PlaylistFragment :
     }
 
     override fun onItemClicked(item: PlaylistItem) {
-        playlistViewModel.playFromId(item.id)
-//        mainViewModel.audioItemClicked(item.id)
+        playlistViewModel.playAudio(item)
     }
 
     @ExperimentalPagingApi
@@ -95,7 +103,7 @@ class PlaylistFragment :
                     true
                 }
                 R.id.menu_delete -> {
-                    playlistViewModel.deleteFromDatabase(item)
+                    playlistViewModel.deleteFromPlaylist(item)
                     true
                 }
                 R.id.menu_open_youtube -> {

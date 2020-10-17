@@ -1,9 +1,9 @@
 package com.nvvi9.ytaudio.repositories.paging
 
 import androidx.paging.PagingSource
-import com.nvvi9.YTStream
 import com.nvvi9.ytaudio.data.datatype.Result
 import com.nvvi9.ytaudio.data.ytstream.YTVideoDetails
+import com.nvvi9.ytaudio.network.YTStreamDataSource
 import com.nvvi9.ytaudio.network.YouTubeNetworkDataSource
 import com.nvvi9.ytaudio.repositories.mapper.YTVideoDetailsMapper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,14 +18,14 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 class YTVideoDetailsPagingSource @Inject constructor(
     private val ytNetworkDataSource: YouTubeNetworkDataSource,
-    private val ytStream: YTStream
+    private val ytStreamDataSource: YTStreamDataSource
 ) : PagingSource<String, YTVideoDetails>() {
 
     override suspend fun load(params: LoadParams<String>) =
         ytNetworkDataSource.getPopular(params.loadSize, params.key).run {
             when (this) {
                 is Result.Success -> {
-                    ytStream.extractVideoDetails(*data.items.map { it.id }.toTypedArray())
+                    ytStreamDataSource.extractVideoDetails(data.items.map { it.id })
                         .filterNotNull()
                         .map { YTVideoDetailsMapper.map(it) }
                         .toList()
