@@ -18,7 +18,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @ExperimentalPagingApi
-class YouTubeBaseViewModel @Inject constructor(
+class YouTubeViewModel @Inject constructor(
     private val audioInfoUseCase: AudioInfoUseCase,
     private val youTubeUseCase: YouTubeUseCase,
     private val ioDispatcher: CoroutineDispatcher,
@@ -31,16 +31,6 @@ class YouTubeBaseViewModel @Inject constructor(
     private val addScope = CoroutineScope(mainDispatcher + addJob)
     private val deleteScope = CoroutineScope(mainDispatcher + deleteJob)
 
-    override fun onCleared() {
-        super.onCleared()
-        items.run {
-            removeSource(youTubeItems)
-            removeSource(audioInfoUseCase.getItemsId())
-        }
-        deleteJob.cancel()
-        addJob.cancel()
-    }
-
     private val _errorEvent = MutableLiveData<Event<String>>()
     val errorEvent: LiveData<Event<String>>
         get() = _errorEvent
@@ -49,11 +39,21 @@ class YouTubeBaseViewModel @Inject constructor(
 
     private val items = MediatorLiveData<PagingData<YouTubeItem>>()
 
-    private fun loadItems(query: String? = null) =
-        query?.let {
-            youTubeUseCase.getYouTubeItemsFromQuery(it)
-        } ?: youTubeUseCase.getPopularYouTubeItems()
+    private val playlistItemsId = audioInfoUseCase.getItemsId()
 
+    override fun onCleared() {
+        super.onCleared()
+        removeSources()
+        deleteJob.cancel()
+        addJob.cancel()
+    }
+
+    fun removeSources() {
+        items.run {
+            removeSource(youTubeItems)
+            removeSource(playlistItemsId)
+        }
+    }
 
     fun observeOnYouTubeItems(owner: LifecycleOwner, observer: Observer<PagingData<YouTubeItem>>) {
         items.observe(owner, observer)
@@ -64,7 +64,7 @@ class YouTubeBaseViewModel @Inject constructor(
             }
         }
 
-        items.addSource(audioInfoUseCase.getItemsId()) { id ->
+        items.addSource(playlistItemsId) { id ->
             youTubeItems.value?.map {
                 it.isAdded = id.contains(it.id)
                 it
@@ -102,4 +102,8 @@ class YouTubeBaseViewModel @Inject constructor(
             }
         }
     }
+
+    private fun loadItems(query: String? = null) =
+        query?.let { youTubeUseCase.getYouTubeItemsFromQuery(it) }
+            ?: youTubeUseCase.getPopularYouTubeItems()
 }

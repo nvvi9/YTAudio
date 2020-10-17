@@ -102,7 +102,7 @@ open class AudioService :
 
     @Synchronized
     override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaItem>>) {
-        val children = audioInfoUseCase.getMetadata().map {
+        val children = audioInfoUseCase.getMediaMetadata().value?.map {
             MediaItem(it.description, it.flag)
         }
 

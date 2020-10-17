@@ -19,7 +19,7 @@ import com.nvvi9.ytaudio.ui.MainActivity
 import com.nvvi9.ytaudio.ui.adapters.ReboundingSwipeActionCallback
 import com.nvvi9.ytaudio.ui.adapters.YTItemAdapter
 import com.nvvi9.ytaudio.ui.adapters.YTLoadStateAdapter
-import com.nvvi9.ytaudio.ui.viewmodels.YouTubeBaseViewModel
+import com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel
 import com.nvvi9.ytaudio.utils.SpringAddItemAnimator
 import com.nvvi9.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,10 +35,10 @@ import javax.inject.Inject
 class YouTubeFragment : YouTubeBaseFragment(), Injectable {
 
     @Inject
-    lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    override val youTubeViewModel: YouTubeBaseViewModel by viewModels {
-        youTubeViewModelFactory
+    override val youTubeViewModel: YouTubeViewModel by viewModels {
+        viewModelFactory
     }
 
     private lateinit var binding: FragmentYoutubeBinding
@@ -72,6 +72,11 @@ class YouTubeFragment : YouTubeBaseFragment(), Injectable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         youTubeViewModel.updateYTItems()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        youTubeViewModel.removeSources()
     }
 
     override fun onItemClicked(cardView: View, item: YouTubeItem) {

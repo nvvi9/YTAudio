@@ -16,7 +16,6 @@ import com.nvvi9.ytaudio.di.Injectable
 import com.nvvi9.ytaudio.ui.MainActivity
 import com.nvvi9.ytaudio.ui.adapters.PlaylistItemAdapter
 import com.nvvi9.ytaudio.ui.adapters.PlaylistItemListener
-import com.nvvi9.ytaudio.ui.viewmodels.MainViewModel
 import com.nvvi9.ytaudio.ui.viewmodels.PlaylistViewModel
 import com.nvvi9.ytaudio.utils.SpringAddItemAnimator
 import com.nvvi9.ytaudio.vo.PlaylistItem
@@ -33,17 +32,11 @@ class PlaylistFragment :
     Injectable {
 
     @Inject
-    lateinit var playlistViewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    @Inject
-    lateinit var mainActivityViewModelFactory: ViewModelProvider.Factory
 
     private val playlistViewModel: PlaylistViewModel by viewModels {
-        playlistViewModelFactory
-    }
-
-    private val mainViewModel: MainViewModel by viewModels {
-        mainActivityViewModelFactory
+        viewModelFactory
     }
 
     private lateinit var binding: FragmentPlaylistBinding
@@ -83,8 +76,14 @@ class PlaylistFragment :
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        playlistViewModel.removeSources()
+    }
+
     override fun onItemClicked(item: PlaylistItem) {
-        mainViewModel.audioItemClicked(item.id)
+        playlistViewModel.playFromId(item.id)
+//        mainViewModel.audioItemClicked(item.id)
     }
 
     @ExperimentalPagingApi

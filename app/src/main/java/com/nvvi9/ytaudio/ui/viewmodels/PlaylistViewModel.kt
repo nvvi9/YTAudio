@@ -4,6 +4,8 @@ import androidx.lifecycle.*
 import com.nvvi9.ytaudio.domain.AudioInfoUseCase
 import com.nvvi9.ytaudio.service.AudioServiceConnection
 import com.nvvi9.ytaudio.utils.extensions.id
+import com.nvvi9.ytaudio.utils.extensions.isPlayEnabled
+import com.nvvi9.ytaudio.utils.extensions.isPrepared
 import com.nvvi9.ytaudio.vo.PlaylistItem
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,6 +28,10 @@ class PlaylistViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
+        removeSources()
+    }
+
+    fun removeSources() {
         items.run {
             removeSource(playlistItems)
             removeSource(audioServiceConnection.nowPlaying)
@@ -52,6 +58,18 @@ class PlaylistViewModel @Inject constructor(
     fun deleteFromDatabase(vararg items: PlaylistItem) {
         viewModelScope.launch(ioDispatcher) {
             audioInfoUseCase.deleteFromPlaylist(*items.map { it.id }.toTypedArray())
+        }
+    }
+
+    fun playFromId(id: String) {
+        audioServiceConnection.run {
+            playbackState.value?.let {
+                if (it.isPrepared && it.isPlayEnabled && id == nowPlaying.value?.id) {
+                    transportControls.play()
+                } else {
+                    transportControls.playFromMediaId(id, null)
+                }
+            }
         }
     }
 }

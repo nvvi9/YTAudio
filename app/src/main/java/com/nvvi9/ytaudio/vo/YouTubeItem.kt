@@ -1,7 +1,5 @@
 package com.nvvi9.ytaudio.vo
 
-import com.nvvi9.ytaudio.data.ytstream.YTVideoDetails
-
 
 data class YouTubeItem(
     val id: String,
@@ -13,6 +11,3 @@ data class YouTubeItem(
     val inPlaylist: Boolean = false,
     var isAdded: Boolean = false
 )
-
-fun YTVideoDetails.toYouTubeItem() =
-    YouTubeItem(id, title ?: "", thumbnails[1].url, channel ?: "", viewCount, durationSeconds)

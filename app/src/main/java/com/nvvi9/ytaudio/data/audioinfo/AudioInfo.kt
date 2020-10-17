@@ -1,9 +1,10 @@
 package com.nvvi9.ytaudio.data.audioinfo
 
-import androidx.room.*
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import com.nvvi9.model.Thumbnail
-import com.nvvi9.model.VideoData
-import com.nvvi9.model.streams.StreamType
 
 
 @Entity(indices = [Index(value = ["id"], unique = true)])
@@ -18,29 +19,6 @@ data class AudioInfo(
 
     val needUpdate
         get() = expiresInSeconds?.let {
-            System.currentTimeMillis() / 1000 >= lastUpdateTimeSeconds + it - UPDATE_TIME_GAP
+            System.currentTimeMillis() / 1000 >= lastUpdateTimeSeconds + it - 10
         }
-
-    companion object {
-
-        @Ignore
-        private const val UPDATE_TIME_GAP = 10
-
-        @Ignore
-        fun fromVideoData(videoData: VideoData): AudioInfo? =
-            with(videoData) {
-                streams.filter { it.streamDetails.type == StreamType.AUDIO }
-                    .mapNotNull { AudioStream.fromStream(it) }
-                    .takeIf { it.isNotEmpty() }
-                    ?.let { streams ->
-                        videoDetails.run {
-                            AudioInfo(
-                                id, AudioDetails(title, channel ?: "", durationSeconds ?: 0),
-                                thumbnails, streams, expiresInSeconds,
-                                System.currentTimeMillis() / 1000
-                            )
-                        }
-                    }
-            }
-    }
 }

@@ -5,8 +5,11 @@ import com.nvvi9.YTStream
 import com.nvvi9.ytaudio.data.datatype.Result
 import com.nvvi9.ytaudio.data.ytstream.YTVideoDetails
 import com.nvvi9.ytaudio.network.YouTubeNetworkDataSource
+import com.nvvi9.ytaudio.repositories.mapper.YTVideoDetailsMapper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import javax.inject.Inject
 
@@ -19,20 +22,16 @@ class YTVideoDetailsPagingSource @Inject constructor(
 ) : PagingSource<String, YTVideoDetails>() {
 
     override suspend fun load(params: LoadParams<String>) =
-        ytNetworkDataSource.getPopular(params.loadSize, params.key).let { result ->
-            when (result) {
+        ytNetworkDataSource.getPopular(params.loadSize, params.key).run {
+            when (this) {
                 is Result.Success -> {
-                    ytStream.extractVideoDetails(*result.data.items.map { it.id }.toTypedArray())
-                        .toList()
+                    ytStream.extractVideoDetails(*data.items.map { it.id }.toTypedArray())
                         .filterNotNull()
-                        .map { YTVideoDetails.create(it) }
-                        .let {
-                            LoadResult.Page(
-                                it, result.data.prevPageToken, result.data.nextPageToken
-                            )
-                        }
+                        .map { YTVideoDetailsMapper.map(it) }
+                        .toList()
+                        .let { LoadResult.Page(it, data.prevPageToken, data.nextPageToken) }
                 }
-                is Result.Error -> LoadResult.Error(result.throwable)
+                is Result.Error -> LoadResult.Error(throwable)
             }
         }
 }

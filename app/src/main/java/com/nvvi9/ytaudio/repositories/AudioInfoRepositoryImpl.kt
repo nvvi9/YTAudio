@@ -1,9 +1,9 @@
 package com.nvvi9.ytaudio.repositories
 
 import com.nvvi9.YTStream
-import com.nvvi9.ytaudio.data.audioinfo.AudioInfo
 import com.nvvi9.ytaudio.db.AudioInfoDao
 import com.nvvi9.ytaudio.repositories.base.AudioInfoRepository
+import com.nvvi9.ytaudio.repositories.mapper.AudioInfoMapper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
@@ -22,7 +22,7 @@ class AudioInfoRepositoryImpl @Inject constructor(
     override suspend fun addToPlaylist(vararg id: String) {
         ytStream.extractVideoData(*id)
             .filterNotNull()
-            .mapNotNull { AudioInfo.fromVideoData(it) }
+            .mapNotNull { AudioInfoMapper.map(it) }
             .collect { audioInfoDao.insert(it) }
     }
 

@@ -1,7 +1,6 @@
 package com.nvvi9.ytaudio.data.ytstream
 
 import com.nvvi9.model.Thumbnail
-import com.nvvi9.model.VideoDetails
 
 
 data class YTVideoDetails(
@@ -15,14 +14,4 @@ data class YTVideoDetails(
     val thumbnails: List<Thumbnail>,
     val expiresInSeconds: Long?,
     val isLiveStream: Boolean?
-) {
-    companion object {
-        fun create(videoDetails: VideoDetails) =
-            with(videoDetails) {
-                YTVideoDetails(
-                    id, title, channel, channelId, description, durationSeconds,
-                    viewCount, thumbnails, expiresInSeconds, isLiveStream
-                )
-            }
-    }
-}
+)

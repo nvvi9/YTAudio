@@ -27,10 +27,10 @@ class SearchFragment :
     Injectable {
 
     @Inject
-    lateinit var searchViewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private val searchViewModel: SearchViewModel by viewModels {
-        searchViewModelFactory
+        viewModelFactory
     }
 
     private lateinit var binding: FragmentSearchBinding

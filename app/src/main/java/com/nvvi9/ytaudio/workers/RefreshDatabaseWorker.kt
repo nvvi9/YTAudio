@@ -5,8 +5,8 @@ import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import com.nvvi9.YTStream
-import com.nvvi9.ytaudio.data.audioinfo.AudioInfo
 import com.nvvi9.ytaudio.db.AudioInfoDao
+import com.nvvi9.ytaudio.repositories.mapper.AudioInfoMapper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filterNotNull
@@ -35,7 +35,7 @@ class RefreshDatabaseWorker(
                     .takeIf { it.isNotEmpty() }
                     ?.let { ytStream.extractVideoData(*it.toTypedArray()) }
                     ?.filterNotNull()
-                    ?.mapNotNull { AudioInfo.fromVideoData(it) }
+                    ?.mapNotNull { AudioInfoMapper.map(it) }
                     ?.toList()
                     ?.let { updatePlaylist(it) }
             }

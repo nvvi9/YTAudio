@@ -6,7 +6,6 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -18,9 +17,8 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.paging.ExperimentalPagingApi
 import com.nvvi9.ytaudio.R
 import com.nvvi9.ytaudio.databinding.ActivityMainBinding
-import com.nvvi9.ytaudio.ui.viewmodels.MainViewModel
 import com.nvvi9.ytaudio.ui.viewmodels.PlayerViewModel
-import com.nvvi9.ytaudio.ui.viewmodels.YouTubeBaseViewModel
+import com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel
 import com.nvvi9.ytaudio.utils.extensions.*
 import dagger.android.AndroidInjection
 import dagger.android.DispatchingAndroidInjector
@@ -39,28 +37,18 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
     lateinit var androidInjector: DispatchingAndroidInjector<Any>
 
     @Inject
-    lateinit var mainViewModelFactory: ViewModelProvider.Factory
-
-    @Inject
-    lateinit var playerViewModelFactory: ViewModelProvider.Factory
-
-    @Inject
-    lateinit var youTubeViewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var navController: NavController
 
-    private val mainViewModel: MainViewModel by viewModels {
-        mainViewModelFactory
-    }
-
     private val playerViewModel: PlayerViewModel by viewModels {
-        playerViewModelFactory
+        viewModelFactory
     }
 
-    private val youTubeBaseViewModel: YouTubeBaseViewModel by viewModels {
-        youTubeViewModelFactory
+    private val youTubeViewModel: YouTubeViewModel by viewModels {
+        viewModelFactory
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,14 +76,6 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
                             bottomControls.visibility = View.GONE
                         }
                     }
-                }
-            }
-        }
-
-        mainViewModel.networkFailure.observe(this) {
-            it?.getContentIfNotHandled()?.let { isNetworkFailure ->
-                if (isNetworkFailure) {
-                    Toast.makeText(this, "Check your connection", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -130,7 +110,7 @@ class MainActivity : AppCompatActivity(), HasAndroidInjector {
         intent?.takeIf {
             it.action == Intent.ACTION_SEND
         }?.getStringExtra(Intent.EXTRA_TEXT)?.let {
-            youTubeBaseViewModel.addToPlaylist(it.takeLast(11))
+            youTubeViewModel.addToPlaylist(it.takeLast(11))
         }
     }
 

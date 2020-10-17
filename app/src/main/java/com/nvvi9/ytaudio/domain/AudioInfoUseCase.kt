@@ -1,9 +1,9 @@
 package com.nvvi9.ytaudio.domain
 
 import androidx.lifecycle.map
+import com.nvvi9.ytaudio.domain.mapper.MediaMetadataMapper
+import com.nvvi9.ytaudio.domain.mapper.PlaylistItemMapper
 import com.nvvi9.ytaudio.repositories.base.AudioInfoRepository
-import com.nvvi9.ytaudio.utils.extensions.toMediaMetadataList
-import com.nvvi9.ytaudio.vo.PlaylistItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
@@ -18,7 +18,7 @@ class AudioInfoUseCase @Inject constructor(
     fun getPlaylistItems() =
         audioInfoRepository.getPlaylist().map { list ->
             list.filter { it.needUpdate == false }
-                .map { PlaylistItem.from(it) }
+                .map { PlaylistItemMapper.map(it) }
         }
 
     fun getItemsId() =
@@ -28,11 +28,8 @@ class AudioInfoUseCase @Inject constructor(
     fun getMediaMetadata() =
         audioInfoRepository.getPlaylist().map { list ->
             list.filter { it.needUpdate == false }
-                .toMediaMetadataList()
+                .map { MediaMetadataMapper.map(it) }
         }
-
-    fun getMetadata() =
-        getMediaMetadata().value ?: emptyList()
 
     suspend fun addToPlaylist(vararg id: String) {
         audioInfoRepository.addToPlaylist(*id)

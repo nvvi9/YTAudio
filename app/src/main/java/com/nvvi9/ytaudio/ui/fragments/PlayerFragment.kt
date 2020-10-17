@@ -30,12 +30,12 @@ class PlayerFragment :
     Injectable {
 
     @Inject
-    lateinit var playerViewModelFactory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private lateinit var binding: FragmentPlayerBinding
 
     private val playerViewModel by viewModels<PlayerViewModel> {
-        playerViewModelFactory
+        viewModelFactory
     }
 
     private var isUserSeeking = false

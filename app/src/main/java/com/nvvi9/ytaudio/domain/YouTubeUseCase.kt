@@ -2,8 +2,8 @@ package com.nvvi9.ytaudio.domain
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.map
+import com.nvvi9.ytaudio.domain.mapper.YouTubeItemMapper
 import com.nvvi9.ytaudio.repositories.base.YouTubeRepository
-import com.nvvi9.ytaudio.vo.toYouTubeItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.map
@@ -21,9 +21,9 @@ class YouTubeUseCase @Inject constructor(
 
     fun getPopularYouTubeItems() =
         youTubeRepository.getVideoDetails()
-            .map { details -> details.map { it.toYouTubeItem() } }
+            .map { details -> details.map { YouTubeItemMapper.map(it) } }
 
     fun getYouTubeItemsFromQuery(query: String) =
         youTubeRepository.getVideoDetailsFromQuery(query)
-            .map { details -> details.map { it.toYouTubeItem() } }
+            .map { details -> details.map { YouTubeItemMapper.map(it) } }
 }
