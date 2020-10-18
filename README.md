@@ -7,7 +7,7 @@ Android app that allows you play the audio track of a YouTube video in the backg
 * Background audio playback
 * Video search and adding it to a playlist
 ## Download
-[Click here](https://github.com/nvvi9/YTAudio/releases/download/v1.0/YTAudio.apk) to download APK.
+[Click here](https://github.com/nvvi9/YTAudio/releases/download/v1.1/YTAudio.apk) to download APK.
 ## Usage
 Swipe right to add video to your playlist
 
