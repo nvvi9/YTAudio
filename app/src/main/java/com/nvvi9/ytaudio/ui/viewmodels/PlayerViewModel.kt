@@ -129,7 +129,7 @@ class PlayerViewModel @Inject constructor(
         metadata: MediaMetadataCompat
     ) {
         metadata.takeIf { it.duration != 0L && it.id != null && it.id != nowPlayingInfo.value?.id }
-            ?.let { _raw.postValue(Random.nextBytes(it.duration.toInt() * 1000)) }
+            ?.let { _raw.postValue(Random.nextBytes(it.duration.toInt())) }
 
         _nowPlayingInfo.postValue(metadata.toNowPlayingInfo())
 

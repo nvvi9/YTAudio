@@ -206,7 +206,7 @@ fun MediaMetadataCompat.Builder.from(audioInfo: AudioInfo): MediaMetadataCompat.
         id = audioInfo.id
         title = audioInfo.details.title
         artist = audioInfo.details.author
-        duration = audioInfo.details.duration
+        duration = audioInfo.details.duration * 1000
         mediaUri = audioInfo.audioStreams.maxByOrNull { it.bitrate }!!.url
         displayIconUri = audioInfo.thumbnails[1].url
         albumArtUri = audioInfo.thumbnails.maxByOrNull { it.height }!!.url
@@ -215,7 +215,7 @@ fun MediaMetadataCompat.Builder.from(audioInfo: AudioInfo): MediaMetadataCompat.
     }
 
 fun MediaMetadataCompat.toNowPlayingInfo() =
-    albumArtUri?.let { NowPlayingInfo(id, title, displaySubtitle, it, duration * 1000) }
+    albumArtUri?.let { NowPlayingInfo(id, title, displaySubtitle, it, duration) }
 
 
 const val METADATA_KEY_FLAGS = "com.example.ytaudio.service.METADATA_KEY_FLAGS"

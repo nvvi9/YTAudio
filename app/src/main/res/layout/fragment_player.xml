@@ -26,10 +26,6 @@
             type="Integer" />
 
         <variable
-            name="viewModel"
-            type="com.nvvi9.ytaudio.ui.viewmodels.PlayerViewModel" />
-
-        <variable
             name="listener"
             type="com.nvvi9.ytaudio.ui.adapters.PlayerListener" />
     </data>
