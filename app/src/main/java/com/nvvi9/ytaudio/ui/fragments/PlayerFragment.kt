@@ -65,7 +65,6 @@ class PlayerFragment :
                 }
             }
             listener = this@PlayerFragment
-            viewModel = playerViewModel
         }
 
         return binding.root
