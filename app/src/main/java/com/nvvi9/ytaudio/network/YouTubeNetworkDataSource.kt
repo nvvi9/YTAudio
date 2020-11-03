@@ -28,4 +28,13 @@ class YouTubeNetworkDataSource @Inject constructor(private val youTubeApiService
         } catch (t: Throwable) {
             Result.Error(t)
         }
+
+    suspend fun getPlaylistItems(playlistId: String) =
+        try {
+            youTubeApiService.getYTPlaylistItems(playlistId).let {
+                Result.Success(it)
+            }
+        } catch (t: Throwable) {
+            Result.Error(t)
+        }
 }

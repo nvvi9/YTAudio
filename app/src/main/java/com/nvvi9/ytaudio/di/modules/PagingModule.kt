@@ -2,7 +2,7 @@ package com.nvvi9.ytaudio.di.modules
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.PagingSource
-import com.nvvi9.ytaudio.data.ytstream.YTVideoDetails
+import com.nvvi9.ytaudio.data.ytstream.YTData
 import com.nvvi9.ytaudio.repositories.paging.YTVideoDetailsPagingSource
 import dagger.Binds
 import dagger.Module
@@ -19,5 +19,5 @@ abstract class PagingModule {
 
     @Binds
     @Singleton
-    abstract fun bindYTVideoDetailsPagingSource(ytVideoDetailsPagingSource: YTVideoDetailsPagingSource): PagingSource<String, YTVideoDetails>
+    abstract fun bindYTVideoDetailsPagingSource(ytVideoDetailsPagingSource: YTVideoDetailsPagingSource): PagingSource<String, YTData.YTVideoDetails>
 }

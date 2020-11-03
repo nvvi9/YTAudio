@@ -2,7 +2,7 @@ package com.nvvi9.ytaudio.repositories.paging
 
 import androidx.paging.PagingSource
 import com.nvvi9.ytaudio.data.datatype.Result
-import com.nvvi9.ytaudio.data.ytstream.YTVideoDetails
+import com.nvvi9.ytaudio.data.ytstream.YTData
 import com.nvvi9.ytaudio.network.YTStreamDataSource
 import com.nvvi9.ytaudio.network.YouTubeNetworkDataSource
 import com.nvvi9.ytaudio.repositories.mapper.YTVideoDetailsMapper
@@ -19,19 +19,41 @@ class YTSearchPagingSource(
     private val query: String,
     private val ytNetworkDataSource: YouTubeNetworkDataSource,
     private val ytStreamDataSource: YTStreamDataSource
-) : PagingSource<String, YTVideoDetails>() {
+) : PagingSource<String, YTData>() {
 
-    override suspend fun load(params: LoadParams<String>): LoadResult<String, YTVideoDetails> =
+    override suspend fun load(params: LoadParams<String>): LoadResult<String, YTData> {
         ytNetworkDataSource.getFromQuery(query, params.loadSize, params.key).run {
             when (this) {
                 is Result.Success -> {
-                    ytStreamDataSource.extractVideoDetails(data.items.map { it.id.videoId })
-                        .filterNotNull()
-                        .map { YTVideoDetailsMapper.map(it) }
-                        .toList()
-                        .let { LoadResult.Page(it, data.prevPageToken, data.nextPageToken) }
+                    val result = mutableListOf<YTData>()
+
+                    val videoDetails =
+                        getYTVideoDetails(data.items.mapNotNull { it.id.videoId })
+
+                    val videoPlaylist = data.items.mapNotNull { it.id.playlistId }
                 }
-                is Result.Error -> LoadResult.Error(throwable)
             }
         }
+    }
+
+    private suspend fun getYTVideoDetails(id: List<String>) =
+        ytStreamDataSource.extractVideoDetails(id)
+            .filterNotNull()
+            .map { YTVideoDetailsMapper.map(it) }
+            .toList()
+
+
+    //    override suspend fun load(params: LoadParams<String>): LoadResult<String, YTData> =
+//        ytNetworkDataSource.getFromQuery(query, params.loadSize, params.key).run {
+//            when (this) {
+//                is Result.Success -> {
+//                    ytStreamDataSource.extractVideoDetails(data.items.map { it.id.videoId })
+//                        .filterNotNull()
+//                        .map { YTVideoDetailsMapper.map(it) }
+//                        .toList()
+//                        .let { LoadResult.Page(it, data.prevPageToken, data.nextPageToken) }
+//                }
+//                is Result.Error -> LoadResult.Error(throwable)
+//            }
+//        }
 }
