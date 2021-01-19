@@ -2,7 +2,7 @@ package com.nvvi9.ytaudio.repositories.paging
 
 import androidx.paging.PagingSource
 import com.nvvi9.ytaudio.data.datatype.Result
-import com.nvvi9.ytaudio.data.ytstream.YTVideoDetails
+import com.nvvi9.ytaudio.data.ytstream.YTData
 import com.nvvi9.ytaudio.network.YTStreamDataSource
 import com.nvvi9.ytaudio.network.YouTubeNetworkDataSource
 import com.nvvi9.ytaudio.repositories.mapper.YTVideoDetailsMapper
@@ -19,7 +19,7 @@ import javax.inject.Inject
 class YTVideoDetailsPagingSource @Inject constructor(
     private val ytNetworkDataSource: YouTubeNetworkDataSource,
     private val ytStreamDataSource: YTStreamDataSource
-) : PagingSource<String, YTVideoDetails>() {
+) : PagingSource<String, YTData.YTVideoDetails>() {
 
     override suspend fun load(params: LoadParams<String>) =
         ytNetworkDataSource.getPopular(params.loadSize, params.key).run {

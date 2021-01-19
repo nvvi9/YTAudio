@@ -2,8 +2,7 @@ package com.nvvi9.ytaudio.network
 
 import com.nvvi9.ytaudio.data.datatype.Result
 import com.nvvi9.ytaudio.network.retrofit.YouTubeApiService
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 
@@ -27,6 +26,17 @@ class YouTubeNetworkDataSource @Inject constructor(private val youTubeApiService
             }
         } catch (t: Throwable) {
             Result.Error(t)
+        }
+
+    suspend fun getPlaylistItems(playlistId: List<String>) =
+        coroutineScope {
+            try {
+                playlistId.map {
+                    async { it to youTubeApiService.getYTPlaylistItems(it) }
+                }.awaitAll().toMap().let { Result.Success(it) }
+            } catch (t: Throwable) {
+                Result.Error(t)
+            }
         }
 
     suspend fun getPlaylistItems(playlistId: String) =

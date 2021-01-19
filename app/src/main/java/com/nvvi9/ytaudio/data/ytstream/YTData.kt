@@ -20,8 +20,6 @@ sealed class YTData {
 
     data class YTPlaylist(
         val playlistId: String,
-        val title: String,
-        val author: String,
         val videos: List<YTVideoDetails>
     ) : YTData()
 }
