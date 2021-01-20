@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import javax.inject.Inject
 
-
 @FlowPreview
 @ExperimentalCoroutinesApi
 class YTVideoDetailsPagingSource @Inject constructor(
@@ -21,7 +20,7 @@ class YTVideoDetailsPagingSource @Inject constructor(
     private val ytStreamDataSource: YTStreamDataSource
 ) : PagingSource<String, YTVideoDetails>() {
 
-    override suspend fun load(params: LoadParams<String>) =
+    override suspend fun load(params: LoadParams<String>): LoadResult<String, YTVideoDetails> =
         ytNetworkDataSource.getPopular(params.loadSize, params.key).run {
             when (this) {
                 is Result.Success -> {
