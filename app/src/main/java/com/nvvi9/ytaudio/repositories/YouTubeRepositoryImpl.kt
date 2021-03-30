@@ -4,7 +4,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.nvvi9.ytaudio.data.ytstream.YTVideoDetails
+import com.nvvi9.ytaudio.data.ytstream.YTVideoItems
 import com.nvvi9.ytaudio.network.YTStreamDataSource
 import com.nvvi9.ytaudio.network.YouTubeNetworkDataSource
 import com.nvvi9.ytaudio.repositories.base.YouTubeRepository
@@ -24,13 +24,13 @@ class YouTubeRepositoryImpl @Inject constructor(
     private val ytStreamDataSource: YTStreamDataSource
 ) : YouTubeRepository {
 
-    override fun getVideoDetailsFromQuery(query: String): Flow<PagingData<YTVideoDetails>> =
+    override fun getVideoDetailsFromQuery(query: String): Flow<PagingData<YTVideoItems>> =
         Pager(PagingConfig(PAGE_SIZE)) {
             YTSearchPagingSource(query, ytNetworkDataSource, ytStreamDataSource)
         }.flow
 
 
-    override fun getVideoDetails(): Flow<PagingData<YTVideoDetails>> =
+    override fun getVideoDetails(): Flow<PagingData<YTVideoItems>> =
         Pager(PagingConfig(PAGE_SIZE)) {
             YTVideoDetailsPagingSource(ytNetworkDataSource, ytStreamDataSource)
         }.flow

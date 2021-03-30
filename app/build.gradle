@@ -4,6 +4,10 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'kotlin-kapt'
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def youtubeApiKey = properties.getProperty('YOUTUBE_API_KEY')
+
 android {
     compileSdkVersion 30
     buildToolsVersion "29.0.3"
@@ -15,6 +19,7 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
+        freeCompilerArgs = freeCompilerArgs + "-Xallow-result-return-type"
     }
 
     defaultConfig {
@@ -28,7 +33,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "YOUTUBE_API_KEY", YOUTUBE_API_KEY)
+        buildConfigField("String", "YOUTUBE_API_KEY", youtubeApiKey)
     }
 
     buildTypes {

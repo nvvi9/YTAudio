@@ -10,6 +10,7 @@ import com.nvvi9.ytaudio.domain.YouTubeUseCase
 import com.nvvi9.ytaudio.utils.Event
 import com.nvvi9.ytaudio.vo.YouTubeItem
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import javax.inject.Inject
@@ -19,10 +20,10 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @ExperimentalPagingApi
 class YouTubeViewModel @Inject constructor(
-    private val audioInfoUseCase: AudioInfoUseCase,
-    private val youTubeUseCase: YouTubeUseCase,
-    private val ioDispatcher: CoroutineDispatcher,
-    mainDispatcher: CoroutineDispatcher
+        private val audioInfoUseCase: AudioInfoUseCase,
+        private val youTubeUseCase: YouTubeUseCase,
+        private val ioDispatcher: CoroutineDispatcher,
+        mainDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val addJob = Job()
@@ -66,7 +67,8 @@ class YouTubeViewModel @Inject constructor(
 
         items.addSource(playlistItemsId) { id ->
             youTubeItems.value?.map {
-                it.isAdded = id.contains(it.id)
+                if (it is YouTubeItem.YouTubeVideoItem)
+                    it.isAdded = id.contains(it.id)
                 it
             }?.let {
                 items.postValue(it)
@@ -77,29 +79,30 @@ class YouTubeViewModel @Inject constructor(
     fun updateYTItems(query: String? = null) {
         viewModelScope.launch(ioDispatcher) {
             loadItems(query)
-                .filterNotNull()
-                .cachedIn(this)
-                .collectLatest { youTubeItems.postValue(it) }
+                    .filterNotNull()
+                    .cachedIn(this)
+                    .catch { _errorEvent.postValue(Event(it.toString())) }
+                    .collectLatest { youTubeItems.postValue(it) }
         }
     }
 
-    fun addToPlaylist(youTubeItem: YouTubeItem) {
+    fun addToPlaylist(youTubeVideoItem: YouTubeItem.YouTubeVideoItem) {
         addScope.launch(ioDispatcher) {
-            if (!audioInfoUseCase.addToPlaylist(youTubeItem.id)) {
-                _errorEvent.postValue(Event("Can't add ${youTubeItem.title}"))
+            if (!audioInfoUseCase.addToPlaylist(youTubeVideoItem.id)) {
+                _errorEvent.postValue(Event("Can't add ${youTubeVideoItem.title}"))
             }
         }
     }
 
-    fun deleteFromPlaylist(youTubeItem: YouTubeItem) {
+    fun deleteFromPlaylist(youTubeVideoItem: YouTubeItem.YouTubeVideoItem) {
         deleteScope.launch(ioDispatcher) {
-            if (!audioInfoUseCase.deleteFromPlaylist(youTubeItem.id)) {
-                _errorEvent.postValue(Event("Can't delete ${youTubeItem.title}"))
+            if (!audioInfoUseCase.deleteFromPlaylist(youTubeVideoItem.id)) {
+                _errorEvent.postValue(Event("Can't delete ${youTubeVideoItem.title}"))
             }
         }
     }
 
     private fun loadItems(query: String? = null) =
-        query?.let { youTubeUseCase.getYouTubeItemsFromQuery(it) }
-            ?: youTubeUseCase.getPopularYouTubeItems()
+            query?.let { youTubeUseCase.getYouTubeItemsFromQuery(it) }
+                    ?: youTubeUseCase.getPopularYouTubeItems()
 }

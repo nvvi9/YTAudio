@@ -13,7 +13,7 @@ import kotlin.math.abs
 
 
 class YTItemAdapter(private val listener: YTItemListener) :
-    PagingDataAdapter<YouTubeItem, YTItemAdapter.YTItemViewHolder>(DiffCallback) {
+    PagingDataAdapter<YouTubeItem.YouTubeVideoItem, YTItemAdapter.YTItemViewHolder>(DiffCallback) {
 
     override fun onBindViewHolder(holder: YTItemViewHolder, position: Int) {
         getItem(position)?.let { holder.bind(it) }
@@ -39,11 +39,11 @@ class YTItemAdapter(private val listener: YTItemListener) :
             }
         }
 
-        fun bind(item: YouTubeItem) {
-            binding.youTubeItem = item
-            binding.root.isActivated = item.isAdded
-            swipeEnabled = !item.isAdded
-            updateCardViewTopLeftCornerSize(if (item.isAdded || item.inPlaylist) 1f else 0f)
+        fun bind(videoItem: YouTubeItem.YouTubeVideoItem) {
+            binding.youTubeItem = videoItem
+            binding.root.isActivated = videoItem.isAdded
+            swipeEnabled = !videoItem.isAdded
+            updateCardViewTopLeftCornerSize(if (videoItem.isAdded || videoItem.inPlaylist) 1f else 0f)
             binding.executePendingBindings()
         }
 
@@ -86,9 +86,9 @@ class YTItemAdapter(private val listener: YTItemListener) :
         }
     }
 
-    private object DiffCallback : DiffUtil.ItemCallback<YouTubeItem>() {
+    private object DiffCallback : DiffUtil.ItemCallback<YouTubeItem.YouTubeVideoItem>() {
 
-        override fun areItemsTheSame(oldItem: YouTubeItem, newItem: YouTubeItem) = false
-        override fun areContentsTheSame(oldItem: YouTubeItem, newItem: YouTubeItem) = false
+        override fun areItemsTheSame(oldVideoItem: YouTubeItem.YouTubeVideoItem, newVideoItem: YouTubeItem.YouTubeVideoItem) = false
+        override fun areContentsTheSame(oldVideoItem: YouTubeItem.YouTubeVideoItem, newVideoItem: YouTubeItem.YouTubeVideoItem) = false
     }
 }

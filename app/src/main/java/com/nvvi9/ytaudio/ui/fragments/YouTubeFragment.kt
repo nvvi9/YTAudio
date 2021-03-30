@@ -17,8 +17,8 @@ import com.nvvi9.ytaudio.databinding.FragmentYoutubeBinding
 import com.nvvi9.ytaudio.di.Injectable
 import com.nvvi9.ytaudio.ui.MainActivity
 import com.nvvi9.ytaudio.ui.adapters.ReboundingSwipeActionCallback
-import com.nvvi9.ytaudio.ui.adapters.YTItemAdapter
 import com.nvvi9.ytaudio.ui.adapters.YTLoadStateAdapter
+import com.nvvi9.ytaudio.ui.adapters.YTPlaylistItemAdapter
 import com.nvvi9.ytaudio.ui.viewmodels.YouTubeViewModel
 import com.nvvi9.ytaudio.utils.SpringAddItemAnimator
 import com.nvvi9.ytaudio.vo.YouTubeItem
@@ -43,12 +43,12 @@ class YouTubeFragment : YouTubeBaseFragment(), Injectable {
 
     private lateinit var binding: FragmentYoutubeBinding
 
-    private val youTubeItemsAdapter = YTItemAdapter(this)
+    private val youTubeItemsAdapter = YTPlaylistItemAdapter(this)
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         binding = FragmentYoutubeBinding.inflate(inflater).apply {
             viewModel = youTubeViewModel
@@ -79,38 +79,45 @@ class YouTubeFragment : YouTubeBaseFragment(), Injectable {
         youTubeViewModel.removeSources()
     }
 
-    override fun onItemClicked(cardView: View, item: YouTubeItem) {
-        (activity as? MainActivity)?.startYouTubeIntent(item.id)
+    override fun onItemClicked(videoItem: YouTubeItem) {
+        when (videoItem) {
+            is YouTubeItem.YouTubeVideoItem -> (activity as? MainActivity)?.startYouTubeIntent(videoItem.id)
+        }
     }
 
-    override fun onItemLongClicked(item: YouTubeItem): Boolean {
-        MenuBottomSheetDialogFragment(R.menu.youtube_bottom_sheet_menu) {
-            when (it.itemId) {
-                R.id.menu_share -> {
-                    (activity as? MainActivity)?.startShareIntent(item.id)
-                    true
+    override fun onItemLongClicked(videoItem: YouTubeItem): Boolean {
+        when (videoItem) {
+            is YouTubeItem.YouTubeVideoItem -> MenuBottomSheetDialogFragment(R.menu.youtube_bottom_sheet_menu) {
+                when (it.itemId) {
+                    R.id.menu_share -> {
+                        (activity as? MainActivity)?.startShareIntent(videoItem.id)
+                        true
+                    }
+                    R.id.menu_open_youtube -> {
+                        (activity as? MainActivity)?.startYouTubeIntent(videoItem.id)
+                        true
+                    }
+                    R.id.menu_add -> {
+                        youTubeViewModel.addToPlaylist(videoItem)
+                        true
+                    }
+                    else -> false
                 }
-                R.id.menu_open_youtube -> {
-                    (activity as? MainActivity)?.startYouTubeIntent(item.id)
-                    true
-                }
-                R.id.menu_add -> {
-                    youTubeViewModel.addToPlaylist(item)
-                    true
-                }
-                else -> false
-            }
-        }.show(parentFragmentManager, null)
-
+            }.show(parentFragmentManager, null)
+        }
         return true
     }
 
-    override fun onItemIconChanged(item: YouTubeItem, newValue: Boolean) {
-        item.isAdded = newValue
-        if (newValue) {
-            youTubeViewModel.addToPlaylist(item)
-        } else {
-            youTubeViewModel.deleteFromPlaylist(item)
+    override fun onItemIconChanged(videoItem: YouTubeItem, newValue: Boolean) {
+        when (videoItem) {
+            is YouTubeItem.YouTubeVideoItem -> {
+                videoItem.isAdded = newValue
+                if (newValue) {
+                    youTubeViewModel.addToPlaylist(videoItem)
+                } else {
+                    youTubeViewModel.deleteFromPlaylist(videoItem)
+                }
+            }
         }
     }
 

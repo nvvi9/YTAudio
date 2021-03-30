@@ -1,13 +1,18 @@
 package com.nvvi9.ytaudio.repositories.paging
 
+import android.util.Log
 import androidx.paging.PagingSource
 import com.nvvi9.ytaudio.data.datatype.Result
-import com.nvvi9.ytaudio.data.ytstream.YTVideoDetails
+import com.nvvi9.ytaudio.data.youtube.Item
+import com.nvvi9.ytaudio.data.ytstream.YTVideoItems
 import com.nvvi9.ytaudio.network.YTStreamDataSource
 import com.nvvi9.ytaudio.network.YouTubeNetworkDataSource
-import com.nvvi9.ytaudio.repositories.mapper.YTVideoDetailsMapper
+import com.nvvi9.ytaudio.repositories.mapper.YTPlaylistMapper
+import com.nvvi9.ytaudio.repositories.mapper.YTVideoMapper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
@@ -16,22 +21,32 @@ import kotlinx.coroutines.flow.toList
 @ExperimentalCoroutinesApi
 @FlowPreview
 class YTSearchPagingSource(
-    private val query: String,
-    private val ytNetworkDataSource: YouTubeNetworkDataSource,
-    private val ytStreamDataSource: YTStreamDataSource
-) : PagingSource<String, YTVideoDetails>() {
+        private val query: String,
+        private val ytNetworkDataSource: YouTubeNetworkDataSource,
+        private val ytStreamDataSource: YTStreamDataSource
+) : PagingSource<String, YTVideoItems>() {
 
-    override suspend fun load(params: LoadParams<String>): LoadResult<String, YTVideoDetails> =
-        ytNetworkDataSource.getFromQuery(query, params.loadSize, params.key).run {
-            when (this) {
-                is Result.Success -> {
-                    ytStreamDataSource.extractVideoDetails(data.items.map { it.id.videoId })
-                        .filterNotNull()
-                        .map { YTVideoDetailsMapper.map(it) }
-                        .toList()
-                        .let { LoadResult.Page(it, data.prevPageToken, data.nextPageToken) }
+    override suspend fun load(params: LoadParams<String>): LoadResult<String, YTVideoItems> =
+            ytNetworkDataSource.getFromQuerySnippet(query, params.loadSize, params.key).let { result ->
+                when (result) {
+                    is Result.Success -> LoadResult.Page(getYTVideoItems(result.data.items), result.data.prevPageToken, result.data.nextPageToken)
+                    is Result.Error -> LoadResult.Error(result.throwable.also { Log.e(this::class.simpleName, it.stackTraceToString()) })
                 }
-                is Result.Error -> LoadResult.Error(throwable)
             }
+
+
+    private suspend fun getYTVideoItems(items: List<Item>): List<YTVideoItems> = coroutineScope {
+        async {
+            ytStreamDataSource.extractVideoDetails(items.mapNotNull { it.id.videoId })
+                    .filterNotNull()
+                    .map { YTVideoMapper.map(it) }
+                    .toList()
+        }.let {
+            items.mapNotNull { item ->
+                item.id.playlistId?.let {
+                    YTPlaylistMapper.map(item)
+                }
+            } + it.await()
         }
+    }
 }
