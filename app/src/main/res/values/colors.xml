@@ -21,4 +21,5 @@
     <color name="yta_black_900_alpha_087">#de000000</color>
     <color name="yta_black_900_alpha_060">#99000000</color>
     <color name="nav_bar">@color/yta_black_900_alpha_020</color>
+    <color name="play_background">@color/yta_white_50</color>
 </resources>
