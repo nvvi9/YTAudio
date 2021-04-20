@@ -183,7 +183,8 @@
                 app:chunkRadius="1dp"
                 app:chunkSpacing="1dp"
                 app:chunkWidth="2dp"
-                app:minChunkHeight="2dp" />
+                app:minChunkHeight="2dp"
+                app:waveColor="@color/wave_color"/>
         </RelativeLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
